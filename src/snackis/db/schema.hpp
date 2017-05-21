@@ -7,17 +7,15 @@
 #include <snackis/db/record.hpp>
 
 namespace snackis {
-  using namespace std;
-  
   template <typename RecT>
   struct Schema {
-    vector<const TableColumn<RecT> *> columns;
+    std::vector<const TableColumn<RecT> *> columns;
 
-    Schema(initializer_list<const TableColumn<RecT> *> cols);
+    Schema(std::initializer_list<const TableColumn<RecT> *> cols);
   };
 
   template <typename RecT>
-  Schema<RecT>::Schema(initializer_list<const TableColumn<RecT> *> cols):
+  Schema<RecT>::Schema(std::initializer_list<const TableColumn<RecT> *> cols):
     columns(cols) {
   }
 
@@ -50,6 +48,13 @@ namespace snackis {
     }
 
     return 0;
+  }
+
+  template <typename RecT>
+  void copy(const Schema<RecT> scm, Record<RecT> dest, const RecT &src) {
+    for (auto c: scm.columns) {
+      c->copy(dest, src);
+    }
   }
 }
 

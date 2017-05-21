@@ -12,7 +12,7 @@ struct Foo {
   string fstring;
   UId fuid;
 
-  Foo(): fuid(uid()) { }
+  Foo(): fint64(0), fuid(uid()) { }
 };
 
 void column_tests() {
@@ -47,6 +47,9 @@ void table_tests() {
   const Column<Foo, UId> uid_col("uid", uid_type, &Foo::fuid); 
   Table<Foo> tbl(ctx, "foos", {&uid_col}, {&int64_col, &string_col});
   open(tbl);
+  Foo foo;
+  assert(insert(tbl, foo));
+  assert(!insert(tbl, foo));
   close(tbl);
 }
 

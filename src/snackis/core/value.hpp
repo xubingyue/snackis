@@ -8,8 +8,7 @@
 #include "snackis/core/uid.hpp"
 
 namespace snackis {
-  using namespace boost;
-  using Value = variant<int64_t, string, UId>;
+  using Value = boost::variant<int64_t, std::string, UId>;
 }
 
 #endif

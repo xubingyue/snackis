@@ -4,16 +4,14 @@
 #include <string>
 
 namespace snackis {
-  using namespace std;
-  
   template <typename ValT>
   struct Type {
-    const string name; 
-    Type(const string &name);
+    const std::string name; 
+    Type(const std::string &name);
   };
 
   template <typename ValT>
-  Type<ValT>::Type(const string &name): name(name) {
+  Type<ValT>::Type(const std::string &name): name(name) {
   }
 }
 

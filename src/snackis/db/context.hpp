@@ -4,15 +4,13 @@
 #include <snackis/core/path.hpp>
 
 namespace snackis {
-  using namespace std;
-  
   struct Context {
     const Path path;
     
     Context(const Path &path);
   };
 
-  string get_path(const Context &ctx, const string &fname);
+  std::string get_path(const Context &ctx, const std::string &fname);
 }
 
 #endif

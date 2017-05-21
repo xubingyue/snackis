@@ -10,29 +10,28 @@
 #include "snackis/db/record.hpp"
 
 namespace snackis {
-  using namespace std;
-		       
   template <typename RecT>
   struct Table: public Schema<RecT> {
-    using CmpT = function<bool (const Record<RecT> &, const Record<RecT> &)>;
+    using CmpT = std::function<bool (const Record<RecT> &, const Record<RecT> &)>;
 
     Context &context;
-    const string name;
+    const std::string name;
     const Schema<RecT> key;
-    set<Record<RecT>, CmpT> records;
-    ofstream file;
+    std::set<Index *> indexes
+    std::set<Record<RecT>, CmpT> records;
+    std::ofstream file;
     
     Table(Context &ctx,
-	  const string &name,
-	  initializer_list<const TableColumn<RecT> *> key_cols,
-	  initializer_list<const TableColumn<RecT> *> cols);
+	  const std::string &name,
+	  std::initializer_list<const TableColumn<RecT> *> key_cols,
+	  std::initializer_list<const TableColumn<RecT> *> cols);
   };
 
   template <typename RecT>
   Table<RecT>::Table(Context &ctx,
-		     const string &name,
-		     initializer_list<const TableColumn<RecT> *> key_cols,
-		     initializer_list<const TableColumn<RecT> *> cols):
+		     const std::string &name,
+		     std::initializer_list<const TableColumn<RecT> *> key_cols,
+		     std::initializer_list<const TableColumn<RecT> *> cols):
     Schema<RecT>(cols),
     context(ctx),
     name(name),
@@ -45,12 +44,35 @@ namespace snackis {
   template <typename RecT>
   void open(Table<RecT> &tbl) {
     tbl.file.open(get_path(tbl.context, tbl.name + ".tbl"),
-		  ios::out | ios::binary | ios::app);
+		  std::ios::out | std::ios::binary | std::ios::app);
   }
 
   template <typename RecT>
   void close(Table<RecT> &tbl) {
     tbl.file.close();
+  }
+
+  template <typename RecT>
+  bool insert(Table<RecT> &tbl, const RecT &_rec) {
+    Record<RecT> rec;
+    copy(tbl, rec, _rec);
+    return insert(tbl, rec);
+  }
+
+  template <typename RecT>
+  bool insert(Table<RecT> &tbl, const Record<RecT> &rec) {
+    auto found(tbl.records.find(rec));
+
+    if (found == tbl.records.end()) {
+      for (auto idx: tbl.indexes) {
+	idx->insert(rec);
+      }
+      
+      tbl.records.insert(rec);
+      return true;
+    }
+
+    return false;
   }
 }
 

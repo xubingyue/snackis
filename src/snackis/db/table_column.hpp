@@ -2,18 +2,18 @@
 #define SNACKIS_TABLE_COLUMN_HPP
 
 #include <string>
+#include "snackis/db/record.hpp"
 
 namespace snackis {
-  using namespace std;
-  
   template <typename RecT>
   struct TableColumn {
-    const string name;
-    TableColumn(const string &name);
+    const std::string name;
+    TableColumn(const std::string &name);
+    virtual void copy(Record<RecT> &dest, const RecT &src) const = 0;
   };
 
   template <typename RecT>
-  TableColumn<RecT>::TableColumn(const string &name): name(name) {
+  TableColumn<RecT>::TableColumn(const std::string &name): name(name) {
   }
 }
 

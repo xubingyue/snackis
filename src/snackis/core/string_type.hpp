@@ -5,7 +5,7 @@
 #include "snackis/core/type.hpp"
 
 namespace snackis {
-  struct StringType: public Type<string> {
+  struct StringType: public Type<std::string> {
     StringType();
   };
 
