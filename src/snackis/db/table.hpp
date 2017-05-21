@@ -28,6 +28,20 @@ namespace snackis {
   };
 
   template <typename RecT>
+  struct TableChange: public Change {
+    Table<RecT> &table;
+    const Record<RecT> record;
+
+    TableChange(Table<RecT> &table, const Record<RecT> &record);
+  };
+
+  template <typename RecT>
+  struct Insert: public TableChange<RecT> {
+    Insert(Table<RecT> &table, const Record<RecT> &record);    
+    void rollback() override;
+  };
+
+  template <typename RecT>
   Table<RecT>::Table(Context &ctx,
 		     const std::string &name,
 		     std::initializer_list<const TableColumn<RecT> *> key_cols,
@@ -67,12 +81,26 @@ namespace snackis {
       for (auto idx: tbl.indexes) {
 	insert(*idx, rec);
       }
-      
+
+      log_change(*tbl.context.transaction, new Insert<RecT>(tbl, rec));
       tbl.records.insert(rec);
       return true;
     }
 
     return false;
+  }
+
+  template <typename RecT>
+  TableChange<RecT>::TableChange(Table<RecT> &table, const Record<RecT> &record):
+    table(table), record(record) { }
+
+  template <typename RecT>
+  Insert<RecT>::Insert(Table<RecT> &table, const Record<RecT> &record):
+    TableChange<RecT>(table, record) { }
+  
+  template <typename RecT>
+  void Insert<RecT>::rollback() {
+    this->table.records.erase(this->record);
   }
 }
 
