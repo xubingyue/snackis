@@ -1,0 +1,7 @@
+* finish Table
+** create context path if not exists
+** add insert/update/delete from tbl.go
+* implement imap fetch
+* implement smtp send
+* add libsodium to build
+* start ui
