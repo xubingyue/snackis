@@ -17,7 +17,7 @@ namespace snackis {
     Context &context;
     const std::string name;
     const Schema<RecT> key;
-    std::set<Index *> indexes
+    std::set<Table<RecT> *> indexes;
     std::set<Record<RecT>, CmpT> records;
     std::ofstream file;
     
@@ -65,7 +65,7 @@ namespace snackis {
 
     if (found == tbl.records.end()) {
       for (auto idx: tbl.indexes) {
-	idx->insert(rec);
+	insert(*idx, rec);
       }
       
       tbl.records.insert(rec);
