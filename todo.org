@@ -1,5 +1,4 @@
 * finish Table
-** create context path if not exists
 ** add update/delete
 * implement imap fetch
 * implement smtp send

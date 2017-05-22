@@ -5,6 +5,8 @@
 
 namespace snackis {
   using Path = boost::filesystem::path;
+
+  bool create(const Path &path);
 }
 
 #endif
