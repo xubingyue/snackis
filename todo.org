@@ -1,5 +1,6 @@
 * finish Table
 ** add update/delete
+* add Type.read(istream) & write(ostream)
 * implement imap fetch
 * implement smtp send
 * add libsodium to build
