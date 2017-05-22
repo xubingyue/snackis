@@ -12,19 +12,17 @@
 namespace snackis {
   template <typename RecT>
   struct Table: public Schema<RecT> {
-    using CmpT = std::function<bool (const Rec<RecT> &, const Rec<RecT> &)>;
+    using CmpRec = std::function<bool (const Rec<RecT> &, const Rec<RecT> &)>;
+    using Cols = std::initializer_list<const TableCol<RecT> *>;
 
     Ctx &ctx;
     const std::string name;
     const Schema<RecT> key;
     std::set<Table<RecT> *> indexes;
-    std::set<Rec<RecT>, CmpT> recs;
+    std::set<Rec<RecT>, CmpRec> recs;
     std::ofstream file;
     
-    Table(Ctx &ctx,
-	  const std::string &name,
-	  std::initializer_list<const TableCol<RecT> *> key_cols,
-	  std::initializer_list<const TableCol<RecT> *> cols);
+    Table(Ctx &ctx, const std::string &name, Cols key_cols, Cols cols);
   };
 
   template <typename RecT>
@@ -42,18 +40,14 @@ namespace snackis {
   };
 
   template <typename RecT>
-  Table<RecT>::Table(Ctx &ctx,
-		     const std::string &name,
-		     std::initializer_list<const TableCol<RecT> *> key_cols,
-		     std::initializer_list<const TableCol<RecT> *> cols):
+  Table<RecT>::Table(Ctx &ctx, const std::string &name, Cols key_cols, Cols cols):
     Schema<RecT>(cols),
     ctx(ctx),
     name(name),
     key(key_cols),
     recs([this](const Rec<RecT> &x, const Rec<RecT> &y) {
 	return compare(key, x, y) < 0;
-      }) {
-  }
+      }) { }
 
   template <typename RecT>
   void open(Table<RecT> &tbl) {

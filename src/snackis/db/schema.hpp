@@ -9,18 +9,16 @@
 namespace snackis {
   template <typename RecT>
   struct Schema {
+    using Cols = std::initializer_list<const TableCol<RecT> *>;
     std::vector<const TableCol<RecT> *> cols;
-
-    Schema(std::initializer_list<const TableCol<RecT> *> cols);
+    Schema(Cols cols);
   };
 
   template <typename RecT>
-  Schema<RecT>::Schema(std::initializer_list<const TableCol<RecT> *> cols):
-    cols(cols) { }
+  Schema<RecT>::Schema(Cols cols): cols(cols) { }
 
   template <typename RecT>
-  int compare(const Schema<RecT> &scm,
-	      const Rec<RecT> &x, const Rec<RecT> &y) {
+  int compare(const Schema<RecT> &scm, const Rec<RecT> &x, const Rec<RecT> &y) {
     for (auto c: scm.cols) {
       auto xi = x.find(c);
       auto yi = y.find(c);
