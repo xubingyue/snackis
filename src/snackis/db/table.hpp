@@ -5,59 +5,59 @@
 #include <set>
 #include <string>
 
-#include "snackis/db/context.hpp"
+#include "snackis/db/ctx.hpp"
 #include "snackis/db/schema.hpp"
-#include "snackis/db/record.hpp"
+#include "snackis/db/rec.hpp"
 
 namespace snackis {
   template <typename RecT>
   struct Table: public Schema<RecT> {
-    using CmpT = std::function<bool (const Record<RecT> &, const Record<RecT> &)>;
+    using CmpT = std::function<bool (const Rec<RecT> &, const Rec<RecT> &)>;
 
-    Context &context;
+    Ctx &ctx;
     const std::string name;
     const Schema<RecT> key;
     std::set<Table<RecT> *> indexes;
-    std::set<Record<RecT>, CmpT> records;
+    std::set<Rec<RecT>, CmpT> recs;
     std::ofstream file;
     
-    Table(Context &ctx,
+    Table(Ctx &ctx,
 	  const std::string &name,
-	  std::initializer_list<const TableColumn<RecT> *> key_cols,
-	  std::initializer_list<const TableColumn<RecT> *> cols);
+	  std::initializer_list<const TableCol<RecT> *> key_cols,
+	  std::initializer_list<const TableCol<RecT> *> cols);
   };
 
   template <typename RecT>
   struct TableChange: public Change {
     Table<RecT> &table;
-    const Record<RecT> record;
+    const Rec<RecT> rec;
 
-    TableChange(Table<RecT> &table, const Record<RecT> &record);
+    TableChange(Table<RecT> &table, const Rec<RecT> &rec);
   };
 
   template <typename RecT>
   struct Insert: public TableChange<RecT> {
-    Insert(Table<RecT> &table, const Record<RecT> &record);    
+    Insert(Table<RecT> &table, const Rec<RecT> &rec);    
     void rollback() override;
   };
 
   template <typename RecT>
-  Table<RecT>::Table(Context &ctx,
+  Table<RecT>::Table(Ctx &ctx,
 		     const std::string &name,
-		     std::initializer_list<const TableColumn<RecT> *> key_cols,
-		     std::initializer_list<const TableColumn<RecT> *> cols):
+		     std::initializer_list<const TableCol<RecT> *> key_cols,
+		     std::initializer_list<const TableCol<RecT> *> cols):
     Schema<RecT>(cols),
-    context(ctx),
+    ctx(ctx),
     name(name),
     key(key_cols),
-    records([this](const Record<RecT> &x, const Record<RecT> &y) {
+    recs([this](const Rec<RecT> &x, const Rec<RecT> &y) {
 	return compare(key, x, y) < 0;
       }) {
   }
 
   template <typename RecT>
   void open(Table<RecT> &tbl) {
-    tbl.file.open(get_path(tbl.context, tbl.name + ".tbl"),
+    tbl.file.open(get_path(tbl.ctx, tbl.name + ".tbl"),
 		  std::ios::out | std::ios::binary | std::ios::app);
   }
 
@@ -68,22 +68,22 @@ namespace snackis {
 
   template <typename RecT>
   bool insert(Table<RecT> &tbl, const RecT &_rec) {
-    Record<RecT> rec;
+    Rec<RecT> rec;
     copy(tbl, rec, _rec);
     return insert(tbl, rec);
   }
 
   template <typename RecT>
-  bool insert(Table<RecT> &tbl, const Record<RecT> &rec) {
-    auto found(tbl.records.find(rec));
+  bool insert(Table<RecT> &tbl, const Rec<RecT> &rec) {
+    auto found(tbl.recs.find(rec));
 
-    if (found == tbl.records.end()) {
+    if (found == tbl.recs.end()) {
       for (auto idx: tbl.indexes) {
 	insert(*idx, rec);
       }
 
-      log_change(*tbl.context.transaction, new Insert<RecT>(tbl, rec));
-      tbl.records.insert(rec);
+      log_change(*tbl.ctx.trans, new Insert<RecT>(tbl, rec));
+      tbl.recs.insert(rec);
       return true;
     }
 
@@ -91,16 +91,16 @@ namespace snackis {
   }
 
   template <typename RecT>
-  TableChange<RecT>::TableChange(Table<RecT> &table, const Record<RecT> &record):
-    table(table), record(record) { }
+  TableChange<RecT>::TableChange(Table<RecT> &table, const Rec<RecT> &rec):
+    table(table), rec(rec) { }
 
   template <typename RecT>
-  Insert<RecT>::Insert(Table<RecT> &table, const Record<RecT> &record):
-    TableChange<RecT>(table, record) { }
+  Insert<RecT>::Insert(Table<RecT> &table, const Rec<RecT> &rec):
+    TableChange<RecT>(table, rec) { }
   
   template <typename RecT>
   void Insert<RecT>::rollback() {
-    this->table.records.erase(this->record);
+    this->table.recs.erase(this->rec);
   }
 }
 

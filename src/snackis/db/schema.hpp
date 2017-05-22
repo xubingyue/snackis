@@ -4,25 +4,24 @@
 #include <initializer_list>
 #include <vector>
 
-#include <snackis/db/record.hpp>
+#include <snackis/db/rec.hpp>
 
 namespace snackis {
   template <typename RecT>
   struct Schema {
-    std::vector<const TableColumn<RecT> *> columns;
+    std::vector<const TableCol<RecT> *> cols;
 
-    Schema(std::initializer_list<const TableColumn<RecT> *> cols);
+    Schema(std::initializer_list<const TableCol<RecT> *> cols);
   };
 
   template <typename RecT>
-  Schema<RecT>::Schema(std::initializer_list<const TableColumn<RecT> *> cols):
-    columns(cols) {
-  }
+  Schema<RecT>::Schema(std::initializer_list<const TableCol<RecT> *> cols):
+    cols(cols) { }
 
   template <typename RecT>
   int compare(const Schema<RecT> &scm,
-	      const Record<RecT> &x, const Record<RecT> &y) {
-    for (auto c: scm.columns) {
+	      const Rec<RecT> &x, const Rec<RecT> &y) {
+    for (auto c: scm.cols) {
       auto xi = x.find(c);
       auto yi = y.find(c);
 
@@ -51,8 +50,8 @@ namespace snackis {
   }
 
   template <typename RecT>
-  void copy(const Schema<RecT> scm, Record<RecT> dest, const RecT &src) {
-    for (auto c: scm.columns) {
+  void copy(const Schema<RecT> scm, Rec<RecT> dest, const RecT &src) {
+    for (auto c: scm.cols) {
       c->copy(dest, src);
     }
   }

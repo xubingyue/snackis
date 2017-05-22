@@ -1,5 +1,5 @@
-#ifndef SNACKIS_TRANSACTION_HPP
-#define SNACKIS_TRANSACTION_HPP
+#ifndef SNACKIS_TRANS_HPP
+#define SNACKIS_TRANS_HPP
 
 #include <vector>
 
@@ -8,11 +8,11 @@ namespace snackis {
     virtual void rollback() = 0;
   };
 
-  struct Transaction {
+  struct Trans {
     std::vector<const Change *> changes;
   };
 
-  void log_change(Transaction &trans, const Change *change);
+  void log_change(Trans &trans, const Change *change);
 }
 
 #endif
