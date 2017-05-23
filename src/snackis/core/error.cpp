@@ -2,8 +2,5 @@
 #include "snackis/core/fmt.hpp"
 
 namespace snackis {
-  Error::Error(const char *file, int line, const std::string &msg):
-    std::runtime_error((fmt("Error in file %1%, line %2%:\n%3%")
-			% file % line % msg).str())
-  { }
+  Error::Error(const std::string &msg): std::runtime_error(stack_trace() + msg) { }
 }

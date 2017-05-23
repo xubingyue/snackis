@@ -9,7 +9,7 @@
 
 namespace snackis {
   struct ImapError: public Error {
-    ImapError(const char *file, int line, const std::string &msg);
+    ImapError(const std::string &msg);
   };
 
   struct Imap {

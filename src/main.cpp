@@ -63,7 +63,7 @@ void table_tests() {
 
 void email_tests() {
   using namespace snackis;
-
+  TRACE("Running email_tests");
   Imap imap("imap.gmail.com", 993, "", "");
   std::vector<std::string> msgs;
   fetch(imap, msgs);

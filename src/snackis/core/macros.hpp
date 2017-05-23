@@ -7,4 +7,7 @@
 #define CONCAT(x, y)				\
   _CONCAT(x, y)					\
 
+#define UNIQUE(prefix)				\
+  CONCAT(prefix, __COUNTER__)			\
+
 #endif

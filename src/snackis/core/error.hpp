@@ -4,13 +4,16 @@
 #include <stdexcept>
 
 #include "snackis/core/macros.hpp"
+#include "snackis/core/trace.hpp"
 
-#define ERROR(type, msg)					\
-  throw CONCAT(type, Error)(__FILE__, __LINE__, msg)		\
+#define ERROR(type, msg) do {					\
+    TRACE("Error thrown");					\
+    throw CONCAT(type, Error)(msg);				\
+  } while (false)						\
 
 namespace snackis {
   struct Error: public std::runtime_error {
-    Error(const char *file, int line, const std::string &msg);
+    Error(const std::string &msg);
   };
 }
 
