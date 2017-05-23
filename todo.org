@@ -1,3 +1,18 @@
+* add Fmt struct
+** inherit boost::format
+** add operator std::string()
+** simplify fmt uses in imap
+* finish Trans
+** copy from golang
+** RAII with rollback in destructor
+** update ctx.trans in constructor/destructor
+*** change ctx.trans to store unique_ptr root_trans
+* add snackis/db.hpp
+** inherit db/Ctx
+** add msgs tbl
+*** uid id, string type, int64 proto_ver
+*** snackis/Msg struct
+* add net/smtp
 * finish Table
 ** add update/delete
 * add Type.read(istream) & write(ostream)
