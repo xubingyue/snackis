@@ -7,6 +7,7 @@
 #include "snackis/rec.hpp"
 #include "snackis/core/time.hpp"
 #include "snackis/core/uid.hpp"
+#include "snackis/crypt/pub_key.hpp"
 
 namespace snackis {
   struct Msg: public Rec {
@@ -16,6 +17,7 @@ namespace snackis {
     Time fetched_at;
     Peer *sent_to;
     std::string peer_name, peer_email;
+    crypt::PubKey peer_key;
     
     Msg(Ctx &ctx, const std::string &type);
     Msg(Ctx &ctx);

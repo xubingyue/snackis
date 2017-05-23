@@ -9,10 +9,12 @@ namespace snackis {
 namespace crypt {
   struct Key {
     unsigned char data[crypto_box_SECRETKEYBYTES];
+    Key(PubKey &pub);
+    Key();
   };  
 
-  struct PubKey;
-  
+  bool operator <(const Key &x, const Key &y);
+    
   std::vector<unsigned char> encrypt(const Key &key, const PubKey &pub_key,
 				     const unsigned char *in,
 				     size_t len);

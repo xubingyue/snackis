@@ -7,9 +7,12 @@
 
 #include "snackis/core/time.hpp"
 #include "snackis/core/uid.hpp"
+#include "snackis/crypt/key.hpp"
+#include "snackis/crypt/pub_key.hpp"
 
 namespace snackis {
-  using Val = boost::variant<int64_t, std::string, Time, UId, void *>;
+  using Val = boost::variant<crypt::Key, crypt::PubKey, int64_t, std::string, Time,
+			     UId, void *>;
 }
 
 #endif

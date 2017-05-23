@@ -6,6 +6,7 @@
 #include <set>
 #include <string>
 
+#include "snackis/core/fmt.hpp"
 #include "snackis/core/type.hpp"
 #include "snackis/db/ctx.hpp"
 #include "snackis/db/schema.hpp"
@@ -58,7 +59,8 @@ namespace db {
   };
 
   template <typename RecT>
-  RecType<RecT>::RecType(Table<RecT> &tbl): Type(tbl.name), tbl(tbl) { }
+  RecType<RecT>::RecType(Table<RecT> &tbl):
+    Type(fmt("Rec(%1%)") % tbl.name), tbl(tbl) { }
 
   template <typename RecT>
   Table<RecT>::Table(Ctx &ctx, const std::string &name, Cols key_cols, Cols cols):

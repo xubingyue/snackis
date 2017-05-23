@@ -3,6 +3,6 @@
 namespace snackis {
   const TimeType time_type;
 
-  TimeType::TimeType(): Type<Time>("time") {
+  TimeType::TimeType(): Type<Time>("Time") {
   }
 }

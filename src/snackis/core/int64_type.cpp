@@ -3,6 +3,6 @@
 namespace snackis {
   const Int64Type int64_type;
 
-  Int64Type::Int64Type(): Type<int64_t>("int64") {
+  Int64Type::Int64Type(): Type<int64_t>("Int64") {
   }
 }

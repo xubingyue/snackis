@@ -14,8 +14,8 @@ using namespace snackis;
 
 void crypt_tests() {
   using namespace snackis::crypt;
-  Key foo, bar;
-  PubKey foo_pub(foo), bar_pub(bar);
+  PubKey foo_pub, bar_pub;
+  Key foo(foo_pub), bar(bar_pub);
   std::string msg("secret message");
   std::vector<unsigned char> cmsg(encrypt(foo, bar_pub,
 					  (const unsigned char *)msg.c_str(),

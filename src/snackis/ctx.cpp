@@ -3,6 +3,7 @@
 #include "snackis/core/string_type.hpp"
 #include "snackis/core/time_type.hpp"
 #include "snackis/core/uid_type.hpp"
+#include "snackis/crypt/pub_key_type.hpp"
 #include "snackis/db/ctx.hpp"
 
 namespace snackis {
@@ -12,6 +13,7 @@ namespace snackis {
     peer_id("id", uid_type, &Peer::id),
     peer_name("name", string_type, &Peer::name),
     peer_email("email", string_type, &Peer::email),
+    peer_key("key", crypt::pub_key_type, &Peer::key),
     peer_invited_at("invited_at", time_type, &Peer::invited_at),
     peer_accepted_at("accepted_at", time_type, &Peer::accepted_at),
     peers(db_ctx, "peers", {&peer_id},
@@ -39,14 +41,15 @@ namespace snackis {
     msg_fetched_at("fetched_at", time_type, &Msg::fetched_at),
     msg_peer_name("peer_name", string_type, &Msg::peer_name),
     msg_peer_email("peer_email", string_type, &Msg::peer_email),
+    msg_peer_key("peer_key", crypt::pub_key_type, &Msg::peer_key),
     inbox(db_ctx, "inbox", {&msg_id},
 	  {&msg_type, &msg_proto_rev, &msg_fetched_at, &msg_peer_name,
-	      &msg_peer_email}),
+	      &msg_peer_email, &msg_peer_key}),
 
     msg_sent_to("sent_to", peers.rec_type, &Msg::sent_to),
     outbox(db_ctx, "outbox", {&msg_id},
 	   {&msg_type, &msg_proto_rev, &msg_sent_to,
-	       &msg_peer_name, &msg_peer_email}) {
+	       &msg_peer_name, &msg_peer_email, &msg_peer_key}) {
     peers.indexes.insert(&peer_names);
     peers.indexes.insert(&peer_emails);
 

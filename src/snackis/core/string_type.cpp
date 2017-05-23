@@ -3,6 +3,6 @@
 namespace snackis {
   const StringType string_type;
 
-  StringType::StringType(): Type<std::string>("string") {
+  StringType::StringType(): Type<std::string>("String") {
   }
 }

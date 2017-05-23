@@ -3,6 +3,6 @@
 namespace snackis {
   const UIdType uid_type;
 
-  UIdType::UIdType(): Type<UId>("uid") {
+  UIdType::UIdType(): Type<UId>("UId") {
   }
 }

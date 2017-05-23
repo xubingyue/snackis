@@ -9,9 +9,10 @@ namespace crypt {
 
   struct PubKey {
     unsigned char data[crypto_box_PUBLICKEYBYTES];
-
-    PubKey(Key &key);
+    PubKey();
   };
+
+  bool operator <(const PubKey &x, const PubKey &y);
 }}
 
 #endif

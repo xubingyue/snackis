@@ -6,6 +6,7 @@
 #include "snackis/thread.hpp"
 #include "snackis/core/time.hpp"
 #include "snackis/core/uid.hpp"
+#include "snackis/crypt/pub_key.hpp"
 #include "snackis/db/col.hpp"
 #include "snackis/db/ctx.hpp"
 #include "snackis/db/table.hpp"
@@ -17,6 +18,7 @@ namespace snackis {
     db::Col<Peer, UId> peer_id;
     db::Col<Peer, std::string> peer_name;
     db::Col<Peer, std::string> peer_email;
+    db::Col<Peer, crypt::PubKey> peer_key;
     db::Col<Peer, Time> peer_invited_at;
     db::Col<Peer, Time> peer_accepted_at;
     db::Table<Peer> peers, peer_names, peer_emails;
@@ -36,6 +38,7 @@ namespace snackis {
     db::Col<Msg, Time> msg_fetched_at;
     db::Col<Msg, std::string> msg_peer_name;
     db::Col<Msg, std::string> msg_peer_email;
+    db::Col<Msg, crypt::PubKey> msg_peer_key;
     db::Table<Msg> inbox;
 
     db::Col<Msg, void *> msg_sent_to;

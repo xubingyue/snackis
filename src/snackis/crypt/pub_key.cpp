@@ -1,9 +1,15 @@
+#include <cstring>
+
 #include "snackis/crypt/key.hpp"
 #include "snackis/crypt/pub_key.hpp"
 
 namespace snackis {
 namespace crypt {
-  PubKey::PubKey(Key &key) {
-    crypto_box_keypair(data, key.data);
+  PubKey::PubKey() {
+    memset(data, 0, crypto_box_PUBLICKEYBYTES);
+  }
+
+  bool operator <(const PubKey &x, const PubKey &y) {
+    return memcmp(x.data, y.data, crypto_box_PUBLICKEYBYTES) < 0;
   }
 }}

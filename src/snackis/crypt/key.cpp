@@ -1,8 +1,22 @@
+#include <cstring>
+
 #include "snackis/crypt/error.hpp"
 #include "snackis/crypt/key.hpp"
 
 namespace snackis {
 namespace crypt {
+  Key::Key(PubKey &pub) {
+    crypto_box_keypair(pub.data, data);
+  }
+
+  Key::Key() {
+    memset(data, 0, crypto_box_SECRETKEYBYTES);
+  }
+  
+  bool operator <(const Key &x, const Key &y) {
+    return memcmp(x.data, y.data, crypto_box_SECRETKEYBYTES) < 0;
+  }
+
   std::vector<unsigned char> encrypt(const Key &key, const PubKey &pub_key,
 				     const unsigned char *in,
 				     size_t len) {

@@ -1,7 +1,3 @@
-* replace msg_sentby/to with msg_peer_email
-* add crypt/key_type & crypt/pub_key_type
-* add peer_key
-* add msg_peer_key
 * add libsodium secret key crypt support
 * add parse(Msg, string)
 ** change imap fetch to return Msgs
