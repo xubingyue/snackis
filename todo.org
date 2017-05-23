@@ -9,7 +9,5 @@
 * add Table.read
 * finish Table
 ** add update/delete
-* add TimeType
-** 
 * add net/smtp
 * add libsodium
