@@ -1,6 +1,5 @@
 #include "snackis/peer.hpp"
 
 namespace snackis {
-  Peer::Peer(): id(uid()) {
-  }
+  Peer::Peer(Ctx &ctx): Rec(ctx), id(uid()) { }
 }

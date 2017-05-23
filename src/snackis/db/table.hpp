@@ -1,5 +1,5 @@
-#ifndef SNACKIS_TABLE_HPP
-#define SNACKIS_TABLE_HPP
+#ifndef SNACKIS_DB_TABLE_HPP
+#define SNACKIS_DB_TABLE_HPP
 
 #include <cstdint>
 #include <fstream>

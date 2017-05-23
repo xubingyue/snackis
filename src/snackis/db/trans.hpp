@@ -1,5 +1,5 @@
-#ifndef SNACKIS_TRANS_HPP
-#define SNACKIS_TRANS_HPP
+#ifndef SNACKIS_DB_TRANS_HPP
+#define SNACKIS_DB_TRANS_HPP
 
 #include <vector>
 

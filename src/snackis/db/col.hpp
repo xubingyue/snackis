@@ -1,5 +1,5 @@
-#ifndef SNACKIS_COL_HPP
-#define SNACKIS_COL_HPP
+#ifndef SNACKIS_DB_COL_HPP
+#define SNACKIS_DB_COL_HPP
 
 #include <functional>
 #include <string>

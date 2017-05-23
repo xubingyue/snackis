@@ -1,5 +1,5 @@
-#ifndef SNACKIS_SCHEMA_HPP
-#define SNACKIS_SCHEMA_HPP
+#ifndef SNACKIS_DB_SCHEMA_HPP
+#define SNACKIS_DB_SCHEMA_HPP
 
 #include <initializer_list>
 #include <vector>

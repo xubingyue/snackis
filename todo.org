@@ -1,3 +1,5 @@
+* add libsodium
+** add peer pub_key
 * add parse(Msg, string)
 ** change imap fetch to return Msgs
 * add curses ui
@@ -10,4 +12,3 @@
 * finish Table
 ** add update/delete
 * add net/smtp
-* add libsodium

@@ -1,5 +1,5 @@
-#ifndef SNACKIS_REC_HPP
-#define SNACKIS_REC_HPP
+#ifndef SNACKIS_DB_REC_HPP
+#define SNACKIS_DB_REC_HPP
 
 #include <map>
 #include <string>
