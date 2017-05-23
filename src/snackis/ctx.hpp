@@ -27,6 +27,7 @@ namespace snackis {
     db::Col<Msg, int64_t> msg_proto_rev;
     db::Col<Msg, std::string> msg_sent_by;
     db::Col<Msg, Time> msg_fetched_at;
+    db::Col<Msg, std::string> msg_peer_name;
     db::Table<Msg> inbox;
 
     db::Col<Msg, std::string> msg_sent_to;

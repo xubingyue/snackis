@@ -1,4 +1,3 @@
-* add msg_peer_name
 * add libsodium
 ** core / crypt.hpp/cpp
 ** add peer_key

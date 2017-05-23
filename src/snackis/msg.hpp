@@ -14,7 +14,8 @@ namespace snackis {
     int64_t proto_rev;
     std::string sent_by, sent_to;
     Time fetched_at;
-
+    std::string peer_name;
+    
     Msg(Ctx &ctx, const std::string &type);
     Msg(Ctx &ctx);
   };
