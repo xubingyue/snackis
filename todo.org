@@ -3,10 +3,12 @@
 ** add msgs tbl
 *** uid id, string type, int64 proto_ver
 *** snackis/Msg struct
-* add net/smtp
 * finish Table
 ** add update/delete
+* add net/smtp
 * add Type.read(istream) & write(ostream)
+* finish Table.write
+* add Table.read
 * implement imap fetch
 * implement smtp send
 * add libsodium to build
