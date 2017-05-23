@@ -1,6 +1,7 @@
 #ifndef SNACKIS_TABLE_HPP
 #define SNACKIS_TABLE_HPP
 
+#include <cstdint>
 #include <fstream>
 #include <set>
 #include <string>
@@ -9,7 +10,7 @@
 #include "snackis/db/schema.hpp"
 #include "snackis/db/rec.hpp"
 
-namespace snackis {
+namespace snackis {  
   template <typename RecT>
   struct Table: public Schema<RecT> {
     using CmpRec = std::function<bool (const Rec<RecT> &, const Rec<RecT> &)>;
@@ -25,18 +26,22 @@ namespace snackis {
     Table(Ctx &ctx, const std::string &name, Cols key_cols, Cols cols);
   };
 
+  enum TableOp {TABLE_ERASE, TABLE_INSERT, TABLE_UPDATE};
+
   template <typename RecT>
   struct TableChange: public Change {
+    TableOp op;
     Table<RecT> &table;
     const Rec<RecT> rec;
 
-    TableChange(Table<RecT> &table, const Rec<RecT> &rec);
+    TableChange(TableOp op, Table<RecT> &table, const Rec<RecT> &rec);
+    void commit() const override;
   };
 
   template <typename RecT>
   struct Insert: public TableChange<RecT> {
     Insert(Table<RecT> &table, const Rec<RecT> &rec);    
-    void rollback() override;
+    void rollback() const override;
   };
 
   template <typename RecT>
@@ -85,15 +90,28 @@ namespace snackis {
   }
 
   template <typename RecT>
-  TableChange<RecT>::TableChange(Table<RecT> &table, const Rec<RecT> &rec):
-    table(table), rec(rec) { }
+  void write(Table<RecT> &tbl, const Rec<RecT> &rec) {
+    //TODO: Write rec
+  }
+  
+  template <typename RecT>
+  TableChange<RecT>::TableChange(TableOp op,
+				 Table<RecT> &table,
+				 const Rec<RecT> &rec):
+    op(op), table(table), rec(rec) { }
+
+  template <typename RecT>
+  void TableChange<RecT>::commit() const {
+    this->table.file << int8_t(this->op);
+    write(this->table, this->rec);
+  }
 
   template <typename RecT>
   Insert<RecT>::Insert(Table<RecT> &table, const Rec<RecT> &rec):
-    TableChange<RecT>(table, rec) { }
+    TableChange<RecT>(TABLE_INSERT, table, rec) { }
   
   template <typename RecT>
-  void Insert<RecT>::rollback() {
+  void Insert<RecT>::rollback() const {
     this->table.recs.erase(this->rec);
   }
 }

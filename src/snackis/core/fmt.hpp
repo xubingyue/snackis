@@ -6,8 +6,8 @@
 namespace snackis {
   struct fmt: public boost::format {
     fmt(const std::string &spec);
-    operator std::string();
-    operator const char *();
+    operator std::string() const;
+    operator const char *() const;
     template<typename T>
     fmt &operator %(const T &arg);
   };

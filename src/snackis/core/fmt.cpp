@@ -3,11 +3,11 @@
 namespace snackis {
   fmt::fmt(const std::string &spec): boost::format(spec) { }
 
-  fmt::operator std::string() {
+  fmt::operator std::string() const {
     return str();
   }
 
-  fmt::operator const char *() {
+  fmt::operator const char *() const {
     return str().c_str();
   }
 }

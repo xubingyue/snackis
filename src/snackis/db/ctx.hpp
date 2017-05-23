@@ -7,6 +7,7 @@
 namespace snackis {
   struct Ctx {
     const Path path;
+    Trans root;
     Trans *trans;
     
     Ctx(const Path &path);
