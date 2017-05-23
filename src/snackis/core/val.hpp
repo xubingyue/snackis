@@ -9,7 +9,7 @@
 #include "snackis/core/uid.hpp"
 
 namespace snackis {
-  using Val = boost::variant<int64_t, std::string, Time, UId>;
+  using Val = boost::variant<int64_t, std::string, Time, UId, void *>;
 }
 
 #endif

@@ -16,18 +16,20 @@ namespace db {
     std::function<const ValT &(const RecT &)> get;
     std::function<void (RecT &, const ValT &)> set;
 
-    Col(const std::string &name, const Type<ValT> &type, ValT RecT::* ptr);
+    template <typename FldT>
+    Col(const std::string &name, const Type<ValT> &type, FldT RecT::* ptr);
     void copy(Rec<RecT> &dest, const RecT &src) const override;
   };
 
   template <typename RecT, typename ValT>
+  template <typename FldT>
   Col<RecT, ValT>::Col(const std::string &name,
 			     const Type<ValT> &type,
-			     ValT RecT::* ptr):
+			     FldT RecT::* ptr):
     TableCol<RecT>(name),
     type(type),
     get([ptr](const RecT &rec) { return std::cref(rec.*ptr); }),
-    set([ptr](RecT &rec, const ValT &val) { rec.*ptr = val; }) {
+    set([ptr](RecT &rec, const ValT &val) { rec.*ptr = static_cast<FldT>(val); }) {
   }
 
   template <typename RecT, typename ValT>

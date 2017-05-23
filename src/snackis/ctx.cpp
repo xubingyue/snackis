@@ -19,7 +19,18 @@ namespace snackis {
 
     peer_names(db_ctx, "peer_names", {&peer_name, &peer_id}, {}),
     peer_emails(db_ctx, "peer_emails", {&peer_email}, {&peer_id}),
-    
+
+    thread_id("id", uid_type, &Thread::id),
+    thread_name("name", string_type, &Thread::name),
+    thread_started_at("started_at", time_type, &Thread::started_at),
+    thread_posted_at("posted_at", time_type, &Thread::posted_at),
+    thread_started_by("started_by", peers.rec_type, &Thread::started_by),
+    threads(db_ctx, "threads", {&thread_id},
+	    {&thread_name, &thread_started_at, &thread_posted_at,
+		&thread_started_by}),
+
+    thread_names(db_ctx, "thread_names", {&thread_name, &thread_id}, {}),
+
     msg_id("id", uid_type, &Msg::id),
     msgs(db_ctx, "msgs", {&msg_id}, {}),
     
@@ -37,5 +48,7 @@ namespace snackis {
 	       &msg_peer_name}) {
     peers.indexes.insert(&peer_names);
     peers.indexes.insert(&peer_emails);
+
+    threads.indexes.insert(&thread_names);
   }
 }

@@ -3,6 +3,7 @@
 
 #include "snackis/msg.hpp"
 #include "snackis/peer.hpp"
+#include "snackis/thread.hpp"
 #include "snackis/core/time.hpp"
 #include "snackis/core/uid.hpp"
 #include "snackis/db/col.hpp"
@@ -19,6 +20,13 @@ namespace snackis {
     db::Col<Peer, Time> peer_invited_at;
     db::Col<Peer, Time> peer_accepted_at;
     db::Table<Peer> peers, peer_names, peer_emails;
+
+    db::Col<Thread, UId> thread_id;
+    db::Col<Thread, std::string> thread_name;
+    db::Col<Thread, Time> thread_started_at;
+    db::Col<Thread, Time> thread_posted_at;
+    db::Col<Thread, void *> thread_started_by;
+    db::Table<Thread> threads, thread_names;
     
     db::Col<Msg, UId> msg_id;
     db::Table<Msg> msgs;

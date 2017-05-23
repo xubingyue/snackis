@@ -6,6 +6,7 @@
 #include <set>
 #include <string>
 
+#include "snackis/core/type.hpp"
 #include "snackis/db/ctx.hpp"
 #include "snackis/db/schema.hpp"
 #include "snackis/db/rec.hpp"
@@ -13,13 +14,24 @@
 namespace snackis {  
 namespace db {
   template <typename RecT>
+  struct Table;
+
+  template <typename RecT>
+  struct RecType: public Type<void *> {
+    Table<RecT> &tbl;
+    
+    RecType(Table<RecT> &tbl);
+  };
+
+  template <typename RecT>
   struct Table: public Schema<RecT> {
     using CmpRec = std::function<bool (const Rec<RecT> &, const Rec<RecT> &)>;
     using Cols = std::initializer_list<const TableCol<RecT> *>;
-
+  
     Ctx &ctx;
     const std::string name;
     const Schema<RecT> key;
+    const RecType<RecT> rec_type;
     std::set<Table<RecT> *> indexes;
     std::set<Rec<RecT>, CmpRec> recs;
     std::ofstream file;
@@ -46,11 +58,15 @@ namespace db {
   };
 
   template <typename RecT>
+  RecType<RecT>::RecType(Table<RecT> &tbl): Type(tbl.name), tbl(tbl) { }
+
+  template <typename RecT>
   Table<RecT>::Table(Ctx &ctx, const std::string &name, Cols key_cols, Cols cols):
     Schema<RecT>(cols),
     ctx(ctx),
     name(name),
     key(key_cols),
+    rec_type(*this),
     recs([this](const Rec<RecT> &x, const Rec<RecT> &y) {
 	return compare(key, x, y) < 0;
       }) { }
