@@ -1,5 +1,5 @@
-* finish inbox tbl
-** msg_id, string type, int64 proto_ver, string sent_by, fetched_at
+* add parse(Msg, string)
+** change imap fetch to return Msgs
 * add curses ui
 ** copy main.cpp to tests.cpp
 ** add separate exec for tests
