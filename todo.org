@@ -1,5 +1,5 @@
-* finish msgs tbl
-** string type, int64 proto_ver, string sent_to, string sent_by
+* finish inbox tbl
+** msg_id, string type, int64 proto_ver, string sent_by, fetched_at
 * add curses ui
 ** copy main.cpp to tests.cpp
 ** add separate exec for tests
@@ -9,5 +9,7 @@
 * add Table.read
 * finish Table
 ** add update/delete
+* add TimeType
+** 
 * add net/smtp
 * add libsodium

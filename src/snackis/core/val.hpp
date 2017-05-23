@@ -5,10 +5,11 @@
 #include <cstdint>
 #include <string>
 
+#include "snackis/core/time.hpp"
 #include "snackis/core/uid.hpp"
 
 namespace snackis {
-  using Val = boost::variant<int64_t, std::string, UId>;
+  using Val = boost::variant<int64_t, std::string, Time, UId>;
 }
 
 #endif
