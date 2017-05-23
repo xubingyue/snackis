@@ -1,6 +1,10 @@
+* add peer_email & peer_name
+* add peer_emails & peer_names indexes
+* add msg_peer_name
 * add libsodium
 ** core / crypt.hpp/cpp
-** add peer pub_key
+** add peer_key
+** add msg_peer_key
 * add parse(Msg, string)
 ** change imap fetch to return Msgs
 * add curses ui
