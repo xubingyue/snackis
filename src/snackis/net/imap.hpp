@@ -2,10 +2,9 @@
 #define SNACKIS_IMAP_HPP
 
 #include <curl/curl.h>
-#include <stdexcept>
+#include <vector>
 
 #include "snackis/core/error.hpp"
-#include "snackis/core/fmt.hpp"
 
 namespace snackis {
   struct ImapError: public Error {

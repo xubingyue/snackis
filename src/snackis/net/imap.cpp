@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iterator>
 #include <sstream>
+#include "snackis/core/fmt.hpp"
 #include "snackis/net/imap.hpp"
 
 namespace snackis {

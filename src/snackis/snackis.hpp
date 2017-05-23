@@ -5,9 +5,10 @@
 
 namespace snackis {
   extern const int VERSION[3];
-  std::string version_string();
-
   extern const int64_t PROTO_REV;
+  
+  void init();
+  std::string version_string();
 }
 
 #endif

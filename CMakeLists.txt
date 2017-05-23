@@ -15,4 +15,7 @@ target_include_directories(snackis PUBLIC ${CURSES_INCLUDE_DIR})
 find_library(CURL NAMES libcurl.a)
 target_include_directories(snackis PUBLIC ${CURL_INCLUDE_DIR})
 
-target_link_libraries(snackis boost_system boost_filesystem curl ${CURSES_LIBRARIES})
+find_library(SODIUM NAMES libsodium.a)
+target_include_directories(snackis PUBLIC ${SODIUM_INCLUDE_DIR})
+
+target_link_libraries(snackis boost_system boost_filesystem curl sodium curses)

@@ -5,12 +5,23 @@
 #include "snackis/core/string_type.hpp"
 #include "snackis/core/time_type.hpp"
 #include "snackis/core/uid_type.hpp"
+#include "snackis/crypt/key.hpp"
 #include "snackis/db/col.hpp"
 #include "snackis/db/table.hpp"
 #include "snackis/net/imap.hpp"
 
 using namespace snackis;
-using namespace snackis::db;
+
+void crypt_tests() {
+  using namespace snackis::crypt;
+  Key foo, bar;
+  std::string msg("secret message");
+  std::vector<unsigned char> cmsg(encrypt(foo, bar.pub,
+					  (const unsigned char *)msg.c_str(),
+					  msg.size()));
+  std::vector<unsigned char> dmsg(decrypt(bar, foo.pub, &cmsg[0], cmsg.size()));
+  assert(std::string(dmsg.begin(), dmsg.end()) == msg);
+}
 
 struct Foo {
   int64_t fint64;
@@ -22,6 +33,7 @@ struct Foo {
 };
 
 void col_tests() {
+  using namespace snackis::db;
   const Col<Foo, std::string> col("string", string_type, &Foo::fstring); 
 
   Foo foo;
@@ -32,6 +44,7 @@ void col_tests() {
 }
 
 void schema_tests() {
+  using namespace snackis::db;
   const Col<Foo, int64_t> col("int64", int64_type, &Foo::fint64); 
   Schema<Foo> scm({&col});
 
@@ -47,6 +60,8 @@ void schema_tests() {
 }
 
 void table_tests() {
+  using namespace snackis::db;
+
   Ctx ctx("testdb/");
   const Col<Foo, int64_t> int64_col("int64", int64_type, &Foo::fint64); 
   const Col<Foo, std::string> string_col("string", string_type, &Foo::fstring); 
@@ -62,8 +77,8 @@ void table_tests() {
 }
 
 void email_tests() {
-  using namespace snackis;
   TRACE("Running email_tests");
+
   Imap imap("imap.gmail.com", 993, "", "");
   std::vector<std::string> msgs;
   fetch(imap, msgs);
@@ -74,9 +89,10 @@ void email_tests() {
 }
 
 int main() {
-  std::cout << "Snackis v" << snackis::version_string() << std::endl;
+  std::cout << "Snackis v" << version_string() << std::endl;
 
   try {
+    crypt_tests();
     col_tests();
     schema_tests();
     table_tests();
