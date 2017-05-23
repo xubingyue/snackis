@@ -4,11 +4,12 @@
 #include <curl/curl.h>
 #include <stdexcept>
 
+#include "snackis/core/error.hpp"
 #include "snackis/core/fmt.hpp"
 
 namespace snackis {
-  struct ImapError: public std::runtime_error {
-    ImapError(const std::string &msg);
+  struct ImapError: public Error {
+    ImapError(const char *file, int line, const std::string &msg);
   };
 
   struct Imap {

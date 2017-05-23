@@ -4,7 +4,8 @@
 #include "snackis/net/imap.hpp"
 
 namespace snackis {
-  ImapError::ImapError(const std::string &msg): std::runtime_error(msg) { }
+  ImapError::ImapError(const char *file, int line, const std::string &msg):
+    Error(file, line, msg) { }
 
   static size_t on_write(char *ptr, size_t size, size_t nmemb, void *_out) {
     std::stringstream *out = static_cast<std::stringstream *>(_out);
@@ -43,7 +44,7 @@ namespace snackis {
     CURLcode res(curl_easy_perform(imap.client));
  
     if (res != CURLE_OK) {
-      throw ImapError(fmt("failed deleting uid: %1%") % curl_easy_strerror(res));
+      ERROR(Imap, fmt("failed deleting uid: %1%") % curl_easy_strerror(res)); 
     }
   }
 
@@ -55,7 +56,7 @@ namespace snackis {
     CURLcode res(curl_easy_perform(imap.client));
  
     if (res != CURLE_OK) {
-      throw ImapError(fmt("failed expunging: %1%") % curl_easy_strerror(res));
+      ERROR(Imap, fmt("failed expunging: %1%") % curl_easy_strerror(res));
     }
   }
 
@@ -70,7 +71,7 @@ namespace snackis {
     CURLcode res(curl_easy_perform(imap.client));
  
     if (res != CURLE_OK) {
-      throw ImapError(fmt("failed fetching uid: %1%") % curl_easy_strerror(res));
+      ERROR(Imap, fmt("failed fetching uid: %1%") % curl_easy_strerror(res));
     }
 
     std::vector<std::string> lines;
@@ -94,7 +95,7 @@ namespace snackis {
   
   void fetch(struct Imap &imap, std::vector<std::string> &msgs) {
     if (!imap.client) {
-      throw ImapError(fmt("imap init failed"));
+      ERROR(Imap, fmt("imap init failed"));
     }
 
     curl_easy_setopt(imap.client,
@@ -108,7 +109,7 @@ namespace snackis {
     CURLcode res(curl_easy_perform(imap.client));
  
     if (res != CURLE_OK) {
-      throw ImapError(fmt("failed fetching: %1%") % curl_easy_strerror(res));
+      ERROR(Imap, fmt("failed fetching: %1%") % curl_easy_strerror(res));
     }
 
     std::vector<std::string> tokens{
@@ -116,7 +117,7 @@ namespace snackis {
 	std::istream_iterator<std::string>{}};
 
     if (tokens.size() < 2 || tokens[1] != "SEARCH") {
-      throw ImapError(fmt("invalid fetch result:\n%1%") % out.str()); 
+      ERROR(Imap, fmt("invalid fetch result:\n%1%") % out.str()); 
     }
     
     for (auto tok = std::next(tokens.begin(), 2); tok != tokens.end(); tok++) {
