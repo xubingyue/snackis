@@ -10,9 +10,12 @@ namespace snackis {
     db_ctx(db_ctx),
 
     peer_id("id", uid_type, &Peer::id),
+    peer_name("name", string_type, &Peer::name),
+    peer_email("email", string_type, &Peer::email),
     peer_invited_at("invited_at", time_type, &Peer::invited_at),
     peer_accepted_at("accepted_at", time_type, &Peer::accepted_at),
-    peers(db_ctx, "peers", {&peer_id}, {&peer_invited_at, &peer_accepted_at}),
+    peers(db_ctx, "peers", {&peer_id},
+	  {&peer_name, &peer_email, &peer_invited_at, &peer_accepted_at}),
 
     msg_id("id", uid_type, &Msg::id),
     msgs(db_ctx, "msgs", {&msg_id}, {}),

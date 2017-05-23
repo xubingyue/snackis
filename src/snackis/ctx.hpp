@@ -14,6 +14,8 @@ namespace snackis {
     db::Ctx &db_ctx;
 
     db::Col<Peer, UId> peer_id;
+    db::Col<Peer, std::string> peer_name;
+    db::Col<Peer, std::string> peer_email;
     db::Col<Peer, Time> peer_invited_at;
     db::Col<Peer, Time> peer_accepted_at;
     db::Table<Peer> peers;

@@ -8,6 +8,7 @@
 namespace snackis {
   struct Peer: public Rec {
     UId id;
+    std::string name, email;
     Time invited_at, accepted_at;
     
     Peer(Ctx &ctx);

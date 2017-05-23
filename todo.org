@@ -1,4 +1,3 @@
-* add peer_email & peer_name
 * add peer_emails & peer_names indexes
 * add msg_peer_name
 * add libsodium

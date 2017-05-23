@@ -6,7 +6,7 @@
 #include "snackis/core/macros.hpp"
 
 #define ERROR(type, msg)					\
-  throw CONCAT(type, Error)(__FILE__, __LINE__, msg)	\
+  throw CONCAT(type, Error)(__FILE__, __LINE__, msg)		\
 
 namespace snackis {
   struct Error: public std::runtime_error {
