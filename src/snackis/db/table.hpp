@@ -11,6 +11,7 @@
 #include "snackis/db/rec.hpp"
 
 namespace snackis {  
+namespace db {
   template <typename RecT>
   struct Table: public Schema<RecT> {
     using CmpRec = std::function<bool (const Rec<RecT> &, const Rec<RecT> &)>;
@@ -114,6 +115,6 @@ namespace snackis {
   void Insert<RecT>::rollback() const {
     this->table.recs.erase(this->rec);
   }
-}
+}}
 
 #endif

@@ -7,6 +7,7 @@
 #include <snackis/db/rec.hpp>
 
 namespace snackis {
+namespace db {
   template <typename RecT>
   struct Schema {
     using Cols = std::initializer_list<const TableCol<RecT> *>;
@@ -53,6 +54,6 @@ namespace snackis {
       c->copy(dest, src);
     }
   }
-}
+}}
 
 #endif

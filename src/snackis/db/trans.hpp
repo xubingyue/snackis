@@ -4,6 +4,7 @@
 #include <vector>
 
 namespace snackis {
+namespace db {
   struct Change {
     virtual void commit() const = 0;
     virtual void rollback() const = 0;
@@ -24,6 +25,6 @@ namespace snackis {
 
   void commit(Trans &trans);
   void rollback(Trans &trans);
-}
+}}
 
 #endif

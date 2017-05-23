@@ -2,6 +2,7 @@
 #define SNACKIS_UID_HPP
 
 #include <boost/uuid/uuid.hpp>
+#include <string>
 
 namespace snackis {
   using UId = boost::uuids::uuid;

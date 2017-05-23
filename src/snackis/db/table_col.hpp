@@ -5,6 +5,7 @@
 #include "snackis/db/rec.hpp"
 
 namespace snackis {
+namespace db {
   template <typename RecT>
   struct TableCol {
     const std::string name;
@@ -14,6 +15,6 @@ namespace snackis {
 
   template <typename RecT>
   TableCol<RecT>::TableCol(const std::string &name): name(name) { }
-}
+}}
 
 #endif

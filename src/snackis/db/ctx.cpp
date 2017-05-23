@@ -1,6 +1,7 @@
 #include "ctx.hpp"
 
 namespace snackis {
+namespace db {
   Ctx::Ctx(const Path &path): path(path), root(*this, nullptr), trans(&root) {
     create(path);
   }
@@ -12,4 +13,4 @@ namespace snackis {
   void commit(Ctx &ctx) {
     commit(*ctx.trans);
   }
-}
+}}

@@ -2,6 +2,7 @@
 #include "snackis/db/trans.hpp"
 
 namespace snackis {
+namespace db {
   Trans::Trans(Ctx &ctx): Trans(ctx, ctx.trans) { }
 
   Trans::Trans(Ctx &ctx, Trans *super): ctx(ctx), super(super) {
@@ -41,4 +42,4 @@ namespace snackis {
     
     trans.changes.clear();
   }
-}
+}}

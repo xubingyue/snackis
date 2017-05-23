@@ -4,9 +4,11 @@
 #include <functional>
 #include <string>
 
+#include "snackis/core/type.hpp"
 #include "snackis/db/table_col.hpp"
 
 namespace snackis {
+namespace db {
   template <typename RecT, typename ValT>
   struct Col: public TableCol<RecT> {
     const std::string name;
@@ -32,6 +34,6 @@ namespace snackis {
   void Col<RecT, ValT>::copy(Rec<RecT> &dest, const RecT &src) const {
     dest[this] = get(src);
   }
-}
+}}
 
 #endif

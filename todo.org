@@ -1,10 +1,5 @@
-* add snackis/db.hpp
-** inherit db/Ctx
-** add peers tbl
-** add rec type
-** add msgs tbl
-*** uid id, string type, int64 proto_ver, Peer *peer
-*** snackis/Msg struct
+* finish msgs tbl
+** string type, int64 proto_ver, string sent_to, string sent_by
 * add curses ui
 ** copy main.cpp to tests.cpp
 ** add separate exec for tests

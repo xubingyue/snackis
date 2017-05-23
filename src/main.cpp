@@ -9,6 +9,7 @@
 #include "snackis/net/imap.hpp"
 
 using namespace snackis;
+using namespace snackis::db;
 
 struct Foo {
   int64_t fint64;
@@ -58,6 +59,8 @@ void table_tests() {
 }
 
 void email_tests() {
+  using namespace snackis;
+
   Imap imap("imap.gmail.com", 993, "", "");
   std::vector<std::string> msgs;
   fetch(imap, msgs);
@@ -68,7 +71,7 @@ void email_tests() {
 }
 
 int main() {
-  std::cout << "Snackis v" << version_string() << std::endl;
+  std::cout << "Snackis v" << snackis::version_string() << std::endl;
 
   try {
     col_tests();
