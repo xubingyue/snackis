@@ -1,13 +1,18 @@
 * add snackis/db.hpp
 ** inherit db/Ctx
+** add peers tbl
+** add rec type
 ** add msgs tbl
-*** uid id, string type, int64 proto_ver
+*** uid id, string type, int64 proto_ver, Peer *peer
 *** snackis/Msg struct
+* add curses ui
+** copy main.cpp to tests.cpp
+** add separate exec for tests
+** init curses ui in main.cpp
 * add Type.read(istream) & write(ostream)
 * finish Table.write
 * add Table.read
 * finish Table
 ** add update/delete
 * add net/smtp
-* add libsodium to build
-* start ui
+* add libsodium
