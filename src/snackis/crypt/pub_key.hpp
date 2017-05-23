@@ -5,10 +5,13 @@
 
 namespace snackis {
 namespace crypt {
+  struct Key;
+
   struct PubKey {
     unsigned char data[crypto_box_PUBLICKEYBYTES];
+
+    PubKey(Key &key);
   };
-}
-}
+}}
 
 #endif

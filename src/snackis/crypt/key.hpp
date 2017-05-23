@@ -2,16 +2,17 @@
 #define SNACKIS_CRYPT_KEY_HPP
 
 #include <vector>
+
 #include "snackis/crypt/pub_key.hpp"
 
 namespace snackis {
 namespace crypt {
   struct Key {
-    PubKey pub;
     unsigned char data[crypto_box_SECRETKEYBYTES];
-    Key();
   };  
 
+  struct PubKey;
+  
   std::vector<unsigned char> encrypt(const Key &key, const PubKey &pub_key,
 				     const unsigned char *in,
 				     size_t len);

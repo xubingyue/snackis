@@ -3,10 +3,6 @@
 
 namespace snackis {
 namespace crypt {
-  Key::Key() {
-    crypto_box_keypair(pub.data, data);
-  }
-
   std::vector<unsigned char> encrypt(const Key &key, const PubKey &pub_key,
 				     const unsigned char *in,
 				     size_t len) {
@@ -40,4 +36,7 @@ namespace crypt {
     return out;
   }
 
+  void init_key(Key &key, PubKey &pub_key) {
+    crypto_box_keypair(pub_key.data, key.data);
+  }
 }}

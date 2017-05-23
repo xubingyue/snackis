@@ -1,7 +1,7 @@
-* add libsodium
-** core / crypt.hpp/cpp
-** add peer_key
-** add msg_peer_key
+* add crypt/key_type & crypt/pub_key_type
+* add peer_key
+* add msg_peer_key
+* add libsodium secret key crypt support
 * add parse(Msg, string)
 ** change imap fetch to return Msgs
 * add curses ui

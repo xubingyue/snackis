@@ -15,11 +15,13 @@ using namespace snackis;
 void crypt_tests() {
   using namespace snackis::crypt;
   Key foo, bar;
+  PubKey foo_pub(foo), bar_pub(bar);
   std::string msg("secret message");
-  std::vector<unsigned char> cmsg(encrypt(foo, bar.pub,
+  std::vector<unsigned char> cmsg(encrypt(foo, bar_pub,
 					  (const unsigned char *)msg.c_str(),
 					  msg.size()));
-  std::vector<unsigned char> dmsg(decrypt(bar, foo.pub, &cmsg[0], cmsg.size()));
+  std::vector<unsigned char> dmsg(decrypt(bar, foo_pub,
+					  &cmsg[0], cmsg.size()));
   assert(std::string(dmsg.begin(), dmsg.end()) == msg);
 }
 
