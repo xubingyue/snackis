@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include "snackis/peer.hpp"
 #include "snackis/rec.hpp"
 #include "snackis/core/time.hpp"
 #include "snackis/core/uid.hpp"
@@ -12,9 +13,9 @@ namespace snackis {
     UId id;
     std::string type;
     int64_t proto_rev;
-    std::string sent_by, sent_to;
     Time fetched_at;
-    std::string peer_name;
+    Peer *sent_to;
+    std::string peer_name, peer_email;
     
     Msg(Ctx &ctx, const std::string &type);
     Msg(Ctx &ctx);

@@ -36,16 +36,17 @@ namespace snackis {
     
     msg_type("type", string_type, &Msg::type),
     msg_proto_rev("proto_rev", int64_type, &Msg::proto_rev),
-    msg_sent_by("sent_by", string_type, &Msg::sent_by),
     msg_fetched_at("fetched_at", time_type, &Msg::fetched_at),
     msg_peer_name("peer_name", string_type, &Msg::peer_name),
+    msg_peer_email("peer_email", string_type, &Msg::peer_email),
     inbox(db_ctx, "inbox", {&msg_id},
-	  {&msg_type, &msg_proto_rev, &msg_fetched_at, &msg_peer_name}),
+	  {&msg_type, &msg_proto_rev, &msg_fetched_at, &msg_peer_name,
+	      &msg_peer_email}),
 
-    msg_sent_to("sent_to", string_type, &Msg::sent_to),
+    msg_sent_to("sent_to", peers.rec_type, &Msg::sent_to),
     outbox(db_ctx, "outbox", {&msg_id},
-	   {&msg_type, &msg_proto_rev, &msg_sent_by, &msg_sent_to,
-	       &msg_peer_name}) {
+	   {&msg_type, &msg_proto_rev, &msg_sent_to,
+	       &msg_peer_name, &msg_peer_email}) {
     peers.indexes.insert(&peer_names);
     peers.indexes.insert(&peer_emails);
 

@@ -33,12 +33,12 @@ namespace snackis {
 
     db::Col<Msg, std::string> msg_type;
     db::Col<Msg, int64_t> msg_proto_rev;
-    db::Col<Msg, std::string> msg_sent_by;
     db::Col<Msg, Time> msg_fetched_at;
     db::Col<Msg, std::string> msg_peer_name;
+    db::Col<Msg, std::string> msg_peer_email;
     db::Table<Msg> inbox;
 
-    db::Col<Msg, std::string> msg_sent_to;
+    db::Col<Msg, void *> msg_sent_to;
     db::Table<Msg> outbox;
 
     Ctx(db::Ctx &db_ctx);
