@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "snackis/snackis.hpp"
 #include "snackis/core/int64_type.hpp"
 #include "snackis/core/string_type.hpp"
 #include "snackis/core/uid_type.hpp"
@@ -52,6 +53,7 @@ void table_tests() {
   Foo foo;
   assert(insert(tbl, foo));
   assert(!insert(tbl, foo));
+  commit(ctx);
   close(tbl);
 }
 
@@ -66,6 +68,8 @@ void email_tests() {
 }
 
 int main() {
+  std::cout << "Snackis v" << version_string() << std::endl;
+
   try {
     col_tests();
     schema_tests();

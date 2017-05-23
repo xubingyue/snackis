@@ -16,6 +16,7 @@ namespace snackis {
     Trans *super;
     std::vector<const Change *> changes;
     Trans(Ctx &ctx);
+    Trans(Ctx &ctx, Trans *super);
     ~Trans();
   };
 

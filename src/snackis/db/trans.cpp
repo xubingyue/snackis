@@ -2,7 +2,9 @@
 #include "snackis/db/trans.hpp"
 
 namespace snackis {
-  Trans::Trans(Ctx &ctx): ctx(ctx), super(ctx.trans) {
+  Trans::Trans(Ctx &ctx): Trans(ctx, ctx.trans) { }
+
+  Trans::Trans(Ctx &ctx, Trans *super): ctx(ctx), super(super) {
     ctx.trans = this;
   }
 

@@ -14,6 +14,7 @@ namespace snackis {
   };
 
   std::string get_path(const Ctx &ctx, const std::string &fname);
+  void commit(Ctx &ctx);
 }
 
 #endif
