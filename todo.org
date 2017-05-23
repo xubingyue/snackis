@@ -1,4 +1,5 @@
 * add libsodium
+** core / crypt.hpp/cpp
 ** add peer pub_key
 * add parse(Msg, string)
 ** change imap fetch to return Msgs
