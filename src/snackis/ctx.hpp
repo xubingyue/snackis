@@ -18,8 +18,8 @@ namespace snackis {
     db::Col<Peer, std::string> peer_email;
     db::Col<Peer, Time> peer_invited_at;
     db::Col<Peer, Time> peer_accepted_at;
-    db::Table<Peer> peers;
-
+    db::Table<Peer> peers, peer_names, peer_emails;
+    
     db::Col<Msg, UId> msg_id;
     db::Table<Msg> msgs;
 

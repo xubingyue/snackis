@@ -17,6 +17,9 @@ namespace snackis {
     peers(db_ctx, "peers", {&peer_id},
 	  {&peer_name, &peer_email, &peer_invited_at, &peer_accepted_at}),
 
+    peer_names(db_ctx, "peer_names", {&peer_name, &peer_id}, {}),
+    peer_emails(db_ctx, "peer_emails", {&peer_email}, {&peer_id}),
+    
     msg_id("id", uid_type, &Msg::id),
     msgs(db_ctx, "msgs", {&msg_id}, {}),
     
@@ -29,5 +32,8 @@ namespace snackis {
 
     msg_sent_to("sent_to", string_type, &Msg::sent_to),
     outbox(db_ctx, "outbox", {&msg_id},
-	   {&msg_type, &msg_proto_rev, &msg_sent_by, &msg_sent_to}) { }
+	   {&msg_type, &msg_proto_rev, &msg_sent_by, &msg_sent_to}) {
+    peers.indexes.insert(&peer_names);
+    peers.indexes.insert(&peer_emails);
+  }
 }
