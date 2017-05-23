@@ -1,7 +1,3 @@
-* add Fmt struct
-** inherit boost::format
-** add operator std::string()
-** simplify fmt uses in imap
 * finish Trans
 ** copy from golang
 ** RAII with rollback in destructor

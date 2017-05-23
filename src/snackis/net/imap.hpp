@@ -8,7 +8,7 @@
 
 namespace snackis {
   struct ImapError: public std::runtime_error {
-    ImapError(const Fmt &msg);
+    ImapError(const std::string &msg);
   };
 
   struct Imap {
