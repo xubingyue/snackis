@@ -7,6 +7,7 @@
 #include <sstream>
 #include <string>
 
+#include "snackis/core/data.hpp"
 #include "snackis/core/fmt.hpp"
 #include "snackis/core/string_type.hpp"
 #include "snackis/core/type.hpp"
@@ -122,13 +123,10 @@ namespace db {
     if (sec) {
       int64_t size = -1;
       in.read((char *)&size, sizeof size);
-      std::vector<unsigned char> edata;
+      Data edata;
       edata.resize(size);
       in.read((char *)&edata[0], size);
-      
-      const std::vector<unsigned char> ddata(decrypt(*sec,
-						     (unsigned char *)&edata[0],
-						     size));
+      const Data ddata(decrypt(*sec, (unsigned char *)&edata[0], size));
       std::stringstream buf(std::string(ddata.begin(), ddata.end()));
       read(tbl, buf, rec, nullptr);
     } else {
@@ -157,10 +155,7 @@ namespace db {
 	std::stringstream buf;
 	write(tbl, rec, buf, nullptr);
 	std::string data(buf.str());
-	const std::vector<unsigned char>
-	  edata(encrypt(*sec,
-			(unsigned char *)data.c_str(),
-			data.size()));
+	const Data edata(encrypt(*sec, (unsigned char *)data.c_str(), data.size()));
 	const int64_t size = edata.size();
 	out.write((char *)&size, sizeof size);
 	out.write((char *)&edata[0], size);

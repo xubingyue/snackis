@@ -2,6 +2,7 @@
 #include <sstream>
 
 #include "snackis/snackis.hpp"
+#include "snackis/core/data.hpp"
 #include "snackis/core/int64_type.hpp"
 #include "snackis/core/string_type.hpp"
 #include "snackis/core/time_type.hpp"
@@ -22,10 +23,8 @@ void crypt_secret_tests() {
   init(sec, key);
   std::string msg("secret message");
   
-  std::vector<unsigned char> cmsg(encrypt(sec,
-					  (const unsigned char *)msg.c_str(),
-					  msg.size()));
-  std::vector<unsigned char> dmsg(decrypt(sec, &cmsg[0], cmsg.size()));
+  Data cmsg(encrypt(sec, (const unsigned char *)msg.c_str(), msg.size())),
+    dmsg(decrypt(sec, &cmsg[0], cmsg.size()));
 
   assert(std::string(dmsg.begin(), dmsg.end()) == msg);
 }
@@ -36,11 +35,8 @@ void crypt_key_tests() {
   Key foo(foo_pub), bar(bar_pub);
   std::string msg("secret message");
 
-  std::vector<unsigned char> cmsg(encrypt(foo, bar_pub,
-					  (const unsigned char *)msg.c_str(),
-					  msg.size()));
-  std::vector<unsigned char> dmsg(decrypt(bar, foo_pub,
-					  &cmsg[0], cmsg.size()));
+  Data cmsg(encrypt(foo, bar_pub, (const unsigned char *)msg.c_str(), msg.size())),
+    dmsg(decrypt(bar, foo_pub, &cmsg[0], cmsg.size()));
 
   assert(std::string(dmsg.begin(), dmsg.end()) == msg);
 }

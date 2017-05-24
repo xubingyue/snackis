@@ -3,7 +3,8 @@
 
 #include <sodium.h>
 #include <string>
-#include <vector>
+
+#include "snackis/core/data.hpp"
 
 namespace snackis {
 namespace crypt {
@@ -22,13 +23,13 @@ namespace crypt {
   void init(Secret &sec, const std::string &key);
   const unsigned char *hash(const Secret &sec);
 
-  std::vector<unsigned char> encrypt(const Secret &secret,
-				     const unsigned char *in,
-				     size_t len);
+  Data encrypt(const Secret &secret,
+	       const unsigned char *in,
+	       size_t len);
   
-  std::vector<unsigned char> decrypt(const Secret &secret,
-				     const unsigned char *in,
-				     size_t len);
+  Data decrypt(const Secret &secret,
+	       const unsigned char *in,
+	       size_t len);
 }}
   
 #endif

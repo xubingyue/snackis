@@ -21,10 +21,10 @@ namespace crypt {
     return memcmp(x.data, y.data, crypto_box_SECRETKEYBYTES) < 0;
   }
 
-  std::vector<unsigned char> encrypt(const Key &key, const PubKey &pub_key,
-				     const unsigned char *in,
-				     size_t len) {
-    std::vector<unsigned char> out;
+  Data encrypt(const Key &key, const PubKey &pub_key,
+	       const unsigned char *in,
+	       size_t len) {
+    Data out;
     out.resize(crypto_box_NONCEBYTES+crypto_box_MACBYTES+len, 0);
     randombytes_buf(&out[0], crypto_box_NONCEBYTES);
     
@@ -38,10 +38,10 @@ namespace crypt {
     return out;
   }
 
-  std::vector<unsigned char> decrypt(const Key &key, const PubKey &pub_key,
-				     const unsigned char *in,
-				     size_t len) {
-    std::vector<unsigned char> out;
+  Data decrypt(const Key &key, const PubKey &pub_key,
+	       const unsigned char *in,
+	       size_t len) {
+    Data out;
     out.resize(len-crypto_box_NONCEBYTES-crypto_box_MACBYTES, 0);
     
     if (crypto_box_open_easy(&out[0],

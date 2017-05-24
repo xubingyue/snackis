@@ -25,10 +25,10 @@ namespace crypt {
     return sec.data + Secret::SALT_SIZE;
   }
   
-  std::vector<unsigned char> encrypt(const Secret &sec,
-				     const unsigned char *in,
-				     size_t len) {
-    std::vector<unsigned char> out;
+  Data encrypt(const Secret &sec,
+	       const unsigned char *in,
+	       size_t len) {
+    Data out;
     const size_t DATA_SIZE = crypto_aead_chacha20poly1305_IETF_ABYTES+len;
     out.resize(Secret::NONCE_SIZE+DATA_SIZE, 0);
     randombytes_buf(&out[0], Secret::NONCE_SIZE);
@@ -42,10 +42,10 @@ namespace crypt {
     return out;
   }
 
-  std::vector<unsigned char> decrypt(const Secret &secret,
-				     const unsigned char *in,
-				     size_t len) {
-    std::vector<unsigned char> out;
+  Data decrypt(const Secret &secret,
+	       const unsigned char *in,
+	       size_t len) {
+    Data out;
     out.resize(len-Secret::NONCE_SIZE-crypto_aead_chacha20poly1305_IETF_ABYTES);
 
     unsigned long long dlen;
