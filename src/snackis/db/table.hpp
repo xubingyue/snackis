@@ -126,9 +126,9 @@ namespace db {
       edata.resize(size);
       in.read((char *)&edata[0], size);
       
-      std::vector<unsigned char> ddata(decrypt(*sec,
-					       (unsigned char *)&edata[0],
-					       size));
+      const std::vector<unsigned char> ddata(decrypt(*sec,
+						     (unsigned char *)&edata[0],
+						     size));
       std::stringstream buf(std::string(ddata.begin(), ddata.end()));
       read(tbl, buf, rec, nullptr);
     } else {
@@ -157,9 +157,10 @@ namespace db {
 	std::stringstream buf;
 	write(tbl, rec, buf, nullptr);
 	std::string data(buf.str());
-	std::vector<unsigned char> edata(encrypt(*sec,
-						 (unsigned char *)data.c_str(),
-						 data.size()));
+	const std::vector<unsigned char>
+	  edata(encrypt(*sec,
+			(unsigned char *)data.c_str(),
+			data.size()));
 	const int64_t size = edata.size();
 	out.write((char *)&size, sizeof size);
 	out.write((char *)&edata[0], size);
