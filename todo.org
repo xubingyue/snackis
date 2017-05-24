@@ -1,3 +1,4 @@
+* finish table read/write
 * add tbl read/write stringstream test
 * add table shared_ptr<*secret>
 ** call encrypt in write to file if set
