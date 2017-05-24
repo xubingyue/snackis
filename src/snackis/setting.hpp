@@ -13,7 +13,7 @@ namespace snackis {
     Data val;
     const BasicType &type;
     opt<Val> init_val;
-    
+
     Setting(Ctx &ctx,
 	    const str &key, const BasicType &type,
 	    opt<Val> init_val);

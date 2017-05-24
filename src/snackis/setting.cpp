@@ -15,7 +15,7 @@ namespace snackis {
   }
 
   opt<Val> get(Setting &setting) {
-    if (setting.val.empty()) { load(setting.ctx.settings, setting); }
+    if (setting.val.empty()) { load(setting.ctx.db.settings, setting); }
 
     if (setting.val.empty() && setting.init_val) { 
 	set(setting, *setting.init_val); 
@@ -33,6 +33,6 @@ namespace snackis {
     Buf buf;
     setting.type.write_val(val, buf);
     str data(buf.str());
-    setting.val.assign(data.begin(), data.end());    
+    setting.val.assign(data.begin(), data.end());
   }
 }

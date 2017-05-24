@@ -1,5 +1,5 @@
-* add settings
-** add ctx.settings
+* add table update
+** update table in set(setting)
 * add dump(Table, out)
 ** write op like change
 * add slurp(Table, in)
