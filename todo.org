@@ -1,4 +1,3 @@
-* rename TableCol to BasicCol
 * add settings
 ** add ctx.settings
 * add dump(Table, out)

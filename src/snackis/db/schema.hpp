@@ -5,15 +5,16 @@
 #include <vector>
 
 #include <snackis/core/str.hpp>
+#include <snackis/db/basic_col.hpp>
 #include <snackis/db/rec.hpp>
 
 namespace snackis {
 namespace db {
   template <typename RecT>
   struct Schema {
-    using Cols = std::initializer_list<const TableCol<RecT> *>;
-    std::vector<const TableCol<RecT> *> cols;
-    std::map<str, const TableCol<RecT> *> col_lookup;
+    using Cols = std::initializer_list<const BasicCol<RecT> *>;
+    std::vector<const BasicCol<RecT> *> cols;
+    std::map<str, const BasicCol<RecT> *> col_lookup;
     Schema(Cols cols);
   };
 
@@ -23,7 +24,7 @@ namespace db {
   }
 
   template <typename RecT>
-  void add(Schema<RecT> &scm, const TableCol<RecT> &col) {
+  void add(Schema<RecT> &scm, const BasicCol<RecT> &col) {
     scm.cols.push_back(&col);
     scm.col_lookup[col.name] = &col;
   }

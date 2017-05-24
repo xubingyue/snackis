@@ -9,10 +9,10 @@
 namespace snackis {
 namespace db {
   template <typename RecT>
-  struct TableCol;
+  struct BasicCol;
 
   template <typename RecT>
-  using Rec = std::map<const TableCol<RecT> *, Val>;
+  using Rec = std::map<const BasicCol<RecT> *, Val>;
 }}
 
 #endif

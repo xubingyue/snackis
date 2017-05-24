@@ -35,7 +35,7 @@ namespace db {
   template <typename RecT>
   struct Table: public Schema<RecT> {
     using CmpRec = std::function<bool (const Rec<RecT> &, const Rec<RecT> &)>;
-    using Cols = std::initializer_list<const TableCol<RecT> *>;
+    using Cols = std::initializer_list<const BasicCol<RecT> *>;
     
     Ctx &ctx;
     const str name;

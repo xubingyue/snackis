@@ -6,12 +6,12 @@
 #include "snackis/core/str.hpp"
 #include "snackis/core/type.hpp"
 #include "snackis/core/val.hpp"
-#include "snackis/db/table_col.hpp"
+#include "snackis/db/basic_col.hpp"
 
 namespace snackis {
 namespace db {
   template <typename RecT, typename ValT>
-  struct Col: public TableCol<RecT> {
+  struct Col: public BasicCol<RecT> {
     const Type<ValT> &type;
     std::function<const ValT &(const RecT &)> getter;
     std::function<void (RecT &, const ValT &)> setter;
@@ -30,7 +30,7 @@ namespace db {
   Col<RecT, ValT>::Col(const str &name,
 			     const Type<ValT> &type,
 			     FldT RecT::* ptr):
-    TableCol<RecT>(name),
+    BasicCol<RecT>(name),
     type(type),
     getter([ptr](const RecT &rec) { return std::cref(rec.*ptr); }),
     setter([ptr](RecT &rec, const ValT &val) { rec.*ptr = static_cast<FldT>(val); })

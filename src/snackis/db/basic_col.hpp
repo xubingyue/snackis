@@ -1,5 +1,5 @@
-#ifndef SNACKIS_DB_TABLE_COL_HPP
-#define SNACKIS_DB_TABLE_COL_HPP
+#ifndef SNACKIS_DB_BASIC_COL_HPP
+#define SNACKIS_DB_BASIC_COL_HPP
 
 #include <iostream>
 
@@ -9,9 +9,9 @@
 namespace snackis {
 namespace db {
   template <typename RecT>
-  struct TableCol {
+  struct BasicCol {
     const str name;
-    TableCol(const str &name);
+    BasicCol(const str &name);
     virtual void copy(Rec<RecT> &dest, const RecT &src) const=0;
     virtual void copy(RecT &dest, const Rec<RecT> &src) const=0;
     virtual void set(RecT &dest, const Val &val) const=0;
@@ -20,7 +20,7 @@ namespace db {
   };
 
   template <typename RecT>
-  TableCol<RecT>::TableCol(const str &name): name(name) { }
+  BasicCol<RecT>::BasicCol(const str &name): name(name) { }
 }}
 
 #endif
