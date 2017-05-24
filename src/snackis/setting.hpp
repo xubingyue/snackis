@@ -3,7 +3,7 @@
 
 #include "snackis/rec.hpp"
 #include "snackis/core/data.hpp"
-#include "snackis/core/optional.hpp"
+#include "snackis/core/opt.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/core/type.hpp"
 
@@ -12,15 +12,15 @@ namespace snackis {
     str key;
     Data val;
     const BasicType &type;
-    optional<Val> init_val;
+    opt<Val> init_val;
     
     Setting(Ctx &ctx,
 	    const str &key, const BasicType &type,
-	    optional<Val> init_val);
+	    opt<Val> init_val);
     Setting(const db::Table<Setting> &tbl, const db::Rec<Setting> &rec);
   };
 
-  optional<Val> get(Setting &setting);
+  opt<Val> get(Setting &setting);
   void set(Setting &setting, const Val &val);
 }
 

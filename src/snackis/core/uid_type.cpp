@@ -3,8 +3,7 @@
 namespace snackis {
   const UIdType uid_type;
 
-  UIdType::UIdType(): Type<UId>("UId") {
-  }
+  UIdType::UIdType(): Type<UId>("UId") { }
 
   UId UIdType::read(std::istream &in) const {
     UId val;

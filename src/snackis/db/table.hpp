@@ -8,7 +8,7 @@
 #include "snackis/core/buf.hpp"
 #include "snackis/core/data.hpp"
 #include "snackis/core/fmt.hpp"
-#include "snackis/core/optional.hpp"
+#include "snackis/core/opt.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/core/str_type.hpp"
 #include "snackis/core/type.hpp"
@@ -91,7 +91,7 @@ namespace db {
   }
 
   template <typename RecT>
-  optional<RecT> load(Table<RecT> &tbl, RecT &rec) {
+  opt<RecT> load(Table<RecT> &tbl, RecT &rec) {
     Rec<RecT> key;
     copy(tbl.key, key, rec);
     auto found = tbl.recs.find(key);

@@ -6,7 +6,7 @@
 namespace snackis {
   Setting::Setting(Ctx &ctx, 
 		   const str &key, const BasicType &type, 
-		   optional<Val> init_val): 
+		   opt<Val> init_val): 
     Rec(ctx), key(key), type(type) { }
 
   Setting::Setting(const db::Table<Setting> &tbl, const db::Rec<Setting> &rec):
@@ -14,7 +14,7 @@ namespace snackis {
     copy(tbl, *this, rec);
   }
 
-  optional<Val> get(Setting &setting) {
+  opt<Val> get(Setting &setting) {
     if (setting.val.empty()) { load(setting.ctx.settings, setting); }
 
     if (setting.val.empty() && setting.init_val) { 

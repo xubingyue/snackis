@@ -1,4 +1,3 @@
-* rename optional to opt
 * rename TableCol to BasicCol
 * add settings
 ** add ctx.settings
