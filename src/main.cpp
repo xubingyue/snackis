@@ -44,7 +44,7 @@ void crypt_key_tests() {
 
 struct Foo {
   int64_t fint64;
-  str fstring;
+  str fstr;
   Time ftime;
   UId fuid;
 
@@ -56,13 +56,13 @@ struct Foo {
 };
 
 void col_tests() {
-  const Col<Foo, str> col("string", str_type, &Foo::fstring); 
+  const Col<Foo, str> col("str", str_type, &Foo::fstr); 
 
   Foo foo;
-  foo.fstring = "abc";
+  foo.fstr = "abc";
   assert(col.getter(foo) == "abc");
   col.setter(foo, "def");
-  assert(foo.fstring == "def");
+  assert(foo.fstr == "def");
 }
 
 void schema_tests() {
@@ -81,14 +81,14 @@ void schema_tests() {
 }
 
 const Col<Foo, int64_t> int64_col("int64", int64_type, &Foo::fint64); 
-const Col<Foo, str> string_col("string", str_type, &Foo::fstring); 
+const Col<Foo, str> str_col("str", str_type, &Foo::fstr); 
 const Col<Foo, Time> time_col("time", time_type, &Foo::ftime); 
 const Col<Foo, UId> uid_col("uid", uid_type, &Foo::fuid); 
 
 void table_tests() {
   Ctx ctx("testdb/");
   Table<Foo> tbl(ctx, "table_tests", {&uid_col},
-		 {&int64_col, &string_col, &time_col});
+		 {&int64_col, &str_col, &time_col});
   open(tbl);
   Foo foo;
   assert(insert(tbl, foo));
@@ -100,7 +100,7 @@ void table_tests() {
 void read_write_tests() {
   Ctx ctx("testdb/");
   Table<Foo> tbl(ctx, "read_write_tests", {&uid_col},
-		 {&int64_col, &string_col, &time_col});
+		 {&int64_col, &str_col, &time_col});
   open(tbl);
   
   crypt::Secret sec;
@@ -108,7 +108,7 @@ void read_write_tests() {
 
   Rec<Foo> rec;
   rec[&int64_col] = 42;
-  rec[&string_col] = str("abc");
+  rec[&str_col] = str("abc");
   rec[&time_col] = now();
   rec[&uid_col] = uid();
 
