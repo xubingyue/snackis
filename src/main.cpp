@@ -100,12 +100,11 @@ void read_write_tests() {
   Ctx ctx("testdb/");
   Table<Foo> tbl(ctx, "read_write_tests", {&uid_col},
 		 {&int64_col, &string_col, &time_col});
+  open(tbl);
+  
   crypt::Secret sec;
   init(sec, "secret key");
-  tbl.secret = &sec;
-  open(tbl);
 
-  
   Rec<Foo> rec;
   rec[&int64_col] = 42;
   rec[&string_col] = std::string("abc");

@@ -40,7 +40,7 @@ namespace snackis {
 		     CURLOPT_CUSTOMREQUEST,
 		     fmt("UID STORE %1% +FLAGS.SILENT \\Deleted") % uid);
 
-    curl_easy_setopt(imap.client, CURLOPT_HEADERFUNCTION, NULL);
+    curl_easy_setopt(imap.client, CURLOPT_HEADERFUNCTION, nullptr);
     curl_easy_setopt(imap.client, CURLOPT_WRITEFUNCTION, skip_write);
     CURLcode res(curl_easy_perform(imap.client));
  
@@ -52,7 +52,7 @@ namespace snackis {
   static void expunge(struct Imap &imap) {
     curl_easy_setopt(imap.client, CURLOPT_CUSTOMREQUEST, "EXPUNGE");
 
-    curl_easy_setopt(imap.client, CURLOPT_HEADERFUNCTION, NULL);
+    curl_easy_setopt(imap.client, CURLOPT_HEADERFUNCTION, nullptr);
     curl_easy_setopt(imap.client, CURLOPT_WRITEFUNCTION, skip_write);
     CURLcode res(curl_easy_perform(imap.client));
  
@@ -104,8 +104,8 @@ namespace snackis {
 		     "UID SEARCH Subject \"__SNACKIS__\"");
 
     std::stringstream out;    
-    curl_easy_setopt(imap.client, CURLOPT_HEADERFUNCTION, NULL);
-    curl_easy_setopt(imap.client, CURLOPT_HEADERDATA, NULL);
+    curl_easy_setopt(imap.client, CURLOPT_HEADERFUNCTION, nullptr);
+    curl_easy_setopt(imap.client, CURLOPT_HEADERDATA, nullptr);
     curl_easy_setopt(imap.client, CURLOPT_WRITEDATA, &out);
     CURLcode res(curl_easy_perform(imap.client));
  

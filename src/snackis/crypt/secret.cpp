@@ -36,8 +36,8 @@ namespace crypt {
     unsigned long long clen;
     crypto_aead_chacha20poly1305_ietf_encrypt(&out[Secret::NONCE_SIZE], &clen,
 					      in, len,
-					      NULL, 0,
-					      NULL, &out[0], hash(sec));
+					      nullptr, 0,
+					      nullptr, &out[0], hash(sec));
     out.resize(Secret::NONCE_SIZE+clen);
     return out;
   }
@@ -51,10 +51,10 @@ namespace crypt {
     unsigned long long dlen;
     if (crypto_aead_chacha20poly1305_ietf_decrypt(&out[0],
 						  &dlen,
-						  NULL,
+						  nullptr,
 						  in+Secret::NONCE_SIZE,
 						  len-Secret::NONCE_SIZE,
-						  NULL, 0,
+						  nullptr, 0,
 						  in, hash(secret)) != 0) {
       ERROR(Crypt, "Failed decrypting secret message");
     }

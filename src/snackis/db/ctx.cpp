@@ -2,7 +2,8 @@
 
 namespace snackis {
 namespace db {
-  Ctx::Ctx(const Path &path): path(path), root(*this, nullptr), trans(&root) {
+  Ctx::Ctx(const Path &path): path(path), secret(nullptr), root(*this, nullptr),
+			      trans(&root) {
     create(path);
   }
 

@@ -43,7 +43,6 @@ namespace db {
     std::set<Table<RecT> *> indexes;
     std::set<Rec<RecT>, CmpRec> recs;
     std::ofstream file;
-    const crypt::Secret *secret;
     
     Table(Ctx &ctx, const std::string &name, Cols key_cols, Cols cols);
   };
@@ -75,8 +74,7 @@ namespace db {
     rec_type(*this),
     recs([this](const Rec<RecT> &x, const Rec<RecT> &y) {
 	return compare(key, x, y) < 0;
-      }),
-    secret(nullptr) {
+      }) {
     for (auto c: key.cols) { add(*this, *c); }
   }
 
@@ -172,7 +170,7 @@ namespace db {
 
   template <typename RecT>
   void write(Table<RecT> &tbl, const Rec<RecT> &rec) {
-    write(tbl, rec, tbl.file, tbl.secret);
+    write(tbl, rec, tbl.file, tbl.ctx.secret);
   }
 
   template <typename RecT>
