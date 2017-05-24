@@ -1,3 +1,8 @@
+* add setting struct
+** add val_type
+** read/write from stringstream using val_type
+* add settings table
+** add data_type
 * add dump(Table, out)
 ** write op like change
 * add slurp(Table, in)
@@ -5,12 +10,6 @@
 ** decrypt if secret is set
 * add slurp(Table)
 ** rewind file and slurp
-* add setting struct
-** add val_type
-** read/write from stringstream using val_type
-* add settings table
-** add data_type
-*** use vector<unsigned char> as storage
 * add flush(db/ctx)
 ** add set dirty_files
 * add curses ui
