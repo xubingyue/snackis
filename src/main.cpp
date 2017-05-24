@@ -6,22 +6,40 @@
 #include "snackis/core/time_type.hpp"
 #include "snackis/core/uid_type.hpp"
 #include "snackis/crypt/key.hpp"
+#include "snackis/crypt/secret.hpp"
 #include "snackis/db/col.hpp"
 #include "snackis/db/table.hpp"
 #include "snackis/net/imap.hpp"
 
 using namespace snackis;
 
-void crypt_tests() {
+void crypt_secret_tests() {
+  using namespace snackis::crypt;
+  std::string key("secret key");
+  Secret sec;
+  init(sec, key);
+  std::string msg("secret message");
+  
+  std::vector<unsigned char> cmsg(encrypt(sec,
+					  (const unsigned char *)msg.c_str(),
+					  msg.size()));
+  std::vector<unsigned char> dmsg(decrypt(sec, &cmsg[0], cmsg.size()));
+
+  assert(std::string(dmsg.begin(), dmsg.end()) == msg);
+}
+
+void crypt_key_tests() {
   using namespace snackis::crypt;
   PubKey foo_pub, bar_pub;
   Key foo(foo_pub), bar(bar_pub);
   std::string msg("secret message");
+
   std::vector<unsigned char> cmsg(encrypt(foo, bar_pub,
 					  (const unsigned char *)msg.c_str(),
 					  msg.size()));
   std::vector<unsigned char> dmsg(decrypt(bar, foo_pub,
 					  &cmsg[0], cmsg.size()));
+
   assert(std::string(dmsg.begin(), dmsg.end()) == msg);
 }
 
@@ -94,7 +112,8 @@ int main() {
   std::cout << "Snackis v" << version_string() << std::endl;
 
   try {
-    crypt_tests();
+    crypt_secret_tests();
+    crypt_key_tests();
     col_tests();
     schema_tests();
     table_tests();

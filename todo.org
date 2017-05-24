@@ -1,11 +1,14 @@
-* add libsodium secret key crypt support
-* add parse(Msg, string)
-** change imap fetch to return Msgs
+* add settings
+** add Type.read(istream) & write(ostream)
+** read/write from stringstream
 * add curses ui
 ** copy main.cpp to tests.cpp
 ** add separate exec for tests
 ** init curses ui in main.cpp
-* add Type.read(istream) & write(ostream)
+*** use sub windows
+*** add login form
+* add parse(Msg, string)
+** change imap fetch to return Msgs
 * finish Table.write
 * add Table.read
 * finish Table

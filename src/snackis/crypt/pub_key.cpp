@@ -6,7 +6,7 @@
 namespace snackis {
 namespace crypt {
   PubKey::PubKey() {
-    memset(data, 0, crypto_box_PUBLICKEYBYTES);
+    memset(data, 0, sizeof(data));
   }
 
   bool operator <(const PubKey &x, const PubKey &y) {

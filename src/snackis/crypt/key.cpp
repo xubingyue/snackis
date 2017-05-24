@@ -10,7 +10,7 @@ namespace crypt {
   }
 
   Key::Key() {
-    memset(data, 0, crypto_box_SECRETKEYBYTES);
+    memset(data, 0, sizeof(data));
   }
   
   bool operator <(const Key &x, const Key &y) {
