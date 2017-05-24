@@ -35,6 +35,6 @@ namespace snackis {
     str data(buf.str());
     setting.val.assign(data.begin(), data.end());
     db::Table<Setting> &tbl(setting.ctx.db.settings);
-    if (!insert(tbl, setting)) { update(tbl, setting); }
+    upsert(tbl, setting);
   }
 }

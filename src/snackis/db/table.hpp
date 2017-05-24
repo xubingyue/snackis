@@ -148,6 +148,13 @@ namespace db {
   }
 
   template <typename RecT>
+  bool upsert(Table<RecT> &tbl, const RecT &rec) {
+    if (insert(tbl, rec)) { return true; }
+    update(tbl, rec);
+    return false;
+  }
+  
+  template <typename RecT>
   void read(const Table<RecT> &tbl,
 	    std::istream &in,
 	    Rec<RecT> &rec,
