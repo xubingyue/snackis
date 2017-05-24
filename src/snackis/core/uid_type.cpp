@@ -8,11 +8,11 @@ namespace snackis {
 
   UId UIdType::read(std::istream &in) const {
     UId val;
-    in >> val;
+    in.read(reinterpret_cast<char *>(&val), 16);
     return val;
   }
   
   void UIdType::write(const UId &val, std::ostream &out) const {
-    out << val;
+    out.write(reinterpret_cast<const char *>(&val), 16);
   }
 }
