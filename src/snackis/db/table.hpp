@@ -4,11 +4,13 @@
 #include <cstdint>
 #include <fstream>
 #include <set>
+#include <sstream>
 #include <string>
 
 #include "snackis/core/fmt.hpp"
 #include "snackis/core/string_type.hpp"
 #include "snackis/core/type.hpp"
+#include "snackis/crypt/secret.hpp"
 #include "snackis/db/ctx.hpp"
 #include "snackis/db/error.hpp"
 #include "snackis/db/schema.hpp"
@@ -40,6 +42,7 @@ namespace db {
     std::set<Table<RecT> *> indexes;
     std::set<Rec<RecT>, CmpRec> recs;
     std::ofstream file;
+    const crypt::Secret *secret;
     
     Table(Ctx &ctx, const std::string &name, Cols key_cols, Cols cols);
   };
@@ -71,7 +74,8 @@ namespace db {
     rec_type(*this),
     recs([this](const Rec<RecT> &x, const Rec<RecT> &y) {
 	return compare(key, x, y) < 0;
-      }) {
+      }),
+    secret(nullptr) {
     for (auto c: key.cols) { add(*this, *c); }
   }
 
@@ -111,36 +115,68 @@ namespace db {
   }
 
   template <typename RecT>
-  void read(const Table<RecT> &tbl, std::istream &in, Rec<RecT> &rec) {
-    int32_t cnt;
-    in.read((char *)&cnt, sizeof cnt);
+  void read(const Table<RecT> &tbl,
+	    std::istream &in,
+	    Rec<RecT> &rec,
+	    const crypt::Secret *sec) {
+    if (sec) {
+      int64_t size = -1;
+      in.read((char *)&size, sizeof size);
+      std::vector<unsigned char> edata;
+      edata.resize(size);
+      in.read((char *)&edata[0], size);
+      
+      std::vector<unsigned char> ddata(decrypt(*sec,
+					       (unsigned char *)&edata[0],
+					       size));
+      std::stringstream buf(std::string(ddata.begin(), ddata.end()));
+      read(tbl, buf, rec, nullptr);
+    } else {
+      int32_t cnt = -1;
+      in.read((char *)&cnt, sizeof cnt);
 
-    for (int32_t i=0; i<cnt; i++) {
-      std::string cname(string_type.read(in));
-      auto found(tbl.col_lookup.find(cname));
-      if (found == tbl.col_lookup.end()) {
-	ERROR(Db, fmt("Column not found: %1%") % cname);
+      for (int32_t i=0; i<cnt; i++) {
+	const std::string cname(string_type.read(in));
+	auto found(tbl.col_lookup.find(cname));
+	if (found == tbl.col_lookup.end()) {
+	  ERROR(Db, fmt("Column not found: %1%") % cname);
+	}
+	
+	auto c = found->second;
+	rec[c] = c->read(in);
       }
-
-      auto c = found->second;
-      rec[c] = c->read(in);
     }
   }
 
   template <typename RecT>
-  void write(const Table<RecT> &tbl, const Rec<RecT> &rec, std::ostream &out) {
-    const int32_t cnt(rec.size());
-    out.write((const char *)&cnt, sizeof cnt);
+  void write(const Table<RecT> &tbl,
+	     const Rec<RecT> &rec,
+	     std::ostream &out,
+	     const crypt::Secret *sec) {
+    if (sec) {
+	std::stringstream buf;
+	write(tbl, rec, buf, nullptr);
+	std::string data(buf.str());
+	std::vector<unsigned char> edata(encrypt(*sec,
+						 (unsigned char *)data.c_str(),
+						 data.size()));
+	const int64_t size = edata.size();
+	out.write((char *)&size, sizeof size);
+	out.write((char *)&edata[0], size);
+    } else {
+      const int32_t cnt(rec.size());
+      out.write((const char *)&cnt, sizeof cnt);
     
-    for (auto f: rec) {
-      string_type.write(f.first->name, out);
-      f.first->write(f.second, out);
-    }    
+      for (auto f: rec) {
+	string_type.write(f.first->name, out);
+	f.first->write(f.second, out);
+      }
+    }
   }
 
   template <typename RecT>
   void write(Table<RecT> &tbl, const Rec<RecT> &rec) {
-    write(tbl, rec, tbl.file);
+    write(tbl, rec, tbl.file, tbl.secret);
   }
 
   template <typename RecT>
@@ -171,7 +207,7 @@ namespace db {
   template <typename RecT>
   void *RecType<RecT>::read(std::istream &in) const {
     Rec<RecT> trec;
-    db::read(tbl, in, trec);
+    db::read(tbl, in, trec, nullptr);
     return new RecT(tbl, trec);
   }
   
@@ -179,7 +215,7 @@ namespace db {
   void RecType<RecT>::write(void *const &val, std::ostream &out) const {
     Rec<RecT> trec;
     copy(tbl, trec, *static_cast<RecT *>(val));
-    db::write(tbl, trec, out);
+    db::write(tbl, trec, out, nullptr);
   }
 }}
 

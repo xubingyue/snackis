@@ -1,11 +1,10 @@
-* add table shared_ptr<*secret>
-** call encrypt in write to file if set
-* add secret param to table read
-** decrypt if set
-* add slurp(Table)
-** rewind file and read all
+* add dump(Table, out)
+** write op like change
+* add slurp(Table, in)
 ** read op like golang
 ** decrypt if secret is set
+* add slurp(Table)
+** rewind file and slurp
 * add setting struct
 ** add val_type
 ** read/write from stringstream using val_type

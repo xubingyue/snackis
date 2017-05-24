@@ -7,7 +7,7 @@ namespace snackis {
   }
 
   std::string StringType::read(std::istream &in) const {
-    int64_t size;
+    int64_t size = -1;
     in.read((char *)&size, sizeof size);
     char *data = new char[size+1];
     data[size] = 0;
