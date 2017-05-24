@@ -7,12 +7,12 @@ namespace snackis {
   }
 
   int64_t Int64Type::read(std::istream &in) const {
-    int64_t val;
-    in >> val;
+    int64_t val = -1;
+    in.read((char *)&val, sizeof val);
     return val;
   }
   
   void Int64Type::write(const int64_t &val, std::ostream &out) const {
-    out << val;
+    out.write((char *)&val, sizeof val);
   }
 }

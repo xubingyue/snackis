@@ -1,5 +1,3 @@
-* fix time/int types read/write
-** call in/out.read/write
 * add dump(Table, out)
 ** write op like change
 * add slurp(Table, in)
