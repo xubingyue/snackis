@@ -67,6 +67,13 @@ namespace db {
   };
 
   template <typename RecT>
+  struct Update: public TableChange<RecT> {
+    const Rec<RecT> prev_rec;
+    Update(Table<RecT> &table, const Rec<RecT> &rec, const Rec<RecT> &prev_rec);    
+    void rollback() const override;
+  };
+
+  template <typename RecT>
   Table<RecT>::Table(Ctx &ctx, const str &name, Cols key_cols, Cols cols):
     Schema<RecT>(cols),
     ctx(ctx),
@@ -110,18 +117,34 @@ namespace db {
   template <typename RecT>
   bool insert(Table<RecT> &tbl, const Rec<RecT> &rec) {
     auto found(tbl.recs.find(rec));
+    if (found != tbl.recs.end()) { return false; }
+    for (auto idx: tbl.indexes) { insert(*idx, rec); }
+    log_change(*tbl.ctx.trans, new Insert<RecT>(tbl, rec));
+    tbl.recs.insert(rec);
+    return true;
+  }
 
-    if (found == tbl.recs.end()) {
-      for (auto idx: tbl.indexes) {
-	insert(*idx, rec);
-      }
+  template <typename RecT>
+  bool update(Table<RecT> &tbl, const RecT &rec) {
+    Rec<RecT> trec;
+    copy(tbl, trec, rec);
+    return update(tbl, trec);
+  }
 
-      log_change(*tbl.ctx.trans, new Insert<RecT>(tbl, rec));
-      tbl.recs.insert(rec);
-      return true;
+  template <typename RecT>
+  bool update(Table<RecT> &tbl, const Rec<RecT> &rec) {
+    auto found(tbl.recs.find(rec));
+    if (found == tbl.recs.end()) { return false; }
+    
+    for (auto idx: tbl.indexes) {
+      erase(*idx, *found);
+      insert(*idx, rec);
     }
-
-    return false;
+    
+    log_change(*tbl.ctx.trans, new Update<RecT>(tbl, rec, *found));
+    tbl.recs.erase(found);
+    tbl.recs.insert(rec);
+    return true;
   }
 
   template <typename RecT>
@@ -203,6 +226,17 @@ namespace db {
   template <typename RecT>
   void Insert<RecT>::rollback() const {
     this->table.recs.erase(this->rec);
+  }
+
+  template <typename RecT>
+  Update<RecT>::Update(Table<RecT> &table,
+		       const Rec<RecT> &rec, const Rec<RecT> &prev_rec):
+    TableChange<RecT>(TABLE_UPDATE, table, rec), prev_rec(prev_rec) { }
+  
+  template <typename RecT>
+  void Update<RecT>::rollback() const {
+    this->table.recs.erase(this->rec);
+    this->table.recs.insert(this->prev_rec);
   }
 
   template <typename RecT>
