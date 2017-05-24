@@ -6,7 +6,6 @@
 ** rewind file and read all
 ** read op like golang
 ** decrypt if secret is set
-* ---
 * add setting struct
 ** add val_type
 ** read/write from stringstream using val_type
