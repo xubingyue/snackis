@@ -5,22 +5,23 @@
 #include <vector>
 
 #include "snackis/core/error.hpp"
+#include "snackis/core/str.hpp"
 
 namespace snackis {
   struct ImapError: public Error {
-    ImapError(const std::string &msg);
+    ImapError(const str &msg);
   };
 
   struct Imap {
     CURL *client;
     
-    Imap(const std::string &url, int port,
-	 const std::string &usr, const std::string &pwd);
+    Imap(const str &url, int port,
+	 const str &usr, const str &pwd);
 
     ~Imap();
   };
     
-  void fetch(struct Imap &imap, std::vector<std::string> &msgs);
+  void fetch(struct Imap &imap, std::vector<str> &msgs);
 }
 
 #endif

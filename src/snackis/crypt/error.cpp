@@ -3,7 +3,7 @@
 namespace snackis {
 namespace crypt {
 
-CryptError::CryptError(const std::string &msg):
-    Error(std::string("CryptError: ") + msg) { }
+CryptError::CryptError(const str &msg):
+    Error(str("CryptError: ") + msg) { }
 
 }}

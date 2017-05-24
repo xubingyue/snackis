@@ -9,11 +9,9 @@ namespace db {
 
   Ctx::~Ctx() { }
 
-  std::string get_path(const Ctx &ctx, const std::string &fname) {
+  str get_path(const Ctx &ctx, const str &fname) {
     return (ctx.path / fname).string(); 
   }
 
-  void commit(Ctx &ctx) {
-    commit(*ctx.trans);
-  }
+  void commit(Ctx &ctx) { commit(*ctx.trans); }
 }}

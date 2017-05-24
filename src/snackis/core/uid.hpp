@@ -3,14 +3,15 @@
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
-#include <string>
+
+#include "snackis/core/str.hpp"
 
 namespace snackis {
   using UId = boost::uuids::uuid;
 
   UId uid();
-  UId parse_uid(const std::string &in);
-  std::string format_uid(const UId &in);  
+  UId parse_uid(const str &in);
+  str format_uid(const UId &in);  
 }
 
 #endif

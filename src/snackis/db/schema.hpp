@@ -4,6 +4,7 @@
 #include <initializer_list>
 #include <vector>
 
+#include <snackis/core/str.hpp>
 #include <snackis/db/rec.hpp>
 
 namespace snackis {
@@ -12,7 +13,7 @@ namespace db {
   struct Schema {
     using Cols = std::initializer_list<const TableCol<RecT> *>;
     std::vector<const TableCol<RecT> *> cols;
-    std::map<std::string, const TableCol<RecT> *> col_lookup;
+    std::map<str, const TableCol<RecT> *> col_lookup;
     Schema(Cols cols);
   };
 

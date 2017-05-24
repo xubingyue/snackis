@@ -2,9 +2,9 @@
 #define SNACKIS_CRYPT_SECRET_HPP
 
 #include <sodium.h>
-#include <string>
 
 #include "snackis/core/data.hpp"
+#include "snackis/core/str.hpp"
 
 namespace snackis {
 namespace crypt {
@@ -20,16 +20,11 @@ namespace crypt {
     Secret();
   };
 
-  void init(Secret &sec, const std::string &key);
+  void init(Secret &sec, const str &key);
   const unsigned char *hash(const Secret &sec);
 
-  Data encrypt(const Secret &secret,
-	       const unsigned char *in,
-	       size_t len);
-  
-  Data decrypt(const Secret &secret,
-	       const unsigned char *in,
-	       size_t len);
+  Data encrypt(const Secret &secret, const unsigned char *in, size_t len);
+  Data decrypt(const Secret &secret, const unsigned char *in, size_t len);
 }}
   
 #endif

@@ -1,9 +1,9 @@
 #include "snackis/core/fmt.hpp"
 
 namespace snackis {
-  fmt::fmt(const std::string &spec): boost::format(spec) { }
+  fmt::fmt(const snackis::str &spec): boost::format(spec) { }
 
-  fmt::operator std::string() const {
+  fmt::operator snackis::str() const {
     return str();
   }
 

@@ -4,19 +4,19 @@
 #define TRACE(msg)				\
   Trace UNIQUE(trace)(msg, __FILE__, __LINE__)	\
 
-#include <string>
+#include "snackis/core/str.hpp"
 
 namespace snackis {
   struct Trace {
-    const std::string msg;
+    const str msg;
     const char *file;
     const int line;
 
-    Trace(const std::string &msg, const char *file, int line);
+    Trace(const str &msg, const char *file, int line);
     ~Trace();
   };
 
-  std::string stack_trace();
+  str stack_trace();
 }
 
 #endif

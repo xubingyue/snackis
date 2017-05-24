@@ -2,14 +2,14 @@
 #define SNACKIS_TYPE_HPP
 
 #include <iostream>
-#include <string>
 
+#include "snackis/core/str.hpp"
 #include "snackis/core/val.hpp"
 
 namespace snackis {
   struct BasicType {
-    const std::string name; 
-    BasicType(const std::string &name);
+    const str name; 
+    BasicType(const str &name);
     virtual Val read_val(std::istream &in) const=0;
     virtual void write_val(const Val &val, std::ostream &out) const=0;
   };
@@ -22,7 +22,7 @@ namespace snackis {
 
   template <typename ValT>
   struct Type: public BasicType {
-    Type(const std::string &name);
+    Type(const str &name);
     Val read_val(std::istream &in) const override;
     void write_val(const Val &val, std::ostream &out) const override;
     virtual ValT read(std::istream &in) const=0;
@@ -32,7 +32,7 @@ namespace snackis {
   extern const NullType null_type;
 
   template <typename ValT>
-  Type<ValT>::Type(const std::string &name): BasicType(name) { }
+  Type<ValT>::Type(const str &name): BasicType(name) { }
 
   template <typename ValT>
   Val Type<ValT>::read_val(std::istream &in) const {

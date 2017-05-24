@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 
+#include "snackis/core/str.hpp"
 #include "snackis/core/macros.hpp"
 #include "snackis/core/trace.hpp"
 
@@ -13,11 +14,11 @@
 
 namespace snackis {
   struct Error: public std::runtime_error {
-    Error(const std::string &msg);
+    Error(const str &msg);
   };
 
   struct CoreError: public Error {
-    CoreError(const std::string &msg);
+    CoreError(const str &msg);
   };
 }
 

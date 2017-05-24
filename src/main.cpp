@@ -1,10 +1,11 @@
 #include <iostream>
-#include <sstream>
 
 #include "snackis/snackis.hpp"
+#include "snackis/core/buf.hpp"
 #include "snackis/core/data.hpp"
 #include "snackis/core/int64_type.hpp"
-#include "snackis/core/string_type.hpp"
+#include "snackis/core/str_type.hpp"
+#include "snackis/core/str.hpp"
 #include "snackis/core/time_type.hpp"
 #include "snackis/core/uid_type.hpp"
 #include "snackis/crypt/key.hpp"
@@ -18,32 +19,32 @@ using namespace snackis::db;
 
 void crypt_secret_tests() {
   using namespace snackis::crypt;
-  std::string key("secret key");
+  str key("secret key");
   Secret sec;
   init(sec, key);
-  std::string msg("secret message");
+  str msg("secret message");
   
   Data cmsg(encrypt(sec, (const unsigned char *)msg.c_str(), msg.size())),
     dmsg(decrypt(sec, &cmsg[0], cmsg.size()));
 
-  assert(std::string(dmsg.begin(), dmsg.end()) == msg);
+  assert(str(dmsg.begin(), dmsg.end()) == msg);
 }
 
 void crypt_key_tests() {
   using namespace snackis::crypt;
   PubKey foo_pub, bar_pub;
   Key foo(foo_pub), bar(bar_pub);
-  std::string msg("secret message");
+  str msg("secret message");
 
   Data cmsg(encrypt(foo, bar_pub, (const unsigned char *)msg.c_str(), msg.size())),
     dmsg(decrypt(bar, foo_pub, &cmsg[0], cmsg.size()));
 
-  assert(std::string(dmsg.begin(), dmsg.end()) == msg);
+  assert(str(dmsg.begin(), dmsg.end()) == msg);
 }
 
 struct Foo {
   int64_t fint64;
-  std::string fstring;
+  str fstring;
   Time ftime;
   UId fuid;
 
@@ -55,7 +56,7 @@ struct Foo {
 };
 
 void col_tests() {
-  const Col<Foo, std::string> col("string", string_type, &Foo::fstring); 
+  const Col<Foo, str> col("string", str_type, &Foo::fstring); 
 
   Foo foo;
   foo.fstring = "abc";
@@ -80,7 +81,7 @@ void schema_tests() {
 }
 
 const Col<Foo, int64_t> int64_col("int64", int64_type, &Foo::fint64); 
-const Col<Foo, std::string> string_col("string", string_type, &Foo::fstring); 
+const Col<Foo, str> string_col("string", str_type, &Foo::fstring); 
 const Col<Foo, Time> time_col("time", time_type, &Foo::ftime); 
 const Col<Foo, UId> uid_col("uid", uid_type, &Foo::fuid); 
 
@@ -107,11 +108,11 @@ void read_write_tests() {
 
   Rec<Foo> rec;
   rec[&int64_col] = 42;
-  rec[&string_col] = std::string("abc");
+  rec[&string_col] = str("abc");
   rec[&time_col] = now();
   rec[&uid_col] = uid();
 
-  std::stringstream buf;
+  Buf buf;
   write(tbl, rec, buf, &sec);
   Rec<Foo> rrec;
   read(tbl, buf, rrec, &sec);
@@ -124,7 +125,7 @@ void email_tests() {
   TRACE("Running email_tests");
 
   Imap imap("imap.gmail.com", 993, "", "");
-  std::vector<std::string> msgs;
+  std::vector<str> msgs;
   fetch(imap, msgs);
 
   for (auto m: msgs) {
@@ -133,7 +134,7 @@ void email_tests() {
 }
 
 int main() {
-  std::cout << "Snackis v" << version_string() << std::endl;
+  std::cout << "Snackis v" << version_str() << std::endl;
 
   try {
     crypt_secret_tests();

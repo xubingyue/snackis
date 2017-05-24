@@ -4,11 +4,9 @@
 
 namespace snackis {
 namespace crypt {
-  Secret::Secret() {
-    memset(data, 0, SIZE);
-  }
+  Secret::Secret() { memset(data, 0, SIZE); }
 
-  void init(Secret &sec, const std::string &key) {
+  void init(Secret &sec, const str &key) {
     randombytes_buf(sec.data, Secret::SALT_SIZE);
 
     if (crypto_pwhash_scryptsalsa208sha256(sec.data + Secret::SALT_SIZE,
@@ -25,9 +23,7 @@ namespace crypt {
     return sec.data + Secret::SALT_SIZE;
   }
   
-  Data encrypt(const Secret &sec,
-	       const unsigned char *in,
-	       size_t len) {
+  Data encrypt(const Secret &sec, const unsigned char *in, size_t len) {
     Data out;
     const size_t DATA_SIZE = crypto_aead_chacha20poly1305_IETF_ABYTES+len;
     out.resize(Secret::NONCE_SIZE+DATA_SIZE, 0);
@@ -42,9 +38,7 @@ namespace crypt {
     return out;
   }
 
-  Data decrypt(const Secret &secret,
-	       const unsigned char *in,
-	       size_t len) {
+  Data decrypt(const Secret &secret, const unsigned char *in, size_t len) {
     Data out;
     out.resize(len-Secret::NONCE_SIZE-crypto_aead_chacha20poly1305_IETF_ABYTES);
 

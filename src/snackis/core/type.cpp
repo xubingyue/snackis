@@ -4,7 +4,7 @@
 namespace snackis {
   const NullType null_type;
 
-  BasicType::BasicType(const std::string &name): name(name) { }
+  BasicType::BasicType(const str &name): name(name) { }
 
   NullType::NullType(): BasicType("Null") { }
 

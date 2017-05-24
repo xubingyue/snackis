@@ -6,11 +6,11 @@ namespace snackis {
     return boost::uuids::random_generator()();
   }
   
-  UId parse_uid(const std::string &in) {
+  UId parse_uid(const str &in) {
     return boost::uuids::string_generator()(in);
   }
 
-  std::string format_uid(const UId &in) {
+  str format_uid(const UId &in) {
     return boost::uuids::to_string(in);
   }
 }

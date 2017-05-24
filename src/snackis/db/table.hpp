@@ -4,13 +4,13 @@
 #include <cstdint>
 #include <fstream>
 #include <set>
-#include <sstream>
-#include <string>
 
+#include "snackis/core/buf.hpp"
 #include "snackis/core/data.hpp"
 #include "snackis/core/fmt.hpp"
 #include "snackis/core/optional.hpp"
-#include "snackis/core/string_type.hpp"
+#include "snackis/core/str.hpp"
+#include "snackis/core/str_type.hpp"
 #include "snackis/core/type.hpp"
 #include "snackis/crypt/secret.hpp"
 #include "snackis/db/ctx.hpp"
@@ -38,14 +38,14 @@ namespace db {
     using Cols = std::initializer_list<const TableCol<RecT> *>;
     
     Ctx &ctx;
-    const std::string name;
+    const str name;
     const Schema<RecT> key;
     const RecType<RecT> rec_type;
     std::set<Table<RecT> *> indexes;
     std::set<Rec<RecT>, CmpRec> recs;
     std::ofstream file;
     
-    Table(Ctx &ctx, const std::string &name, Cols key_cols, Cols cols);
+    Table(Ctx &ctx, const str &name, Cols key_cols, Cols cols);
   };
     
   enum TableOp {TABLE_ERASE, TABLE_INSERT, TABLE_UPDATE};
@@ -67,7 +67,7 @@ namespace db {
   };
 
   template <typename RecT>
-  Table<RecT>::Table(Ctx &ctx, const std::string &name, Cols key_cols, Cols cols):
+  Table<RecT>::Table(Ctx &ctx, const str &name, Cols key_cols, Cols cols):
     Schema<RecT>(cols),
     ctx(ctx),
     name(name),
@@ -136,14 +136,14 @@ namespace db {
       edata.resize(size);
       in.read((char *)&edata[0], size);
       const Data ddata(decrypt(*sec, (unsigned char *)&edata[0], size));
-      std::stringstream buf(std::string(ddata.begin(), ddata.end()));
+      Buf buf(str(ddata.begin(), ddata.end()));
       read(tbl, buf, rec, nullptr);
     } else {
       int32_t cnt = -1;
       in.read((char *)&cnt, sizeof cnt);
 
       for (int32_t i=0; i<cnt; i++) {
-	const std::string cname(string_type.read(in));
+	const str cname(str_type.read(in));
 	auto found(tbl.col_lookup.find(cname));
 	if (found == tbl.col_lookup.end()) {
 	  ERROR(Db, fmt("Column not found: %1%") % cname);
@@ -161,9 +161,9 @@ namespace db {
 	     std::ostream &out,
 	     const crypt::Secret *sec) {
     if (sec) {
-	std::stringstream buf;
+	Buf buf;
 	write(tbl, rec, buf, nullptr);
-	std::string data(buf.str());
+	str data(buf.str());
 	const Data edata(encrypt(*sec, (unsigned char *)data.c_str(), data.size()));
 	const int64_t size = edata.size();
 	out.write((char *)&size, sizeof size);
@@ -173,7 +173,7 @@ namespace db {
       out.write((const char *)&cnt, sizeof cnt);
     
       for (auto f: rec) {
-	string_type.write(f.first->name, out);
+	str_type.write(f.first->name, out);
 	f.first->write(f.second, out);
       }
     }

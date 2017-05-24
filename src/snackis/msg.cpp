@@ -5,7 +5,7 @@
 namespace snackis {
   Msg::Msg(Ctx &ctx): Rec(ctx) { }
 
-  Msg::Msg(Ctx &ctx, const std::string &type):
+  Msg::Msg(Ctx &ctx, const str &type):
     Rec(ctx), id(uid()), type(type), proto_rev(PROTO_REV) { }
 
   Msg::Msg(const db::Table<Msg> &tbl, const db::Rec<Msg> &rec):

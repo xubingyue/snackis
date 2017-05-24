@@ -2,6 +2,7 @@
 
 #include <sodium.h>
 #include <sstream>
+#include "snackis/core/buf.hpp"
 #include "snackis/crypt/error.hpp"
 
 namespace snackis {
@@ -14,8 +15,8 @@ namespace snackis {
     }
   }
 
-  std::string version_string() {
-    std::stringstream out;
+  str version_str() {
+    Buf out;
 
     for (int i = 0; i < 3; i++) {
       if (i) { out << "."; }

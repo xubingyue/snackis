@@ -3,10 +3,12 @@
 
 #include <boost/format.hpp>
 
+#include "snackis/core/str.hpp"
+
 namespace snackis {
   struct fmt: public boost::format {
-    fmt(const std::string &spec);
-    operator std::string() const;
+    fmt(const snackis::str &spec);
+    operator snackis::str() const;
     operator const char *() const;
     template<typename T>
     fmt &operator %(const T &arg);

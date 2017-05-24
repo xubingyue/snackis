@@ -1,13 +1,13 @@
-#include "snackis/core/trace.hpp"
-
 #include <iostream>
-#include <sstream>
 #include <vector>
+
+#include "snackis/core/buf.hpp"
+#include "snackis/core/trace.hpp"
 
 namespace snackis {
   thread_local std::vector<const Trace *> stack;
   
-  Trace::Trace(const std::string &msg, const char *file, int line):
+  Trace::Trace(const str &msg, const char *file, int line):
     msg(msg), file(file), line(line) {
     stack.push_back(this);
   }
@@ -16,8 +16,8 @@ namespace snackis {
     stack.pop_back();
   }
   
-  std::string stack_trace() {
-    std::stringstream out;
+  str stack_trace() {
+    Buf out;
 
     for (const Trace *t: stack) {
       out << t->msg << " in file " << t->file << ", line " << t->line << ":\n";

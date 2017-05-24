@@ -2,11 +2,12 @@
 #define SNACKIS_CRYPT_ERROR_HPP
 
 #include "snackis/core/error.hpp"
+#include "snackis/core/str.hpp"
 
 namespace snackis {
 namespace crypt {
   struct CryptError: public Error {
-    CryptError(const std::string &msg);
+    CryptError(const str &msg);
   };
 }}
 

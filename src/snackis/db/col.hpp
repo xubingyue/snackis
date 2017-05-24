@@ -2,8 +2,8 @@
 #define SNACKIS_DB_COL_HPP
 
 #include <functional>
-#include <string>
 
+#include "snackis/core/str.hpp"
 #include "snackis/core/type.hpp"
 #include "snackis/core/val.hpp"
 #include "snackis/db/table_col.hpp"
@@ -17,7 +17,7 @@ namespace db {
     std::function<void (RecT &, const ValT &)> setter;
 
     template <typename FldT>
-    Col(const std::string &name, const Type<ValT> &type, FldT RecT::* ptr);
+    Col(const str &name, const Type<ValT> &type, FldT RecT::* ptr);
     void copy(Rec<RecT> &dest, const RecT &src) const override;
     void copy(RecT &dest, const Rec<RecT> &src) const override;
     void set(RecT &dest, const Val &val) const override;
@@ -27,7 +27,7 @@ namespace db {
 
   template <typename RecT, typename ValT>
   template <typename FldT>
-  Col<RecT, ValT>::Col(const std::string &name,
+  Col<RecT, ValT>::Col(const str &name,
 			     const Type<ValT> &type,
 			     FldT RecT::* ptr):
     TableCol<RecT>(name),

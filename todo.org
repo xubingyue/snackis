@@ -1,6 +1,3 @@
-* grep std::string
-** use Buf instead of stringstream
-* rename string_type to str_type
 * rename optional to opt
 * rename TableCol to BasicCol
 * add settings

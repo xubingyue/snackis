@@ -2,6 +2,7 @@
 #define SNACKIS_DB_CTX_HPP
 
 #include "snackis/core/path.hpp"
+#include "snackis/core/str.hpp"
 #include "snackis/crypt/secret.hpp"
 #include "snackis/db/trans.hpp"
 
@@ -17,7 +18,7 @@ namespace db {
     virtual ~Ctx();
   };
 
-  std::string get_path(const Ctx &ctx, const std::string &fname);
+  str get_path(const Ctx &ctx, const str &fname);
   void commit(Ctx &ctx);
 }}
 

@@ -6,7 +6,7 @@
 namespace snackis {
 namespace db {
   struct DbError: public Error {
-    DbError(const std::string &msg);
+    DbError(const str &msg);
   };
 }}
 
