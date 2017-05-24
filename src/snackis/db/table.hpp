@@ -48,7 +48,7 @@ namespace db {
     Table(Ctx &ctx, const str &name, Cols key_cols, Cols cols);
   };
     
-  enum TableOp {TABLE_ERASE, TABLE_INSERT, TABLE_UPDATE};
+  enum TableOp {TABLE_INSERT, TABLE_UPDATE, TABLE_ERASE};
 
   template <typename RecT>
   struct TableChange: public Change {
@@ -70,6 +70,12 @@ namespace db {
   struct Update: public TableChange<RecT> {
     const Rec<RecT> prev_rec;
     Update(Table<RecT> &table, const Rec<RecT> &rec, const Rec<RecT> &prev_rec);    
+    void rollback() const override;
+  };
+
+  template <typename RecT>
+  struct Erase: public TableChange<RecT> {
+    Erase(Table<RecT> &table, const Rec<RecT> &rec);    
     void rollback() const override;
   };
 
@@ -153,7 +159,24 @@ namespace db {
     update(tbl, rec);
     return false;
   }
-  
+
+  template <typename RecT>
+  bool erase(Table<RecT> &tbl, const RecT &rec) {
+    Rec<RecT> trec;
+    copy(tbl.key, trec, rec);
+    return erase(tbl, trec);
+  }
+
+  template <typename RecT>
+  bool erase(Table<RecT> &tbl, const Rec<RecT> &rec) {
+    auto found(tbl.recs.find(rec));
+    if (found == tbl.recs.end()) { return false; }
+    for (auto idx: tbl.indexes) { erase(*idx, *found); }
+    log_change(*tbl.ctx.trans, new Erase<RecT>(tbl, *found));
+    tbl.recs.erase(found);
+    return true;
+  }
+
   template <typename RecT>
   void read(const Table<RecT> &tbl,
 	    std::istream &in,
@@ -244,6 +267,15 @@ namespace db {
   void Update<RecT>::rollback() const {
     this->table.recs.erase(this->rec);
     this->table.recs.insert(this->prev_rec);
+  }
+
+  template <typename RecT>
+  Erase<RecT>::Erase(Table<RecT> &table, const Rec<RecT> &rec):
+    TableChange<RecT>(TABLE_ERASE, table, rec) { }
+  
+  template <typename RecT>
+  void Erase<RecT>::rollback() const {
+    this->table.recs.insert(this->rec);
   }
 
   template <typename RecT>

@@ -1,4 +1,3 @@
-* add table erase
 * add curses ui
 ** copy main.cpp to tests.cpp
 ** add separate exec for tests
