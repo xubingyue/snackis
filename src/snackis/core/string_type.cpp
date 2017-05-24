@@ -8,7 +8,7 @@ namespace snackis {
 
   std::string StringType::read(std::istream &in) const {
     int64_t size;
-    in >> size;
+    in.read((char *)&size, sizeof size);
     char *data = new char[size+1];
     data[size] = 0;
     in.read(data, size);
@@ -16,7 +16,8 @@ namespace snackis {
   }
   
   void StringType::write(const std::string &val, std::ostream &out) const {
-    out << int64_t(val.size());
-    out.write(val.c_str(), val.size());
+    int64_t size = val.size();
+    out.write((const char *)&size, sizeof size);
+    out.write(val.c_str(), size);
   }
 }

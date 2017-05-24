@@ -7,8 +7,10 @@
 #include <string>
 
 #include "snackis/core/fmt.hpp"
+#include "snackis/core/string_type.hpp"
 #include "snackis/core/type.hpp"
 #include "snackis/db/ctx.hpp"
+#include "snackis/db/error.hpp"
 #include "snackis/db/schema.hpp"
 #include "snackis/db/rec.hpp"
 
@@ -69,7 +71,9 @@ namespace db {
     rec_type(*this),
     recs([this](const Rec<RecT> &x, const Rec<RecT> &y) {
 	return compare(key, x, y) < 0;
-      }) { }
+      }) {
+    for (auto c: key.cols) { add(*this, *c); }
+  }
 
   template <typename RecT>
   void open(Table<RecT> &tbl) {
@@ -108,12 +112,30 @@ namespace db {
 
   template <typename RecT>
   void read(const Table<RecT> &tbl, std::istream &in, Rec<RecT> &rec) {
-    
+    int32_t cnt;
+    in.read((char *)&cnt, sizeof cnt);
+
+    for (int32_t i=0; i<cnt; i++) {
+      std::string cname(string_type.read(in));
+      auto found(tbl.col_lookup.find(cname));
+      if (found == tbl.col_lookup.end()) {
+	ERROR(Db, fmt("Column not found: %1%") % cname);
+      }
+
+      auto c = found->second;
+      rec[c] = c->read(in);
+    }
   }
 
   template <typename RecT>
   void write(const Table<RecT> &tbl, const Rec<RecT> &rec, std::ostream &out) {
+    const int32_t cnt(rec.size());
+    out.write((const char *)&cnt, sizeof cnt);
     
+    for (auto f: rec) {
+      string_type.write(f.first->name, out);
+      f.first->write(f.second, out);
+    }    
   }
 
   template <typename RecT>

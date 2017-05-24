@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 
 #include "snackis/snackis.hpp"
 #include "snackis/core/int64_type.hpp"
@@ -12,6 +13,7 @@
 #include "snackis/net/imap.hpp"
 
 using namespace snackis;
+using namespace snackis::db;
 
 void crypt_secret_tests() {
   using namespace snackis::crypt;
@@ -57,18 +59,16 @@ struct Foo {
 };
 
 void col_tests() {
-  using namespace snackis::db;
   const Col<Foo, std::string> col("string", string_type, &Foo::fstring); 
 
   Foo foo;
   foo.fstring = "abc";
-  assert(col.get(foo) == "abc");
-  col.set(foo, "def");
+  assert(col.getter(foo) == "abc");
+  col.setter(foo, "def");
   assert(foo.fstring == "def");
 }
 
 void schema_tests() {
-  using namespace snackis::db;
   const Col<Foo, int64_t> col("int64", int64_type, &Foo::fint64); 
   Schema<Foo> scm({&col});
 
@@ -83,20 +83,41 @@ void schema_tests() {
   assert(compare(scm, foo, bar) == -1);
 }
 
-void table_tests() {
-  using namespace snackis::db;
+const Col<Foo, int64_t> int64_col("int64", int64_type, &Foo::fint64); 
+const Col<Foo, std::string> string_col("string", string_type, &Foo::fstring); 
+const Col<Foo, Time> time_col("time", time_type, &Foo::ftime); 
+const Col<Foo, UId> uid_col("uid", uid_type, &Foo::fuid); 
 
+void table_tests() {
   Ctx ctx("testdb/");
-  const Col<Foo, int64_t> int64_col("int64", int64_type, &Foo::fint64); 
-  const Col<Foo, std::string> string_col("string", string_type, &Foo::fstring); 
-  const Col<Foo, Time> time_col("time", time_type, &Foo::ftime); 
-  const Col<Foo, UId> uid_col("uid", uid_type, &Foo::fuid); 
-  Table<Foo> tbl(ctx, "foos", {&uid_col}, {&int64_col, &string_col, &time_col});
+  Table<Foo> tbl(ctx, "table_tests", {&uid_col},
+		 {&int64_col, &string_col, &time_col});
   open(tbl);
   Foo foo;
   assert(insert(tbl, foo));
   assert(!insert(tbl, foo));
   commit(ctx);
+  close(tbl);
+}
+
+void read_write_tests() {
+  Ctx ctx("testdb/");
+  Table<Foo> tbl(ctx, "read_write_tests", {&uid_col},
+		 {&int64_col, &string_col, &time_col});
+  open(tbl);
+
+  Rec<Foo> rec;
+  rec[&int64_col] = 42;
+  rec[&string_col] = std::string("abc");
+  rec[&time_col] = now();
+  rec[&uid_col] = uid();
+
+  std::stringstream buf;
+  write(tbl, rec, buf);
+  Rec<Foo> rrec;
+  read(tbl, buf, rrec);
+  assert(compare(tbl, rrec, rec) == 0);
+  
   close(tbl);
 }
 
@@ -121,6 +142,7 @@ int main() {
     col_tests();
     schema_tests();
     table_tests();
+    read_write_tests();
     email_tests();
   } catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
