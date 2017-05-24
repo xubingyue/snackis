@@ -1,5 +1,11 @@
 * add table update
 ** update table in set(setting)
+* add curses ui
+** copy main.cpp to tests.cpp
+** add separate exec for tests
+** init curses ui in main.cpp
+*** use sub windows
+*** add login form
 * add dump(Table, out)
 ** write op like change
 * add slurp(Table, in)
@@ -9,14 +15,8 @@
 ** rewind file and slurp
 * add flush(db/ctx)
 ** add set dirty_files
-* add curses ui
-** copy main.cpp to tests.cpp
-** add separate exec for tests
-** init curses ui in main.cpp
-*** use sub windows
-*** add login form
 * add parse(Msg, string)
 ** change imap fetch to return Msgs
 * finish Table
-** add update/delete
+** add delete
 * add net/smtp
