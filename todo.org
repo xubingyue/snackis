@@ -1,4 +1,10 @@
-* add tbl read/write test 
+* add tbl read/write stringstream test
+* add table shared_ptr<*secret>
+** call encrypt in write to file if set
+* add secret param to table read
+** decrypt if set
+* update read/write test to set secret
+* ---
 * add setting struct
 ** add val_type
 ** read/write from stringstream using val_type
