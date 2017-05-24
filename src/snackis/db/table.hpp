@@ -9,6 +9,7 @@
 
 #include "snackis/core/data.hpp"
 #include "snackis/core/fmt.hpp"
+#include "snackis/core/optional.hpp"
 #include "snackis/core/string_type.hpp"
 #include "snackis/core/type.hpp"
 #include "snackis/crypt/secret.hpp"
@@ -87,6 +88,16 @@ namespace db {
   template <typename RecT>
   void close(Table<RecT> &tbl) {
     tbl.file.close();
+  }
+
+  template <typename RecT>
+  optional<RecT> load(Table<RecT> &tbl, RecT &rec) {
+    Rec<RecT> key;
+    copy(tbl.key, key, rec);
+    auto found = tbl.recs.find(key);
+    if (found == tbl.recs.end()) { return none; }
+    copy(tbl, rec, *found);
+    return rec;
   }
 
   template <typename RecT>

@@ -3,9 +3,8 @@
 
 #include "snackis/msg.hpp"
 #include "snackis/peer.hpp"
+#include "snackis/setting.hpp"
 #include "snackis/thread.hpp"
-#include "snackis/core/time.hpp"
-#include "snackis/core/uid.hpp"
 #include "snackis/crypt/pub_key.hpp"
 #include "snackis/db/col.hpp"
 #include "snackis/db/ctx.hpp"
@@ -15,6 +14,10 @@ namespace snackis {
   struct Ctx {
     db::Ctx &db_ctx;
 
+    db::Col<Setting, std::string> setting_key;
+    db::Col<Setting, Data> setting_val;
+    db::Table<Setting> settings;
+    
     db::Col<Peer, UId> peer_id;
     db::Col<Peer, std::string> peer_name;
     db::Col<Peer, std::string> peer_email;

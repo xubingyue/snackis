@@ -15,6 +15,10 @@ namespace snackis {
   struct Error: public std::runtime_error {
     Error(const std::string &msg);
   };
+
+  struct CoreError: public Error {
+    CoreError(const std::string &msg);
+  };
 }
 
 #endif

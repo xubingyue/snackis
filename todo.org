@@ -1,8 +1,10 @@
-* add setting struct
-** add val_type
-** read/write from stringstream using val_type
-* add settings table
-** add data_type
+* grep std::string
+** use Buf instead of stringstream
+* rename string_type to str_type
+* rename optional to opt
+* rename TableCol to BasicCol
+* add settings
+** add ctx.settings
 * add dump(Table, out)
 ** write op like change
 * add slurp(Table, in)

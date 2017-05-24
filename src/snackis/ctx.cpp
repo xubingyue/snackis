@@ -1,4 +1,5 @@
 #include "snackis/ctx.hpp"
+#include "snackis/core/data_type.hpp"
 #include "snackis/core/int64_type.hpp"
 #include "snackis/core/string_type.hpp"
 #include "snackis/core/time_type.hpp"
@@ -10,6 +11,10 @@ namespace snackis {
   Ctx::Ctx(db::Ctx &db_ctx):
     db_ctx(db_ctx),
 
+    setting_key("key", string_type, &Setting::key),
+    setting_val("val", data_type, &Setting::val),
+    settings(db_ctx, "settings", {&setting_key}, {&setting_val}),
+    
     peer_id("id", uid_type, &Peer::id),
     peer_name("name", string_type, &Peer::name),
     peer_email("email", string_type, &Peer::email),
