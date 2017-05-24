@@ -1,9 +1,5 @@
-* add curses ui
-** copy main.cpp to tests.cpp
-** add separate exec for tests
-** init curses ui in main.cpp
-*** use sub windows
-*** add login form
+* extract ui::console
+* add login form
 * add dump(Table, out)
 ** write op like change
 * add slurp(Table, in)
