@@ -1,6 +1,9 @@
-* add settings
-** add Type.read(istream) & write(ostream)
-** read/write from stringstream
+* add tbl read/write test 
+* add setting struct
+** add val_type
+** read/write from stringstream using val_type
+* add flush(db/ctx)
+** add set dirty_files
 * add curses ui
 ** copy main.cpp to tests.cpp
 ** add separate exec for tests
@@ -9,8 +12,6 @@
 *** add login form
 * add parse(Msg, string)
 ** change imap fetch to return Msgs
-* finish Table.write
-* add Table.read
 * finish Table
 ** add update/delete
 * add net/smtp

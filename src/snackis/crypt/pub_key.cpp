@@ -6,7 +6,11 @@
 namespace snackis {
 namespace crypt {
   PubKey::PubKey() {
-    memset(data, 0, sizeof(data));
+    memset(data, 0, sizeof data);
+  }
+
+  PubKey::PubKey(std::istream &in) {
+    in.read((char *)data, sizeof data);
   }
 
   bool operator <(const PubKey &x, const PubKey &y) {

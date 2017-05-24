@@ -7,6 +7,8 @@
 namespace snackis {
   struct StringType: public Type<std::string> {
     StringType();
+    std::string read(std::istream &in) const override;
+    void write(const std::string &val, std::ostream &out) const override;
   };
 
   extern const StringType string_type;

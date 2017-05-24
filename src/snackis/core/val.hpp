@@ -13,6 +13,11 @@
 namespace snackis {
   using Val = boost::variant<crypt::Key, crypt::PubKey, int64_t, std::string, Time,
 			     UId, void *>;
+
+  template <typename T>
+  T get(const Val &val) {
+    return boost::get<T>(val);
+  }
 }
 
 #endif

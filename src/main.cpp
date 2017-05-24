@@ -50,6 +50,10 @@ struct Foo {
   UId fuid;
 
   Foo(): fint64(0), ftime(now()), fuid(uid()) { }
+
+  Foo(db::Table<Foo> &tbl, db::Rec<Foo> &rec) {
+    copy(tbl, *this, rec);
+  }
 };
 
 void col_tests() {

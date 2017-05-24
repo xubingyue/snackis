@@ -7,6 +7,8 @@
 namespace snackis {
   struct TimeType: public Type<Time> {
     TimeType();
+    Time read(std::istream &in) const override;
+    void write(const Time &val, std::ostream &out) const override;
   };
 
   extern const TimeType time_type;

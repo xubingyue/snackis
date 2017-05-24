@@ -10,7 +10,8 @@ namespace db {
   struct TableCol {
     const std::string name;
     TableCol(const std::string &name);
-    virtual void copy(Rec<RecT> &dest, const RecT &src) const = 0;
+    virtual void copy(Rec<RecT> &dest, const RecT &src) const=0;
+    virtual void copy(RecT &dest, const Rec<RecT> &src) const=0;
   };
 
   template <typename RecT>

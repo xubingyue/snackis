@@ -15,6 +15,7 @@ namespace snackis {
     Peer *started_by;
     
     Thread(Ctx &ctx);
+    Thread(const db::Table<Thread> &tbl, const db::Rec<Thread> &rec);   
   };
 }
 

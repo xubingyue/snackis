@@ -5,6 +5,7 @@
 #include <string>
 
 #include "snackis/core/type.hpp"
+#include "snackis/core/val.hpp"
 #include "snackis/db/table_col.hpp"
 
 namespace snackis {
@@ -19,6 +20,7 @@ namespace db {
     template <typename FldT>
     Col(const std::string &name, const Type<ValT> &type, FldT RecT::* ptr);
     void copy(Rec<RecT> &dest, const RecT &src) const override;
+    void copy(RecT &dest, const Rec<RecT> &src) const override;
   };
 
   template <typename RecT, typename ValT>
@@ -35,6 +37,11 @@ namespace db {
   template <typename RecT, typename ValT>
   void Col<RecT, ValT>::copy(Rec<RecT> &dest, const RecT &src) const {
     dest[this] = get(src);
+  }
+
+  template <typename RecT, typename ValT>
+  void Col<RecT, ValT>::copy(RecT &dest, const Rec<RecT> &src) const {
+    set(dest, snackis::get<ValT>(src.at(this)));
   }
 }}
 

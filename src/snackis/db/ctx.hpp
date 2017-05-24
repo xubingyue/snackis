@@ -12,6 +12,7 @@ namespace db {
     Trans *trans;
     
     Ctx(const Path &path);
+    virtual ~Ctx();
   };
 
   std::string get_path(const Ctx &ctx, const std::string &fname);

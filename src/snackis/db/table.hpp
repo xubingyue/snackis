@@ -16,19 +16,21 @@ namespace snackis {
 namespace db {
   template <typename RecT>
   struct Table;
-
+  
   template <typename RecT>
   struct RecType: public Type<void *> {
     Table<RecT> &tbl;
     
     RecType(Table<RecT> &tbl);
+    void *read(std::istream &in) const override;
+    void write(void *const &val, std::ostream &out) const override;
   };
-
+  
   template <typename RecT>
   struct Table: public Schema<RecT> {
     using CmpRec = std::function<bool (const Rec<RecT> &, const Rec<RecT> &)>;
     using Cols = std::initializer_list<const TableCol<RecT> *>;
-  
+    
     Ctx &ctx;
     const std::string name;
     const Schema<RecT> key;
@@ -39,7 +41,7 @@ namespace db {
     
     Table(Ctx &ctx, const std::string &name, Cols key_cols, Cols cols);
   };
-
+    
   enum TableOp {TABLE_ERASE, TABLE_INSERT, TABLE_UPDATE};
 
   template <typename RecT>
@@ -57,10 +59,6 @@ namespace db {
     Insert(Table<RecT> &table, const Rec<RecT> &rec);    
     void rollback() const override;
   };
-
-  template <typename RecT>
-  RecType<RecT>::RecType(Table<RecT> &tbl):
-    Type(fmt("Rec(%1%)") % tbl.name), tbl(tbl) { }
 
   template <typename RecT>
   Table<RecT>::Table(Ctx &ctx, const std::string &name, Cols key_cols, Cols cols):
@@ -85,10 +83,10 @@ namespace db {
   }
 
   template <typename RecT>
-  bool insert(Table<RecT> &tbl, const RecT &_rec) {
-    Rec<RecT> rec;
-    copy(tbl, rec, _rec);
-    return insert(tbl, rec);
+  bool insert(Table<RecT> &tbl, const RecT &rec) {
+    Rec<RecT> trec;
+    copy(tbl, trec, rec);
+    return insert(tbl, trec);
   }
 
   template <typename RecT>
@@ -109,10 +107,20 @@ namespace db {
   }
 
   template <typename RecT>
-  void write(Table<RecT> &tbl, const Rec<RecT> &rec) {
-    //TODO: Write rec
+  void read(const Table<RecT> &tbl, std::istream &in, Rec<RecT> &rec) {
+    
   }
-  
+
+  template <typename RecT>
+  void write(const Table<RecT> &tbl, const Rec<RecT> &rec, std::ostream &out) {
+    
+  }
+
+  template <typename RecT>
+  void write(Table<RecT> &tbl, const Rec<RecT> &rec) {
+    write(tbl, rec, tbl.file);
+  }
+
   template <typename RecT>
   TableChange<RecT>::TableChange(TableOp op,
 				 Table<RecT> &table,
@@ -132,6 +140,24 @@ namespace db {
   template <typename RecT>
   void Insert<RecT>::rollback() const {
     this->table.recs.erase(this->rec);
+  }
+
+  template <typename RecT>
+  RecType<RecT>::RecType(Table<RecT> &tbl):
+    Type(fmt("Rec(%1%)") % tbl.name), tbl(tbl) { }
+
+  template <typename RecT>
+  void *RecType<RecT>::read(std::istream &in) const {
+    Rec<RecT> trec;
+    db::read(tbl, in, trec);
+    return new RecT(tbl, trec);
+  }
+  
+  template <typename RecT>
+  void RecType<RecT>::write(void *const &val, std::ostream &out) const {
+    Rec<RecT> trec;
+    copy(tbl, trec, *static_cast<RecT *>(val));
+    db::write(tbl, trec, out);
   }
 }}
 

@@ -9,8 +9,9 @@ namespace snackis {
 namespace crypt {
   struct Key {
     unsigned char data[crypto_box_SECRETKEYBYTES];
-    Key(PubKey &pub);
     Key();
+    Key(PubKey &pub);
+    Key(std::istream &in);
   };  
 
   bool operator <(const Key &x, const Key &y);

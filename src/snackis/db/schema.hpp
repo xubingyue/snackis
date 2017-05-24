@@ -49,7 +49,14 @@ namespace db {
   }
 
   template <typename RecT>
-  void copy(const Schema<RecT> scm, Rec<RecT> dest, const RecT &src) {
+  void copy(const Schema<RecT> scm, Rec<RecT> &dest, const RecT &src) {
+    for (auto c: scm.cols) {
+      c->copy(dest, src);
+    }
+  }
+
+  template <typename RecT>
+  void copy(const Schema<RecT> scm, RecT &dest, const Rec<RecT> &src) {
     for (auto c: scm.cols) {
       c->copy(dest, src);
     }

@@ -7,6 +7,8 @@
 namespace snackis {
   struct UIdType: public Type<UId> {
     UIdType();
+    UId read(std::istream &in) const override;
+    void write(const UId &val, std::ostream &out) const override;
   };
 
   extern const UIdType uid_type;

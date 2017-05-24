@@ -19,8 +19,9 @@ namespace snackis {
     std::string peer_name, peer_email;
     crypt::PubKey peer_key;
     
-    Msg(Ctx &ctx, const std::string &type);
     Msg(Ctx &ctx);
+    Msg(Ctx &ctx, const std::string &type);
+    Msg(const db::Table<Msg> &tbl, const db::Rec<Msg> &rec);    
   };
 }
 

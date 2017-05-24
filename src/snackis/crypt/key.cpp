@@ -5,12 +5,16 @@
 
 namespace snackis {
 namespace crypt {
+  Key::Key() {
+    memset(data, 0, sizeof data);
+  }
+
   Key::Key(PubKey &pub) {
     crypto_box_keypair(pub.data, data);
   }
 
-  Key::Key() {
-    memset(data, 0, sizeof(data));
+  Key::Key(std::istream &in) {
+    in.read((char *)data, sizeof data);
   }
   
   bool operator <(const Key &x, const Key &y) {

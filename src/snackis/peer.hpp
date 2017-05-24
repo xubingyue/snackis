@@ -5,6 +5,7 @@
 #include "snackis/core/uid.hpp"
 #include "snackis/core/time.hpp"
 #include "snackis/crypt/pub_key.hpp"
+#include "snackis/db/rec.hpp"
 
 namespace snackis {
   struct Peer: public Rec {
@@ -14,6 +15,7 @@ namespace snackis {
     Time invited_at, accepted_at;
     
     Peer(Ctx &ctx);
+    Peer(const db::Table<Peer> &tbl, const db::Rec<Peer> &rec);
   };
 }
 

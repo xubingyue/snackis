@@ -6,6 +6,8 @@ namespace db {
     create(path);
   }
 
+  Ctx::~Ctx() { }
+
   std::string get_path(const Ctx &ctx, const std::string &fname) {
     return (ctx.path / fname).string(); 
   }
