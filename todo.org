@@ -3,7 +3,10 @@
 ** call encrypt in write to file if set
 * add secret param to table read
 ** decrypt if set
-* update read/write test to set secret
+* add slurp(Table)
+** rewind file and read all
+** read op like golang
+** decrypt if secret is set
 * ---
 * add setting struct
 ** add val_type
