@@ -1,8 +1,7 @@
-* add login form
-** password & repeat
-** try login on enter in repeat
+* finish login form
+** only show repeat if pass file not found
+** try login on enter && !repeat || active==repeat
 ** update/validate password
-** only show repeat if password not set
 * add dump(Table, out)
 ** write op like change
 * add slurp(Table, in)

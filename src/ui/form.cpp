@@ -7,7 +7,8 @@
 #include "ui/window.hpp"
 
 namespace ui {
-  Form::Form(Window &wnd): window(wnd), ptr(nullptr), label_width(0) { }
+  Form::Form(Window &wnd):
+    window(wnd), ptr(nullptr), label_width(0), margin_top(0) { }
 
   Form::~Form() {
     if (ptr) { close(*this); }
@@ -15,7 +16,7 @@ namespace ui {
   
   void open(Form &frm) {
     assert(!frm.ptr);
-    Pos pos(0, frm.label_width);
+    Pos pos(frm.margin_top, frm.label_width);
 
     for (auto f: frm.fields) {
       f->dim.w = min(f->dim.w, frm.window.dim.w-frm.label_width);
@@ -30,11 +31,14 @@ namespace ui {
     set_form_sub(frm.ptr, frm.window.ptr);
     post_form(frm.ptr);
 
-    pos = Pos(0, frm.label_width);
+    pos = Pos(frm.margin_top, frm.label_width);
     for (auto f: frm.fields) {
       move(frm.window, Pos(pos.y, pos.x - f->label.size()));
       print(frm.window, f->label);
+      pos.y += f->dim.h+1;      
     }
+
+    focus(frm);
   }
 
   void close(Form &frm) {
@@ -42,6 +46,7 @@ namespace ui {
     unpost_form(frm.ptr);
     free_form(frm.ptr);
     frm.ptr = nullptr;
+    refresh(frm.window);
   }
 
   void focus(Form &frm) {

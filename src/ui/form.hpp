@@ -19,7 +19,7 @@ namespace ui {
     FORM *ptr;
     std::vector<Field *> fields;
     std::vector<FIELD *> field_ptrs;
-    int label_width;
+    int label_width, margin_top;
     Form(Window &wnd);
     virtual ~Form();
   };

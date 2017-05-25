@@ -41,9 +41,9 @@ namespace ui {
     bool done = false;
 
     while (!done) {
-      int key = get_key(rdr);
-      if (key == KEY_RETURN) { done = true; }
-      drive(rdr.form, key);
+      chtype ch = get_key(rdr);
+      if (ch == KEY_RETURN) { done = true; }
+      drive(rdr.form, ch);
     }
    
     str in(trim(get_str(rdr.field)));
