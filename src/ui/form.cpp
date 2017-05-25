@@ -85,9 +85,9 @@ namespace ui {
     case KEY_TAB: {
       opt<Field &> fld(active_field(frm));
 
-      if (fld && fld->completer) {
+      if (fld && fld->complete) {
 	validate(frm);
-	str in(get_str(*fld)), out(complete(*fld, in));
+	str in(get_str(*fld)), out(fld->complete.get()(in));
 	
 	if (out != in) {
 	  set_str(*fld, out);
@@ -115,7 +115,7 @@ namespace ui {
   }
   
   Field::Field(Form &frm, const Dim &dim, const str &lbl):
-    form(frm), dim(dim), label(lbl), completer(none) {
+    form(frm), dim(dim), label(lbl) {
     frm.fields.push_back(this);
     frm.label_width = max(frm.label_width, lbl.size());
   }
@@ -146,10 +146,5 @@ namespace ui {
   void set_str(Field &fld, const str &val) {
     assert(fld.ptr);
     set_field_buffer(fld.ptr, 0, val.c_str());
-  }
-
-  str complete(Field &fld, const str &in) {
-    if (!fld.completer) { return in; }
-    return fld.completer.get()(in);
   }
 }

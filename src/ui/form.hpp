@@ -25,13 +25,13 @@ namespace ui {
   };
 
   struct Field {
-    using Completer = std::function<str (const str &)>;
+    using Complete = std::function<str (const str &)>;
 
     Form &form;
     Dim dim;
     str label;
     FIELD *ptr;
-    opt<Completer> completer;
+    opt<Complete> complete;
     
     Field(Form &frm, const Dim &dim, const str &lbl);
     virtual ~Field();
@@ -49,9 +49,7 @@ namespace ui {
   void show(Field &fld, const Pos &pos);
   void focus(Field &fld);
   str get_str(Field &fld);
-  void set_str(Field &fld, const str &val);
-  str complete(Field &fld, const str &in);
-  
+  void set_str(Field &fld, const str &val);  
 }
 
 #endif
