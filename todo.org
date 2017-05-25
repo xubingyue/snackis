@@ -1,5 +1,4 @@
-* add reader
-** copy console
+* add reader form
 ** add ui::form
 * add login form
 * add dump(Table, out)

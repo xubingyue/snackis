@@ -1,5 +1,6 @@
 #include "ui/ui.hpp"
 #include "ui/console.hpp"
+#include "ui/reader.hpp"
 
 using namespace snackis;
 
@@ -8,7 +9,8 @@ int main() {
   ui::Dim max(ui::dim());
   ui::Console console;
   ui::log(console, "Welcome to Snackis!");
-  ui::get_key(console);
+  ui::Reader reader;
+  ui::get_key(reader);
   ui::close();
   return 0;
 }
