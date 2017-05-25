@@ -1,4 +1,9 @@
+* move ui dir up one level
+** remove curses from tests target
 * extract ui::console
+* add ui::form
+** take window param
+*** create subwindow
 * add login form
 * add dump(Table, out)
 ** write op like change
@@ -9,8 +14,8 @@
 ** rewind file and slurp
 * add flush(db/ctx)
 ** add set dirty_files
+* add reader
+* add profile form
 * add parse(Msg, string)
 ** change imap fetch to return Msgs
-* finish Table
-** add delete
 * add net/smtp
