@@ -1,5 +1,5 @@
-#include "snackis/ui/ui.hpp"
-#include "snackis/ui/window.hpp"
+#include "ui/ui.hpp"
+#include "ui/window.hpp"
 
 using namespace snackis;
 

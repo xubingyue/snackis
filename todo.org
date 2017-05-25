@@ -1,5 +1,3 @@
-* move ui dir up one level
-** remove curses from tests target
 * extract ui::console
 * add ui::form
 ** take window param

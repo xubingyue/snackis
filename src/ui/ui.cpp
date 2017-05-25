@@ -1,7 +1,6 @@
 #include <ncurses.h>
-#include "snackis/ui/ui.hpp"
+#include "ui/ui.hpp"
 
-namespace snackis {
 namespace ui {
   Dim::Dim(int h, int w): h(h), w(w) { }
 
@@ -20,4 +19,4 @@ namespace ui {
     getmaxyx(stdscr, y, x);
     return Dim(y, x);
   }
-}}
+}
