@@ -1,6 +1,13 @@
-* add reader form
-** add ui::form
+* finish drive(Form)
+* print form labels
+* add support for table locking
+** one lock per table
+* add ctx log lock
 * add login form
+** password & repeat
+** try login on enter in repeat
+** update/validate password
+** only show repeat if password not set
 * add dump(Table, out)
 ** write op like change
 * add slurp(Table, in)

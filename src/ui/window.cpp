@@ -1,8 +1,8 @@
 #include "ui/window.hpp"
 
 namespace ui {
-  Window::Window(const Dim &dim, const Pos &pos):
-    dim(dim), pos(pos), ptr(newwin(dim.h, dim.w, pos.y, pos.x))
+  Window::Window(Ctx &ctx, const Dim &dim, const Pos &pos):
+    ctx(ctx), dim(dim), pos(pos), ptr(newwin(dim.h, dim.w, pos.y, pos.x))
   { }
 
   Window::~Window() { delwin(ptr); }

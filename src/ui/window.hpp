@@ -5,15 +5,20 @@
 #include "snackis/core/str.hpp"
 #include "ui/ui.hpp"
 
+namespace snackis {
+  struct Ctx;
+}
+
 namespace ui {
   using namespace snackis;
   
   struct Window {
+    Ctx &ctx;
     Dim dim;
     Pos pos;
     WINDOW *ptr;
     
-    Window(const Dim &dim, const Pos &pos);
+    Window(Ctx &ctx, const Dim &dim, const Pos &pos);
     virtual ~Window();
   };
 

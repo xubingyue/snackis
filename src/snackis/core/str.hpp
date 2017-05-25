@@ -5,6 +5,8 @@
 
 namespace snackis {
   using str = std::string;
+  extern const str whitespace;
+  str trim(const str& in);
 }
 
 #endif

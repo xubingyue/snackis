@@ -5,7 +5,7 @@
 
 namespace ui {
   struct Console: public Window {
-    Console();
+    Console(Ctx &ctx);
   };
 
   void log(Console &cons, const str &msg);
