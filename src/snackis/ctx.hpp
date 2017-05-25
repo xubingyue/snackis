@@ -3,6 +3,7 @@
 
 #include "snackis/db.hpp"
 #include "snackis/settings.hpp"
+#include "snackis/core/mutex.hpp"
 #include "snackis/core/opt.hpp"
 #include "snackis/core/str.hpp"
 
@@ -13,7 +14,8 @@ namespace snackis {
     Db db;
     Settings settings;
     opt<Log> log;
-
+    Mutex log_mutex;
+    
     Ctx(db::Ctx &db_ctx);
   };
 

@@ -8,6 +8,7 @@
 #include "snackis/core/buf.hpp"
 #include "snackis/core/data.hpp"
 #include "snackis/core/fmt.hpp"
+#include "snackis/core/mutex.hpp"
 #include "snackis/core/opt.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/core/str_type.hpp"
@@ -44,6 +45,7 @@ namespace db {
     std::set<Table<RecT> *> indexes;
     std::set<Rec<RecT>, CmpRec> recs;
     std::ofstream file;
+    Mutex mutex;
     
     Table(Ctx &ctx, const str &name, Cols key_cols, Cols cols);
   };

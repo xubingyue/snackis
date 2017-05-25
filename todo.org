@@ -1,6 +1,3 @@
-* add support for table locking
-** one lock per table
-* add ctx log lock
 * add login form
 ** password & repeat
 ** try login on enter in repeat
