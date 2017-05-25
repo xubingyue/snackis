@@ -1,7 +1,6 @@
 * add reader
-* add ui::form
-** take window param
-*** create subwindow
+** copy console
+** add ui::form
 * add login form
 * add dump(Table, out)
 ** write op like change
