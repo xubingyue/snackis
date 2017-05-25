@@ -83,14 +83,14 @@ namespace ui {
       eol(frm);
       break;
     case KEY_TAB: {
-      opt<Field &> fld(active_field(frm));
+      Field & fld(active_field(frm));
 
-      if (fld && fld->complete) {
+      if (fld.complete) {
 	validate(frm);
-	str in(get_str(*fld)), out(fld->complete.get()(in));
+	str in(get_str(fld)), out(fld.complete.get()(in));
 	
 	if (out != in) {
-	  set_str(*fld, out);
+	  set_str(fld, out);
 	  eol(frm);
 	}
       }
@@ -102,10 +102,10 @@ namespace ui {
     }
   }
 
-  opt<Field &> active_field(Form &frm) {
+  Field &active_field(Form &frm) {
     assert(frm.ptr);
     FIELD *ptr = current_field(frm.ptr);
-    if (!ptr) { return none; }
+    assert(ptr);
     return *reinterpret_cast<Field *>(field_userptr(ptr));
   }
   

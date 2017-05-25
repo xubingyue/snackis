@@ -43,7 +43,7 @@ namespace ui {
   void eol(Form &frm);
   void validate(Form &frm);
   void drive(Form &frm, int key);
-  opt<Field &> active_field(Form &frm);
+  Field &active_field(Form &frm);
   void clear_field(Form &frm);
 
   void show(Field &fld, const Pos &pos);
