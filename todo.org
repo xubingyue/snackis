@@ -1,9 +1,3 @@
-* print form labels
-* change reader window to reverse background
-** also change field?
-* add header window
-* 1 height on top
-** reverse background
 * add support for table locking
 ** one lock per table
 * add ctx log lock

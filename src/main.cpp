@@ -1,6 +1,7 @@
 #include "snackis/ctx.hpp"
 #include "ui/ui.hpp"
 #include "ui/console.hpp"
+#include "ui/header.hpp"
 #include "ui/reader.hpp"
 
 using namespace snackis;
@@ -12,12 +13,15 @@ int main() {
   ui::open();
   ui::Dim max(ui::dim());
 
-  ui::Console console(ctx);
-  ctx.logger = [&console](const str &msg) { ui::log(console, msg); };
+  ui::Header hdr(ctx);
+  ui::set_label(hdr, "Login");
+  
+  ui::Console cons(ctx);
+  ctx.log = [&cons](const str &msg) { ui::log(cons, msg); };
   log(ctx, "Welcome to Snackis!");
 
-  ui::Reader reader(ctx);
-  ui::run(reader);
+  ui::Reader rdr(ctx);
+  ui::run(rdr);
   ui::close();
   return 0;
 }

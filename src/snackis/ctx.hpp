@@ -8,11 +8,11 @@
 
 namespace snackis {
   struct Ctx {
-    using Logger = std::function<void (const str &)>;
+    using Log = std::function<void (const str &)>;
 
     Db db;
     Settings settings;
-    opt<Logger> logger;
+    opt<Log> log;
 
     Ctx(db::Ctx &db_ctx);
   };
