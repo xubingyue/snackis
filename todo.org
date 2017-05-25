@@ -1,4 +1,4 @@
-* extract ui::console
+* add reader
 * add ui::form
 ** take window param
 *** create subwindow
@@ -12,7 +12,6 @@
 ** rewind file and slurp
 * add flush(db/ctx)
 ** add set dirty_files
-* add reader
 * add profile form
 * add parse(Msg, string)
 ** change imap fetch to return Msgs
