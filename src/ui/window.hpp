@@ -22,7 +22,9 @@ namespace ui {
     virtual ~Window();
   };
 
-  void print(Window &wnd, const str &it);
+  void set_bg(Window &wnd, chtype ch);
+  void move(Window &wnd, const Pos &pos);
+  void print(Window &wnd, const str &msg);
   void refresh(Window &wnd);
   int get_key(Window &wnd);
 }

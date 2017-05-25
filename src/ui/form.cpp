@@ -29,6 +29,12 @@ namespace ui {
     set_form_win(frm.ptr, frm.window.ptr);
     set_form_sub(frm.ptr, frm.window.ptr);
     post_form(frm.ptr);
+
+    pos = Pos(0, frm.label_width);
+    for (auto f: frm.fields) {
+      move(frm.window, Pos(pos.y, pos.x - f->label.size()));
+      print(frm.window, f->label);
+    }
   }
 
   void close(Form &frm) {
@@ -83,7 +89,7 @@ namespace ui {
       eol(frm);
       break;
     case KEY_TAB: {
-      Field & fld(active_field(frm));
+      Field &fld(active_field(frm));
 
       if (fld.complete) {
 	validate(frm);
@@ -104,7 +110,7 @@ namespace ui {
 
   Field &active_field(Form &frm) {
     assert(frm.ptr);
-    FIELD *ptr = current_field(frm.ptr);
+    FIELD *ptr(current_field(frm.ptr));
     assert(ptr);
     return *reinterpret_cast<Field *>(field_userptr(ptr));
   }
@@ -124,11 +130,13 @@ namespace ui {
     free_field(ptr);
   }
 
+  void set_bg(Field &fld, chtype ch) { set_field_back(fld.ptr, ch); }
+
   void show(Field &fld, const Pos &pos) {
     assert(!fld.ptr);
     fld.ptr = new_field(fld.dim.h, fld.dim.w, pos.y, pos.x, 0, 0);
     set_field_userptr(fld.ptr, reinterpret_cast<char *>(&fld));
-    set_field_back(fld.ptr, A_UNDERLINE);
+    set_bg(fld, A_UNDERLINE);
     field_opts_off(fld.ptr, O_AUTOSKIP);
   }
 

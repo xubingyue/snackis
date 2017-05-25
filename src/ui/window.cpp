@@ -8,7 +8,11 @@ namespace ui {
 
   Window::~Window() { delwin(ptr); }
 
-  void print(Window &wnd, const str &it) { waddstr(wnd.ptr, it.c_str()); }
+  void set_bg(Window &wnd, chtype ch) { wbkgd(wnd.ptr, ch); }
+
+  void move(Window &wnd, const Pos &pos) { wmove(wnd.ptr, pos.y, pos.x); }
+  
+  void print(Window &wnd, const str &msg) { waddstr(wnd.ptr, msg.c_str()); }
 
   void refresh(Window &wnd) { wrefresh(wnd.ptr); }
 

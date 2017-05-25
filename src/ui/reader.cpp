@@ -9,7 +9,10 @@ namespace ui {
     field(form, ui::Dim(1, dim.w), ": "),
     last_cmd(none),
     quitting(false) {
+    set_bg(*this, A_REVERSE);
     open(form);
+    set_bg(field, A_REVERSE);
+    
     refresh(*this);
     init_cmds(*this);
   }

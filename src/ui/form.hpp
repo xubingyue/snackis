@@ -46,6 +46,7 @@ namespace ui {
   Field &active_field(Form &frm);
   void clear_field(Form &frm);
 
+  void set_bg(Field &fld, chtype ch);
   void show(Field &fld, const Pos &pos);
   void focus(Field &fld);
   str get_str(Field &fld);
