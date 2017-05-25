@@ -54,25 +54,68 @@ namespace ui {
   
   void drive(Form &frm, int key) {
     switch (key) {
+    case KEY_BACKSPACE:
+      form_driver(frm.ptr, REQ_DEL_PREV);
+      break;
+    case KEY_DC:
+      form_driver(frm.ptr, REQ_CLR_EOF);
+      break;
+    case KEY_HOME:
+      form_driver(frm.ptr, REQ_BEG_FIELD);
+      break;
+    case KEY_END:
+      eol(frm);
+      break;
+    case KEY_LEFT:
+      form_driver(frm.ptr, REQ_PREV_CHAR);
+      break;
+    case KEY_RIGHT:
+      form_driver(frm.ptr, REQ_NEXT_CHAR);
+      break;
+    case KEY_UP:
+      form_driver(frm.ptr, REQ_PREV_FIELD);
+      eol(frm);
+      break;
     case KEY_RETURN:
       validate(frm);
+    case KEY_DOWN:
+      form_driver(frm.ptr, REQ_NEXT_FIELD);
+      eol(frm);
       break;
-    default:
+    case KEY_TAB: {
+      opt<Field &> fld(active_field(frm));
+
+      if (fld && fld->completer) {
+	validate(frm);
+	str in(get_str(*fld)), out(complete(*fld, in));
+	
+	if (out != in) {
+	  set_str(*fld, out);
+	  eol(frm);
+	}
+      }
+
+      break;
+    }
+   default:
       form_driver(frm.ptr, key);
     }
   }
 
-  Field &active_field(Form &frm) {
+  opt<Field &> active_field(Form &frm) {
+    assert(frm.ptr);
     FIELD *ptr = current_field(frm.ptr);
+    if (!ptr) { return none; }
     return *reinterpret_cast<Field *>(field_userptr(ptr));
   }
   
   void clear_field(Form &frm) {
+    assert(frm.ptr);
     form_driver(frm.ptr, REQ_CLR_FIELD);
   }
   
   Field::Field(Form &frm, const Dim &dim, const str &lbl):
-    form(frm), dim(dim), label(lbl) {
+    form(frm), dim(dim), label(lbl), completer(none) {
     frm.fields.push_back(this);
     frm.label_width = max(frm.label_width, lbl.size());
   }
@@ -84,12 +127,29 @@ namespace ui {
   void show(Field &fld, const Pos &pos) {
     assert(!fld.ptr);
     fld.ptr = new_field(fld.dim.h, fld.dim.w, pos.y, pos.x, 0, 0);
-    set_field_userptr(fld.ptr, reinterpret_cast<char *>(fld.ptr));
+    set_field_userptr(fld.ptr, reinterpret_cast<char *>(&fld));
     set_field_back(fld.ptr, A_UNDERLINE);
     field_opts_off(fld.ptr, O_AUTOSKIP);
   }
 
+  void focus(Field &fld) {
+    assert(fld.form.ptr);
+    assert(fld.ptr);
+    set_current_field(fld.form.ptr, fld.ptr);
+  }
+
   str get_str(Field &fld) {
+    assert(fld.ptr);
     return trim(str(field_buffer(fld.ptr, 0)));
+  }
+
+  void set_str(Field &fld, const str &val) {
+    assert(fld.ptr);
+    set_field_buffer(fld.ptr, 0, val.c_str());
+  }
+
+  str complete(Field &fld, const str &in) {
+    if (!fld.completer) { return in; }
+    return fld.completer.get()(in);
   }
 }

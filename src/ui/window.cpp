@@ -2,8 +2,9 @@
 
 namespace ui {
   Window::Window(Ctx &ctx, const Dim &dim, const Pos &pos):
-    ctx(ctx), dim(dim), pos(pos), ptr(newwin(dim.h, dim.w, pos.y, pos.x))
-  { }
+    ctx(ctx), dim(dim), pos(pos), ptr(newwin(dim.h, dim.w, pos.y, pos.x)) {
+    keypad(ptr, true);
+  }
 
   Window::~Window() { delwin(ptr); }
 

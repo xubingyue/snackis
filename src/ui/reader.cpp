@@ -42,7 +42,7 @@ namespace ui {
       if (key == KEY_RETURN) { done = true; }
       drive(rdr.form, key);
     }
-
+   
     str in(trim(get_str(rdr.field)));
     clear_field(rdr.form);
     refresh(rdr);

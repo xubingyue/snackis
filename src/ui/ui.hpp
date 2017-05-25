@@ -2,8 +2,8 @@
 #define SNACKIS_UI_HPP
 
 namespace ui {
-  const int KEY_RETURN(10);
-  
+  const int KEY_RETURN(10), KEY_TAB(9);
+ 
   struct Dim {
     int h, w;
     Dim(int h, int w);
