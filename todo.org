@@ -13,3 +13,4 @@
 * add invite form
 * add inbox form
 ** use menus
+* add tab-completion in reader
