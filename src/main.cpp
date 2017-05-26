@@ -16,11 +16,9 @@ int main() {
 
   {
     ui::Header hdr(ctx);
-
     ui::Console cons(ctx);
     ctx.log = [&cons](const str &msg) { ui::log(cons, msg); };
-    log(ctx, "Welcome to Snackis!");
-
+    log(ctx, "Welcome to Snackis");
     ui::View view(ctx, hdr);
   
     {  
@@ -31,6 +29,7 @@ int main() {
 
     open(ctx);
     slurp(ctx);
+    log(ctx, "Type 'quit' followed by Return to exit");
     ui::Reader rdr(ctx);
     ui::run(rdr);
   }

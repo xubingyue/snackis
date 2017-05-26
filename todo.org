@@ -1,5 +1,3 @@
-* attempt removing RecT param from BasicCol
-** template methods instead
 * add profile form
 * add parse(Msg, string)
 ** change imap fetch to return Msgs
