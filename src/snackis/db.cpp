@@ -8,8 +8,8 @@
 
 namespace snackis {
   Db::Db(db::Ctx &ctx):
-    setting_key("key", str_type, &Setting::key),
-    setting_val("val", data_type, &Setting::val),
+    setting_key("key", str_type, &BasicSetting::key),
+    setting_val("val", data_type, &BasicSetting::val),
     settings(ctx, "settings", {&setting_key}, {&setting_val}),
     
     peer_id("id", uid_type, &Peer::id),

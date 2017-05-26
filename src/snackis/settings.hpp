@@ -5,9 +5,17 @@
 
 namespace snackis {
   struct Settings {
-    Setting me, editor, priv_key,
-      imap_server, imap_port, imap_user, imap_pass,
-      smtp_server, smtp_port, smtp_user, smtp_pass;
+    Setting<void *> me;
+    Setting<str> editor;
+    Setting<crypt::Key> priv_key;
+    
+    Setting<str> imap_server;
+    Setting<int64_t> imap_port;
+    Setting<str> imap_user, imap_pass;
+
+    Setting<str> smtp_server;
+    Setting<int64_t> smtp_port;
+    Setting<str> smtp_user, smtp_pass;
 
     Settings(Ctx &ctx);
   };

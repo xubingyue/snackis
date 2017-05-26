@@ -3,6 +3,8 @@
 ** change imap fetch to return Msgs
 * add net/smtp
 * add db/ver file
+** add support for migrations
+** store keyed on from_ver
 * add invite form
 * add inbox form
 ** use menus
