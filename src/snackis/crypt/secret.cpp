@@ -6,9 +6,11 @@ namespace snackis {
 namespace crypt {
   Secret::Secret() { memset(data, 0, SIZE); }
 
-  void init(Secret &sec, const str &key) {
+  void init_salt(Secret &sec) {
     randombytes_buf(sec.data, Secret::SALT_SIZE);
-
+  }
+  
+  void init(Secret &sec, const str &key) {
     if (crypto_pwhash_scryptsalsa208sha256(sec.data + Secret::SALT_SIZE,
 					   Secret::KEY_SIZE,
 					   key.c_str(), key.size(),

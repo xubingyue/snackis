@@ -1,9 +1,5 @@
-* finish login form
-** only show repeat if pass file not found
-** try login on enter && !repeat || active==repeat
-** update/validate password
-* add dump(Table, out)
-** write op like change
+* add ctrl+space shortcut to toggle O_PUBLIC
+** google vim stackoverflow for CTRL macro
 * add slurp(Table, in)
 ** read op like golang
 ** decrypt if secret is set
@@ -15,3 +11,7 @@
 * add parse(Msg, string)
 ** change imap fetch to return Msgs
 * add net/smtp
+* add db/ver file
+* add invite form
+* add inbox form
+** use menus

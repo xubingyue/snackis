@@ -96,7 +96,7 @@ namespace db {
 
   template <typename RecT>
   void open(Table<RecT> &tbl) {
-    tbl.file.open(get_path(tbl.ctx, tbl.name + ".tbl"),
+    tbl.file.open(get_path(tbl.ctx, tbl.name + ".tbl").string(),
 		  std::ios::out | std::ios::binary | std::ios::app);
   }
 
@@ -183,7 +183,7 @@ namespace db {
   void read(const Table<RecT> &tbl,
 	    std::istream &in,
 	    Rec<RecT> &rec,
-	    const crypt::Secret *sec) {
+	    opt<crypt::Secret> sec) {
     if (sec) {
       int64_t size = -1;
       in.read((char *)&size, sizeof size);
@@ -192,7 +192,7 @@ namespace db {
       in.read((char *)&edata[0], size);
       const Data ddata(decrypt(*sec, (unsigned char *)&edata[0], size));
       Buf buf(str(ddata.begin(), ddata.end()));
-      read(tbl, buf, rec, nullptr);
+      read(tbl, buf, rec, none);
     } else {
       int32_t cnt = -1;
       in.read((char *)&cnt, sizeof cnt);
@@ -214,10 +214,10 @@ namespace db {
   void write(const Table<RecT> &tbl,
 	     const Rec<RecT> &rec,
 	     std::ostream &out,
-	     const crypt::Secret *sec) {
+	     opt<crypt::Secret> sec) {
     if (sec) {
 	Buf buf;
-	write(tbl, rec, buf, nullptr);
+	write(tbl, rec, buf, none);
 	str data(buf.str());
 	const Data edata(encrypt(*sec, (unsigned char *)data.c_str(), data.size()));
 	const int64_t size = edata.size();
@@ -287,7 +287,7 @@ namespace db {
   template <typename RecT>
   void *RecType<RecT>::read(std::istream &in) const {
     Rec<RecT> trec;
-    db::read(tbl, in, trec, nullptr);
+    db::read(tbl, in, trec, none);
     return new RecT(tbl, trec);
   }
   
@@ -295,7 +295,7 @@ namespace db {
   void RecType<RecT>::write(void *const &val, std::ostream &out) const {
     Rec<RecT> trec;
     copy(tbl, trec, *static_cast<RecT *>(val));
-    db::write(tbl, trec, out, nullptr);
+    db::write(tbl, trec, out, none);
   }
 }}
 

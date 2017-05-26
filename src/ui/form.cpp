@@ -126,14 +126,12 @@ namespace ui {
   }
   
   Field::Field(Form &frm, const Dim &dim, const str &lbl):
-    form(frm), dim(dim), label(lbl) {
+    form(frm), dim(dim), label(lbl), echo(true) {
     frm.fields.push_back(this);
     frm.label_width = max(frm.label_width, lbl.size());
   }
 
-  Field::~Field() {
-    free_field(ptr);
-  }
+  Field::~Field() { free_field(ptr); }
 
   void set_bg(Field &fld, chtype ch) { set_field_back(fld.ptr, ch); }
 
@@ -143,6 +141,7 @@ namespace ui {
     set_field_userptr(fld.ptr, reinterpret_cast<char *>(&fld));
     set_bg(fld, A_UNDERLINE);
     field_opts_off(fld.ptr, O_AUTOSKIP);
+    if (!fld.echo) { field_opts_off(fld.ptr, O_PUBLIC); }
   }
 
   void focus(Field &fld) {

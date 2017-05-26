@@ -21,6 +21,7 @@ void crypt_secret_tests() {
   using namespace snackis::crypt;
   str key("secret key");
   Secret sec;
+  init_salt(sec);
   init(sec, key);
   str msg("secret message");
   
@@ -113,9 +114,9 @@ void read_write_tests() {
   rec[&uid_col] = uid();
 
   Buf buf;
-  write(tbl, rec, buf, &sec);
+  write(tbl, rec, buf, sec);
   Rec<Foo> rrec;
-  read(tbl, buf, rrec, &sec);
+  read(tbl, buf, rrec, sec);
   assert(compare(tbl, rrec, rec) == 0);
   
   close(tbl);

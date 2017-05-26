@@ -19,7 +19,7 @@ namespace snackis {
     Ctx(db::Ctx &db_ctx);
   };
 
-  void log(Ctx &ctx, const str &msg);
+  void log(const Ctx &ctx, const str &msg);
 }
 
 #endif

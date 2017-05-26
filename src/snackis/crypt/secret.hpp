@@ -20,6 +20,7 @@ namespace crypt {
     Secret();
   };
 
+  void init_salt(Secret &sec);
   void init(Secret &sec, const str &key);
   const unsigned char *hash(const Secret &sec);
 

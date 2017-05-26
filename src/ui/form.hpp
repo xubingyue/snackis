@@ -31,6 +31,7 @@ namespace ui {
     Dim dim;
     str label;
     FIELD *ptr;
+    bool echo;
     opt<Complete> complete;
     
     Field(Form &frm, const Dim &dim, const str &lbl);
