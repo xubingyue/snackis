@@ -10,7 +10,7 @@ namespace ui {
     pass_fld(*this, Dim(1, 50), "Password: ") {
     pass_fld.echo = false;
     
-    if (!pass_exists(window.ctx.db.ctx)) {
+    if (!pass_exists(window.ctx)) {
       repeat_fld.reset(new Field(*this, Dim(1, 50), "Repeat: "));
       repeat_fld->echo = false;
     }
@@ -34,9 +34,9 @@ namespace ui {
 	    continue;
 	  }
 
-	  db::init_pass(frm.window.ctx.db.ctx,  get_str(frm.pass_fld));
+	  db::init_pass(frm.window.ctx,  get_str(frm.pass_fld));
 	} else {
-	  if (!db::login(frm.window.ctx.db.ctx, get_str(frm.pass_fld))) {
+	  if (!db::login(frm.window.ctx, get_str(frm.pass_fld))) {
 	    log(frm.window.ctx, "Password mismatch");
 	    continue;
 	  }	  

@@ -9,8 +9,7 @@
 using namespace snackis;
 
 int main() {
-  db::Ctx db_ctx("db/");
-  Ctx ctx(db_ctx);
+  Ctx ctx("db/");
 
   ui::open();
   ui::Dim max(ui::dim());
