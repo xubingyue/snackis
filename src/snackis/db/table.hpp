@@ -2,17 +2,16 @@
 #define SNACKIS_DB_TABLE_HPP
 
 #include <cstdint>
-#include <fstream>
 #include <set>
 
 #include "snackis/core/buf.hpp"
 #include "snackis/core/data.hpp"
 #include "snackis/core/fmt.hpp"
 #include "snackis/core/opt.hpp"
-#include "snackis/core/str.hpp"
 #include "snackis/core/str_type.hpp"
 #include "snackis/core/type.hpp"
 #include "snackis/crypt/secret.hpp"
+#include "snackis/db/basic_table.hpp"
 #include "snackis/db/ctx.hpp"
 #include "snackis/db/error.hpp"
 #include "snackis/db/schema.hpp"
@@ -33,19 +32,18 @@ namespace db {
   };
   
   template <typename RecT>
-  struct Table: public Schema<RecT> {
+  struct Table: public BasicTable, public Schema<RecT> {
     using CmpRec = std::function<bool (const Rec<RecT> &, const Rec<RecT> &)>;
     using Cols = std::initializer_list<const BasicCol<RecT> *>;
     
-    Ctx &ctx;
-    const str name;
     const Schema<RecT> key;
     const RecType<RecT> rec_type;
     std::set<Table<RecT> *> indexes;
     std::set<Rec<RecT>, CmpRec> recs;
-    std::fstream file;
     
     Table(Ctx &ctx, const str &name, Cols key_cols, Cols cols);
+    virtual ~Table();
+    void slurp() override;
   };
     
   enum TableOp {TABLE_INSERT, TABLE_UPDATE, TABLE_ERASE};
@@ -78,25 +76,6 @@ namespace db {
     Erase(Table<RecT> &table, const Rec<RecT> &rec);    
     void rollback() const override;
   };
-
-  template <typename RecT>
-  Table<RecT>::Table(Ctx &ctx, const str &name, Cols key_cols, Cols cols):
-    Schema<RecT>(cols),
-    ctx(ctx),
-    name(name),
-    key(key_cols),
-    rec_type(*this),
-    recs([this](const Rec<RecT> &x, const Rec<RecT> &y) {
-	return compare(key, x, y) < 0;
-      }) {
-    for (auto c: key.cols) { add(*this, *c); }
-  }
-
-  template <typename RecT>
-  void open(Table<RecT> &tbl) {
-    tbl.file.open(get_path(tbl.ctx, tbl.name + ".tbl").string(),
-		  std::ios::in | std::ios::out | std::ios::binary | std::ios::app);
-  }
 
   template <typename RecT>
   void close(Table<RecT> &tbl) {
@@ -246,8 +225,17 @@ namespace db {
     
     while (true) {
       in.read(reinterpret_cast<char *>(&op), sizeof op);
-      if (in.eof()) { break; }
-      
+
+      if (in.eof()) {
+	in.clear();
+	break;
+      }
+
+      if (in.fail()) {
+	in.clear();
+	ERROR(Db, fmt("Failed reading: %1%") % tbl.name);
+      }
+            
       Rec<RecT> rec;
       read(tbl, in, rec, tbl.ctx.secret);
 
@@ -270,10 +258,31 @@ namespace db {
 
   template <typename RecT>
   void slurp(Table<RecT> &tbl) {
-    tbl.file.seekg(0);
     slurp(tbl, tbl.file);
   }
 
+  template <typename RecT>
+  Table<RecT>::Table(Ctx &ctx, const str &name, Cols key_cols, Cols cols):
+    BasicTable(ctx, name),
+    Schema<RecT>(cols),
+    key(key_cols),
+    rec_type(*this),
+    recs([this](const Rec<RecT> &x, const Rec<RecT> &y) {
+	return compare(key, x, y) < 0;
+      }) {
+    for (auto c: key.cols) { add(*this, *c); }
+    ctx.tables.insert(this);
+  }
+
+  template <typename RecT>
+  Table<RecT>::~Table() {
+    if (file.is_open()) { close(*this); }
+    ctx.tables.erase(this);
+  }
+
+  template <typename RecT>
+  void Table<RecT>::slurp() { db::slurp(*this); }
+  
   template <typename RecT>
   TableChange<RecT>::TableChange(TableOp op,
 				 Table<RecT> &table,

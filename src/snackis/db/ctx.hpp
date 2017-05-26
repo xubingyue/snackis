@@ -12,6 +12,8 @@
 
 namespace snackis {
 namespace db {
+  struct BasicTable;
+  
   struct Ctx {
     using Log = std::function<void (const str &)>;
 
@@ -19,6 +21,7 @@ namespace db {
     opt<crypt::Secret> secret;
     opt<Log> log;
     Mutex log_mutex;
+    std::set<BasicTable *> tables;
     opt<Trans &> trans;
     std::set<std::ostream *> dirty_files;
     
@@ -31,8 +34,10 @@ namespace db {
   bool pass_exists(const Ctx &ctx);
   void init_pass(Ctx &ctx, const str &pass);
   bool login(Ctx &ctx, const str &pass);
+  void open(Ctx &ctx);
   void dirty_file(Ctx &ctx, std::ostream &file);
   void flush(Ctx &ctx);
+  void slurp(Ctx &ctx);
 }}
 
 #endif

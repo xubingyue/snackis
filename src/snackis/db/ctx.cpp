@@ -68,6 +68,10 @@ namespace db {
     return true;
   }
 
+  void open(Ctx &ctx) {
+    for (auto t: ctx.tables) { open(*t); }
+  }
+
   void dirty_file(Ctx &ctx, std::ostream &file) {
     ctx.dirty_files.insert(&file);
   }
@@ -75,5 +79,9 @@ namespace db {
   void flush(Ctx &ctx) {
     for (auto f: ctx.dirty_files) { f->flush(); }
     ctx.dirty_files.clear();
+  }
+
+  void slurp(Ctx &ctx) {
+    for (auto t: ctx.tables) { t->slurp(); }
   }
 }}
