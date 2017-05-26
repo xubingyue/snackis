@@ -1,6 +1,8 @@
 * add slurp(db::Ctx)
 ** add BasicTable type with everything not depending on RecT
 *** add virtual slurp & override in Table
+** add std::set<BasicTable *> tables to ctx
+*** update in Table constructor
 ** slurp all tables
 * add profile form
 * add parse(Msg, string)
