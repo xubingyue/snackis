@@ -108,7 +108,7 @@ namespace ui {
 
       break;
     }
-   default:
+    default:
       form_driver(frm.ptr, key);
     }
   }
@@ -141,7 +141,9 @@ namespace ui {
     set_field_userptr(fld.ptr, reinterpret_cast<char *>(&fld));
     set_bg(fld, A_UNDERLINE);
     field_opts_off(fld.ptr, O_AUTOSKIP);
-    if (!fld.echo) { field_opts_off(fld.ptr, O_PUBLIC); }
+    if (!fld.echo) {
+      field_opts_off(fld.ptr, O_PUBLIC);
+    }
   }
 
   void focus(Field &fld) {

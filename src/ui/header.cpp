@@ -12,6 +12,8 @@ namespace ui {
 
   void set_label(Header &hdr, const str &lbl) {
     move(hdr, Pos(0, hdr.dim.w/2));
+    wclrtoeol(hdr.ptr);
+    move(hdr, Pos(0, hdr.dim.w/2));
     print(hdr, lbl);
     refresh(hdr);
   }

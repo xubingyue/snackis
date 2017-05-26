@@ -13,8 +13,6 @@
 
 namespace snackis {
   struct Db {
-    db::Ctx &ctx;
-    
     db::Col<Setting, str> setting_key;
     db::Col<Setting, Data> setting_val;
     db::Table<Setting> settings;

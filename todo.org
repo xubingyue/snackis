@@ -1,5 +1,3 @@
-* add ctrl+space shortcut to toggle O_PUBLIC
-** google vim stackoverflow for CTRL macro
 * add slurp(Table, in)
 ** read op like golang
 ** decrypt if secret is set

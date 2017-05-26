@@ -16,13 +16,12 @@ int main() {
 
   {
     ui::Header hdr(ctx);
-    ui::set_label(hdr, "Login");
 
     ui::Console cons(ctx);
     ctx.log = [&cons](const str &msg) { ui::log(cons, msg); };
     log(ctx, "Welcome to Snackis!");
 
-    ui::View view(ctx);
+    ui::View view(ctx, hdr);
   
     {  
       ui::LoginForm login(view);

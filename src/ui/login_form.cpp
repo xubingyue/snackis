@@ -3,10 +3,12 @@
 #include "snackis/db/ctx.hpp"
 
 #include "ui/login_form.hpp"
+#include "ui/view.hpp"
 
 namespace ui {
   LoginForm::LoginForm(View &view):
     Form(view),
+    view(view),
     pass_fld(*this, Dim(1, 50), "Password: ") {
     pass_fld.echo = false;
     
@@ -19,6 +21,7 @@ namespace ui {
   }
 
   void run(LoginForm &frm) {
+    set_label(frm.view, "Login");
     bool done = false;
     
     while (!done) {
@@ -47,5 +50,7 @@ namespace ui {
       
       drive(frm, ch);
     }
+
+    set_label(frm.view, "");
   }
 }
