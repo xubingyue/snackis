@@ -3,6 +3,8 @@
 ** add Field.margin_top
 *** use to separate imap/smtp
 ** update on save
+*** add whoami(Ctx)
+*** update me setting
 ** add ctrl+s to save without entering through
 ** add escape to exit without saving
 * add parse(Msg, string)

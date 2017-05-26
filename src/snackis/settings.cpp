@@ -6,7 +6,7 @@
 
 namespace snackis {
   Settings::Settings(Ctx &ctx):
-    me(ctx,       "me",       ctx.db.peers.rec_type, none),
+    whoami(ctx,   "whoami",   ctx.db.peers.rec_type, none),
     editor(ctx,   "editor",   str_type,              str("nano")),
     priv_key(ctx, "priv_key", crypt::key_type,       none),
     

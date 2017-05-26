@@ -5,7 +5,7 @@
 
 namespace snackis {
   struct Settings {
-    Setting<void *> me;
+    Setting<void *> whoami;
     Setting<str> editor;
     Setting<crypt::Key> priv_key;
     
