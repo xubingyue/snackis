@@ -1,3 +1,8 @@
+* try switching RecType from void * to opt<RecT>
+* finish open(ctx)
+** create whoami if not found
+** create key
+** update settings
 * finish profile form
 ** add all fields
 ** add Field.margin_top

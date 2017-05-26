@@ -6,8 +6,8 @@
 namespace snackis {
   struct Settings {
     Setting<void *> whoami;
+    Setting<crypt::Key> crypt_key;
     Setting<str> editor;
-    Setting<crypt::Key> priv_key;
     
     Setting<str> imap_server;
     Setting<int64_t> imap_port;
