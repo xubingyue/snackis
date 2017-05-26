@@ -16,14 +16,16 @@ namespace ui {
 
   void run(ProfileForm &frm) {
     set_label(frm.view, "Profile");
-    bool done = false;
     
-    while (!done) {
+    while (true) {
       chtype ch = get_key(frm.window);
 
-      if (ch == KEY_RETURN && &active_field(frm) == frm.fields.back()) {
+      if (ch == KEY_ESCAPE) { break; }
+      
+      if (ch == CTRL('s') ||
+	  (ch == KEY_RETURN && &active_field(frm) == frm.fields.back())) {
 	validate(frm);
-	done = true;	  
+	break;
       }
       
       drive(frm, ch);

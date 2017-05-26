@@ -11,11 +11,13 @@ namespace snackis {
   struct Ctx: public db::Ctx {
     Db db;
     Settings settings;
+    Peer whoami;
     
     Ctx(const Path &path);
   };
 
   void log(const Ctx &ctx, const str &msg);
+  Peer &whoami(Ctx &ctx);
 }
 
 #endif

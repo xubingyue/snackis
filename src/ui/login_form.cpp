@@ -20,12 +20,21 @@ namespace ui {
     margin_top = 1;
   }
 
-  void run(LoginForm &frm) {
+  bool run(LoginForm &frm) {
     set_label(frm.view, "Login");
-    bool done = false;
     
-    while (!done) {
+    if (frm.repeat_fld) {
+      log(frm.window.ctx, "Please select a system password and type it twice");
+    } else {
+      log(frm.window.ctx, "Please enter system password");
+    }
+    
+    log(frm.window.ctx, "Press Escape to exit");
+    
+    while (true) {
       chtype ch = get_key(frm.window);
+
+      if (ch == KEY_ESCAPE) { return false; }
 
       if (ch == KEY_RETURN && &active_field(frm) == frm.fields.back()) {
 	validate(frm);
@@ -44,12 +53,13 @@ namespace ui {
 	  }	  
 	}
 	
-	done = true;	  
+	break;	  
       }
       
       drive(frm, ch);
     }
 
     set_label(frm.view, "");
+    return true;
   }
 }

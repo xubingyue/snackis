@@ -16,7 +16,7 @@ namespace ui {
     LoginForm(View &view);
   };
 
-  void run(LoginForm &frm);
+  bool run(LoginForm &frm);
 }
 
 #endif
