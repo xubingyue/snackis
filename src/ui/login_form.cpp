@@ -29,7 +29,7 @@ namespace ui {
       log(frm.window.ctx, "Please enter system password");
     }
     
-    log(frm.window.ctx, "Press Escape to exit");
+    log(frm.window.ctx, "Press Escape to cancel and exit");
     
     while (true) {
       chtype ch = get_key(frm.window);

@@ -1,18 +1,16 @@
-* try switching RecType from void * to opt<RecT>
-** remove cast in col getter
-* finish open(ctx)
-** create whoami if not found
-** create key
-** update settings
+* add type.encode/decode
+** to/from Val
+** virtual with defaultx
+** update Schema to use encode/decode
+* change RecType from void * to opt<RecT>
+** override encode/decode and type cast opt to/from void *
+** update db
+** update msg/thread
 * finish profile form
 ** add all fields
 ** add Field.margin_top
 *** use to separate imap/smtp
 ** update on save
-*** add whoami(Ctx)
-*** update me setting
-** add ctrl+s to save without entering through
-** add escape to exit without saving
 * add parse(Msg, string)
 ** change imap fetch to return Msgs
 * add net/smtp

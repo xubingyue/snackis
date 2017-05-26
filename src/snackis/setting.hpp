@@ -12,15 +12,15 @@ namespace snackis {
   struct BasicSetting: public Rec {
     str key;
     Data val;
-    const BasicType &type;
 
-    BasicSetting(Ctx &ctx, const str &key, const BasicType &type);
+    BasicSetting(Ctx &ctx, const str &key);
     BasicSetting(const db::Table<BasicSetting> &tbl,
 		 const db::Rec<BasicSetting> &rec);
   };
 
   template <typename ValT>
   struct Setting: public BasicSetting {
+    const Type<ValT> &type;
     opt<ValT> init_val;
 
     Setting(Ctx &ctx,
@@ -32,11 +32,13 @@ namespace snackis {
   Setting<ValT>::Setting(Ctx &ctx,
 			 const str &key, const Type<ValT> &type, 
 			 opt<ValT> init_val): 
-    BasicSetting(ctx, key, type), init_val(init_val) { }
+    BasicSetting(ctx, key), type(type), init_val(init_val) { }
   
   template <typename ValT>
-  opt<ValT> get(Setting<ValT> &stn) {
-    if (stn.val.empty()) { load(stn.ctx.db.settings, stn); }
+  opt<ValT> get_val(Setting<ValT> &stn) {
+    if (stn.val.empty()) {
+      load(stn.ctx.db.settings, dynamic_cast<BasicSetting &>(stn));
+    }
 
     if (stn.val.empty() && stn.init_val) { 
 	set_val(stn, *stn.init_val); 
@@ -47,16 +49,16 @@ namespace snackis {
 
     Buf buf;
     buf.write((char *)&stn.val[0], stn.val.size());
-    return stn.type.read_val(buf);
+    return stn.type.read(buf);
   }
   
   template <typename ValT>
   void set_val(Setting<ValT> &stn, const ValT &val) {
     Buf buf;
-    stn.type.write_val(val, buf);
+    stn.type.write(val, buf);
     str data(buf.str());
     stn.val.assign(data.begin(), data.end());
-    upsert(stn.ctx.db.settings, stn);
+    upsert(stn.ctx.db.settings, dynamic_cast<BasicSetting &>(stn));
   }
 }
 

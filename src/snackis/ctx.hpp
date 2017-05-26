@@ -16,6 +16,7 @@ namespace snackis {
     Ctx(const Path &path);
   };
 
+  void init_defaults(Ctx &ctx);
   void log(const Ctx &ctx, const str &msg);
   Peer &whoami(Ctx &ctx);
 }

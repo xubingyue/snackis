@@ -9,9 +9,9 @@ namespace db {
 
   void open(BasicTable &tbl) {
     tbl.file.open(get_path(tbl.ctx, tbl.name + ".tbl").string(),
-		  std::ios::in | std::ios::out | std::ios::binary | std::ios::ate);
+		  std::ios::out | std::ios::binary | std::ios::app);
     if (tbl.file.fail()) {
-      ERROR(Db, fmt("Failed opening file: '%1%'") % tbl.name);
+      ERROR(Db, fmt("Failed opening file: %1%") % tbl.name);
     }
   }
 }}

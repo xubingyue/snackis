@@ -8,8 +8,7 @@ namespace snackis {
   Data DataType::read(std::istream &in) const {
     int64_t size = -1;
     in.read((char *)&size, sizeof size);
-    Data out;
-    out.resize(size);
+    Data out(size);
     in.read((char *)&out[0], size);
     return out;
   }

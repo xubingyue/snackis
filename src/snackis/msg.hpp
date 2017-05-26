@@ -16,7 +16,7 @@ namespace snackis {
     Time fetched_at;
     Peer *sent_to;
     str peer_name, peer_email;
-    crypt::PubKey peer_key;
+    crypt::PubKey crypt_key;
     
     Msg(Ctx &ctx);
     Msg(Ctx &ctx, const str &type);

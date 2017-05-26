@@ -18,6 +18,7 @@ namespace db {
 
     template <typename FldT>
     Col(const str &name, const Type<ValT> &type, FldT RecT::* ptr);
+    void copy(RecT &dest, const RecT &src) const override;
     void copy(Rec<RecT> &dest, const RecT &src) const override;
     void copy(RecT &dest, const Rec<RecT> &src) const override;
     void set(RecT &dest, const Val &val) const override;
@@ -35,6 +36,11 @@ namespace db {
     getter([ptr](const RecT &rec) { return std::cref(rec.*ptr); }),
     setter([ptr](RecT &rec, const ValT &val) { rec.*ptr = static_cast<FldT>(val); })
   { }
+
+  template <typename RecT, typename ValT>
+  void Col<RecT, ValT>::copy(RecT &dest, const RecT &src) const {
+    setter(dest, getter(src));
+  }
 
   template <typename RecT, typename ValT>
   void Col<RecT, ValT>::copy(Rec<RecT> &dest, const RecT &src) const {

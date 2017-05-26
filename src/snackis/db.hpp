@@ -20,7 +20,7 @@ namespace snackis {
     db::Col<Peer, UId> peer_id;
     db::Col<Peer, str> peer_name;
     db::Col<Peer, str> peer_email;
-    db::Col<Peer, crypt::PubKey> peer_key;
+    db::Col<Peer, crypt::PubKey> peer_crypt_key;
     db::Col<Peer, Time> peer_invited_at;
     db::Col<Peer, Time> peer_accepted_at;
     db::Table<Peer> peers, peer_names, peer_emails;
@@ -40,7 +40,7 @@ namespace snackis {
     db::Col<Msg, Time> msg_fetched_at;
     db::Col<Msg, str> msg_peer_name;
     db::Col<Msg, str> msg_peer_email;
-    db::Col<Msg, crypt::PubKey> msg_peer_key;
+    db::Col<Msg, crypt::PubKey> msg_crypt_key;
     db::Table<Msg> inbox;
 
     db::Col<Msg, void *> msg_sent_to;

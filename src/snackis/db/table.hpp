@@ -103,7 +103,14 @@ namespace db {
   bool insert(Table<RecT> &tbl, const Rec<RecT> &rec) {
     auto found(tbl.recs.find(rec));
     if (found != tbl.recs.end()) { return false; }
-    for (auto idx: tbl.indexes) { insert(*idx, rec); }
+
+    for (auto idx: tbl.indexes) {
+      Rec<RecT> irec;
+      copy(*idx, irec, rec);
+      insert(*idx, irec);
+    }
+    
+    assert(tbl.ctx.trans);
     log_change(*tbl.ctx.trans, new Insert<RecT>(tbl, rec));
     tbl.recs.insert(rec);
     return true;
@@ -123,7 +130,10 @@ namespace db {
     
     for (auto idx: tbl.indexes) {
       erase(*idx, *found);
-      insert(*idx, rec);
+      
+      Rec<RecT> irec;
+      copy(*idx, irec, rec);
+      insert(*idx, irec);
     }
     
     log_change(*tbl.ctx.trans, new Update<RecT>(tbl, rec, *found));
@@ -178,7 +188,7 @@ namespace db {
 	const str cname(str_type.read(in));
 	auto found(tbl.col_lookup.find(cname));
 	if (found == tbl.col_lookup.end()) {
-	  ERROR(Db, fmt("Column not found: %1%") % cname);
+	  ERROR(Db, fmt("Column not found: %1%/%2%") % tbl.name % cname);
 	}
 	
 	auto c = found->second;
@@ -258,7 +268,16 @@ namespace db {
 
   template <typename RecT>
   void slurp(Table<RecT> &tbl) {
-    slurp(tbl, tbl.file);
+    std::fstream file;
+    
+    file.open(get_path(tbl.ctx, tbl.name + ".tbl").string(),
+	      std::ios::in | std::ios::binary);
+    if (tbl.file.fail()) {
+      ERROR(Db, fmt("Failed opening file: %1%") % tbl.name);
+    }
+
+    slurp(tbl, file);
+    file.close();
   }
 
   template <typename RecT>

@@ -12,6 +12,7 @@ namespace db {
   struct BasicCol {
     const str name;
     BasicCol(const str &name);
+    virtual void copy(RecT &dest, const RecT &src) const=0;
     virtual void copy(Rec<RecT> &dest, const RecT &src) const=0;
     virtual void copy(RecT &dest, const Rec<RecT> &src) const=0;
     virtual void set(RecT &dest, const Val &val) const=0;

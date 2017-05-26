@@ -12,7 +12,7 @@ namespace snackis {
   struct Peer: public Rec {
     UId id;
     str name, email;
-    crypt::PubKey key;
+    crypt::PubKey crypt_key;
     Time invited_at, accepted_at;
     
     Peer(Ctx &ctx);

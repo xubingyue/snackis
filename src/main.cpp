@@ -24,11 +24,12 @@ static void run(Ctx &ctx) {
   if (login(view)) {
     open(ctx);
     slurp(ctx);
-
+    init_defaults(ctx);
+    
     Peer &me(whoami(ctx));
     if (!me.name.empty()) { log(ctx, fmt("Hello %1%") % me.name); }
     
-    log(ctx, "Escape cancels the current operation");
+    log(ctx, "Escape cancels current operation");
     log(ctx, "Type 'quit' followed by Return to exit");
     ui::Reader rdr(ctx, view);
     ui::run(rdr);
