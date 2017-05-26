@@ -9,6 +9,8 @@
 #include "ui/window.hpp"
 
 namespace ui {
+  struct View;
+  
   struct Reader: public Window {
     using Cmd = std::function<void ()>;
     
@@ -17,7 +19,9 @@ namespace ui {
     std::map<str, Cmd> cmds;
     opt<Cmd> last_cmd;
     bool quitting;
-    Reader(Ctx &ctx);
+    View &view;
+    
+    Reader(Ctx &ctx, View &view);
   };
 
   void init_cmds(Reader &rdr);

@@ -126,7 +126,7 @@ namespace ui {
   }
   
   Field::Field(Form &frm, const Dim &dim, const str &lbl):
-    form(frm), dim(dim), label(lbl), echo(true) {
+    form(frm), dim(dim), label(lbl), ptr(nullptr), echo(true) {
     frm.fields.push_back(this);
     frm.label_width = max(frm.label_width, lbl.size());
   }

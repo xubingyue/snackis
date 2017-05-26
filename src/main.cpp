@@ -30,7 +30,7 @@ int main() {
     open(ctx);
     slurp(ctx);
     log(ctx, "Type 'quit' followed by Return to exit");
-    ui::Reader rdr(ctx);
+    ui::Reader rdr(ctx, view);
     ui::run(rdr);
   }
   

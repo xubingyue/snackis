@@ -1,14 +1,16 @@
 #include "snackis/ctx.hpp"
 #include "snackis/core/fmt.hpp"
 #include "ui/reader.hpp"
+#include "ui/profile_form.hpp"
 
 namespace ui {
-  Reader::Reader(Ctx &ctx):
+  Reader::Reader(Ctx &ctx, View &view):
     Window(ctx, ui::Dim(1, ui::dim().w), ui::Pos(ui::dim().h-1, 0)),
     form(*this),
     field(form, ui::Dim(1, dim.w), ": "),
     last_cmd(none),
-    quitting(false) {
+    quitting(false),
+    view(view) {
     set_bg(*this, A_REVERSE);
     open(form);
     set_bg(field, A_REVERSE);
@@ -18,6 +20,12 @@ namespace ui {
   }
 
   void init_cmds(Reader &rdr) {
+    rdr.cmds["profile"] = [&rdr]() {
+      ProfileForm prof(rdr.view);
+      open(prof);
+      run(prof);
+    };
+    
     rdr.cmds["quit"] = [&rdr]() { rdr.quitting = true; };
   }
 

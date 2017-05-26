@@ -1,4 +1,10 @@
-* add profile form
+* finish profile form
+** add all fields
+** add Field.margin_top
+*** use to separate imap/smtp
+** update on save
+** add ctrl+s to save without entering through
+** add escape to exit without saving
 * add parse(Msg, string)
 ** change imap fetch to return Msgs
 * add net/smtp

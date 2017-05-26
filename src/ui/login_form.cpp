@@ -27,8 +27,7 @@ namespace ui {
     while (!done) {
       chtype ch = get_key(frm.window);
 
-      if (ch == KEY_RETURN &&
-	  (!frm.repeat_fld || &active_field(frm) == frm.repeat_fld.get())) {
+      if (ch == KEY_RETURN && &active_field(frm) == frm.fields.back()) {
 	validate(frm);
 	
 	if (frm.repeat_fld) {
