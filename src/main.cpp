@@ -29,6 +29,7 @@ int main() {
       ui::run(login);
     }
   
+    slurp(ctx);
     ui::Reader rdr(ctx);
     ui::run(rdr);
   }

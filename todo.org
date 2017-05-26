@@ -1,9 +1,7 @@
-* add ctx.db.slurp()
+* add slurp(db::Ctx)
+** add BasicTable type with everything not depending on RecT
+*** add virtual slurp & override in Table
 ** slurp all tables
-** call after login
-* add flush(db/ctx)
-** add set dirty_files
-** call after commit
 * add profile form
 * add parse(Msg, string)
 ** change imap fetch to return Msgs

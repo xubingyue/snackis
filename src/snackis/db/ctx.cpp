@@ -67,4 +67,13 @@ namespace db {
     ctx.secret = secret;
     return true;
   }
+
+  void dirty_file(Ctx &ctx, std::ostream &file) {
+    ctx.dirty_files.insert(&file);
+  }
+
+  void flush(Ctx &ctx) {
+    for (auto f: ctx.dirty_files) { f->flush(); }
+    ctx.dirty_files.clear();
+  }
 }}

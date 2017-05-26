@@ -23,6 +23,7 @@ namespace db {
 		std::back_inserter(trans.super->changes));
     } else {
       for (const Change *c: trans.changes) { c->commit(); }
+      flush(trans.ctx);
     }
 
     trans.changes.clear();

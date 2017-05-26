@@ -237,6 +237,7 @@ namespace db {
     int8_t op(_op);
     tbl.file.write(reinterpret_cast<const char *>(&op), sizeof op);
     write(tbl, rec, tbl.file, tbl.ctx.secret);
+    dirty_file(tbl.ctx, tbl.file);
   }
 
   template <typename RecT>

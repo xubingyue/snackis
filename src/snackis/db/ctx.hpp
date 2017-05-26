@@ -1,6 +1,8 @@
 #ifndef SNACKIS_DB_CTX_HPP
 #define SNACKIS_DB_CTX_HPP
 
+#include <set>
+
 #include "snackis/core/opt.hpp"
 #include "snackis/core/mutex.hpp"
 #include "snackis/core/path.hpp"
@@ -18,6 +20,7 @@ namespace db {
     opt<Log> log;
     Mutex log_mutex;
     opt<Trans &> trans;
+    std::set<std::ostream *> dirty_files;
     
     Ctx(const Path &path);
     virtual ~Ctx();
@@ -28,6 +31,8 @@ namespace db {
   bool pass_exists(const Ctx &ctx);
   void init_pass(Ctx &ctx, const str &pass);
   bool login(Ctx &ctx, const str &pass);
+  void dirty_file(Ctx &ctx, std::ostream &file);
+  void flush(Ctx &ctx);
 }}
 
 #endif
