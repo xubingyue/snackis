@@ -5,7 +5,5 @@ namespace snackis {
     db::Ctx(path), db(*this), settings(*this)
   { }
 
-  void log(const Ctx &ctx, const str &msg) {
-    db::log(ctx,msg);
-  }
+  void log(const Ctx &ctx, const str &msg) { db::log(ctx,msg); }
 }

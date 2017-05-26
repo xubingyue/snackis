@@ -43,7 +43,7 @@ namespace db {
     const RecType<RecT> rec_type;
     std::set<Table<RecT> *> indexes;
     std::set<Rec<RecT>, CmpRec> recs;
-    std::ofstream file;
+    std::fstream file;
     
     Table(Ctx &ctx, const str &name, Cols key_cols, Cols cols);
   };
@@ -95,7 +95,7 @@ namespace db {
   template <typename RecT>
   void open(Table<RecT> &tbl) {
     tbl.file.open(get_path(tbl.ctx, tbl.name + ".tbl").string(),
-		  std::ios::out | std::ios::binary | std::ios::app);
+		  std::ios::in | std::ios::out | std::ios::binary | std::ios::app);
   }
 
   template <typename RecT>
@@ -233,8 +233,44 @@ namespace db {
   }
 
   template <typename RecT>
-  void write(Table<RecT> &tbl, const Rec<RecT> &rec) {
+  void write(Table<RecT> &tbl, const Rec<RecT> &rec, TableOp _op) {
+    int8_t op(_op);
+    tbl.file.write(reinterpret_cast<const char *>(&op), sizeof op);
     write(tbl, rec, tbl.file, tbl.ctx.secret);
+  }
+
+  template <typename RecT>
+  void slurp(Table<RecT> &tbl, std::istream &in) {
+    int8_t op(-1);
+    
+    while (true) {
+      in.read(reinterpret_cast<char *>(&op), sizeof op);
+      if (in.eof()) { break; }
+      
+      Rec<RecT> rec;
+      read(tbl, in, rec, tbl.ctx.secret);
+
+      switch (op) {
+      case TABLE_INSERT:
+	tbl.recs.insert(rec);
+	break;
+      case TABLE_UPDATE:
+	tbl.recs.erase(rec);
+	tbl.recs.insert(rec);
+	break;
+      case TABLE_ERASE:
+	tbl.recs.erase(rec);
+	break;
+      default:
+	log(tbl.ctx, fmt("Invalid table operation: %1%") % op);
+      }
+    }
+  }
+
+  template <typename RecT>
+  void slurp(Table<RecT> &tbl) {
+    tbl.file.seekg(0);
+    slurp(tbl, tbl.file);
   }
 
   template <typename RecT>
@@ -245,8 +281,7 @@ namespace db {
 
   template <typename RecT>
   void TableChange<RecT>::commit() const {
-    this->table.file << int8_t(this->op);
-    write(this->table, this->rec);
+    write(this->table, this->rec, this->op);
   }
 
   template <typename RecT>

@@ -86,15 +86,38 @@ const Col<Foo, str> str_col("str", str_type, &Foo::fstr);
 const Col<Foo, Time> time_col("time", time_type, &Foo::ftime); 
 const Col<Foo, UId> uid_col("uid", uid_type, &Foo::fuid); 
 
-void table_tests() {
+void table_insert_tests() {
   Ctx ctx("testdb/");
-  Table<Foo> tbl(ctx, "table_tests", {&uid_col},
+  Table<Foo> tbl(ctx, "insert_tests", {&uid_col},
 		 {&int64_col, &str_col, &time_col});
   open(tbl);
   Foo foo;
+  Trans trans(ctx);
   assert(insert(tbl, foo));
+  assert(load(tbl, foo));
   assert(!insert(tbl, foo));
-  commit(ctx);
+  commit(trans);
+  assert(load(tbl, foo));
+  close(tbl);
+}
+
+void table_slurp_tests() {
+  Ctx ctx("testdb/");
+  Table<Foo> tbl(ctx, "slurp_tests", {&uid_col},
+		 {&int64_col, &str_col, &time_col});
+  open(tbl);
+  
+  Foo foo, bar;
+  Trans trans(ctx);
+  assert(insert(tbl, foo));
+  assert(insert(tbl, bar));
+  commit(trans);
+  
+  tbl.recs.clear();
+  slurp(tbl);
+  
+  assert(load(tbl, foo));
+  assert(load(tbl, bar));
   close(tbl);
 }
 
@@ -142,7 +165,8 @@ int main() {
     crypt_key_tests();
     col_tests();
     schema_tests();
-    table_tests();
+    table_insert_tests();
+    table_slurp_tests();
     read_write_tests();
     email_tests();
   } catch (const std::exception &e) {

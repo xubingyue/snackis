@@ -3,17 +3,12 @@
 
 namespace snackis {
 namespace db {
-  Trans::Trans(Ctx &ctx): Trans(ctx, ctx.trans) { }
-
-  Trans::Trans(Ctx &ctx, Trans *super): ctx(ctx), super(super) {
-    ctx.trans = this;
+  Trans::Trans(Ctx &ctx): ctx(ctx), super(ctx.trans) {
+    ctx.trans = *this;
   }
 
   Trans::~Trans() {
-    if (!changes.empty()) {
-      rollback(*this);
-    }
-    
+    if (!changes.empty()) { rollback(*this); }
     ctx.trans = super;
   }
   
@@ -27,19 +22,14 @@ namespace db {
 		trans.changes.end(),
 		std::back_inserter(trans.super->changes));
     } else {
-      for (const Change *c: trans.changes) {
-	c->commit();
-      }
+      for (const Change *c: trans.changes) { c->commit(); }
     }
 
     trans.changes.clear();
   }
   
   void rollback(Trans &trans) {
-    for (const Change *c: trans.changes) {
-      c->rollback();
-    }
-    
+    for (const Change *c: trans.changes) { c->rollback(); }
     trans.changes.clear();
   }
 }}

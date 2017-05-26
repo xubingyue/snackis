@@ -1,10 +1,9 @@
-* add slurp(Table, in)
-** read op like golang
-** decrypt if secret is set
-* add slurp(Table)
-** rewind file and slurp
+* add ctx.db.slurp()
+** slurp all tables
+** call after login
 * add flush(db/ctx)
 ** add set dirty_files
+** call after commit
 * add profile form
 * add parse(Msg, string)
 ** change imap fetch to return Msgs

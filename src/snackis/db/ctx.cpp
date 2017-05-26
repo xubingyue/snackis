@@ -5,8 +5,7 @@
 
 namespace snackis {
 namespace db {
-  Ctx::Ctx(const Path &path):
-    path(path), root(*this, nullptr), trans(&root) {
+  Ctx::Ctx(const Path &path): path(path) {
     create_path(path);
   }
 
@@ -14,6 +13,13 @@ namespace db {
 
   Path get_path(const Ctx &ctx, const str &fname) {
     return ctx.path / fname; 
+  }
+
+  void log(const Ctx &ctx, const str &msg) {
+    if (ctx.log) {
+      WLock lock(const_cast<Ctx &>(ctx).log_mutex);
+      ctx.log.get()(msg);
+    }
   }
 
   bool pass_exists(const Ctx &ctx) {
@@ -43,7 +49,7 @@ namespace db {
     file.seekg(0, std::ios::end);
     const std::streamsize size =
       file.tellg()-std::streamsize(crypt::Secret::SALT_SIZE);
-    file.seekg(0, std::ios::beg);
+    file.seekg(0);
     file.read(reinterpret_cast<char *>(secret.data), crypt::Secret::SALT_SIZE);
     init(secret, pass);
     Data edata(size);
@@ -61,6 +67,4 @@ namespace db {
     ctx.secret = secret;
     return true;
   }
-
-  void commit(Ctx &ctx) { commit(*ctx.trans); }
 }}
