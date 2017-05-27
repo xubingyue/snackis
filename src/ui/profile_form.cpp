@@ -9,22 +9,39 @@ namespace ui {
   ProfileForm::ProfileForm(View &view):
     Form(view),
     view(view),
-    name_fld(*this, Dim(1, 50), "Name: "),
-    email_fld(*this, Dim(1, 50), "Email: ") {
+    name(*this, Dim(1, 50), "Name: "),
+    email(*this, Dim(1, 50), "Email: "),
+    editor(*this, Dim(1, 50), "Editor: "),
+
+    imap_server(*this, Dim(1, 50), "Imap Server: "),
+    imap_port(*this, Dim(1, 10), "Imap Port: "),
+    imap_user(*this, Dim(1, 50), "Imap User: "),
+    imap_pass(*this, Dim(1, 50), "Imap Pass: "),
+
+    smtp_server(*this, Dim(1, 50), "Smtp Server: "),
+    smtp_port(*this, Dim(1, 10), "Smtp Port: "),
+    smtp_user(*this, Dim(1, 50), "Smtp User: "),
+    smtp_pass(*this, Dim(1, 50), "Smtp Pass: ") {
     margin_top = 1;
+    imap_server.margin_top = 1;
+    imap_pass.echo = false;
+    smtp_server.margin_top = 1;
+    smtp_pass.echo = false;
   }
 
   void run(ProfileForm &frm) {
     set_label(frm.view, "Profile");
-    
+    log(frm.window.ctx, "Press Ctrl-s to save profile");
+
     while (true) {
       chtype ch = get_key(frm.window);
 
-      if (ch == KEY_ESCAPE) { break; }
+      if (ch == CTRL('q')) { break; }
       
       if (ch == CTRL('s') ||
 	  (ch == KEY_RETURN && &active_field(frm) == frm.fields.back())) {
 	validate(frm);
+	log(frm.window.ctx, "Saved profile");
 	break;
       }
       

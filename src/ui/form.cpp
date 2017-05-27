@@ -20,6 +20,7 @@ namespace ui {
 
     for (auto f: frm.fields) {
       f->dim.w = min(f->dim.w, frm.window.dim.w-frm.label_width);
+      pos.y += f->margin_top;
       show(*f, pos);
       pos.y += f->dim.h+1;
       frm.field_ptrs.push_back(f->ptr);
@@ -33,6 +34,7 @@ namespace ui {
 
     pos = Pos(frm.margin_top, frm.label_width);
     for (auto f: frm.fields) {
+      pos.y += f->margin_top;
       move(frm.window, Pos(pos.y, pos.x - f->label.size()));
       print(frm.window, f->label);
       pos.y += f->dim.h+1;      
@@ -126,7 +128,7 @@ namespace ui {
   }
   
   Field::Field(Form &frm, const Dim &dim, const str &lbl):
-    form(frm), dim(dim), label(lbl), ptr(nullptr), echo(true) {
+    form(frm), dim(dim), margin_top(0), label(lbl), ptr(nullptr), echo(true) {
     frm.fields.push_back(this);
     frm.label_width = max(frm.label_width, lbl.size());
   }

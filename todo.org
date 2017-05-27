@@ -1,7 +1,4 @@
 * finish profile form
-** add all fields
-** add Field.margin_top
-*** use to separate imap/smtp
 ** update on save
 * add parse(Msg, string)
 ** change imap fetch to return Msgs

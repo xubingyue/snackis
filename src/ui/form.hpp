@@ -29,6 +29,7 @@ namespace ui {
 
     Form &form;
     Dim dim;
+    int margin_top;
     str label;
     FIELD *ptr;
     bool echo;

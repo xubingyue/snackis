@@ -29,12 +29,12 @@ namespace ui {
       log(frm.window.ctx, "Please enter system password");
     }
     
-    log(frm.window.ctx, "Press Escape to cancel and exit");
+    log(frm.window.ctx, "Press Ctrl-q to cancel and exit");
     
     while (true) {
       chtype ch = get_key(frm.window);
 
-      if (ch == KEY_ESCAPE) { return false; }
+      if (ch == CTRL('q')) { return false; }
 
       if (ch == KEY_RETURN && &active_field(frm) == frm.fields.back()) {
 	validate(frm);
