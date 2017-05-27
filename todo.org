@@ -1,6 +1,6 @@
-* change RecType to store key rec as str
-** read/write from/to Buf
-** change ValT to opt<RecT>
+* change ValT to opt<RecT>
+* remove col getter/setter
+** add field
 * finish profile form
 ** add all fields
 ** add Field.margin_top

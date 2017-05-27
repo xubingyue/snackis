@@ -22,12 +22,9 @@ namespace db {
   template <typename RecT>
   struct Table;
 
-  template <typename RecT, typename ValT>
-  using RecCol = Col<RecT, ValT *>;
-  
   template <typename RecT>
   struct RecType: public Type<RecT *> {
-    Table<RecT> &tbl;
+    Table<RecT> &table;
     
     RecType(Table<RecT> &tbl);
     RecT *from_val(const Val &in) const override;
@@ -358,30 +355,37 @@ namespace db {
 
   template <typename RecT>
   RecType<RecT>::RecType(Table<RecT> &tbl):
-    Type<RecT *>(fmt("Rec(%1%)") % tbl.name), tbl(tbl) { }
+    Type<RecT *>(fmt("Rec(%1%)") % tbl.name), table(tbl) { }
 
   template <typename RecT>
   RecT *RecType<RecT>::from_val(const Val &in) const {
-    return static_cast<RecT *>(get<void *>(in));
+    Buf buf(get<str>(in));
+    Rec<RecT> rec;
+    db::read(table, buf, rec, none);
+    return rec.empty() ? nullptr : new RecT(table, rec);
   }
 
   template <typename RecT>
   Val RecType<RecT>::to_val(RecT *const &in) const {
-    return static_cast<void *>(in);
+    Rec<RecT> rec;
+    copy(table, rec, *in);
+    Buf buf;
+    db::write(table, rec, buf, none);
+    return buf.str();
   }
 
   template <typename RecT>
   RecT *RecType<RecT>::read(std::istream &in) const {
-    Rec<RecT> trec;
-    db::read(tbl, in, trec, none);
-    return new RecT(tbl, trec);
+    Rec<RecT> rec;
+    db::read(table, in, rec, none);
+    return rec.empty() ? nullptr : new RecT(table, rec);
   }
   
   template <typename RecT>
   void RecType<RecT>::write(RecT *const &val, std::ostream &out) const {
-    Rec<RecT> trec;
-    copy(tbl, trec, *static_cast<RecT *>(val));
-    db::write(tbl, trec, out, none);
+    Rec<RecT> rec;
+    copy(table, rec, *val);
+    db::write(table, rec, out, none);
   }
   
 }}

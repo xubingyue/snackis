@@ -29,7 +29,7 @@ namespace snackis {
     db::Col<Thread, str> thread_name;
     db::Col<Thread, Time> thread_started_at;
     db::Col<Thread, Time> thread_posted_at;
-    db::RecCol<Thread, Peer> thread_started_by;
+    db::Col<Thread, Peer *> thread_started_by;
     db::Table<Thread> threads, thread_names;
     
     db::Col<Msg, UId> msg_id;
@@ -43,7 +43,7 @@ namespace snackis {
     db::Col<Msg, crypt::PubKey> msg_crypt_key;
     db::Table<Msg> inbox;
 
-    db::RecCol<Msg, Peer> msg_sent_to;
+    db::Col<Msg, Peer *> msg_sent_to;
     db::Table<Msg> outbox;
 
     Db(db::Ctx &ctx);

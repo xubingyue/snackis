@@ -38,7 +38,7 @@ namespace snackis {
 
   template <typename ValT>
   Val Type<ValT>::read_val(std::istream &in) const {
-    return read(in);
+    return to_val(read(in));
   }
   
   template <typename ValT>

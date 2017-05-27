@@ -57,12 +57,12 @@ namespace db {
 
   template <typename RecT, typename ValT>
   Val Col<RecT, ValT>::read(std::istream &in) const {
-    return type.read(in);
+    return type.read_val(in);
   }
 
   template <typename RecT, typename ValT>
   void Col<RecT, ValT>::write(const Val &val, std::ostream &out) const {
-    type.write(type.from_val(val), out);
+    type.write_val(val, out);
   }
 }}
 
