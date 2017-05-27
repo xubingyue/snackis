@@ -21,6 +21,9 @@ namespace snackis {
 namespace db {
   template <typename RecT>
   struct Table;
+
+  template <typename RecT, typename ValT>
+  using RecCol = Col<RecT, ValT *, void *>;
   
   template <typename RecT>
   struct RecType: public Type<void *> {
