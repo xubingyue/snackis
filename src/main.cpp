@@ -1,5 +1,6 @@
 #include "snackis/ctx.hpp"
 #include "ui/console.hpp"
+#include "ui/footer.hpp"
 #include "ui/header.hpp"
 #include "ui/login_form.hpp"
 #include "ui/reader.hpp"
@@ -16,10 +17,12 @@ static bool login(ui::View &view) {
 
 static void run(Ctx &ctx) {
   ui::Header hdr(ctx);
+  ui::Footer ftr(ctx);
+  
   ui::Console cons(ctx);
   ctx.log = [&cons](const str &msg) { ui::log(cons, msg); };
   log(ctx, "Welcome to Snackis");
-  ui::View view(ctx, hdr);
+  ui::View view(ctx, hdr, ftr);
 
   if (login(view)) {
     open(ctx);

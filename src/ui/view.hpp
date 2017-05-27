@@ -5,13 +5,14 @@
 
 namespace ui {
   struct Header;
+  struct Footer;
   
   struct View: public Window {
     Header &header;
-    View(Ctx &ctx, Header &header);
-  };
+    Footer &footer;
 
-  void set_label(View &view, const str &lbl);
+    View(Ctx &ctx, Header &hdr, Footer &ftr);
+  };
 }
 
 #endif

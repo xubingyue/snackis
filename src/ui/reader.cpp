@@ -5,15 +5,13 @@
 
 namespace ui {
   Reader::Reader(Ctx &ctx, View &view):
-    Window(ctx, ui::Dim(1, ui::dim().w), ui::Pos(ui::dim().h-1, 0)),
+    Window(ctx, ui::Dim(1, ui::dim().w/2), ui::Pos(ui::dim().h-1, 0)),
     form(*this),
     field(form, ui::Dim(1, dim.w), ": "),
     last_cmd(none),
     quitting(false),
     view(view) {
-    set_bg(*this, A_REVERSE);
     open(form);
-    set_bg(field, A_REVERSE);
     
     refresh(*this);
     init_cmds(*this);

@@ -2,6 +2,7 @@
 #include "snackis/core/path.hpp"
 #include "snackis/db/ctx.hpp"
 
+#include "ui/header.hpp"
 #include "ui/login_form.hpp"
 #include "ui/view.hpp"
 
@@ -21,7 +22,7 @@ namespace ui {
   }
 
   bool run(LoginForm &frm) {
-    set_label(frm.view, "Login");
+    set_label(frm.view.header, "Login");
     
     if (frm.repeat_fld) {
       log(frm.window.ctx, "Please select a system password and type it twice");
@@ -59,7 +60,7 @@ namespace ui {
       drive(frm, ch);
     }
 
-    set_label(frm.view, "");
+    set_label(frm.view.header, "");
     return true;
   }
 }

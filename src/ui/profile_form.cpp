@@ -2,6 +2,8 @@
 #include "snackis/core/path.hpp"
 #include "snackis/db/ctx.hpp"
 
+#include "ui/footer.hpp"
+#include "ui/header.hpp"
 #include "ui/profile_form.hpp"
 #include "ui/view.hpp"
 
@@ -30,8 +32,10 @@ namespace ui {
   }
   
   void run(ProfileForm &frm) {
-    set_label(frm.view, "Profile");
-    log(frm.window.ctx, "Press Ctrl-s to save profile");
+    set_label(frm.view.header, "Profile");
+    set_status(frm.view.footer, 
+	       "Press Ctrl-s to save profile, or Ctrl-q to cancel");
+    
     Ctx &ctx(frm.window.ctx);
     db::Trans trans(ctx);
     
@@ -71,6 +75,7 @@ namespace ui {
       drive(frm, ch);
     }
 
-    set_label(frm.view, "");
+    set_label(frm.view.header, "");
+    set_status(frm.view.footer, "");
   }
 }
