@@ -13,9 +13,3 @@
 * add inbox form
 ** use menus
 * add reader tab-completion
-* add ctx.log_tags
-** add 'log on x' / 'log off x' commands
-** add tags param to log fn
-*** initializer_list<str>
-** only call log if all in log_tags
-** init log_tags with all tags
