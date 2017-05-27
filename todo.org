@@ -1,4 +1,4 @@
-* switch RecType to opt<RecT>
+* switch RecType to RecT
 ** update db
 ** update msg & thread structs
 ** remove ctx from peer struct
