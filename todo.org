@@ -1,3 +1,5 @@
+* change uuid to store data as string
+* change crypt::key/pubkey to store data as string
 * finish profile form
 ** add all fields
 ** add Field.margin_top
