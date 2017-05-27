@@ -1,4 +1,6 @@
-* change ValT to opt<RecT>
+* change rec type ValT to opt<RecT>
+** update db
+** update thread & msg
 * remove col getter/setter
 ** add field
 * finish profile form
