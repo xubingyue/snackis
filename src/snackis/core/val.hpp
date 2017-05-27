@@ -12,7 +12,7 @@
 #include "snackis/crypt/pub_key.hpp"
 
 namespace snackis {
-  using Val = boost::variant<int64_t, str, void *,
+  using Val = boost::variant<int64_t, str,
 			     Data, Time, UId,
 			     crypt::Key, crypt::PubKey>;
 

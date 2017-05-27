@@ -47,7 +47,7 @@ namespace db {
 
   template <typename RecT, typename ValT>
   void Col<RecT, ValT>::copy(RecT &dest, const Rec<RecT> &src) const {
-    set(dest, type.from_val(src.at(this)));
+    set(dest, src.at(this));
   }
 
   template <typename RecT, typename ValT>
