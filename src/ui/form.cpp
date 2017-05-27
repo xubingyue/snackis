@@ -4,16 +4,10 @@
 #include "snackis/core/fmt.hpp"
 #include "snackis/core/utils.hpp"
 #include "ui/form.hpp"
+#include "ui/footer.hpp"
 #include "ui/window.hpp"
 
 namespace ui {
-  Form::Form(Window &wnd):
-    window(wnd), ptr(nullptr), label_width(0), margin_top(0) { }
-
-  Form::~Form() {
-    if (ptr) { close(*this); }
-  }
-  
   void open(Form &frm) {
     assert(!frm.ptr);
     Pos pos(frm.margin_top, frm.label_width);
@@ -54,6 +48,7 @@ namespace ui {
   void focus(Form &frm) {
     form_driver(frm.ptr, REQ_FIRST_FIELD);
     eol(frm);
+    set_status(frm.footer, frm.status);
   }
 
   void eol(Form &frm) {
@@ -126,14 +121,6 @@ namespace ui {
     assert(frm.ptr);
     form_driver(frm.ptr, REQ_CLR_FIELD);
   }
-  
-  Field::Field(Form &frm, const Dim &dim, const str &lbl):
-    form(frm), dim(dim), margin_top(0), label(lbl), ptr(nullptr), echo(true) {
-    frm.fields.push_back(this);
-    frm.label_width = max(frm.label_width, lbl.size());
-  }
-
-  Field::~Field() { free_field(ptr); }
 
   void set_bg(Field &fld, chtype ch) { set_field_back(fld.ptr, ch); }
 
@@ -163,4 +150,19 @@ namespace ui {
     assert(fld.ptr);
     set_field_buffer(fld.ptr, 0, val.c_str());
   }
+
+  Form::Form(Window &wnd, Footer &ftr):
+    window(wnd), footer(ftr), ptr(nullptr), label_width(0), margin_top(0) { }
+
+  Form::~Form() {
+    if (ptr) { close(*this); }
+  }
+
+  Field::Field(Form &frm, const Dim &dim, const str &lbl):
+    form(frm), dim(dim), margin_top(0), label(lbl), ptr(nullptr), echo(true) {
+    frm.fields.push_back(this);
+    frm.label_width = max(frm.label_width, lbl.size());
+  }
+
+  Field::~Field() { free_field(ptr); }
 }

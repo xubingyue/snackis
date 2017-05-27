@@ -2,15 +2,9 @@
 ** init port fields
 *** add to_int64(str) & to_str(int64_t))
 ** update db on save
-** add form.status
-*** opt<str>
-*** display in footer unless field.status
-* hook up status
-** add field.status
-*** display in footer if set
-*** add outer run(Form &) fn
-**** update label and clear label/status automagically
-*** update status when active_field changed in drive
+* add field.status
+** display in footer if set
+** update status when active_field changed in drive
 * add ctrl-space shortcut to test editor
 ** show in status
 * add ctrl-space shortcut to test imap

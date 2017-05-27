@@ -4,27 +4,27 @@
 #include "ui/profile_form.hpp"
 
 namespace ui {
-  Reader::Reader(Ctx &ctx, View &view):
+  Reader::Reader(Ctx &ctx, View &view, Footer &ftr):
     Window(ctx, ui::Dim(1, ui::dim().w/2), ui::Pos(ui::dim().h-1, 0)),
-    form(*this),
+    form(*this, ftr),
     field(form, ui::Dim(1, dim.w), "! "),
     last_cmd(none),
     quitting(false),
     view(view) {
+    form.status = "Type 'quit' followed by Return to exit";
     open(form);
-    
     refresh(*this);
     init_cmds(*this);
   }
 
   void init_cmds(Reader &rdr) {
-    rdr.cmds["profile"] = [&rdr]() {
-      ProfileForm prof(rdr.view);
+    rdr.cmds["profile"] = [&]() {
+      ProfileForm prof(rdr.view, rdr.form.footer);
       open(prof);
       run(prof);
     };
     
-    rdr.cmds["quit"] = [&rdr]() { rdr.quitting = true; };
+    rdr.cmds["quit"] = [&]() { rdr.quitting = true; };
   }
 
   bool run_cmd(Reader &rdr, const str &in) {

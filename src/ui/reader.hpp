@@ -9,6 +9,7 @@
 #include "ui/window.hpp"
 
 namespace ui {
+  struct Footer;
   struct View;
   
   struct Reader: public Window {
@@ -21,7 +22,7 @@ namespace ui {
     bool quitting;
     View &view;
     
-    Reader(Ctx &ctx, View &view);
+    Reader(Ctx &ctx, View &view, Footer &footer);
   };
 
   void init_cmds(Reader &rdr);

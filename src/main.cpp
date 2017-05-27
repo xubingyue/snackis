@@ -9,8 +9,8 @@
 
 using namespace snackis;
 
-static bool login(ui::View &view) {
-  ui::LoginForm login(view);
+static bool login(ui::View &view, ui::Footer &ftr) {
+  ui::LoginForm login(view, ftr);
   ui::open(login);
   return ui::run(login);
 }
@@ -22,17 +22,15 @@ static void run(Ctx &ctx) {
   ui::Console cons(ctx);
   ctx.log = [&cons](const str &msg) { ui::log(cons, msg); };
   log(ctx, "Welcome to Snackis");
-  ui::View view(ctx, hdr, ftr);
+  ui::View view(ctx, hdr);
 
-  if (login(view)) {
+  if (login(view, ftr)) {
     open(ctx);
     
     Peer &me(whoami(ctx));
     if (!me.name.empty()) { log(ctx, fmt("Hello %1%") % me.name); }
     
-    log(ctx, "Ctrl-q cancels current operation");
-    log(ctx, "Type 'quit' followed by Return to exit");
-    ui::Reader rdr(ctx, view);
+    ui::Reader rdr(ctx, view, ftr);
     ui::run(rdr);
   }
 }

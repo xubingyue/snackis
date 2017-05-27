@@ -15,6 +15,7 @@ namespace ui {
     wclrtoeol(hdr.ptr);
     move(hdr, Pos(0, hdr.dim.w/2));
     print(hdr, lbl);
+    hdr.label = lbl;
     refresh(hdr);
   }
 }

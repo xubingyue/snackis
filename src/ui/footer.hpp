@@ -6,6 +6,7 @@
 
 namespace ui {
   struct Footer: public Window {
+    str status;
     Footer(Ctx &ctx);
   };
 

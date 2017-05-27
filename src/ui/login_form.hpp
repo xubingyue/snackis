@@ -3,17 +3,14 @@
 
 #include <memory>
 
-#include "ui/form.hpp"
+#include "ui/view_form.hpp"
 
 namespace ui {
-  struct View;
-  
-  struct LoginForm: public Form {
-    View &view;
-    Field pass_fld;
-    std::unique_ptr<Field> repeat_fld;
+  struct LoginForm: public ViewForm {
+    Field pass;
+    std::unique_ptr<Field> repeat;
     
-    LoginForm(View &view);
+    LoginForm(View &view, Footer &ftr);
   };
 
   bool run(LoginForm &frm);

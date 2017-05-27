@@ -2,15 +2,13 @@
 #include "snackis/core/path.hpp"
 #include "snackis/db/ctx.hpp"
 
-#include "ui/footer.hpp"
-#include "ui/header.hpp"
 #include "ui/profile_form.hpp"
-#include "ui/view.hpp"
+#include "ui/window.hpp"
 
 namespace ui {
-  ProfileForm::ProfileForm(View &view):
-    Form(view),
-    view(view),
+  ProfileForm::ProfileForm(View &view, Footer &ftr):
+    ViewForm(view, ftr),
+    
     name(*this, Dim(1, 50), "Name: "),
     email(*this, Dim(1, 50), "Email: "),
     editor(*this, Dim(1, 50), "Editor: "),
@@ -24,24 +22,24 @@ namespace ui {
     smtp_port(*this, Dim(1, 10), "Smtp Port: "),
     smtp_user(*this, Dim(1, 50), "Smtp User: "),
     smtp_pass(*this, Dim(1, 50), "Smtp Pass: ") {
+    label = "Profile";
+    status = "Press Ctrl-s to save profile, or Ctrl-q to cancel";
+    
     margin_top = 1;
     imap_server.margin_top = 1;
     imap_pass.echo = false;
     smtp_server.margin_top = 1;
     smtp_pass.echo = false;
   }
-  
-  void run(ProfileForm &frm) {
-    set_label(frm.view.header, "Profile");
-    set_status(frm.view.footer, 
-	       "Press Ctrl-s to save profile, or Ctrl-q to cancel");
-    
+
+  bool run(ProfileForm &frm) {
     Ctx &ctx(frm.window.ctx);
     db::Trans trans(ctx);
     
     Peer &me(whoami(ctx));
     set_str(frm.name, me.name);
     set_str(frm.email, me.email);
+    
     auto editor(get_val(ctx.settings.editor));
     if (editor) { set_str(frm.editor, *editor); }
     
@@ -62,20 +60,17 @@ namespace ui {
     while (true) {
       chtype ch = get_key(frm.window);
 
-      if (ch == CTRL('q')) { break; }
+      if (ch == CTRL('q')) { return false; }
       
       if (ch == CTRL('s') ||
 	  (ch == KEY_RETURN && &active_field(frm) == frm.fields.back())) {
 	validate(frm);
 	db::commit(trans);
 	log(frm.window.ctx, "Saved profile");
-	break;
+	return true;
       }
       
       drive(frm, ch);
     }
-
-    set_label(frm.view.header, "");
-    set_status(frm.view.footer, "");
   }
 }

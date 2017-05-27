@@ -5,6 +5,7 @@
 
 #include <form.h>
 
+#include "snackis/core/opt.hpp"
 #include "snackis/core/str.hpp"
 #include "ui/ui.hpp"
 
@@ -13,14 +14,17 @@ namespace ui {
   
   struct Window;
   struct Field;
-
+  struct Footer;
+  
   struct Form {
     Window &window;
+    Footer &footer;
     FORM *ptr;
     std::vector<Field *> fields;
     std::vector<FIELD *> field_ptrs;
     int label_width, margin_top;
-    Form(Window &wnd);
+    str label, status;
+    Form(Window &wnd, Footer &ftr);
     virtual ~Form();
   };
 
@@ -47,7 +51,7 @@ namespace ui {
   void drive(Form &frm, int key);
   Field &active_field(Form &frm);
   void clear_field(Form &frm);
-
+    
   void set_bg(Field &fld, chtype ch);
   void show(Field &fld, const Pos &pos);
   void focus(Field &fld);

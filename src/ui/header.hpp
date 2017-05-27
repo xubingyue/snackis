@@ -6,6 +6,7 @@
 
 namespace ui {
   struct Header: public Window {
+    str label;
     Header(Ctx &ctx);
   };
 

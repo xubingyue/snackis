@@ -15,6 +15,7 @@ namespace ui {
     move(ftr, Pos(0, 2));
     wclrtoeol(ftr.ptr);
     print(ftr, stat);
+    ftr.status = stat;
     refresh(ftr);
   }
 }
