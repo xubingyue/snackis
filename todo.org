@@ -1,3 +1,7 @@
+* change RecType storage to Rec<RecT>
+** update db
+** update settings
+** update peer & msg
 * finish profile form
 ** add all fields
 ** add Field.margin_top
