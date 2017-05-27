@@ -362,7 +362,14 @@ namespace db {
     Buf buf(get<str>(in));
     Rec<RecT> rec;
     db::read(table, buf, rec, none);
-    return rec.empty() ? nullptr : new RecT(table, rec);
+    if (rec.empty()) { return nullptr; }
+
+    RecT *out = new RecT(table, rec);
+    if (!load(table, *out)) {
+      ERROR(Db, fmt("Record not found: %1%") % table.name);
+    }
+    
+    return out;
   }
 
   template <typename RecT>

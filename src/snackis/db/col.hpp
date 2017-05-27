@@ -13,10 +13,9 @@ namespace db {
   template <typename RecT, typename ValT>
   struct Col: public BasicCol<RecT> {
     const Type<ValT> &type;
-    std::function<const ValT &(const RecT &)> getter;
-    std::function<void (RecT &, const ValT &)> setter;
-
-    Col(const str &name, const Type<ValT> &type, ValT RecT::* ptr);
+    ValT RecT::* field;
+    
+    Col(const str &name, const Type<ValT> &type, ValT RecT::* fld);
     void copy(RecT &dest, const RecT &src) const override;
     void copy(Rec<RecT> &dest, const RecT &src) const override;
     void copy(RecT &dest, const Rec<RecT> &src) const override;
@@ -28,21 +27,20 @@ namespace db {
   template <typename RecT, typename ValT>
   Col<RecT, ValT>::Col(const str &name,
 			     const Type<ValT> &type,
-			     ValT RecT::* ptr):
+			     ValT RecT::* fld):
     BasicCol<RecT>(name),
     type(type),
-    getter([ptr](const RecT &rec) { return std::cref(rec.*ptr); }),
-    setter([ptr](RecT &rec, const ValT &val) { rec.*ptr = val; })
+    field(fld)
   { }
 
   template <typename RecT, typename ValT>
   void Col<RecT, ValT>::copy(RecT &dest, const RecT &src) const {
-    setter(dest, getter(src));
+    dest.*field = src.*field;
   }
 
   template <typename RecT, typename ValT>
   void Col<RecT, ValT>::copy(Rec<RecT> &dest, const RecT &src) const {
-    dest[this] = type.to_val(getter(src));
+    dest[this] = type.to_val(src.*field);
   }
 
   template <typename RecT, typename ValT>
@@ -51,8 +49,8 @@ namespace db {
   }
 
   template <typename RecT, typename ValT>
-  void Col<RecT, ValT>::set(RecT &dest, const Val &val) const {
-    setter(dest, type.from_val(val));
+  void Col<RecT, ValT>::set(RecT &rec, const Val &val) const {
+    rec.*field = type.from_val(val);
   }
 
   template <typename RecT, typename ValT>

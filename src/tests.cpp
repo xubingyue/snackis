@@ -56,16 +56,6 @@ struct Foo {
   }
 };
 
-void col_tests() {
-  const Col<Foo, str> col("str", str_type, &Foo::fstr); 
-
-  Foo foo;
-  foo.fstr = "abc";
-  assert(col.getter(foo) == "abc");
-  col.setter(foo, "def");
-  assert(foo.fstr == "def");
-}
-
 void schema_tests() {
   const Col<Foo, int64_t> col("int64", int64_type, &Foo::fint64); 
   Schema<Foo> scm({&col});
@@ -163,7 +153,6 @@ int main() {
   try {
     crypt_secret_tests();
     crypt_key_tests();
-    col_tests();
     schema_tests();
     table_insert_tests();
     table_slurp_tests();
