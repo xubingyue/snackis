@@ -1,3 +1,7 @@
+* switch RecType to opt<RecT>
+** update db
+** update msg & thread structs
+** remove ctx from peer struct
 * finish profile form
 ** add all fields
 ** add Field.margin_top
