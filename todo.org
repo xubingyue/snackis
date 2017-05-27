@@ -1,7 +1,5 @@
-* change rectype to store as data instead of str
-* change uuid to store data as data
-* change crypt::key/pubkey to store data as data
-* change string to store as data
+* change crypt::Key/PubKey to store as string
+** remove from Val
 * finish profile form
 ** add all fields
 ** add Field.margin_top
