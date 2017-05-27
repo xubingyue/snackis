@@ -5,7 +5,7 @@
 
 namespace snackis {
   struct Settings {
-    Setting<void *> whoami;
+    Setting<Peer *> whoami;
     Setting<crypt::Key> crypt_key;
     Setting<str> editor;
     

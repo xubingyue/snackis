@@ -10,8 +10,8 @@ namespace snackis {
   struct BasicType {
     const str name; 
     BasicType(const str &name);
-    virtual Val read_val(std::istream &in) const=0;
-    virtual void write_val(const Val &val, std::ostream &out) const=0;
+    virtual Val read_val(std::istream &in) const = 0;
+    virtual void write_val(const Val &val, std::ostream &out) const = 0;
   };
 
   struct NullType: public BasicType {
@@ -23,10 +23,12 @@ namespace snackis {
   template <typename ValT>
   struct Type: public BasicType {
     Type(const str &name);
+    virtual ValT from_val(const Val &in) const = 0;
+    virtual Val to_val(const ValT &in) const = 0;
     Val read_val(std::istream &in) const override;
     void write_val(const Val &val, std::ostream &out) const override;
-    virtual ValT read(std::istream &in) const=0;
-    virtual void write(const ValT &val, std::ostream &out) const=0;
+    virtual ValT read(std::istream &in) const = 0;
+    virtual void write(const ValT &val, std::ostream &out) const = 0;
   };
 
   extern const NullType null_type;
@@ -41,7 +43,7 @@ namespace snackis {
   
   template <typename ValT>
   void Type<ValT>::write_val(const Val &val, std::ostream &out) const {
-    write(get<ValT>(val), out);
+    write(from_val(val), out);
   }
 }
 

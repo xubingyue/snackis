@@ -1,8 +1,5 @@
-* add FldT type param to col.hpp
-* add type.from_/to_val
-** override for all types
-** use in col.hpp
-** store to/from Data in RecType
+* change RecType to store key rec as Data
+** change ValT to opt<RecT>
 * finish profile form
 ** add all fields
 ** add Field.margin_top

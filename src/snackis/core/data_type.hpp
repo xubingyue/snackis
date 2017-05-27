@@ -7,6 +7,8 @@
 namespace snackis {
   struct DataType: public Type<Data> {
     DataType();
+    Data from_val(const Val &in) const override;
+    Val to_val(const Data &in) const override;
     Data read(std::istream &in) const override;
     void write(const Data &val, std::ostream &out) const override;
   };

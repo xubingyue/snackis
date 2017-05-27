@@ -5,6 +5,10 @@ namespace snackis {
 
   DataType::DataType(): Type<Data>("Data") { }
 
+  Data DataType::from_val(const Val &in) const { return get<Data>(in); }
+
+  Val DataType::to_val(const Data &in) const { return in; }
+
   Data DataType::read(std::istream &in) const {
     int64_t size = -1;
     in.read((char *)&size, sizeof size);

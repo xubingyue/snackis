@@ -7,6 +7,10 @@ namespace crypt {
   KeyType::KeyType(): Type<Key>("crypt::Key") {
   }
 
+  Key KeyType::from_val(const Val &in) const { return get<Key>(in); }
+
+  Val KeyType::to_val(const Key &in) const { return in; }
+
   Key KeyType::read(std::istream &in) const {
     return Key(in);
   }

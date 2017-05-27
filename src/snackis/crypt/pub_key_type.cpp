@@ -7,6 +7,10 @@ namespace crypt {
   PubKeyType::PubKeyType(): Type<PubKey>("crypt::PubKey") {
   }
 
+  PubKey PubKeyType::from_val(const Val &in) const { return get<PubKey>(in); }
+
+  Val PubKeyType::to_val(const PubKey &in) const { return in; }
+
   PubKey PubKeyType::read(std::istream &in) const {
     return PubKey(in);
   }

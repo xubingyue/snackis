@@ -5,6 +5,10 @@ namespace snackis {
 
   TimeType::TimeType(): Type<Time>("Time") { }
 
+  Time TimeType::from_val(const Val &in) const { return get<Time>(in); }
+
+  Val TimeType::to_val(const Time &in) const { return in; }
+
   Time TimeType::read(std::istream &in) const {
     int64_t ms = -1;
     in.read((char *)&ms, sizeof ms);

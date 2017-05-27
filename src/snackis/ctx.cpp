@@ -9,11 +9,11 @@ namespace snackis {
   void init_defaults(Ctx &ctx) {
     db::Trans trans(ctx);
 
-    opt<void *> found_me = get_val(ctx.settings.whoami);
+    opt<Peer *> found_me = get_val(ctx.settings.whoami);
     if (found_me) {
-      copy(ctx.db.peers, ctx.whoami, *static_cast<Peer *>(*found_me));
+      copy(ctx.db.peers, ctx.whoami, **found_me);
     } else {
-      set_val(ctx.settings.whoami, static_cast<void *>(&ctx.whoami));
+      set_val(ctx.settings.whoami, &ctx.whoami);
     }
     
     opt<crypt::Key> found_crypt_key(get_val(ctx.settings.crypt_key));

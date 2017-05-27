@@ -23,15 +23,17 @@ namespace db {
   struct Table;
 
   template <typename RecT, typename ValT>
-  using RecCol = Col<RecT, ValT *, void *>;
+  using RecCol = Col<RecT, ValT *>;
   
   template <typename RecT>
-  struct RecType: public Type<void *> {
+  struct RecType: public Type<RecT *> {
     Table<RecT> &tbl;
     
     RecType(Table<RecT> &tbl);
-    void *read(std::istream &in) const override;
-    void write(void *const &val, std::ostream &out) const override;
+    RecT *from_val(const Val &in) const override;
+    Val to_val(RecT *const &in) const override;
+    RecT *read(std::istream &in) const override;
+    void write(RecT *const &val, std::ostream &out) const override;
   };
   
   template <typename RecT>
@@ -356,21 +358,32 @@ namespace db {
 
   template <typename RecT>
   RecType<RecT>::RecType(Table<RecT> &tbl):
-    Type(fmt("Rec(%1%)") % tbl.name), tbl(tbl) { }
+    Type<RecT *>(fmt("Rec(%1%)") % tbl.name), tbl(tbl) { }
 
   template <typename RecT>
-  void *RecType<RecT>::read(std::istream &in) const {
+  RecT *RecType<RecT>::from_val(const Val &in) const {
+    return static_cast<RecT *>(get<void *>(in));
+  }
+
+  template <typename RecT>
+  Val RecType<RecT>::to_val(RecT *const &in) const {
+    return static_cast<void *>(in);
+  }
+
+  template <typename RecT>
+  RecT *RecType<RecT>::read(std::istream &in) const {
     Rec<RecT> trec;
     db::read(tbl, in, trec, none);
     return new RecT(tbl, trec);
   }
   
   template <typename RecT>
-  void RecType<RecT>::write(void *const &val, std::ostream &out) const {
+  void RecType<RecT>::write(RecT *const &val, std::ostream &out) const {
     Rec<RecT> trec;
     copy(tbl, trec, *static_cast<RecT *>(val));
     db::write(tbl, trec, out, none);
   }
+  
 }}
 
 #endif

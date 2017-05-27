@@ -5,6 +5,10 @@ namespace snackis {
 
   StrType::StrType(): Type<str>("Str") { }
 
+  str StrType::from_val(const Val &in) const { return get<str>(in); }
+
+  Val StrType::to_val(const str &in) const { return in; }
+
   str StrType::read(std::istream &in) const {
     int64_t size = -1;
     in.read((char *)&size, sizeof size);

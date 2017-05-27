@@ -7,6 +7,9 @@
 namespace snackis {
   struct TimeType: public Type<Time> {
     TimeType();
+    Time from_val(const Val &in) const override;
+    Val to_val(const Time &in) const override;
+
     Time read(std::istream &in) const override;
     void write(const Time &val, std::ostream &out) const override;
   };
