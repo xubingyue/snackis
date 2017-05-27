@@ -1,7 +1,3 @@
-* change crypt::Key/PubKey to store as str
-** remove from Val
-* change setting to use str for val
-** remove data_type
 * finish profile form
 ** add all fields
 ** add Field.margin_top

@@ -12,15 +12,14 @@ namespace snackis {
   str StrType::read(std::istream &in) const {
     int64_t size = -1;
     in.read((char *)&size, sizeof size);
-    char *data = new char[size+1];
-    data[size] = 0;
-    in.read(data, size);
-    return str(data);
+    std::vector<char> data(size);
+    in.read(&data[0], size);
+    return str(data.begin(), data.end());
   }
   
   void StrType::write(const str &val, std::ostream &out) const {
     int64_t size = val.size();
     out.write((const char *)&size, sizeof size);
-    out.write(val.c_str(), size);
+    out.write(val.data(), size);
   }
 }

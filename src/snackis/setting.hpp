@@ -3,15 +3,13 @@
 
 #include "snackis/rec.hpp"
 #include "snackis/core/buf.hpp"
-#include "snackis/core/data.hpp"
 #include "snackis/core/opt.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/core/type.hpp"
 
 namespace snackis {
   struct BasicSetting: public Rec {
-    str key;
-    Data val;
+    str key, val;
 
     BasicSetting(Ctx &ctx, const str &key);
     BasicSetting(const db::Table<BasicSetting> &tbl,
@@ -47,8 +45,7 @@ namespace snackis {
 
     if (stn.val.empty()) { return none; }
 
-    Buf buf;
-    buf.write((char *)&stn.val[0], stn.val.size());
+    Buf buf(stn.val);
     return stn.type.read(buf);
   }
   
@@ -56,8 +53,7 @@ namespace snackis {
   void set_val(Setting<ValT> &stn, const ValT &val) {
     Buf buf;
     stn.type.write(val, buf);
-    str data(buf.str());
-    stn.val.assign(data.begin(), data.end());
+    stn.val = buf.str();
     upsert(stn.ctx.db.settings, dynamic_cast<BasicSetting &>(stn));
   }
 }

@@ -14,7 +14,7 @@
 namespace snackis {
   struct Db {
     db::Col<BasicSetting, str> setting_key;
-    db::Col<BasicSetting, Data> setting_val;
+    db::Col<BasicSetting, str> setting_val;
     db::Table<BasicSetting> settings;
     
     db::Col<Peer, UId> peer_id;

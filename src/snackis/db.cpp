@@ -1,5 +1,4 @@
 #include "snackis/db.hpp"
-#include "snackis/core/data_type.hpp"
 #include "snackis/core/int64_type.hpp"
 #include "snackis/core/str_type.hpp"
 #include "snackis/core/time_type.hpp"
@@ -9,7 +8,7 @@
 namespace snackis {
   Db::Db(db::Ctx &ctx):
     setting_key("key", str_type, &BasicSetting::key),
-    setting_val("val", data_type, &BasicSetting::val),
+    setting_val("val", str_type, &BasicSetting::val),
     settings(ctx, "settings", {&setting_key}, {&setting_val}),
     
     peer_id("id", uid_type, &Peer::id),
