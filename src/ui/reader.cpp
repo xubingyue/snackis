@@ -7,7 +7,7 @@ namespace ui {
   Reader::Reader(Ctx &ctx, View &view):
     Window(ctx, ui::Dim(1, ui::dim().w/2), ui::Pos(ui::dim().h-1, 0)),
     form(*this),
-    field(form, ui::Dim(1, dim.w), ": "),
+    field(form, ui::Dim(1, dim.w), "! "),
     last_cmd(none),
     quitting(false),
     view(view) {

@@ -2,14 +2,13 @@
 ** init port fields
 *** add to_int64(str) & to_str(int64_t))
 ** update db on save
+** add form.status
+*** opt<str>
+*** display in footer unless field.status
 * hook up status
 ** add field.status
 *** display in footer if set
-** add form.status
-*** display in footer unless field.status
-** add ViewForm struct
-*** add ViewForm.run method
-*** add outer run(ViewForm &) fn
+*** add outer run(Form &) fn
 **** update label and clear label/status automagically
 *** update status when active_field changed in drive
 * add ctrl-space shortcut to test editor
