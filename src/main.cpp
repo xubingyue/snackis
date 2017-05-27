@@ -23,8 +23,6 @@ static void run(Ctx &ctx) {
 
   if (login(view)) {
     open(ctx);
-    slurp(ctx);
-    init_defaults(ctx);
     
     Peer &me(whoami(ctx));
     if (!me.name.empty()) { log(ctx, fmt("Hello %1%") % me.name); }

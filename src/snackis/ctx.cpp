@@ -6,14 +6,22 @@ namespace snackis {
     db::Ctx(path), db(*this), settings(*this), whoami(*this) 
   { }
 
-  void init_defaults(Ctx &ctx) {
+  void open(Ctx &ctx) {
+    open(dynamic_cast<db::Ctx &>(ctx));
+    slurp(ctx);
+
     db::Trans trans(ctx);
 
-    opt<Peer *> found_me = get_val(ctx.settings.whoami);
+    opt<db::Rec<Peer>> found_me = get_val(ctx.settings.whoami);
     if (found_me) {
-      copy(ctx.db.peers, ctx.whoami, **found_me);
+      copy(ctx.db.peers, ctx.whoami, *found_me);
+      if (!load(ctx.db.peers, ctx.whoami)) {
+	ERROR(db::Db, "Failed loading me");
+      }
     } else {
-      set_val(ctx.settings.whoami, &ctx.whoami);
+      db::Rec<Peer> me;
+      copy(ctx.db.peers.key, me, ctx.whoami);
+      set_val(ctx.settings.whoami, me);
     }
     
     opt<crypt::Key> found_crypt_key(get_val(ctx.settings.crypt_key));

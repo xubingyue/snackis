@@ -14,7 +14,7 @@ namespace snackis {
     str type;
     int64_t proto_rev;
     Time fetched_at;
-    Peer *sent_to;
+    db::Rec<Peer> sent_to;
     str peer_name, peer_email;
     crypt::PubKey crypt_key;
     

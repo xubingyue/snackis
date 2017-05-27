@@ -13,7 +13,7 @@ namespace snackis {
     UId id;
     str name;
     Time started_at, posted_at;
-    Peer *started_by;
+    db::Rec<Peer> started_by;
     
     Thread(Ctx &ctx);
     Thread(const db::Table<Thread> &tbl, const db::Rec<Thread> &rec);   

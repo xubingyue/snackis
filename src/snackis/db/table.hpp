@@ -23,14 +23,14 @@ namespace db {
   struct Table;
 
   template <typename RecT>
-  struct RecType: public Type<RecT *> {
+  struct RecType: public Type<Rec<RecT>> {
     Table<RecT> &table;
     
     RecType(Table<RecT> &tbl);
-    RecT *from_val(const Val &in) const override;
-    Val to_val(RecT *const &in) const override;
-    RecT *read(std::istream &in) const override;
-    void write(RecT *const &val, std::ostream &out) const override;
+    Rec<RecT> from_val(const Val &in) const override;
+    Val to_val(const Rec<RecT> &in) const override;
+    Rec<RecT> read(std::istream &in) const override;
+    void write(const Rec<RecT> &val, std::ostream &out) const override;
   };
   
   template <typename RecT>
@@ -355,46 +355,34 @@ namespace db {
 
   template <typename RecT>
   RecType<RecT>::RecType(Table<RecT> &tbl):
-    Type<RecT *>(fmt("Rec(%1%)") % tbl.name), table(tbl) { }
+    Type<Rec<RecT>>(fmt("Rec(%1%)") % tbl.name), table(tbl) { }
 
   template <typename RecT>
-  RecT *RecType<RecT>::from_val(const Val &in) const {
+  Rec<RecT> RecType<RecT>::from_val(const Val &in) const {
     Buf buf(get<str>(in));
     Rec<RecT> rec;
     db::read(table, buf, rec, none);
-    if (rec.empty()) { return nullptr; }
-
-    RecT *out = new RecT(table, rec);
-    if (!load(table, *out)) {
-      ERROR(Db, fmt("Record not found: %1%") % table.name);
-    }
-    
-    return out;
+    return rec;
   }
 
   template <typename RecT>
-  Val RecType<RecT>::to_val(RecT *const &in) const {
-    Rec<RecT> rec;
-    copy(table, rec, *in);
+  Val RecType<RecT>::to_val(const Rec<RecT> &in) const {
     Buf buf;
-    db::write(table, rec, buf, none);
+    db::write(table, in, buf, none);
     return buf.str();
   }
 
   template <typename RecT>
-  RecT *RecType<RecT>::read(std::istream &in) const {
+  Rec<RecT> RecType<RecT>::read(std::istream &in) const {
     Rec<RecT> rec;
     db::read(table, in, rec, none);
-    return rec.empty() ? nullptr : new RecT(table, rec);
+    return rec;
   }
   
   template <typename RecT>
-  void RecType<RecT>::write(RecT *const &val, std::ostream &out) const {
-    Rec<RecT> rec;
-    copy(table, rec, *val);
-    db::write(table, rec, out, none);
+  void RecType<RecT>::write(const Rec<RecT> &val, std::ostream &out) const {
+    db::write(table, val, out, none);
   }
-  
 }}
 
 #endif
