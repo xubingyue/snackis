@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 project(snackis)
-add_compile_options(-std=c++17 -Wall -Werror -g)
+add_compile_options(-std=c++14 -Wall -Werror -g)
 file(GLOB_RECURSE sources src/snackis/*.cpp)
 find_package(Boost REQUIRED)
 find_library(CURL NAMES libcurl.a)

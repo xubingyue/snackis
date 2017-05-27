@@ -106,8 +106,11 @@ namespace db {
 
     for (auto idx: tbl.indexes) {
       Rec<RecT> irec;
-      copy(*idx, irec, rec);
-      insert(*idx, irec);
+      copy(idx->key, irec, rec);
+      if (!irec.empty()) {
+	copy(tbl.key, irec, rec);
+	insert(*idx, irec);
+      }
     }
     
     assert(tbl.ctx.trans);
@@ -132,10 +135,14 @@ namespace db {
       erase(*idx, *found);
       
       Rec<RecT> irec;
-      copy(*idx, irec, rec);
-      insert(*idx, irec);
+      copy(idx->key, irec, rec);
+      if (!irec.empty()) {
+	copy(tbl.key, irec, rec);
+	insert(*idx, irec);
+      }
     }
     
+    assert(tbl.ctx.trans);
     log_change(*tbl.ctx.trans, new Update<RecT>(tbl, rec, *found));
     tbl.recs.erase(found);
     tbl.recs.insert(rec);
@@ -161,6 +168,8 @@ namespace db {
     auto found(tbl.recs.find(rec));
     if (found == tbl.recs.end()) { return false; }
     for (auto idx: tbl.indexes) { erase(*idx, *found); }
+    
+    assert(tbl.ctx.trans);
     log_change(*tbl.ctx.trans, new Erase<RecT>(tbl, *found));
     tbl.recs.erase(found);
     return true;
