@@ -28,11 +28,33 @@ namespace ui {
     smtp_server.margin_top = 1;
     smtp_pass.echo = false;
   }
-
+  
   void run(ProfileForm &frm) {
     set_label(frm.view, "Profile");
     log(frm.window.ctx, "Press Ctrl-s to save profile");
+    Ctx &ctx(frm.window.ctx);
+    db::Trans trans(ctx);
+    
+    Peer &me(whoami(ctx));
+    set_str(frm.name, me.name);
+    set_str(frm.email, me.email);
+    auto editor(get_val(ctx.settings.editor));
+    if (editor) { set_str(frm.editor, *editor); }
+    
+    auto imap_server(get_val(ctx.settings.imap_server));
+    if (imap_server) { set_str(frm.imap_server, *imap_server); }
+    auto imap_user(get_val(ctx.settings.imap_user));
+    if (imap_user) { set_str(frm.imap_user, *imap_user); }
+    auto imap_pass(get_val(ctx.settings.imap_pass));
+    if (imap_pass) { set_str(frm.imap_pass, *imap_pass); }
 
+    auto smtp_server(get_val(ctx.settings.smtp_server));
+    if (smtp_server) { set_str(frm.smtp_server, *smtp_server); }
+    auto smtp_user(get_val(ctx.settings.smtp_user));
+    if (smtp_user) { set_str(frm.smtp_user, *smtp_user); }
+    auto smtp_pass(get_val(ctx.settings.smtp_pass));
+    if (smtp_pass) { set_str(frm.smtp_pass, *smtp_pass); }
+    
     while (true) {
       chtype ch = get_key(frm.window);
 
@@ -41,6 +63,7 @@ namespace ui {
       if (ch == CTRL('s') ||
 	  (ch == KEY_RETURN && &active_field(frm) == frm.fields.back())) {
 	validate(frm);
+	db::commit(trans);
 	log(frm.window.ctx, "Saved profile");
 	break;
       }
