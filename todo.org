@@ -1,11 +1,8 @@
-* add type.encode/decode
-** to/from Val
-** virtual with defaultx
-** update Schema to use encode/decode
-* change RecType from void * to opt<RecT>
-** override encode/decode and type cast opt to/from void *
-** update db
-** update msg/thread
+* add FldT type param to col.hpp
+* add type.from_/to_val
+** override for all types
+** use in col.hpp
+** store to/from Data in RecType
 * finish profile form
 ** add all fields
 ** add Field.margin_top

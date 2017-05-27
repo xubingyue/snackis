@@ -44,12 +44,12 @@ namespace db {
 
   template <typename RecT, typename ValT>
   void Col<RecT, ValT>::copy(Rec<RecT> &dest, const RecT &src) const {
-    dest[this] = type.to_val(getter(src));
+    dest[this] = getter(src);
   }
 
   template <typename RecT, typename ValT>
   void Col<RecT, ValT>::copy(RecT &dest, const Rec<RecT> &src) const {
-    set(dest, type.from_val(snackis::get<ValT>(src.at(this))));
+    set(dest, snackis::get<ValT>(src.at(this)));
   }
 
   template <typename RecT, typename ValT>
