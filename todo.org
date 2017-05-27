@@ -12,6 +12,10 @@
 *** add outer run(ViewForm &) fn
 **** update label and clear label/status automagically
 *** update status when active_field changed in drive
+* add ctrl-space shortcut to test editor
+** show in status
+* add ctrl-space shortcut to test imap
+** show in status
 * add parse(Msg, string)
 ** change imap fetch to return Msgs
 * add net/smtp
