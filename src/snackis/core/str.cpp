@@ -9,4 +9,8 @@ namespace snackis {
     const size_t j = in.find_last_not_of(whitespace);
     return in.substr(i, (j-i+1));
   }
+
+  int64_t to_int64(const str &in) {
+    return std::stoll(in);
+  }
 }

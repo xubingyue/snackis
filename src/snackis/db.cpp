@@ -21,7 +21,7 @@ namespace snackis {
 	  {&peer_name, &peer_email, &peer_crypt_key, &peer_invited_at,
 	      &peer_accepted_at}),
 
-    peer_names(ctx, "peer_names", {&peer_name, &peer_id}, {}),
+    peer_names(ctx, "peer_names", {&peer_name}, {&peer_id}),
     peer_emails(ctx, "peer_emails", {&peer_email}, {&peer_id}),
 
     thread_id("id", uid_type, &Thread::id),
@@ -33,7 +33,7 @@ namespace snackis {
 	    {&thread_name, &thread_started_at, &thread_posted_at,
 		&thread_started_by}),
 
-    thread_names(ctx, "thread_names", {&thread_name, &thread_id}, {}),
+    thread_names(ctx, "thread_names", {&thread_name}, {&thread_id}),
 
     msg_id("id", uid_type, &Msg::id),
     msgs(ctx, "msgs", {&msg_id}, {}),

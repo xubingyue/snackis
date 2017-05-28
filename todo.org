@@ -1,14 +1,9 @@
 * finish profile form
-** init port fields
-*** add to_int64(str) & to_str(int64_t))
-** update db on save
-* add field.status
-** display in footer if set
-** update status when active_field changed in drive
-* add ctrl-space shortcut to test editor
-** show in status
+* add func type/header
+** std::function
 * add ctrl-space shortcut to test imap
-** show in status
+** change imap to take ctx and use settings
+* add ctrl-space shortcut to test editor
 * add parse(Msg, string)
 ** change imap fetch to return Msgs
 * add net/smtp

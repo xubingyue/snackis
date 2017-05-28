@@ -36,7 +36,7 @@ namespace ui {
     int margin_top;
     str label;
     FIELD *ptr;
-    bool echo;
+    bool active, echo;
     opt<Complete> complete;
     
     Field(Form &frm, const Dim &dim, const str &lbl);
