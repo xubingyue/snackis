@@ -4,13 +4,15 @@
 #define DEFER(fn)				\
   Defer UNIQUE(defer)([&]() fn)			\
 
-#include <functional>
+#include <snackis/core/func.hpp>
 #include <snackis/core/macros.hpp>
 
 namespace snackis {
   struct Defer {
-    using Fn = std::function<void ()>; 
+    using Fn = func<void ()>;
+    
     const Fn fn;
+    
     Defer(const Fn &fn);
     ~Defer();
   };

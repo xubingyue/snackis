@@ -1,6 +1,3 @@
-* finish profile form
-* add func type/header
-** std::function
 * add ctrl-space shortcut to test imap
 ** change imap to take ctx and use settings
 * add ctrl-space shortcut to test editor

@@ -5,6 +5,7 @@
 
 #include <form.h>
 
+#include "snackis/core/func.hpp"
 #include "snackis/core/opt.hpp"
 #include "snackis/core/str.hpp"
 #include "ui/ui.hpp"
@@ -29,7 +30,7 @@ namespace ui {
   };
 
   struct Field {
-    using Complete = std::function<str (const str &)>;
+    using Complete = func<str (const str &)>;
 
     Form &form;
     Dim dim;

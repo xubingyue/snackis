@@ -7,6 +7,7 @@
 #include "snackis/core/buf.hpp"
 #include "snackis/core/data.hpp"
 #include "snackis/core/fmt.hpp"
+#include "snackis/core/func.hpp"
 #include "snackis/core/opt.hpp"
 #include "snackis/core/str_type.hpp"
 #include "snackis/core/type.hpp"
@@ -35,7 +36,7 @@ namespace db {
   
   template <typename RecT>
   struct Table: public BasicTable, public Schema<RecT> {
-    using CmpRec = std::function<bool (const Rec<RecT> &, const Rec<RecT> &)>;
+    using CmpRec = func<bool (const Rec<RecT> &, const Rec<RecT> &)>;
     using Cols = std::initializer_list<const BasicCol<RecT> *>;
     
     const Schema<RecT> key;

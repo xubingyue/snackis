@@ -3,6 +3,7 @@
 
 #include <map>
 
+#include "snackis/core/func.hpp"
 #include "snackis/core/opt.hpp"
 #include "snackis/core/str.hpp"
 #include "ui/form.hpp"
@@ -13,7 +14,7 @@ namespace ui {
   struct View;
   
   struct Reader: public Window {
-    using Cmd = std::function<void ()>;
+    using Cmd = func<void ()>;
     
     Form form;
     Field field;

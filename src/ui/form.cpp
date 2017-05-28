@@ -128,9 +128,9 @@ namespace ui {
     assert(!fld.ptr);
     fld.ptr = new_field(fld.dim.h, fld.dim.w, pos.y, pos.x, 0, 0);
     set_field_userptr(fld.ptr, reinterpret_cast<char *>(&fld));
-    set_bg(fld, A_UNDERLINE);
     field_opts_off(fld.ptr, O_AUTOSKIP);
-    if (!fld.active) { field_opts_off(fld.ptr, O_ACTIVE); }
+    if (fld.active) { set_bg(fld, A_UNDERLINE); }
+    else { field_opts_off(fld.ptr, O_ACTIVE); }
     if (!fld.echo) { field_opts_off(fld.ptr, O_PUBLIC); }
   }
 

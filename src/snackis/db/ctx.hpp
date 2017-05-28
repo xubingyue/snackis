@@ -3,6 +3,7 @@
 
 #include <set>
 
+#include "snackis/core/func.hpp"
 #include "snackis/core/opt.hpp"
 #include "snackis/core/mutex.hpp"
 #include "snackis/core/path.hpp"
@@ -15,7 +16,7 @@ namespace db {
   struct BasicTable;
   
   struct Ctx {
-    using Log = std::function<void (const str &)>;
+    using Log = func<void (const str &)>;
 
     const Path path;
     opt<crypt::Secret> secret;
