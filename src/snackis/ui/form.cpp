@@ -2,10 +2,11 @@
 
 #include "snackis/ctx.hpp"
 #include "snackis/core/utils.hpp"
-#include "ui/form.hpp"
-#include "ui/footer.hpp"
-#include "ui/window.hpp"
+#include "snackis/ui/form.hpp"
+#include "snackis/ui/footer.hpp"
+#include "snackis/ui/window.hpp"
 
+namespace snackis {
 namespace ui {
   void open(Form &frm) {
     assert(!frm.ptr);
@@ -177,4 +178,4 @@ namespace ui {
   }
 
   Field::~Field() { free_field(ptr); }
-}
+}}

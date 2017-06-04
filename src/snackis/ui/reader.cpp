@@ -2,9 +2,10 @@
 #include "snackis/core/fmt.hpp"
 #include "snackis/net/imap.hpp"
 #include "snackis/net/smtp.hpp"
-#include "ui/reader.hpp"
-#include "ui/profile_form.hpp"
+#include "snackis/ui/reader.hpp"
+#include "snackis/ui/profile_form.hpp"
 
+namespace snackis {
 namespace ui {
   Reader::Reader(Ctx &ctx, View &view, Footer &ftr):
     Window(ctx, ui::Dim(1, ui::dim().w/2), ui::Pos(ui::dim().h-1, 0)),
@@ -83,4 +84,4 @@ namespace ui {
       focus(rdr.form);
     }
   }
-}
+}}

@@ -8,8 +8,9 @@
 #include "snackis/core/func.hpp"
 #include "snackis/core/opt.hpp"
 #include "snackis/core/str.hpp"
-#include "ui/ui.hpp"
+#include "snackis/ui/ui.hpp"
 
+namespace snackis {
 namespace ui {
   using namespace snackis;
   
@@ -61,6 +62,6 @@ namespace ui {
   void focus(Field &fld);
   str get_str(Field &fld);
   void set_str(Field &fld, const str &val);  
-}
+}}
 
 #endif

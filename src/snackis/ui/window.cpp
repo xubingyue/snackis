@@ -1,6 +1,7 @@
 #include "snackis/ctx.hpp"
-#include "ui/window.hpp"
+#include "snackis/ui/window.hpp"
 
+namespace snackis {
 namespace ui {
   std::set<Window *> windows;
 
@@ -33,5 +34,4 @@ namespace ui {
   }
 
   int get_key(Window &wnd) { return wgetch(wnd.ptr); }
-}
-
+}}

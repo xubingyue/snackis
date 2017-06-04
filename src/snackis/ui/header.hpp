@@ -2,8 +2,9 @@
 #define SNACKIS_UI_HEADER_HPP
 
 #include "snackis/core/str.hpp"
-#include "ui/window.hpp"
+#include "snackis/ui/window.hpp"
 
+namespace snackis {
 namespace ui {
   struct Header: public Window {
     str label;
@@ -11,6 +12,6 @@ namespace ui {
   };
 
   void set_label(Header &hdr, const str &lbl);
-}
+}}
 
 #endif

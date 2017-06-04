@@ -1,8 +1,9 @@
 #ifndef SNACKIS_UI_VIEW_HPP
 #define SNACKIS_UI_VIEW_HPP
 
-#include "ui/window.hpp"
+#include "snackis/ui/window.hpp"
 
+namespace snackis {
 namespace ui {
   struct Header;
   
@@ -11,6 +12,6 @@ namespace ui {
 
     View(Ctx &ctx, Header &hdr);
   };
-}
+}}
 
 #endif

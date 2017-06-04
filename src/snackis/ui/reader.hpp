@@ -6,9 +6,10 @@
 #include "snackis/core/func.hpp"
 #include "snackis/core/opt.hpp"
 #include "snackis/core/str.hpp"
-#include "ui/form.hpp"
-#include "ui/window.hpp"
+#include "snackis/ui/form.hpp"
+#include "snackis/ui/window.hpp"
 
+namespace snackis {
 namespace ui {
   struct Footer;
   struct View;
@@ -30,6 +31,6 @@ namespace ui {
   bool run_cmd(Reader &rdr, const str &in);
   void run_once(Reader &rdr);
   void run(Reader &rdr);
-}
+}}
 
 #endif

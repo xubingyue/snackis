@@ -1,8 +1,8 @@
 #include "snackis/snackis.hpp"
 #include "snackis/core/fmt.hpp"
+#include "snackis/ui/header.hpp"
 
-#include "ui/header.hpp"
-
+namespace snackis {
 namespace ui {
   Header::Header(Ctx &ctx): Window(ctx, ui::Dim(1, ui::dim().w), ui::Pos(0, 0)) {
     set_bg(*this, A_REVERSE);
@@ -18,4 +18,4 @@ namespace ui {
     hdr.label = lbl;
     refresh(hdr);
   }
-}
+}}

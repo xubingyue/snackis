@@ -4,6 +4,7 @@
 #define KEY_CTRL(c)				\
   ((c) & 037)					\
 
+namespace snackis {
 namespace ui {
   const int KEY_RETURN(10), KEY_SPACE(32), KEY_TAB(9);
  
@@ -20,6 +21,6 @@ namespace ui {
   Dim dim();
   void open();
   void close();
-}
+}}
 
 #endif

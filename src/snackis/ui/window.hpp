@@ -6,12 +6,14 @@
 #include <ncurses.h>
 
 #include "snackis/core/str.hpp"
-#include "ui/ui.hpp"
+#include "snackis/ui/ui.hpp"
 
 namespace snackis {
   struct Ctx;
 }
 
+
+namespace snackis {
 namespace ui {
   using namespace snackis;
   
@@ -34,6 +36,6 @@ namespace ui {
   void refresh(Window &wnd);
   void redraw();
   int get_key(Window &wnd);
-}
+}}
 
 #endif

@@ -1,8 +1,9 @@
 #ifndef SNACKIS_UI_PROFILE_FORM_HPP
 #define SNACKIS_UI_PROFILE_FORM_HPP
 
-#include "ui/view_form.hpp"
+#include "snackis/ui/view_form.hpp"
 
+namespace snackis {
 namespace ui {
   struct ProfileForm: public ViewForm {
     Field
@@ -14,6 +15,6 @@ namespace ui {
   };
 
   bool run(ProfileForm &frm);
-}
+}}
 
 #endif

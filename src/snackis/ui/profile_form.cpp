@@ -5,11 +5,11 @@
 #include "snackis/db/ctx.hpp"
 #include "snackis/net/imap.hpp"
 #include "snackis/net/smtp.hpp"
+#include "snackis/ui/profile_form.hpp"
+#include "snackis/ui/view.hpp"
+#include "snackis/ui/window.hpp"
 
-#include "ui/profile_form.hpp"
-#include "ui/view.hpp"
-#include "ui/window.hpp"
-
+namespace snackis {
 namespace ui {
   static void test_editor(Ctx &ctx, const str &path) {
     log(ctx, fmt("Launching editor: %0", path));
@@ -167,4 +167,4 @@ namespace ui {
       }
     }
   }
-}
+}}

@@ -2,8 +2,9 @@
 #define SNACKIS_UI_FOOTER_HPP
 
 #include "snackis/core/str.hpp"
-#include "ui/window.hpp"
+#include "snackis/ui/window.hpp"
 
+namespace snackis {
 namespace ui {
   struct Footer: public Window {
     str status;
@@ -11,6 +12,6 @@ namespace ui {
   };
 
   void set_status(Footer &hdr, const str &stat);
-}
+}}
 
 #endif

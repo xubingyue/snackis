@@ -1,12 +1,12 @@
 #include "snackis/ctx.hpp"
 #include "snackis/core/fmt.hpp"
-#include "ui/console.hpp"
-#include "ui/footer.hpp"
-#include "ui/header.hpp"
-#include "ui/login_form.hpp"
-#include "ui/reader.hpp"
-#include "ui/view.hpp"
-#include "ui/ui.hpp"
+#include "snackis/ui/console.hpp"
+#include "snackis/ui/footer.hpp"
+#include "snackis/ui/header.hpp"
+#include "snackis/ui/login_form.hpp"
+#include "snackis/ui/reader.hpp"
+#include "snackis/ui/view.hpp"
+#include "snackis/ui/ui.hpp"
 
 using namespace snackis;
 

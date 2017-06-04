@@ -2,9 +2,10 @@
 #include "snackis/core/path.hpp"
 #include "snackis/db/ctx.hpp"
 
-#include "ui/login_form.hpp"
-#include "ui/view.hpp"
+#include "snackis/ui/login_form.hpp"
+#include "snackis/ui/view.hpp"
 
+namespace snackis {
 namespace ui {
   LoginForm::LoginForm(View &view, Footer &ftr):
     ViewForm(view, ftr),
@@ -59,4 +60,4 @@ namespace ui {
 
     return true;
   }
-}
+}}

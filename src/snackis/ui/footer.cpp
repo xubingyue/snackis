@@ -1,7 +1,7 @@
 #include "snackis/snackis.hpp"
+#include "snackis/ui/footer.hpp"
 
-#include "ui/footer.hpp"
-
+namespace snackis {
 namespace ui {
   Footer::Footer(Ctx &ctx):
     Window(ctx, ui::Dim(1, ui::dim().w/2), ui::Pos(ui::dim().h-1, ui::dim().w/2)) {
@@ -17,4 +17,4 @@ namespace ui {
     ftr.status = stat;
     refresh(ftr);
   }
-}
+}}

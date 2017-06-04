@@ -3,8 +3,9 @@
 
 #include <memory>
 
-#include "ui/view_form.hpp"
+#include "snackis/ui/view_form.hpp"
 
+namespace snackis {
 namespace ui {
   struct LoginForm: public ViewForm {
     Field pass;
@@ -14,6 +15,6 @@ namespace ui {
   };
 
   bool run(LoginForm &frm);
-}
+}}
 
 #endif

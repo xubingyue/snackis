@@ -3,8 +3,9 @@
 
 #include <memory>
 
-#include "ui/form.hpp"
+#include "snackis/ui/form.hpp"
 
+namespace snackis {
 namespace ui {
   struct View;
   
@@ -13,6 +14,6 @@ namespace ui {
     
     ViewForm(View &view, Footer &ftr);
   };
-}
+}}
 
 #endif
