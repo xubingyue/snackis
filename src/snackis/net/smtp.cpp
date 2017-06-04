@@ -1,11 +1,18 @@
 #include <iostream>
 #include <iterator>
 #include "snackis/ctx.hpp"
+#include "snackis/core/buf.hpp"
 #include "snackis/core/fmt.hpp"
 #include "snackis/net/smtp.hpp"
 
 namespace snackis {
   SmtpError::SmtpError(const str &msg): Error(str("SmtpError: ") + msg) { }
+
+  static size_t on_read(char *ptr, size_t size, size_t nmemb, void *_out) {
+    Buf *out = static_cast<Buf *>(_out);
+    out->write(ptr, size * nmemb);
+    return size * nmemb;  
+  }
 
   static size_t on_write(void *ptr, size_t size, size_t nmemb, void *_smtp) {
     if (!_smtp || !size || !nmemb || ((size*nmemb) < 1)) {
@@ -36,6 +43,8 @@ namespace snackis {
     curl_easy_setopt(client, CURLOPT_USE_SSL, (long)CURLUSESSL_ALL);
     curl_easy_setopt(client, CURLOPT_READFUNCTION, on_write);
     curl_easy_setopt(client, CURLOPT_READDATA, this);
+    curl_easy_setopt(client, CURLOPT_WRITEFUNCTION, on_read);
+
     //curl_easy_setopt(client, CURLOPT_VERBOSE, 1L);
     
     log(ctx, "Connecting to Smtp");
@@ -52,10 +61,21 @@ namespace snackis {
   void noop(const struct Smtp &smtp) {
     curl_easy_setopt(smtp.client, CURLOPT_CUSTOMREQUEST, "NOOP");
     curl_easy_setopt(smtp.client, CURLOPT_UPLOAD, 0L);
+
+    Buf resp_buf;
+    curl_easy_setopt(smtp.client, CURLOPT_WRITEDATA, &resp_buf);
     CURLcode res(curl_easy_perform(smtp.client));
  
     if (res != CURLE_OK) {
       ERROR(Smtp, fmt("Failed sending NOOP: %0", curl_easy_strerror(res))); 
+    }
+
+    std::vector<str> resp {
+      std::istream_iterator<str>{resp_buf}, std::istream_iterator<str>{}
+    };
+
+    if (resp.size() < 3 || resp[2] != "OK") {
+      ERROR(Smtp, fmt("Invalid NOOP response: %0", resp_buf.str()));
     }
   }
 
@@ -63,15 +83,27 @@ namespace snackis {
     log(smtp.ctx, "Sending email");
     curl_easy_setopt(smtp.client, CURLOPT_UPLOAD, 1L);
 
+    Buf resp_buf;
+    curl_easy_setopt(smtp.client, CURLOPT_WRITEDATA, &resp_buf);
+
     db::Table<Msg> &tbl(smtp.ctx.db.outbox);
     while (tbl.recs.size() > 0) {
       //TODO: set email addrs
       smtp.data.clear();
-      //TODO: write data
+      //TODO: encode msg to smtp.data
+      resp_buf.str("");
       CURLcode res(curl_easy_perform(smtp.client));
       
       if (res != CURLE_OK) {
 	ERROR(Smtp, fmt("Failed sending email: %0", curl_easy_strerror(res)));
+      }
+
+      std::vector<str> resp {
+	std::istream_iterator<str>{resp_buf}, std::istream_iterator<str>{}
+      };
+
+      if (resp.size() < 3 || resp[2] != "OK") {
+	ERROR(Smtp, fmt("Invalid send response: %0", resp_buf.str()));
       }
 
       tbl.recs.erase(tbl.recs.begin());

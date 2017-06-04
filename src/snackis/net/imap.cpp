@@ -132,9 +132,9 @@ namespace snackis {
       ERROR(Imap, fmt("Failed searching inbox: %0", curl_easy_strerror(res)));
     }
 
-    std::vector<str> tokens{
-      std::istream_iterator<str>{out},
-	std::istream_iterator<str>{}};
+    std::vector<str> tokens {
+      std::istream_iterator<str>{out}, std::istream_iterator<str>{}
+    };
 
     if (tokens.size() < 2 || tokens[1] != "SEARCH") {
       ERROR(Imap, fmt("Invalid fetch result:\n%0", out.str())); 
