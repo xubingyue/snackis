@@ -1,12 +1,12 @@
 #include "snackis/snackis.hpp"
-#include "snackis/core/format.hpp"
+#include "snackis/core/fmt.hpp"
 
 #include "ui/header.hpp"
 
 namespace ui {
   Header::Header(Ctx &ctx): Window(ctx, ui::Dim(1, ui::dim().w), ui::Pos(0, 0)) {
     set_bg(*this, A_REVERSE);
-    print(*this, format("Snackis v{0}", version_str()));
+    print(*this, fmt("Snackis v%0", version_str()));
     refresh(*this);
   }
 

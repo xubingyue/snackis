@@ -1,4 +1,4 @@
-#include "snackis/core/format.hpp"
+#include "snackis/core/fmt.hpp"
 #include "snackis/db/ctx.hpp"
 #include "snackis/db/error.hpp"
 #include "snackis/db/basic_table.hpp"
@@ -11,7 +11,7 @@ namespace db {
     tbl.file.open(get_path(tbl.ctx, tbl.name + ".tbl").string(),
 		  std::ios::out | std::ios::binary | std::ios::app);
     if (tbl.file.fail()) {
-      ERROR(Db, format("Failed opening file: {0}", tbl.name));
+      ERROR(Db, fmt("Failed opening file: %0", tbl.name));
     }
   }
 }}

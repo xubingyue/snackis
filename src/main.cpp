@@ -1,4 +1,5 @@
 #include "snackis/ctx.hpp"
+#include "snackis/core/fmt.hpp"
 #include "ui/console.hpp"
 #include "ui/footer.hpp"
 #include "ui/header.hpp"
@@ -28,7 +29,7 @@ static void run(Ctx &ctx) {
     open(ctx);
     
     Peer &me(whoami(ctx));
-    if (!me.name.empty()) { log(ctx, format("Welcome back, {0}", me.name)); }
+    if (!me.name.empty()) { log(ctx, fmt("Welcome back, %0", me.name)); }
     
     ui::Reader rdr(ctx, view, ftr);
     ui::run(rdr);

@@ -1,12 +1,13 @@
 #ifndef SNACKIS_DB_TABLE_HPP
 #define SNACKIS_DB_TABLE_HPP
 
+#include <cassert>
 #include <cstdint>
 #include <set>
 
 #include "snackis/core/buf.hpp"
 #include "snackis/core/data.hpp"
-#include "snackis/core/format.hpp"
+#include "snackis/core/fmt.hpp"
 #include "snackis/core/func.hpp"
 #include "snackis/core/opt.hpp"
 #include "snackis/core/str_type.hpp"
@@ -200,7 +201,7 @@ namespace db {
 	const str cname(str_type.read(in));
 	auto found(tbl.col_lookup.find(cname));
 	if (found == tbl.col_lookup.end()) {
-	  ERROR(Db, format("Column not found: {0}/{1}", tbl.name, cname));
+	  ERROR(Db, fmt("Column not found: %0/%1", tbl.name, cname));
 	}
 	
 	auto c = found->second;
@@ -255,7 +256,7 @@ namespace db {
 
       if (in.fail()) {
 	in.clear();
-	ERROR(Db, format("Failed reading: {0}", tbl.name));
+	ERROR(Db, fmt("Failed reading: %0", tbl.name));
       }
             
       Rec<RecT> rec;
@@ -273,7 +274,7 @@ namespace db {
 	tbl.recs.erase(rec);
 	break;
       default:
-	log(tbl.ctx, format("Invalid table operation: {0}", op));
+	log(tbl.ctx, fmt("Invalid table operation: %0", op));
       }
     }
   }
@@ -285,7 +286,7 @@ namespace db {
     file.open(get_path(tbl.ctx, tbl.name + ".tbl").string(),
 	      std::ios::in | std::ios::binary);
     if (tbl.file.fail()) {
-      ERROR(Db, format("Failed opening file: {0}", tbl.name));
+      ERROR(Db, fmt("Failed opening file: %0", tbl.name));
     }
 
     slurp(tbl, file);
@@ -356,7 +357,7 @@ namespace db {
 
   template <typename RecT>
   RecType<RecT>::RecType(Table<RecT> &tbl):
-    Type<Rec<RecT>>(format("Rec({0})", tbl.name)), table(tbl) { }
+    Type<Rec<RecT>>(fmt("Rec(%0)", tbl.name)), table(tbl) { }
 
   template <typename RecT>
   Rec<RecT> RecType<RecT>::from_val(const Val &in) const {

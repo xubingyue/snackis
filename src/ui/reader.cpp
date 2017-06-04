@@ -1,5 +1,5 @@
 #include "snackis/ctx.hpp"
-#include "snackis/core/format.hpp"
+#include "snackis/core/fmt.hpp"
 #include "snackis/net/imap.hpp"
 #include "ui/reader.hpp"
 #include "ui/profile_form.hpp"
@@ -62,7 +62,7 @@ namespace ui {
     clear_field(rdr.form);
     refresh(rdr);
     if (!run_cmd(rdr, in)) { 
-      log(rdr.ctx, format("Invalid command: '{0}'", in));
+      log(rdr.ctx, fmt("Invalid command: '%0'", in));
     }
   }
   

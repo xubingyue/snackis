@@ -1,5 +1,5 @@
 #include "snackis/ctx.hpp"
-#include "snackis/core/format.hpp"
+#include "snackis/core/fmt.hpp"
 #include "snackis/core/path.hpp"
 #include "snackis/core/proc.hpp"
 #include "snackis/db/ctx.hpp"
@@ -37,9 +37,9 @@ namespace ui {
   }
 
   static void test_editor(Ctx &ctx, const str &path) {
-    log(ctx, format("Launching editor: {0}", path));
+    log(ctx, fmt("Launching editor: %0", path));
     int ret(run_proc(path, {"test.txt"}));
-    if (ret) { log(ctx, format("Editor exited with code {0}", ret)); }
+    if (ret) { log(ctx, fmt("Editor exited with code %0", ret)); }
     ui::redraw();
   }
   
