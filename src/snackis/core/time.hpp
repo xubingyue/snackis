@@ -9,7 +9,7 @@ namespace snackis {
   using Time = std::chrono::time_point<Clock>;
 
   Time now();
-  str fmt_time(const Time &time, const str &spec);
+  str fmt(const Time &time, const str &spec);
 };
 
 #endif

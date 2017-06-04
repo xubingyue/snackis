@@ -9,7 +9,7 @@ namespace ui {
   }
 
   void log(Console &cons, const str &msg) {
-    print(cons, fmt("%0 %1\n", fmt_time(now(), "%a %H:%M:%S"), msg));
+    print(cons, fmt("%0 %1\n", fmt(now(), "%a %H:%M:%S"), msg));
     refresh(cons);
   }
 }
