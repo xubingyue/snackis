@@ -1,5 +1,3 @@
-* finish net/smtp
-** format email body
 * move ui into snackis
 * add invite form
 ** email, name & send immediately
@@ -12,6 +10,8 @@
 **** autocomplete on input
 ***** as far as possible, keep current in field
 * implement Data encode(Msg)
+** finish net/smtp
+*** format email body
 * add bool decode(Msg, unsigned char *data, size_t len)
 ** change imap fetch_uid to return opt<Msg>
 ** change imap fetch to insert into inbox
