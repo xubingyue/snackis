@@ -19,7 +19,7 @@ namespace snackis {
     return size * nmemb;  
   }
 
-  Imap::Imap(Ctx &ctx): ctx(ctx), client(curl_easy_init()) {
+  Imap::Imap(Ctx &ctx): ctx(ctx), trans(ctx), client(curl_easy_init()) {
     if (!client) { ERROR(Imap, "Failed initializing client"); }
     curl_easy_setopt(client, 
 		     CURLOPT_USERNAME, 
@@ -36,7 +36,7 @@ namespace snackis {
     //curl_easy_setopt(client, CURLOPT_VERBOSE, 1L);
     
     log(ctx, "Connecting to Imap");
-    
+
     try {
       noop(*this);
     } catch (const ImapError &e) {
@@ -116,9 +116,8 @@ namespace snackis {
     return out.str();
   }
   
-  void fetch(const struct Imap &imap) {
+  void fetch(struct Imap &imap) {
     log(imap.ctx, "Fetching email");
-    db::Trans trans(imap.ctx);
     curl_easy_setopt(imap.client,
 		     CURLOPT_CUSTOMREQUEST,
 		     "UID SEARCH Subject \"__SNACKIS__\"");
@@ -152,7 +151,7 @@ namespace snackis {
       expunge(imap);
     }
 
-    db::commit(trans);
+    db::commit(imap.trans);
     log(imap.ctx, "OK");
   }
 }

@@ -1,5 +1,3 @@
-* add fetch command to reader
-* fix tests
 * add net/smtp
 * add bool parse(Msg, string)
 ** change imap fetch_uid to return opt<Msg>

@@ -27,10 +27,6 @@ namespace ui {
 
   static void test_imap(ProfileForm &frm) {
     if (copy_imap(frm)) {
-      log(frm.ctx, format("Connecting to Imap: {0}@{1}",
-			  *get_val(frm.ctx.settings.imap_url),
-			  *get_val(frm.ctx.settings.imap_port)));
-
       try {
 	Imap imap(frm.ctx);
 	log(frm.ctx, "OK");

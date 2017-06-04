@@ -19,7 +19,10 @@ namespace ui {
   }
 
   void init_cmds(Reader &rdr) {
-    rdr.cmds["fetch"] = [&rdr]() { fetch(Imap(rdr.ctx)); };
+    rdr.cmds["fetch"] = [&rdr]() { 
+      Imap imap(rdr.ctx);
+      fetch(imap); 
+    };
 
     rdr.cmds["profile"] = [&rdr]() {
       ProfileForm prof(rdr.view, rdr.form.footer);

@@ -6,6 +6,7 @@
 
 #include "snackis/core/error.hpp"
 #include "snackis/core/str.hpp"
+#include "snackis/db/trans.hpp"
 
 namespace snackis {
   struct ImapError: public Error {
@@ -16,6 +17,7 @@ namespace snackis {
 
   struct Imap {
     Ctx &ctx;
+    db::Trans trans;
     CURL *client;
     
     Imap(Ctx &ctx);
@@ -23,7 +25,7 @@ namespace snackis {
   };
     
   void noop(const struct Imap &imap);
-  void fetch(const struct Imap &imap);
+  void fetch(struct Imap &imap);
 }
 
 #endif
