@@ -14,18 +14,21 @@ namespace snackis {
   void for_each(const std::tuple<Args...>& t, Func&& f) {
     for_each(t, f, std::index_sequence_for<Args...>{});
   }
-  
+
+  template <typename T>
+  str fmt_arg(const T &arg) { return std::to_string(arg); }
+
+  str fmt_arg(const char *arg);
+  str fmt_arg(const str &arg);
+
   template <typename...Args>
   str fmt(const str &in, Args..._args) {
     auto args(std::make_tuple(std::forward<Args>(_args)...));
     str out(in);
-    Buf buf;
     size_t i = 0;
     
-    for_each(args, [&buf, &i, &in, &out](auto &a) {
-	buf.str("");
-	buf << a;
-	const str val(buf.str());
+    for_each(args, [&i, &in, &out](auto &a) {
+	const str val(fmt_arg(a));
 	size_t start = 0, end = -1;
 	const str id("%" + to_str(i));
 	
