@@ -2,10 +2,10 @@
 #define SNACKIS_DB_CTX_HPP
 
 #include <set>
+#include <shared_mutex>
 
 #include "snackis/core/func.hpp"
 #include "snackis/core/opt.hpp"
-#include "snackis/core/mutex.hpp"
 #include "snackis/core/path.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/crypt/secret.hpp"
@@ -18,12 +18,12 @@ namespace db {
   struct Ctx {
     using Log = func<void (const str &)>;
 
-    const Path path;
+    Path path;
     opt<crypt::Secret> secret;
     opt<Log> log;
-    Mutex log_mutex;
+    mutable std::shared_mutex log_mutex;
     std::set<BasicTable *> tables;
-    opt<Trans &> trans;
+    Trans *trans;
     std::set<std::ostream *> dirty_files;
     
     Ctx(const Path &path);

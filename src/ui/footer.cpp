@@ -1,5 +1,4 @@
 #include "snackis/snackis.hpp"
-#include "snackis/core/fmt.hpp"
 
 #include "ui/footer.hpp"
 

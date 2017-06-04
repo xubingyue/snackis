@@ -1,17 +1,17 @@
 #ifndef SNACKIS_UID_HPP
 #define SNACKIS_UID_HPP
 
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
-
+#include <uuid/uuid.h>
 #include "snackis/core/str.hpp"
 
 namespace snackis {
-  using UId = boost::uuids::uuid;
+  struct UId {
+    uuid_t val;
 
-  UId uid();
-  UId parse_uid(const str &in);
-  str format_uid(const UId &in);  
+    UId(bool init=true);
+  };
+  
+  bool operator<(const UId &x, const UId &y);
 }
 
 #endif

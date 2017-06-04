@@ -1,11 +1,10 @@
 #include <fstream>
 #include "snackis/crypt/error.hpp"
-#include "snackis/core/fmt.hpp"
 #include "snackis/ctx.hpp"
 
 namespace snackis {
 namespace db {
-  Ctx::Ctx(const Path &path): path(path) {
+  Ctx::Ctx(const Path &path): path(path), trans(nullptr) {
     create_path(path);
   }
 
@@ -17,8 +16,8 @@ namespace db {
 
   void log(const Ctx &ctx, const str &msg) {
     if (ctx.log) {
-      WLock lock(const_cast<Ctx &>(ctx).log_mutex);
-      ctx.log.get()(msg);
+      std::unique_lock<std::shared_mutex> lock(ctx.log_mutex);
+      (*ctx.log)(msg);
     }
   }
 
@@ -48,7 +47,7 @@ namespace db {
     file.open(get_path(ctx, "pass").string(), std::ios::in | std::ios::binary);
     file.seekg(0, std::ios::end);
     const std::streamsize size =
-      file.tellg()-std::streamsize(crypt::Secret::SALT_SIZE);
+      std::streamsize(file.tellg())-std::streamsize(crypt::Secret::SALT_SIZE);
     file.seekg(0);
     file.read(reinterpret_cast<char *>(secret.data), crypt::Secret::SALT_SIZE);
     init(secret, pass);

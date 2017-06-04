@@ -28,7 +28,7 @@ static void run(Ctx &ctx) {
     open(ctx);
     
     Peer &me(whoami(ctx));
-    if (!me.name.empty()) { log(ctx, fmt("Hello %1%") % me.name); }
+    if (!me.name.empty()) { log(ctx, format("Hello {0}", me.name)); }
     
     ui::Reader rdr(ctx, view, ftr);
     ui::run(rdr);

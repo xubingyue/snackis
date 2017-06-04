@@ -9,7 +9,7 @@ namespace snackis {
     return std::chrono::time_point_cast<std::chrono::milliseconds>(tim);
   }
 
-  str fmt_time(const Time &tim, const str &spec) {
+  str format_time(const Time &tim, const str &spec) {
     const time_t t = Clock::to_time_t(tim);
     tm tm;
     localtime_r(&t, &tm);

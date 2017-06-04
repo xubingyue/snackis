@@ -10,12 +10,12 @@ namespace snackis {
   Val UIdType::to_val(const UId &in) const { return in; }
 
   UId UIdType::read(std::istream &in) const {
-    UId val;
-    in.read(reinterpret_cast<char *>(&val), 16);
-    return val;
+    UId id(false);
+    in.read(reinterpret_cast<char *>(id.val), sizeof(id.val));
+    return id;
   }
   
-  void UIdType::write(const UId &val, std::ostream &out) const {
-    out.write(reinterpret_cast<const char *>(&val), 16);
+  void UIdType::write(const UId &id, std::ostream &out) const {
+    out.write(reinterpret_cast<const char *>(id.val), sizeof(id.val));
   }
 }

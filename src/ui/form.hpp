@@ -20,6 +20,7 @@ namespace ui {
   struct Form {
     Window &window;
     Footer &footer;
+    Ctx &ctx;
     FORM *ptr;
     std::vector<Field *> fields;
     std::vector<FIELD *> field_ptrs;
@@ -31,7 +32,8 @@ namespace ui {
 
   struct Field {
     using Complete = func<str (const str &)>;
-
+    using Action = func<void ()>;
+    
     Form &form;
     Dim dim;
     int margin_top;
@@ -39,6 +41,7 @@ namespace ui {
     FIELD *ptr;
     bool active, echo;
     opt<Complete> complete;
+    opt<Action> action;
     
     Field(Form &frm, const Dim &dim, const str &lbl);
     virtual ~Field();

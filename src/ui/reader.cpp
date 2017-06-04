@@ -1,5 +1,5 @@
 #include "snackis/ctx.hpp"
-#include "snackis/core/fmt.hpp"
+#include "snackis/core/format.hpp"
 #include "ui/reader.hpp"
 #include "ui/profile_form.hpp"
 
@@ -8,7 +8,7 @@ namespace ui {
     Window(ctx, ui::Dim(1, ui::dim().w/2), ui::Pos(ui::dim().h-1, 0)),
     form(*this, ftr),
     field(form, ui::Dim(1, dim.w), "! "),
-    last_cmd(none),
+    last_cmd(nullopt),
     quitting(false),
     view(view) {
     form.status = "Type 'quit' followed by Return to exit";
@@ -18,19 +18,19 @@ namespace ui {
   }
 
   void init_cmds(Reader &rdr) {
-    rdr.cmds["profile"] = [&]() {
+    rdr.cmds["profile"] = [&rdr]() {
       ProfileForm prof(rdr.view, rdr.form.footer);
       open(prof);
       run(prof);
     };
     
-    rdr.cmds["quit"] = [&]() { rdr.quitting = true; };
+    rdr.cmds["quit"] = [&rdr]() { rdr.quitting = true; };
   }
 
   bool run_cmd(Reader &rdr, const str &in) {
     if (in == "") {
       if (rdr.last_cmd) {
-	rdr.last_cmd.get()();
+	(*rdr.last_cmd)();
       }
     } else {
       const str id(in.substr(0, in.find_first_of(' ')));
@@ -56,7 +56,7 @@ namespace ui {
     clear_field(rdr.form);
     refresh(rdr);
     if (!run_cmd(rdr, in)) { 
-      log(rdr.ctx, fmt("Invalid command: '%1%'") % in); 
+      log(rdr.ctx, format("Invalid command: '{0}'", in));
     }
   }
   

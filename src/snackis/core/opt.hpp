@@ -1,14 +1,13 @@
 #ifndef SNACKIS_OPT_HPP
 #define SNACKIS_OPT_HPP
 
-#include <boost/optional.hpp>
-#include <boost/optional/optional_io.hpp>
+#include <optional>
 
 namespace snackis {
   template <typename T>
-  using opt = boost::optional<T>;
+  using opt = std::optional<T>;
 
-  extern const boost::none_t none;
+  extern const std::nullopt_t nullopt;
 }
 
 #endif

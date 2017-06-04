@@ -1,7 +1,7 @@
 #include <iostream>
 #include <iterator>
 #include "snackis/core/buf.hpp"
-#include "snackis/core/fmt.hpp"
+#include "snackis/core/format.hpp"
 #include "snackis/net/imap.hpp"
 
 namespace snackis {
@@ -25,7 +25,7 @@ namespace snackis {
       curl_easy_setopt(client, CURLOPT_USERNAME, usr.c_str());
       curl_easy_setopt(client, CURLOPT_PASSWORD, pwd.c_str());
       curl_easy_setopt(client, CURLOPT_URL,
-		       fmt("imaps://%1%:%2%/INBOX") % url % port);
+		       format("imaps://{0}:{1}/INBOX", url, port).c_str());
       curl_easy_setopt(client, CURLOPT_WRITEFUNCTION, on_write);
       //curl_easy_setopt(client, CURLOPT_VERBOSE, 1L);
     }
@@ -38,14 +38,14 @@ namespace snackis {
   static void delete_uid(struct Imap &imap, const str &uid) {
     curl_easy_setopt(imap.client,
 		     CURLOPT_CUSTOMREQUEST,
-		     fmt("UID STORE %1% +FLAGS.SILENT \\Deleted") % uid);
+		     format("UID STORE {0} +FLAGS.SILENT \\Deleted", uid).c_str());
 
     curl_easy_setopt(imap.client, CURLOPT_HEADERFUNCTION, nullptr);
     curl_easy_setopt(imap.client, CURLOPT_WRITEFUNCTION, skip_write);
     CURLcode res(curl_easy_perform(imap.client));
  
     if (res != CURLE_OK) {
-      ERROR(Imap, fmt("Failed deleting uid: %1%") % curl_easy_strerror(res)); 
+      ERROR(Imap, format("Failed deleting uid: {0}", curl_easy_strerror(res))); 
     }
   }
 
@@ -57,14 +57,14 @@ namespace snackis {
     CURLcode res(curl_easy_perform(imap.client));
  
     if (res != CURLE_OK) {
-      ERROR(Imap, fmt("Failed expunging: %1%") % curl_easy_strerror(res));
+      ERROR(Imap, format("Failed expunging: {0}", curl_easy_strerror(res)));
     }
   }
 
   static str fetch_uid(struct Imap &imap, const str &uid) {
     curl_easy_setopt(imap.client,
 		     CURLOPT_CUSTOMREQUEST,
-		     fmt("UID FETCH %1% BODY[TEXT]") % uid);
+		     format("UID FETCH {0} BODY[TEXT]", uid).c_str());
 
     Buf out;    
     curl_easy_setopt(imap.client, CURLOPT_HEADERFUNCTION, on_write);
@@ -72,7 +72,7 @@ namespace snackis {
     CURLcode res(curl_easy_perform(imap.client));
  
     if (res != CURLE_OK) {
-      ERROR(Imap, fmt("Failed fetching uid: %1%") % curl_easy_strerror(res));
+      ERROR(Imap, format("Failed fetching uid: {0}", curl_easy_strerror(res)));
     }
 
     std::vector<str> lines;
@@ -96,7 +96,7 @@ namespace snackis {
   
   void fetch(struct Imap &imap, std::vector<str> &msgs) {
     if (!imap.client) {
-      ERROR(Imap, fmt("Failed connecing"));
+      ERROR(Imap, "Failed connecing");
     }
 
     curl_easy_setopt(imap.client,
@@ -110,7 +110,7 @@ namespace snackis {
     CURLcode res(curl_easy_perform(imap.client));
  
     if (res != CURLE_OK) {
-      ERROR(Imap, fmt("Failed fetching: %1%") % curl_easy_strerror(res));
+      ERROR(Imap, format("Failed fetching: {0}", curl_easy_strerror(res)));
     }
 
     std::vector<str> tokens{
@@ -118,7 +118,7 @@ namespace snackis {
 	std::istream_iterator<str>{}};
 
     if (tokens.size() < 2 || tokens[1] != "SEARCH") {
-      ERROR(Imap, fmt("Invalid fetch result:\n%1%") % out.str()); 
+      ERROR(Imap, format("Invalid fetch result:\n{0}", out.str())); 
     }
     
     for (auto tok = std::next(tokens.begin(), 2); tok != tokens.end(); tok++) {

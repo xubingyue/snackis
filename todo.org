@@ -1,6 +1,7 @@
+* add ctrl-space shortcut to test editor
+** rewrite proc
 * add ctrl-space shortcut to test imap
 ** change imap to take ctx and use settings
-* add ctrl-space shortcut to test editor
 * add parse(Msg, string)
 ** change imap fetch to return Msgs
 * add net/smtp

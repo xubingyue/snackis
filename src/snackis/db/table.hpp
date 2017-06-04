@@ -6,7 +6,7 @@
 
 #include "snackis/core/buf.hpp"
 #include "snackis/core/data.hpp"
-#include "snackis/core/fmt.hpp"
+#include "snackis/core/format.hpp"
 #include "snackis/core/func.hpp"
 #include "snackis/core/opt.hpp"
 #include "snackis/core/str_type.hpp"
@@ -90,7 +90,7 @@ namespace db {
     Rec<RecT> key;
     copy(tbl.key, key, rec);
     auto found = tbl.recs.find(key);
-    if (found == tbl.recs.end()) { return none; }
+    if (found == tbl.recs.end()) { return nullopt; }
     copy(tbl, rec, *found);
     return rec;
   }
@@ -191,7 +191,7 @@ namespace db {
       in.read((char *)&edata[0], size);
       const Data ddata(decrypt(*sec, (unsigned char *)&edata[0], size));
       Buf buf(str(ddata.begin(), ddata.end()));
-      read(tbl, buf, rec, none);
+      read(tbl, buf, rec, nullopt);
     } else {
       int32_t cnt = -1;
       in.read((char *)&cnt, sizeof cnt);
@@ -200,7 +200,7 @@ namespace db {
 	const str cname(str_type.read(in));
 	auto found(tbl.col_lookup.find(cname));
 	if (found == tbl.col_lookup.end()) {
-	  ERROR(Db, fmt("Column not found: %1%/%2%") % tbl.name % cname);
+	  ERROR(Db, format("Column not found: {0}/{1}", tbl.name, cname));
 	}
 	
 	auto c = found->second;
@@ -216,7 +216,7 @@ namespace db {
 	     opt<crypt::Secret> sec) {
     if (sec) {
 	Buf buf;
-	write(tbl, rec, buf, none);
+	write(tbl, rec, buf, nullopt);
 	str data(buf.str());
 	const Data edata(encrypt(*sec, (unsigned char *)data.c_str(), data.size()));
 	const int64_t size = edata.size();
@@ -255,7 +255,7 @@ namespace db {
 
       if (in.fail()) {
 	in.clear();
-	ERROR(Db, fmt("Failed reading: %1%") % tbl.name);
+	ERROR(Db, format("Failed reading: {0}", tbl.name));
       }
             
       Rec<RecT> rec;
@@ -273,7 +273,7 @@ namespace db {
 	tbl.recs.erase(rec);
 	break;
       default:
-	log(tbl.ctx, fmt("Invalid table operation: %1%") % op);
+	log(tbl.ctx, format("Invalid table operation: {0}", op));
       }
     }
   }
@@ -285,7 +285,7 @@ namespace db {
     file.open(get_path(tbl.ctx, tbl.name + ".tbl").string(),
 	      std::ios::in | std::ios::binary);
     if (tbl.file.fail()) {
-      ERROR(Db, fmt("Failed opening file: %1%") % tbl.name);
+      ERROR(Db, format("Failed opening file: {0}", tbl.name));
     }
 
     slurp(tbl, file);
@@ -356,33 +356,33 @@ namespace db {
 
   template <typename RecT>
   RecType<RecT>::RecType(Table<RecT> &tbl):
-    Type<Rec<RecT>>(fmt("Rec(%1%)") % tbl.name), table(tbl) { }
+    Type<Rec<RecT>>(format("Rec({0})", tbl.name)), table(tbl) { }
 
   template <typename RecT>
   Rec<RecT> RecType<RecT>::from_val(const Val &in) const {
     Buf buf(get<str>(in));
     Rec<RecT> rec;
-    db::read(table, buf, rec, none);
+    db::read(table, buf, rec, nullopt);
     return rec;
   }
 
   template <typename RecT>
   Val RecType<RecT>::to_val(const Rec<RecT> &in) const {
     Buf buf;
-    db::write(table, in, buf, none);
+    db::write(table, in, buf, nullopt);
     return buf.str();
   }
 
   template <typename RecT>
   Rec<RecT> RecType<RecT>::read(std::istream &in) const {
     Rec<RecT> rec;
-    db::read(table, in, rec, none);
+    db::read(table, in, rec, nullopt);
     return rec;
   }
   
   template <typename RecT>
   void RecType<RecT>::write(const Rec<RecT> &val, std::ostream &out) const {
-    db::write(table, val, out, none);
+    db::write(table, val, out, nullopt);
   }
 }}
 

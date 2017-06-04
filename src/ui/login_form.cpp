@@ -3,7 +3,7 @@
 #include "snackis/db/ctx.hpp"
 
 #include "ui/login_form.hpp"
-#include "ui/window.hpp"
+#include "ui/view.hpp"
 
 namespace ui {
   LoginForm::LoginForm(View &view, Footer &ftr):
@@ -14,7 +14,7 @@ namespace ui {
 
     pass.echo = false;
     
-    if (!pass_exists(window.ctx)) {
+    if (!pass_exists(view.ctx)) {
       repeat.reset(new Field(*this, Dim(1, 50), "Repeat: "));
       repeat->echo = false;
     }
@@ -32,7 +32,7 @@ namespace ui {
     while (true) {
       chtype ch = get_key(frm.window);
 
-      if (ch == CTRL('q')) { return false; }
+      if (ch == KEY_CTRL('q')) { return false; }
 
       if (ch == KEY_RETURN && &active_field(frm) == frm.fields.back()) {
 	validate(frm);

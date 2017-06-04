@@ -2,7 +2,6 @@
 #define SNACKIS_DB_TRANS_HPP
 
 #include <vector>
-#include "snackis/core/opt.hpp"
 
 namespace snackis {
 namespace db {
@@ -15,7 +14,7 @@ namespace db {
   
   struct Trans {
     Ctx &ctx;
-    opt<Trans &> super;
+    Trans * super;
     std::vector<const Change *> changes;
     Trans(Ctx &ctx);
     ~Trans();

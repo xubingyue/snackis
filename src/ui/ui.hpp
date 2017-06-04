@@ -1,7 +1,7 @@
 #ifndef SNACKIS_UI_HPP
 #define SNACKIS_UI_HPP
 
-#define CTRL(c)					\
+#define KEY_CTRL(c)				\
   ((c) & 037)					\
 
 namespace ui {

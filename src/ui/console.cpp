@@ -1,4 +1,4 @@
-#include "snackis/core/fmt.hpp"
+#include "snackis/core/format.hpp"
 #include "snackis/core/time.hpp"
 #include "ui/console.hpp"
 
@@ -9,7 +9,7 @@ namespace ui {
   }
 
   void log(Console &cons, const str &msg) {
-    print(cons, fmt("%1% %2%\n") % fmt_time(now(), "%a %H:%M:%S") % msg);
+    print(cons, format("{0} {1}\n", format_time(now(), "%a %H:%M:%S"), msg));
     refresh(cons);
   }
 }

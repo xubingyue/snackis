@@ -43,7 +43,7 @@ namespace snackis {
 	return stn.init_val;
     }
 
-    if (stn.val.empty()) { return none; }
+    if (stn.val.empty()) { return nullopt; }
 
     Buf buf(stn.val);
     return stn.type.read(buf);

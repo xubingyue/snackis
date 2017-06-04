@@ -1,11 +1,26 @@
+#include <ncurses.h>
+
 #include "snackis/ctx.hpp"
 #include "snackis/core/path.hpp"
+#include "snackis/core/proc.hpp"
 #include "snackis/db/ctx.hpp"
 
 #include "ui/profile_form.hpp"
+#include "ui/view.hpp"
 #include "ui/window.hpp"
 
 namespace ui {
+  static void test_imap(Ctx &ctx) {
+    log(ctx, "Testing Imap");
+  }
+
+  static void test_editor(Ctx &ctx, const str &path) {
+    log(ctx, format("Launching editor: {0}", path));
+    int ret(run_proc(path, {"test.txt"}));
+    if (ret != 0) { log(ctx, format("Editor exited with code {0}", ret)); }
+    ::refresh();
+  }
+  
   ProfileForm::ProfileForm(View &view, Footer &ftr):
     ViewForm(view, ftr),
     
@@ -24,15 +39,18 @@ namespace ui {
     smtp_pass(*this, Dim(1, 50), "Smtp Pass: ") {
     label = "Profile";
     status = "Press Ctrl-s to save profile, or Ctrl-q to cancel";
-    
     margin_top = 1;
+    
+    editor.action = [this]() { test_editor(ctx, get_str(editor)); };
+    imap_server.action = [this]() { test_imap(ctx); };
+    imap_port.action = [this]() { test_imap(ctx); };
+    imap_user.action = [this]() { test_imap(ctx); };
+    imap_pass.action = [this]() { test_imap(ctx); };
     imap_server.margin_top = 1;
     imap_pass.echo = false;
+
     smtp_server.margin_top = 1;
     smtp_pass.echo = false;
-
-    Peer &me(whoami(window.ctx));
-    if (me.email != "") { email.active = false; }
   }
 
   bool run(ProfileForm &frm) {
@@ -66,10 +84,8 @@ namespace ui {
     
     while (true) {
       chtype ch = get_key(frm.window);
-
-      if (ch == CTRL('q')) { return false; }
       
-      if (ch == CTRL('s') ||
+      if (ch == KEY_CTRL('s') ||
 	  (ch == KEY_RETURN && &active_field(frm) == frm.fields.back())) {
 	validate(frm);
 
@@ -92,8 +108,13 @@ namespace ui {
 	log(frm.window.ctx, "Saved profile");
 	return true;
       }
-      
-      drive(frm, ch);
+
+      switch (ch) {
+      case KEY_CTRL('q'):
+	return false;
+      default:
+	drive(frm, ch);
+      }
     }
   }
 }

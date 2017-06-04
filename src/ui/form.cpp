@@ -1,7 +1,6 @@
 #include <cassert>
 
 #include "snackis/ctx.hpp"
-#include "snackis/core/fmt.hpp"
 #include "snackis/core/utils.hpp"
 #include "ui/form.hpp"
 #include "ui/footer.hpp"
@@ -95,7 +94,7 @@ namespace ui {
 
       if (fld.complete) {
 	validate(frm);
-	str in(get_str(fld)), out(fld.complete.get()(in));
+	str in(get_str(fld)), out((*fld.complete)(in));
 	
 	if (out != in) {
 	  set_str(fld, out);
@@ -103,6 +102,16 @@ namespace ui {
 	}
       }
 
+      break;
+    }
+    case KEY_CTRL(KEY_SPACE): {
+      Field &fld(active_field(frm));
+      
+      if (fld.action) { 
+	validate(frm);
+	(*fld.action)(); 
+      }
+      
       break;
     }
     default:
@@ -151,7 +160,8 @@ namespace ui {
   }
 
   Form::Form(Window &wnd, Footer &ftr):
-    window(wnd), footer(ftr), ptr(nullptr), label_width(0), margin_top(0) { }
+    window(wnd), footer(ftr), ctx(wnd.ctx), ptr(nullptr), label_width(0),
+    margin_top(0) { }
 
   Form::~Form() {
     if (ptr) { close(*this); }

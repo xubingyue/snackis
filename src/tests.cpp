@@ -49,9 +49,9 @@ struct Foo {
   Time ftime;
   UId fuid;
 
-  Foo(): fint64(0), ftime(now()), fuid(uid()) { }
+  Foo(): fint64(0), ftime(now()) { }
 
-  Foo(db::Table<Foo> &tbl, db::Rec<Foo> &rec) {
+  Foo(db::Table<Foo> &tbl, db::Rec<Foo> &rec): fuid(false) {
     copy(tbl, *this, rec);
   }
 };
@@ -124,7 +124,7 @@ void read_write_tests() {
   rec[&int64_col] = 42;
   rec[&str_col] = str("abc");
   rec[&time_col] = now();
-  rec[&uid_col] = uid();
+  rec[&uid_col] = UId();
 
   Buf buf;
   write(tbl, rec, buf, sec);
