@@ -1,7 +1,9 @@
 #include "fmt.hpp"
 
 namespace snackis {
-  str fmt_arg(const char *arg) { return arg; }
+  template <>
+  str fmt_arg(const char * const &arg) { return arg; }
 
+  template <>
   str fmt_arg(const str &arg) { return arg; }
 }

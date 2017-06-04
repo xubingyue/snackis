@@ -1,7 +1,6 @@
 #ifndef SNACKIS_FMT_HPP
 #define SNACKIS_FMT_HPP
 
-#include "snackis/core/buf.hpp"
 #include "snackis/core/str.hpp"
 
 namespace snackis {
@@ -20,7 +19,10 @@ namespace snackis {
   template <typename T>
   str fmt_arg(const T &arg) { return std::to_string(arg); }
 
-  str fmt_arg(const char *arg);
+  template <>
+  str fmt_arg(const char *const &arg);
+  
+  template <>
   str fmt_arg(const str &arg);
 
   template <typename...Args>

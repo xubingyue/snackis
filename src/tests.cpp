@@ -44,11 +44,6 @@ static void crypt_key_tests() {
   assert(str(dmsg.begin(), dmsg.end()) == msg);
 }
 
-static void fmt_tests() {
-  assert(fmt("%0 %1\n", "abc", 42) == "abc 42\n");
-  assert(fmt("%0 %%1 %1", "abc", 42) == "abc %1 42");
-}
-
 struct Foo {
   int64_t fint64;
   str fstr;
@@ -61,6 +56,19 @@ struct Foo {
     copy(tbl, *this, rec);
   }
 };
+
+namespace snackis {
+  template <>
+  str fmt_arg(const Foo &arg) {
+    return "Foo";
+  }
+}
+
+static void fmt_tests() {
+  assert(fmt("%0 %1\n", "abc", 42) == "abc 42\n");
+  assert(fmt("%0 %%1 %1", "abc", 42) == "abc %1 42");
+  assert(fmt("%0 %1 %2", "abc", Foo(), "42") == "abc Foo 42");
+}
 
 static void schema_tests() {
   const Col<Foo, int64_t> col("int64", int64_type, &Foo::fint64); 
