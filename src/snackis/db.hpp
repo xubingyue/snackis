@@ -43,7 +43,7 @@ namespace snackis {
     db::Col<Msg, crypt::PubKey> msg_crypt_key;
     db::Table<Msg> inbox;
 
-    db::Col<Msg, db::Rec<Peer>> msg_sent_to;
+    db::Col<Msg, str> msg_sent_to;
     db::Table<Msg> outbox;
 
     Db(db::Ctx &ctx);
