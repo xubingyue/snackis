@@ -44,7 +44,6 @@ namespace snackis {
     curl_easy_setopt(client, CURLOPT_READFUNCTION, on_write);
     curl_easy_setopt(client, CURLOPT_READDATA, this);
     curl_easy_setopt(client, CURLOPT_WRITEFUNCTION, on_read);
-
     //curl_easy_setopt(client, CURLOPT_VERBOSE, 1L);
     
     log(ctx, "Connecting to Smtp");
@@ -88,7 +87,16 @@ namespace snackis {
 
     db::Table<Msg> &tbl(smtp.ctx.db.outbox);
     while (tbl.recs.size() > 0) {
-      //TODO: set email addrs
+      Msg msg(tbl, *tbl.recs.begin());
+      curl_easy_setopt(smtp.client, CURLOPT_MAIL_FROM, msg.peer_email.c_str());
+      
+      load(smtp.ctx.db.peers, msg.sent_to);
+      struct curl_slist *sent_to = nullptr;
+      sent_to = curl_slist_append(sent_to,
+				  get<str>(msg.sent_to.at(&smtp.ctx.db.peer_email)).
+				  c_str());
+      curl_easy_setopt(smtp.client, CURLOPT_MAIL_RCPT, sent_to);
+      
       smtp.data.clear();
       //TODO: encode msg to smtp.data
       resp_buf.str("");

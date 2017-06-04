@@ -97,6 +97,14 @@ namespace db {
   }
 
   template <typename RecT>
+  opt<Rec<RecT>> load(Table<RecT> &tbl, Rec<RecT> &rec) {
+    auto found = tbl.recs.find(rec);
+    if (found == tbl.recs.end()) { return nullopt; }
+    copy(tbl, rec, *found);
+    return rec;
+  }
+
+  template <typename RecT>
   bool insert(Table<RecT> &tbl, const RecT &rec) {
     Rec<RecT> trec;
     copy(tbl, trec, rec);

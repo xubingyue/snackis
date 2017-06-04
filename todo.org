@@ -1,6 +1,5 @@
 * finish net/smtp
-** handle smtp connect reply
-** set address / subject from msg
+** format email body
 * move ui into snackis
 * add invite form
 ** email, name & send immediately
