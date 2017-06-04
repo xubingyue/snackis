@@ -139,13 +139,11 @@ void read_write_tests() {
 void email_tests() {
   TRACE("Running email_tests");
   snackis::Ctx ctx("testdb/");
+  ctx.db.inbox.recs.clear();
+  
   Imap imap(ctx);
   std::vector<str> msgs;
-  fetch(imap, msgs);
-
-  for (auto m: msgs) {
-    std::cout << "msg: " << m << std::endl;
-  }
+  fetch(imap);
 }
 
 int main() {

@@ -1,9 +1,9 @@
-* replace log_mutex with recursive_mutex in Trans
-** add trans in imap fetch()
-** add fetch command to reader
+* add fetch command to reader
+* fix tests
 * add net/smtp
-* add parse(Msg, string)
-** change imap fetch to return Msgs
+* add bool parse(Msg, string)
+** change imap fetch_uid to return opt<Msg>
+** change imap fetch to insert into inbox
 * add db/ver file
 ** add support for migrations
 ** store keyed on from_ver

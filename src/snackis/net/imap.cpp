@@ -35,6 +35,8 @@ namespace snackis {
     curl_easy_setopt(client, CURLOPT_WRITEFUNCTION, on_write);
     //curl_easy_setopt(client, CURLOPT_VERBOSE, 1L);
     
+    log(ctx, "Connecting to Imap");
+    
     try {
       noop(*this);
     } catch (const ImapError &e) {
@@ -44,7 +46,7 @@ namespace snackis {
 
   Imap::~Imap() { curl_easy_cleanup(client); }
 
-  void noop(struct Imap &imap) {
+  void noop(const struct Imap &imap) {
     curl_easy_setopt(imap.client, CURLOPT_CUSTOMREQUEST, "NOOP");
     curl_easy_setopt(imap.client, CURLOPT_HEADERFUNCTION, nullptr);
     curl_easy_setopt(imap.client, CURLOPT_WRITEFUNCTION, skip_write);
@@ -55,7 +57,7 @@ namespace snackis {
     }
   }
 
-  static void delete_uid(struct Imap &imap, const str &uid) {
+  static void delete_uid(const struct Imap &imap, const str &uid) {
     curl_easy_setopt(imap.client,
 		     CURLOPT_CUSTOMREQUEST,
 		     format("UID STORE {0} +FLAGS.SILENT \\Deleted", uid).c_str());
@@ -69,7 +71,7 @@ namespace snackis {
     }
   }
 
-  static void expunge(struct Imap &imap) {
+  static void expunge(const struct Imap &imap) {
     curl_easy_setopt(imap.client, CURLOPT_CUSTOMREQUEST, "EXPUNGE");
 
     curl_easy_setopt(imap.client, CURLOPT_HEADERFUNCTION, nullptr);
@@ -81,7 +83,7 @@ namespace snackis {
     }
   }
 
-  static str fetch_uid(struct Imap &imap, const str &uid) {
+  static str fetch_uid(const struct Imap &imap, const str &uid) {
     curl_easy_setopt(imap.client,
 		     CURLOPT_CUSTOMREQUEST,
 		     format("UID FETCH {0} BODY[TEXT]", uid).c_str());
@@ -114,7 +116,9 @@ namespace snackis {
     return out.str();
   }
   
-  void fetch(struct Imap &imap, std::vector<str> &msgs) {
+  void fetch(const struct Imap &imap) {
+    log(imap.ctx, "Fetching email");
+    db::Trans trans(imap.ctx);
     curl_easy_setopt(imap.client,
 		     CURLOPT_CUSTOMREQUEST,
 		     "UID SEARCH Subject \"__SNACKIS__\"");
@@ -122,6 +126,7 @@ namespace snackis {
     Buf out;    
     curl_easy_setopt(imap.client, CURLOPT_HEADERFUNCTION, nullptr);
     curl_easy_setopt(imap.client, CURLOPT_HEADERDATA, nullptr);
+    curl_easy_setopt(imap.client, CURLOPT_WRITEFUNCTION, on_write);
     curl_easy_setopt(imap.client, CURLOPT_WRITEDATA, &out);
     CURLcode res(curl_easy_perform(imap.client));
  
@@ -139,12 +144,15 @@ namespace snackis {
     
     for (auto tok = std::next(tokens.begin(), 2); tok != tokens.end(); tok++) {
       const str uid(*tok);
-      msgs.push_back(fetch_uid(imap, uid));
+      auto msg = fetch_uid(imap, uid);
       delete_uid(imap, uid);
     }
 
     if (tokens.size() > 2) {
       expunge(imap);
     }
+
+    db::commit(trans);
+    log(imap.ctx, "OK");
   }
 }

@@ -22,8 +22,8 @@ namespace snackis {
     virtual ~Imap();
   };
     
-  void noop(struct Imap &imap);
-  void fetch(struct Imap &imap, std::vector<str> &msgs);
+  void noop(const struct Imap &imap);
+  void fetch(const struct Imap &imap);
 }
 
 #endif

@@ -15,10 +15,7 @@ namespace db {
   }
 
   void log(const Ctx &ctx, const str &msg) {
-    if (ctx.log) {
-      std::unique_lock<std::shared_mutex> lock(ctx.log_mutex);
-      (*ctx.log)(msg);
-    }
+    if (ctx.log) { (*ctx.log)(msg); }
   }
 
   bool pass_exists(const Ctx &ctx) {

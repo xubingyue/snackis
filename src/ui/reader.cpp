@@ -1,5 +1,6 @@
 #include "snackis/ctx.hpp"
 #include "snackis/core/format.hpp"
+#include "snackis/net/imap.hpp"
 #include "ui/reader.hpp"
 #include "ui/profile_form.hpp"
 
@@ -18,6 +19,8 @@ namespace ui {
   }
 
   void init_cmds(Reader &rdr) {
+    rdr.cmds["fetch"] = [&rdr]() { fetch(Imap(rdr.ctx)); };
+
     rdr.cmds["profile"] = [&rdr]() {
       ProfileForm prof(rdr.view, rdr.form.footer);
       open(prof);

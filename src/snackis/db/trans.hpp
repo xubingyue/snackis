@@ -1,6 +1,7 @@
 #ifndef SNACKIS_DB_TRANS_HPP
 #define SNACKIS_DB_TRANS_HPP
 
+#include <mutex>
 #include <vector>
 
 namespace snackis {
@@ -14,7 +15,8 @@ namespace db {
   
   struct Trans {
     Ctx &ctx;
-    Trans * super;
+    Trans *super;
+    std::recursive_mutex mutex;
     std::vector<const Change *> changes;
     Trans(Ctx &ctx);
     ~Trans();

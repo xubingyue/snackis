@@ -2,7 +2,6 @@
 #define SNACKIS_DB_CTX_HPP
 
 #include <set>
-#include <shared_mutex>
 
 #include "snackis/core/func.hpp"
 #include "snackis/core/opt.hpp"
@@ -21,7 +20,6 @@ namespace db {
     Path path;
     opt<crypt::Secret> secret;
     opt<Log> log;
-    mutable std::shared_mutex log_mutex;
     std::set<BasicTable *> tables;
     Trans *trans;
     std::set<std::ostream *> dirty_files;
