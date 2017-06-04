@@ -18,7 +18,7 @@
 using namespace snackis;
 using namespace snackis::db;
 
-void crypt_secret_tests() {
+static void crypt_secret_tests() {
   using namespace snackis::crypt;
   str key("secret key");
   Secret sec;
@@ -32,7 +32,7 @@ void crypt_secret_tests() {
   assert(str(dmsg.begin(), dmsg.end()) == msg);
 }
 
-void crypt_key_tests() {
+static void crypt_key_tests() {
   using namespace snackis::crypt;
   PubKey foo_pub, bar_pub;
   Key foo(foo_pub), bar(bar_pub);
@@ -42,6 +42,11 @@ void crypt_key_tests() {
     dmsg(decrypt(bar, foo_pub, &cmsg[0], cmsg.size()));
 
   assert(str(dmsg.begin(), dmsg.end()) == msg);
+}
+
+static void fmt_tests() {
+  assert(fmt("%0 %1\n", "abc", 42) == "abc 42\n");
+  assert(fmt("%0 %%1 %1", "abc", 42) == "abc %1 42");
 }
 
 struct Foo {
@@ -57,7 +62,7 @@ struct Foo {
   }
 };
 
-void schema_tests() {
+static void schema_tests() {
   const Col<Foo, int64_t> col("int64", int64_type, &Foo::fint64); 
   Schema<Foo> scm({&col});
 
@@ -92,7 +97,7 @@ void table_insert_tests() {
   close(tbl);
 }
 
-void table_slurp_tests() {
+static void table_slurp_tests() {
   db::Ctx ctx("testdb/");
   Table<Foo> tbl(ctx, "slurp_tests", {&uid_col},
 		 {&int64_col, &str_col, &time_col});
@@ -112,7 +117,7 @@ void table_slurp_tests() {
   close(tbl);
 }
 
-void read_write_tests() {
+static void read_write_tests() {
   db::Ctx ctx("testdb/");
   Table<Foo> tbl(ctx, "read_write_tests", {&uid_col},
 		 {&int64_col, &str_col, &time_col});
@@ -136,7 +141,7 @@ void read_write_tests() {
   close(tbl);
 }
 
-void email_tests() {
+static void email_tests() {
   TRACE("Running email_tests");
   snackis::Ctx ctx("testdb/");
   ctx.db.inbox.recs.clear();
@@ -152,6 +157,7 @@ int main() {
   try {
     crypt_secret_tests();
     crypt_key_tests();
+    fmt_tests();
     schema_tests();
     table_insert_tests();
     table_slurp_tests();

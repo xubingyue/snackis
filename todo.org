@@ -1,3 +1,5 @@
+* polish fmt
+** read up on algos / fold exprs
 * add net/smtp
 * add bool parse(Msg, string)
 ** change imap fetch_uid to return opt<Msg>
@@ -10,3 +12,4 @@
 ** use menus
 * add reader tab-completion
 * replace virtual methods with free functions / dynamic_cast
+* rename Buf to Stream

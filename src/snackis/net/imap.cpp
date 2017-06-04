@@ -6,8 +6,7 @@
 #include "snackis/net/imap.hpp"
 
 namespace snackis {
-  ImapError::ImapError(const str &msg):
-    Error(str("ImapError: ") + msg) { }
+  ImapError::ImapError(const str &msg): Error(str("ImapError: ") + msg) { }
 
   static size_t on_write(char *ptr, size_t size, size_t nmemb, void *_out) {
     Buf *out = static_cast<Buf *>(_out);

@@ -29,17 +29,22 @@ namespace snackis {
     
     for_each(args, [&i, &in, &out](auto &a) {
 	const str val(fmt_arg(a));
-	size_t start = 0, end = -1;
 	const str id("%" + to_str(i));
-	
+	size_t start = 0, end;
+
 	while ((end = out.find(id, start)) != str::npos) {
-	  out.replace(end, id.size(), val);
-	  start = end+val.size();
+	  if (end > 0 && out[end-1] == '%') {
+	    out.erase(end-1, 1);
+	    start = end-1+id.size();
+	  } else {
+	    out.replace(end, id.size(), val);
+	    start = end+val.size();
+	  }
 	}
 
 	i++;
       });
-    
+
     return out;
   }
 }
