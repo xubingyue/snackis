@@ -1,9 +1,8 @@
-* move ui into snackis
-** add separate sources for snackis subdirs in cmake
 * add invite form
 ** email, name & send immediately
 ** create peer if not exists
 ** extract Field baseclass with drive method
+*** move to separate file
 *** add TextField
 **** call form.drive
 *** add EnumField<T> 
