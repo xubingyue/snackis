@@ -1,15 +1,25 @@
 * finish net/smtp
 ** handle smtp connect reply
-** implement Data encode(Msg)
+** set address / subject from msg
+* move ui into snackis
+* add invite form
+** email, name & send immediately
+** create peer if not exists
+** extract Field baseclass with drive method
+*** add TextField
+**** call form.drive
+*** add EnumFieldloops 
+**** loop list of alts on space
+**** autocomplete on input
+***** as far as possible, keep current in field
+* implement Data encode(Msg)
 * add bool decode(Msg, unsigned char *data, size_t len)
 ** change imap fetch_uid to return opt<Msg>
 ** change imap fetch to insert into inbox
 * add db/ver file
 ** add support for migrations
 ** store keyed on from_ver
-* move ui into snackis
 ** add separate sources for snackis subdirs in cmake
-* add invite form
 * add inbox form
 ** use menus
 * add reader tab-completion
