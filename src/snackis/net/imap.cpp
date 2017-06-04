@@ -1,15 +1,15 @@
 #include <iostream>
 #include <iterator>
 #include "snackis/ctx.hpp"
-#include "snackis/core/buf.hpp"
 #include "snackis/core/fmt.hpp"
+#include "snackis/core/stream.hpp"
 #include "snackis/net/imap.hpp"
 
 namespace snackis {
   ImapError::ImapError(const str &msg): Error(str("ImapError: ") + msg) { }
 
   static size_t on_read(char *ptr, size_t size, size_t nmemb, void *_out) {
-    Buf *out = static_cast<Buf *>(_out);
+    Stream *out = static_cast<Stream *>(_out);
     out->write(ptr, size * nmemb);
     return size * nmemb;  
   }
@@ -87,7 +87,7 @@ namespace snackis {
 		     CURLOPT_CUSTOMREQUEST,
 		     fmt("UID FETCH %0 BODY[TEXT]", uid).c_str());
 
-    Buf out;    
+    Stream out;    
     curl_easy_setopt(imap.client, CURLOPT_HEADERFUNCTION, on_read);
     curl_easy_setopt(imap.client, CURLOPT_HEADERDATA, &out);
     CURLcode res(curl_easy_perform(imap.client));
@@ -121,7 +121,7 @@ namespace snackis {
 		     CURLOPT_CUSTOMREQUEST,
 		     "UID SEARCH Subject \"__SNACKIS__\"");
 
-    Buf out;    
+    Stream out;    
     curl_easy_setopt(imap.client, CURLOPT_HEADERFUNCTION, nullptr);
     curl_easy_setopt(imap.client, CURLOPT_HEADERDATA, nullptr);
     curl_easy_setopt(imap.client, CURLOPT_WRITEFUNCTION, on_read);

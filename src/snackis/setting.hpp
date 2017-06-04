@@ -2,9 +2,9 @@
 #define SNACKIS_SETTING_HPP
 
 #include "snackis/rec.hpp"
-#include "snackis/core/buf.hpp"
 #include "snackis/core/opt.hpp"
 #include "snackis/core/str.hpp"
+#include "snackis/core/stream.hpp"
 #include "snackis/core/type.hpp"
 
 namespace snackis {
@@ -45,13 +45,13 @@ namespace snackis {
 
     if (stn.val.empty()) { return nullopt; }
 
-    Buf buf(stn.val);
+    Stream buf(stn.val);
     return stn.type.read(buf);
   }
   
   template <typename ValT>
   void set_val(Setting<ValT> &stn, const ValT &val) {
-    Buf buf;
+    Stream buf;
     stn.type.write(val, buf);
     stn.val = buf.str();
     upsert(stn.ctx.db.settings, dynamic_cast<BasicSetting &>(stn));

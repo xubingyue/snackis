@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "snackis/core/buf.hpp"
+#include "snackis/core/stream.hpp"
 #include "snackis/core/trace.hpp"
 
 namespace snackis {
@@ -17,7 +17,7 @@ namespace snackis {
   }
   
   str stack_trace() {
-    Buf out;
+    Stream out;
 
     for (const Trace *t: stack) {
       out << t->msg << " in file " << t->file << ", line " << t->line << ":\n";

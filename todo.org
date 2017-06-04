@@ -1,4 +1,3 @@
-* rename Buf to Stream
 * move ui into snackis
 ** add separate sources for snackis subdirs in cmake
 * add invite form

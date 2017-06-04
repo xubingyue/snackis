@@ -1,6 +1,6 @@
 #include <ctime>
 #include <iomanip>
-#include "snackis/core/buf.hpp"
+#include "snackis/core/stream.hpp"
 #include "snackis/core/time.hpp"
 
 namespace snackis {
@@ -13,7 +13,7 @@ namespace snackis {
     const time_t t = Clock::to_time_t(tim);
     tm tm;
     localtime_r(&t, &tm);
-    Buf buf;
+    Stream buf;
     buf << std::put_time(localtime_r(&t, &tm), spec.c_str());
     return buf.str();
   }

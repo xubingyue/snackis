@@ -5,13 +5,13 @@
 #include <cstdint>
 #include <set>
 
-#include "snackis/core/buf.hpp"
 #include "snackis/core/data.hpp"
 #include "snackis/core/fmt.hpp"
 #include "snackis/core/func.hpp"
 #include "snackis/core/opt.hpp"
 #include "snackis/core/str_type.hpp"
 #include "snackis/core/type.hpp"
+#include "snackis/core/stream.hpp"
 #include "snackis/crypt/secret.hpp"
 #include "snackis/db/basic_table.hpp"
 #include "snackis/db/ctx.hpp"
@@ -199,7 +199,7 @@ namespace db {
       edata.resize(size);
       in.read((char *)&edata[0], size);
       const Data ddata(decrypt(*sec, (unsigned char *)&edata[0], size));
-      Buf buf(str(ddata.begin(), ddata.end()));
+      Stream buf(str(ddata.begin(), ddata.end()));
       read(tbl, buf, rec, nullopt);
     } else {
       int32_t cnt = -1;
@@ -224,7 +224,7 @@ namespace db {
 	     std::ostream &out,
 	     opt<crypt::Secret> sec) {
     if (sec) {
-	Buf buf;
+	Stream buf;
 	write(tbl, rec, buf, nullopt);
 	str data(buf.str());
 	const Data edata(encrypt(*sec, (unsigned char *)data.c_str(), data.size()));
@@ -369,7 +369,7 @@ namespace db {
 
   template <typename RecT>
   Rec<RecT> RecType<RecT>::from_val(const Val &in) const {
-    Buf buf(get<str>(in));
+    Stream buf(get<str>(in));
     Rec<RecT> rec;
     db::read(table, buf, rec, nullopt);
     return rec;
@@ -377,7 +377,7 @@ namespace db {
 
   template <typename RecT>
   Val RecType<RecT>::to_val(const Rec<RecT> &in) const {
-    Buf buf;
+    Stream buf;
     db::write(table, in, buf, nullopt);
     return buf.str();
   }

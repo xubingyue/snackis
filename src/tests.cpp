@@ -2,11 +2,11 @@
 
 #include "snackis/ctx.hpp"
 #include "snackis/snackis.hpp"
-#include "snackis/core/buf.hpp"
 #include "snackis/core/data.hpp"
 #include "snackis/core/int64_type.hpp"
 #include "snackis/core/str_type.hpp"
 #include "snackis/core/str.hpp"
+#include "snackis/core/stream.hpp"
 #include "snackis/core/time_type.hpp"
 #include "snackis/core/uid_type.hpp"
 #include "snackis/crypt/key.hpp"
@@ -140,7 +140,7 @@ static void read_write_tests() {
   rec[&time_col] = now();
   rec[&uid_col] = UId();
 
-  Buf buf;
+  Stream buf;
   write(tbl, rec, buf, sec);
   Rec<Foo> rrec;
   read(tbl, buf, rrec, sec);

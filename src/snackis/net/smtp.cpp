@@ -1,15 +1,15 @@
 #include <iostream>
 #include <iterator>
 #include "snackis/ctx.hpp"
-#include "snackis/core/buf.hpp"
 #include "snackis/core/fmt.hpp"
+#include "snackis/core/stream.hpp"
 #include "snackis/net/smtp.hpp"
 
 namespace snackis {
   SmtpError::SmtpError(const str &msg): Error(str("SmtpError: ") + msg) { }
 
   static size_t on_read(char *ptr, size_t size, size_t nmemb, void *_out) {
-    Buf *out = static_cast<Buf *>(_out);
+    Stream *out = static_cast<Stream *>(_out);
     out->write(ptr, size * nmemb);
     return size * nmemb;  
   }
@@ -61,7 +61,7 @@ namespace snackis {
     curl_easy_setopt(smtp.client, CURLOPT_CUSTOMREQUEST, "NOOP");
     curl_easy_setopt(smtp.client, CURLOPT_UPLOAD, 0L);
 
-    Buf resp_buf;
+    Stream resp_buf;
     curl_easy_setopt(smtp.client, CURLOPT_WRITEDATA, &resp_buf);
     CURLcode res(curl_easy_perform(smtp.client));
  
@@ -82,7 +82,7 @@ namespace snackis {
     log(smtp.ctx, "Sending email");
     curl_easy_setopt(smtp.client, CURLOPT_UPLOAD, 1L);
 
-    Buf resp_buf;
+    Stream resp_buf;
     curl_easy_setopt(smtp.client, CURLOPT_WRITEDATA, &resp_buf);
 
     db::Table<Msg> &tbl(smtp.ctx.db.outbox);

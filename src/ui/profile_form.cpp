@@ -14,7 +14,7 @@ namespace ui {
   static void test_editor(Ctx &ctx, const str &path) {
     log(ctx, fmt("Launching editor: %0", path));
     int ret(run_proc(path, {"test.txt"}));
-    if (ret) { log(ctx, fmt("Editor exited with code %0", ret)); }
+    log(ctx, ret ? fmt("Editor exited with code %0", ret) : "OK");
     ui::redraw();
   }
 
