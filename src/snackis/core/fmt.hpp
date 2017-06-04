@@ -24,7 +24,6 @@ namespace snackis {
     
     for_each(args, [&buf, &i, &in, &out](auto &a) {
 	buf.str("");
-	buf.clear();
 	buf << a;
 	const str val(buf.str());
 	size_t start = 0, end = -1;
