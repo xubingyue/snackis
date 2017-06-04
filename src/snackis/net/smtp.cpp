@@ -7,7 +7,7 @@
 namespace snackis {
   SmtpError::SmtpError(const str &msg): Error(str("SmtpError: ") + msg) { }
 
-  static size_t on_read(void *ptr, size_t size, size_t nmemb, void *_smtp) {
+  static size_t on_write(void *ptr, size_t size, size_t nmemb, void *_smtp) {
     if (!_smtp || !size || !nmemb || ((size*nmemb) < 1)) {
       return 0;
     }
@@ -34,7 +34,7 @@ namespace snackis {
 			 *get_val(ctx.settings.smtp_url),
 			 *get_val(ctx.settings.smtp_port)).c_str());
     curl_easy_setopt(client, CURLOPT_USE_SSL, (long)CURLUSESSL_ALL);
-    curl_easy_setopt(client, CURLOPT_READFUNCTION, on_read);
+    curl_easy_setopt(client, CURLOPT_READFUNCTION, on_write);
     curl_easy_setopt(client, CURLOPT_READDATA, this);
     //curl_easy_setopt(client, CURLOPT_VERBOSE, 1L);
     

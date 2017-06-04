@@ -7,6 +7,8 @@
 * add db/ver file
 ** add support for migrations
 ** store keyed on from_ver
+* move ui into snackis
+** add separate sources for snackis subdirs in cmake
 * add invite form
 * add inbox form
 ** use menus

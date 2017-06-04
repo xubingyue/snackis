@@ -8,13 +8,13 @@
 namespace snackis {
   ImapError::ImapError(const str &msg): Error(str("ImapError: ") + msg) { }
 
-  static size_t on_write(char *ptr, size_t size, size_t nmemb, void *_out) {
+  static size_t on_read(char *ptr, size_t size, size_t nmemb, void *_out) {
     Buf *out = static_cast<Buf *>(_out);
     out->write(ptr, size * nmemb);
     return size * nmemb;  
   }
 
-  static size_t skip_write(char *ptr, size_t size, size_t nmemb, void *_out) {
+  static size_t skip_read(char *ptr, size_t size, size_t nmemb, void *_out) {
     return size * nmemb;  
   }
 
@@ -31,7 +31,7 @@ namespace snackis {
 		     fmt("imaps://%0:%1/INBOX",
 			 *get_val(ctx.settings.imap_url),
 			 *get_val(ctx.settings.imap_port)).c_str());
-    curl_easy_setopt(client, CURLOPT_WRITEFUNCTION, on_write);
+    curl_easy_setopt(client, CURLOPT_WRITEFUNCTION, on_read);
     //curl_easy_setopt(client, CURLOPT_VERBOSE, 1L);
     
     log(ctx, "Connecting to Imap");
@@ -48,7 +48,7 @@ namespace snackis {
   void noop(const struct Imap &imap) {
     curl_easy_setopt(imap.client, CURLOPT_CUSTOMREQUEST, "NOOP");
     curl_easy_setopt(imap.client, CURLOPT_HEADERFUNCTION, nullptr);
-    curl_easy_setopt(imap.client, CURLOPT_WRITEFUNCTION, skip_write);
+    curl_easy_setopt(imap.client, CURLOPT_WRITEFUNCTION, skip_read);
     CURLcode res(curl_easy_perform(imap.client));
  
     if (res != CURLE_OK) {
@@ -62,7 +62,7 @@ namespace snackis {
 		     fmt("UID STORE %0 +FLAGS.SILENT \\Deleted", uid).c_str());
 
     curl_easy_setopt(imap.client, CURLOPT_HEADERFUNCTION, nullptr);
-    curl_easy_setopt(imap.client, CURLOPT_WRITEFUNCTION, skip_write);
+    curl_easy_setopt(imap.client, CURLOPT_WRITEFUNCTION, skip_read);
     CURLcode res(curl_easy_perform(imap.client));
  
     if (res != CURLE_OK) {
@@ -74,7 +74,7 @@ namespace snackis {
     curl_easy_setopt(imap.client, CURLOPT_CUSTOMREQUEST, "EXPUNGE");
 
     curl_easy_setopt(imap.client, CURLOPT_HEADERFUNCTION, nullptr);
-    curl_easy_setopt(imap.client, CURLOPT_WRITEFUNCTION, skip_write);
+    curl_easy_setopt(imap.client, CURLOPT_WRITEFUNCTION, skip_read);
     CURLcode res(curl_easy_perform(imap.client));
  
     if (res != CURLE_OK) {
@@ -88,7 +88,7 @@ namespace snackis {
 		     fmt("UID FETCH %0 BODY[TEXT]", uid).c_str());
 
     Buf out;    
-    curl_easy_setopt(imap.client, CURLOPT_HEADERFUNCTION, on_write);
+    curl_easy_setopt(imap.client, CURLOPT_HEADERFUNCTION, on_read);
     curl_easy_setopt(imap.client, CURLOPT_HEADERDATA, &out);
     CURLcode res(curl_easy_perform(imap.client));
  
@@ -124,7 +124,7 @@ namespace snackis {
     Buf out;    
     curl_easy_setopt(imap.client, CURLOPT_HEADERFUNCTION, nullptr);
     curl_easy_setopt(imap.client, CURLOPT_HEADERDATA, nullptr);
-    curl_easy_setopt(imap.client, CURLOPT_WRITEFUNCTION, on_write);
+    curl_easy_setopt(imap.client, CURLOPT_WRITEFUNCTION, on_read);
     curl_easy_setopt(imap.client, CURLOPT_WRITEDATA, &out);
     CURLcode res(curl_easy_perform(imap.client));
  
