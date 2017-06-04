@@ -129,7 +129,7 @@ namespace snackis {
     CURLcode res(curl_easy_perform(imap.client));
  
     if (res != CURLE_OK) {
-      ERROR(Imap, fmt("Failed fetching: %0", curl_easy_strerror(res)));
+      ERROR(Imap, fmt("Failed searching inbox: %0", curl_easy_strerror(res)));
     }
 
     std::vector<str> tokens{

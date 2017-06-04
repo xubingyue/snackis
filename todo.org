@@ -1,5 +1,7 @@
-* add net/smtp
-* add bool parse(Msg, string)
+* finish net/smtp
+** handle smtp connect reply
+** implement Data encode(Msg)
+* add bool decode(Msg, unsigned char *data, size_t len)
 ** change imap fetch_uid to return opt<Msg>
 ** change imap fetch to insert into inbox
 * add db/ver file

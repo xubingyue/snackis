@@ -4,12 +4,20 @@
 #include "snackis/core/proc.hpp"
 #include "snackis/db/ctx.hpp"
 #include "snackis/net/imap.hpp"
+#include "snackis/net/smtp.hpp"
 
 #include "ui/profile_form.hpp"
 #include "ui/view.hpp"
 #include "ui/window.hpp"
 
 namespace ui {
+  static void test_editor(Ctx &ctx, const str &path) {
+    log(ctx, fmt("Launching editor: %0", path));
+    int ret(run_proc(path, {"test.txt"}));
+    if (ret) { log(ctx, fmt("Editor exited with code %0", ret)); }
+    ui::redraw();
+  }
+
   static bool copy_imap(ProfileForm &frm) {
     const str
       url = get_str(frm.imap_url),
@@ -36,11 +44,30 @@ namespace ui {
     }
   }
 
-  static void test_editor(Ctx &ctx, const str &path) {
-    log(ctx, fmt("Launching editor: %0", path));
-    int ret(run_proc(path, {"test.txt"}));
-    if (ret) { log(ctx, fmt("Editor exited with code %0", ret)); }
-    ui::redraw();
+  static bool copy_smtp(ProfileForm &frm) {
+    const str
+      url = get_str(frm.smtp_url),
+      port = get_str(frm.smtp_port),
+      user = get_str(frm.smtp_user),
+      pass = get_str(frm.smtp_pass);
+
+    set_val(frm.ctx.settings.smtp_url, url);
+    set_val(frm.ctx.settings.smtp_port, to_int64(port));
+    set_val(frm.ctx.settings.smtp_user, user);
+    set_val(frm.ctx.settings.smtp_pass, pass);
+    
+    return !url.empty() && !port.empty() && !user.empty() && !pass.empty();
+  }
+
+  static void test_smtp(ProfileForm &frm) {
+    if (copy_smtp(frm)) {
+      try {
+	Smtp smtp(frm.ctx);
+	log(frm.ctx, "OK");
+      } catch (const SmtpError &e) {
+	log(frm.ctx, e.what());
+      }
+    }
   }
   
   ProfileForm::ProfileForm(View &view, Footer &ftr):
@@ -70,9 +97,16 @@ namespace ui {
     imap_port.action = imap_action;
     imap_user.action = imap_action;
     imap_pass.action = imap_action;
+
     imap_url.margin_top = 1;
     imap_pass.echo = false;
 
+    auto smtp_action([this]() { test_smtp(*this); });
+    smtp_url.action = smtp_action;
+    smtp_port.action = smtp_action;
+    smtp_user.action = smtp_action;
+    smtp_pass.action = smtp_action;
+    
     smtp_url.margin_top = 1;
     smtp_pass.echo = false;
   }
@@ -119,12 +153,7 @@ namespace ui {
 	set_val(ctx.settings.editor, get_str(frm.editor));
 
 	copy_imap(frm);
-
-	set_val(ctx.settings.smtp_url,  get_str(frm.smtp_url));
-	set_val(ctx.settings.smtp_port, to_int64(get_str(frm.smtp_port)));
-	set_val(ctx.settings.smtp_user, get_str(frm.smtp_user));
-	set_val(ctx.settings.smtp_pass, get_str(frm.smtp_pass));
-
+	copy_smtp(frm);
 	db::commit(trans);
 	log(frm.window.ctx, "Saved profile");
 	return true;

@@ -1,6 +1,7 @@
 #include "snackis/ctx.hpp"
 #include "snackis/core/fmt.hpp"
 #include "snackis/net/imap.hpp"
+#include "snackis/net/smtp.hpp"
 #include "ui/reader.hpp"
 #include "ui/profile_form.hpp"
 
@@ -24,12 +25,17 @@ namespace ui {
       fetch(imap); 
     };
 
+    rdr.cmds["send"] = [&rdr]() { 
+      Smtp smtp(rdr.ctx);
+      send(smtp); 
+    };
+
     rdr.cmds["profile"] = [&rdr]() {
       ProfileForm prof(rdr.view, rdr.form.footer);
       open(prof);
       run(prof);
     };
-    
+
     rdr.cmds["quit"] = [&rdr]() { rdr.quitting = true; };
   }
 
@@ -61,8 +67,13 @@ namespace ui {
     str in(trim(get_str(rdr.field)));
     clear_field(rdr.form);
     refresh(rdr);
-    if (!run_cmd(rdr, in)) { 
-      log(rdr.ctx, fmt("Invalid command: '%0'", in));
+    
+    try {
+      if (!run_cmd(rdr, in)) { 
+	log(rdr.ctx, fmt("Invalid command: '%0'", in));
+      }
+    } catch (const std::exception &e) {
+      log(rdr.ctx, e.what());
     }
   }
   
