@@ -7,8 +7,8 @@ namespace ui {
   struct ProfileForm: public ViewForm {
     Field
     name, email, editor,
-      imap_server, imap_port, imap_user, imap_pass,
-      smtp_server, smtp_port, smtp_user, smtp_pass;
+      imap_url, imap_port, imap_user, imap_pass,
+      smtp_url, smtp_port, smtp_user, smtp_pass;
     
     ProfileForm(View &view, Footer &ftr);
   };

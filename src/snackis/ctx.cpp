@@ -28,7 +28,7 @@ namespace snackis {
     if (!found_crypt_key) {
       crypt::Key key(ctx.whoami.crypt_key);
       set_val(ctx.settings.crypt_key, key);
-      log(ctx, "New crypto-key generated");
+      log(ctx, "New encryption-key created");
     }
     
     db::upsert(ctx.db.peers, ctx.whoami);

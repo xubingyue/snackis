@@ -1,8 +1,9 @@
-* add ctrl-space shortcut to test imap
-** change imap to take ctx and use settings
+* replace log_mutex with recursive_mutex in Trans
+** add trans in imap fetch()
+** add fetch command to reader
+* add net/smtp
 * add parse(Msg, string)
 ** change imap fetch to return Msgs
-* add net/smtp
 * add db/ver file
 ** add support for migrations
 ** store keyed on from_ver
@@ -10,3 +11,4 @@
 * add inbox form
 ** use menus
 * add reader tab-completion
+* replace virtual methods with free functions / dynamic_cast

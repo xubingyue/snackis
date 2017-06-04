@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "snackis/ctx.hpp"
 #include "snackis/snackis.hpp"
 #include "snackis/core/buf.hpp"
 #include "snackis/core/data.hpp"
@@ -77,7 +78,7 @@ const Col<Foo, Time> time_col("time", time_type, &Foo::ftime);
 const Col<Foo, UId> uid_col("uid", uid_type, &Foo::fuid); 
 
 void table_insert_tests() {
-  Ctx ctx("testdb/");
+  db::Ctx ctx("testdb/");
   Table<Foo> tbl(ctx, "insert_tests", {&uid_col},
 		 {&int64_col, &str_col, &time_col});
   open(tbl);
@@ -92,7 +93,7 @@ void table_insert_tests() {
 }
 
 void table_slurp_tests() {
-  Ctx ctx("testdb/");
+  db::Ctx ctx("testdb/");
   Table<Foo> tbl(ctx, "slurp_tests", {&uid_col},
 		 {&int64_col, &str_col, &time_col});
   open(tbl);
@@ -112,7 +113,7 @@ void table_slurp_tests() {
 }
 
 void read_write_tests() {
-  Ctx ctx("testdb/");
+  db::Ctx ctx("testdb/");
   Table<Foo> tbl(ctx, "read_write_tests", {&uid_col},
 		 {&int64_col, &str_col, &time_col});
   open(tbl);
@@ -137,8 +138,8 @@ void read_write_tests() {
 
 void email_tests() {
   TRACE("Running email_tests");
-
-  Imap imap("imap.gmail.com", 993, "", "");
+  snackis::Ctx ctx("testdb/");
+  Imap imap(ctx);
   std::vector<str> msgs;
   fetch(imap, msgs);
 

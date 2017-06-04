@@ -1,5 +1,6 @@
 #include <iostream>
 #include <iterator>
+#include "snackis/ctx.hpp"
 #include "snackis/core/buf.hpp"
 #include "snackis/core/format.hpp"
 #include "snackis/net/imap.hpp"
@@ -18,21 +19,40 @@ namespace snackis {
     return size * nmemb;  
   }
 
-  Imap::Imap(const str &url, int port,
-	     const str &usr, const str &pwd):
-    client(curl_easy_init()) {
-    if (client) {
-      curl_easy_setopt(client, CURLOPT_USERNAME, usr.c_str());
-      curl_easy_setopt(client, CURLOPT_PASSWORD, pwd.c_str());
-      curl_easy_setopt(client, CURLOPT_URL,
-		       format("imaps://{0}:{1}/INBOX", url, port).c_str());
-      curl_easy_setopt(client, CURLOPT_WRITEFUNCTION, on_write);
-      //curl_easy_setopt(client, CURLOPT_VERBOSE, 1L);
+  Imap::Imap(Ctx &ctx): ctx(ctx), client(curl_easy_init()) {
+    if (!client) { ERROR(Imap, "Failed initializing client"); }
+    curl_easy_setopt(client, 
+		     CURLOPT_USERNAME, 
+		     get_val(ctx.settings.imap_user)->c_str());
+    curl_easy_setopt(client, 
+		     CURLOPT_PASSWORD, 
+		     get_val(ctx.settings.imap_pass)->c_str());
+    curl_easy_setopt(client,
+		     CURLOPT_URL,
+		     format("imaps://{0}:{1}/INBOX",
+			    *get_val(ctx.settings.imap_url),
+			    *get_val(ctx.settings.imap_port)).c_str());
+    curl_easy_setopt(client, CURLOPT_WRITEFUNCTION, on_write);
+    //curl_easy_setopt(client, CURLOPT_VERBOSE, 1L);
+    
+    try {
+      noop(*this);
+    } catch (const ImapError &e) {
+      ERROR(Imap, format("Failed connecting: {0}", e.what()));
     }
   }
 
-  Imap::~Imap() {
-    curl_easy_cleanup(client);
+  Imap::~Imap() { curl_easy_cleanup(client); }
+
+  void noop(struct Imap &imap) {
+    curl_easy_setopt(imap.client, CURLOPT_CUSTOMREQUEST, "NOOP");
+    curl_easy_setopt(imap.client, CURLOPT_HEADERFUNCTION, nullptr);
+    curl_easy_setopt(imap.client, CURLOPT_WRITEFUNCTION, skip_write);
+    CURLcode res(curl_easy_perform(imap.client));
+ 
+    if (res != CURLE_OK) {
+      ERROR(Imap, format("Failed sending NOOP: {0}", curl_easy_strerror(res))); 
+    }
   }
 
   static void delete_uid(struct Imap &imap, const str &uid) {
@@ -95,10 +115,6 @@ namespace snackis {
   }
   
   void fetch(struct Imap &imap, std::vector<str> &msgs) {
-    if (!imap.client) {
-      ERROR(Imap, "Failed connecing");
-    }
-
     curl_easy_setopt(imap.client,
 		     CURLOPT_CUSTOMREQUEST,
 		     "UID SEARCH Subject \"__SNACKIS__\"");

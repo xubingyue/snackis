@@ -9,11 +9,11 @@ namespace snackis {
     Setting<crypt::Key> crypt_key;
     Setting<str> editor;
     
-    Setting<str> imap_server;
+    Setting<str> imap_url;
     Setting<int64_t> imap_port;
     Setting<str> imap_user, imap_pass;
 
-    Setting<str> smtp_server;
+    Setting<str> smtp_url;
     Setting<int64_t> smtp_port;
     Setting<str> smtp_user, smtp_pass;
 

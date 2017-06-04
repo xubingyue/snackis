@@ -12,15 +12,17 @@ namespace snackis {
     ImapError(const str &msg);
   };
 
+  struct Ctx;
+
   struct Imap {
+    Ctx &ctx;
     CURL *client;
     
-    Imap(const str &url, int port,
-	 const str &usr, const str &pwd);
-
-    ~Imap();
+    Imap(Ctx &ctx);
+    virtual ~Imap();
   };
     
+  void noop(struct Imap &imap);
   void fetch(struct Imap &imap, std::vector<str> &msgs);
 }
 
