@@ -42,7 +42,7 @@ namespace ui {
   }
   
   bool run(InviteForm &frm) {
-    select(frm.send_now, true);
+    select(frm.send_now, 0);
     Ctx &ctx(frm.window.ctx);
     db::Trans trans(ctx);
     

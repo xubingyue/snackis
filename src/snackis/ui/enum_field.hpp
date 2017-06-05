@@ -3,6 +3,8 @@
 
 #include <cctype>
 #include <map>
+#include <unordered_map>
+
 #include "snackis/ui/field.hpp"
 #include "snackis/ui/window.hpp"
 
@@ -22,9 +24,8 @@ namespace ui {
   struct EnumField: public Field {
     std::vector<EnumAlt<T>> alts;
     std::map<str, size_t> lbl_lookup;
-    std::map<T, size_t> alt_lookup;
     opt<EnumAlt<T>> selected;
-    using OnSelect = func<void (const opt<T> &val)>;
+    using OnSelect = func<void (const opt<EnumAlt<T>> &val)>;
     opt<OnSelect> on_select;
     str search;
     bool allow_clear;
@@ -51,8 +52,7 @@ namespace ui {
 	auto found = lbl_lookup.find(get_str(*this));
 	if (found != lbl_lookup.end()) { found++; }
 	if (found == lbl_lookup.end()) { found = lbl_lookup.begin(); }
-	const EnumAlt<T> alt(alts[found->second]);
-	select(*this, alt.val);
+	select(*this, found->second);
       }
       
       break;
@@ -60,6 +60,10 @@ namespace ui {
       if (!search.empty()) {
 	search.pop_back();
 	form_driver(form.ptr, REQ_PREV_CHAR);
+
+	if (allow_clear && search.empty()) {
+	  set_str(*this, "");
+	}
       }
       break;
     case KEY_DC:
@@ -77,8 +81,7 @@ namespace ui {
 	auto found(lbl_lookup.lower_bound(nsearch));
 	if (found != lbl_lookup.end() && found->first.find(nsearch) != str::npos) {
 	  search.push_back(ch);
-	  const EnumAlt<T> alt(alts[found->second]);
-	  select(*this, alt.val);
+	  select(*this, found->second);
 	  
 	  for (int i=0; i < search.size(); i++) {
 	    form_driver(form.ptr, REQ_NEXT_CHAR);
@@ -92,17 +95,15 @@ namespace ui {
   void push(EnumField<T> &fld, const str &lbl, const T &val) {
     const size_t i = fld.alts.size();
     fld.lbl_lookup[lbl] = i;
-    fld.alt_lookup[val] = i;
     fld.alts.push_back(EnumAlt<T>(lbl, val));
   }
 
   template <typename T>
-  bool select(EnumField<T> &fld, const T &val, bool trig = true) {
-    auto found(fld.alt_lookup.find(val));
-    if (found == fld.alt_lookup.end()) { return false; } 
-    fld.selected = fld.alts[found->second];
+  bool select(EnumField<T> &fld, size_t i, bool trig = true) {
+    assert(i < fld.alts.size());
+    fld.selected = fld.alts[i];
     set_str(fld, fld.selected->lbl);
-    if (trig && fld.on_select) { (*fld.on_select)(val); } 
+    if (trig && fld.on_select) { (*fld.on_select)(*fld.selected); } 
     return true;
   }
 

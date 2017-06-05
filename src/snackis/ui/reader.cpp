@@ -8,6 +8,32 @@
 
 namespace snackis {
 namespace ui {
+  static void init_cmds(Reader &rdr) {
+    push(rdr.field, "profile", Reader::Cmd([&rdr]() {
+	  ProfileForm prof(rdr.view, rdr.form.footer);
+	  open(prof);
+	  run(prof);
+	}));
+
+    push(rdr.field, "invite", Reader::Cmd([&rdr]() {
+	  InviteForm inv(rdr.view, rdr.form.footer);
+	  open(inv);
+	  run(inv);
+	}));
+
+    push(rdr.field, "fetch", Reader::Cmd([&rdr]() { 
+	  Imap imap(rdr.ctx);
+	  fetch(imap); 
+	}));
+
+    push(rdr.field, "send", Reader::Cmd([&rdr]() { 
+	  Smtp smtp(rdr.ctx);
+	  send(smtp); 
+	}));
+
+    push(rdr.field, "quit", Reader::Cmd([&rdr]() { rdr.quitting = true; }));
+  }
+
   Reader::Reader(Ctx &ctx, View &view, Footer &ftr):
     Window(ctx, ui::Dim(1, ui::dim().w/2), ui::Pos(ui::dim().h-1, 0)),
     form(*this, ftr),
@@ -16,54 +42,13 @@ namespace ui {
     quitting(false),
     view(view) {
     form.status = "Type 'quit' followed by Return to exit";
+    field.allow_clear = true;
     open(form);
     refresh(*this);
     init_cmds(*this);
   }
 
-  void init_cmds(Reader &rdr) {
-    rdr.cmds["profile"] = [&rdr]() {
-      ProfileForm prof(rdr.view, rdr.form.footer);
-      open(prof);
-      run(prof);
-    };
-
-    rdr.cmds["invite"] = [&rdr]() {
-      InviteForm inv(rdr.view, rdr.form.footer);
-      open(inv);
-      run(inv);
-    };
-
-    rdr.cmds["fetch"] = [&rdr]() { 
-      Imap imap(rdr.ctx);
-      fetch(imap); 
-    };
-
-    rdr.cmds["send"] = [&rdr]() { 
-      Smtp smtp(rdr.ctx);
-      send(smtp); 
-    };
-
-    rdr.cmds["quit"] = [&rdr]() { rdr.quitting = true; };
-  }
-
-  bool run_cmd(Reader &rdr, const str &in) {
-    if (in == "") {
-      if (rdr.last_cmd) {
-	(*rdr.last_cmd)();
-      }
-    } else {
-      const str id(in.substr(0, in.find_first_of(' ')));
-      auto found = rdr.cmds.find(id);
-      if (found == rdr.cmds.end()) { return false; }
-      rdr.last_cmd = found->second;
-      found->second();
-    }
-
-    return true;
-  }
-  
-  void run_once(Reader &rdr) {
+  static void run_once(Reader &rdr) {
     bool done = false;
 
     while (!done) {
@@ -72,13 +57,14 @@ namespace ui {
       drive(rdr.form, ch);
     }
    
-    str in(trim(get_str(rdr.field)));
     clear_field(rdr.form);
     refresh(rdr);
     
     try {
-      if (!run_cmd(rdr, in)) { 
-	log(rdr.ctx, fmt("Invalid command: '%0'", in));
+      if (rdr.field.selected) {
+	rdr.field.selected->val();
+      } else {
+	if (rdr.last_cmd) { (*rdr.last_cmd)(); }
       }
     } catch (const std::exception &e) {
       log(rdr.ctx, e.what());

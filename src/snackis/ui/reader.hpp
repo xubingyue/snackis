@@ -6,8 +6,8 @@
 #include "snackis/core/func.hpp"
 #include "snackis/core/opt.hpp"
 #include "snackis/core/str.hpp"
+#include "snackis/ui/enum_field.hpp"
 #include "snackis/ui/form.hpp"
-#include "snackis/ui/text_field.hpp"
 #include "snackis/ui/window.hpp"
 
 namespace snackis {
@@ -19,8 +19,7 @@ namespace ui {
     using Cmd = func<void ()>;
     
     Form form;
-    TextField field;
-    std::map<str, Cmd> cmds;
+    EnumField<Cmd> field;
     opt<Cmd> last_cmd;
     bool quitting;
     View &view;
@@ -28,9 +27,6 @@ namespace ui {
     Reader(Ctx &ctx, View &view, Footer &footer);
   };
 
-  void init_cmds(Reader &rdr);
-  bool run_cmd(Reader &rdr, const str &in);
-  void run_once(Reader &rdr);
   void run(Reader &rdr);
 }}
 
