@@ -11,12 +11,16 @@ namespace snackis {
 namespace ui {
   void open(Form &frm) {
     assert(!frm.ptr);
-    Pos pos(frm.margin_top, -1);
+
+    size_t max_width = 0;
     for (auto f: frm.fields) {
-      f->dim.w = min(f->dim.w+f->margin_left+f->margin_right,
-		     frm.window.dim.w-frm.label_width);
+      max_width = max(max_width, label_width(*f));
+    }
+    
+    Pos pos(frm.margin_top, max_width);
+    for (auto f: frm.fields) {
+      f->dim.w = min(f->dim.w, frm.window.dim.w-max_width);
       pos.y += f->margin_top;
-      pos.x = frm.label_width + f->margin_left;
       open(*f, pos);
       pos.y += f->dim.h+1;
       frm.field_ptrs.push_back(f->ptr);
@@ -95,8 +99,7 @@ namespace ui {
   }
 
   Form::Form(Window &wnd, Footer &ftr):
-    window(wnd), footer(ftr), ctx(wnd.ctx), ptr(nullptr), label_width(0),
-    margin_top(0) { }
+    window(wnd), footer(ftr), ctx(wnd.ctx), ptr(nullptr), margin_top(0) { }
 
   Form::~Form() {
     if (ptr) { close(*this); }

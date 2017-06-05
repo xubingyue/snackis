@@ -22,8 +22,9 @@ namespace ui {
     Form &form;
     Pos pos;
     Dim dim;
-    int margin_left, margin_right, margin_top;
+    int margin_top;
     str label;
+    char symbol;
     FIELD *ptr;
     bool active;
     opt<OnAction> on_action;
@@ -36,6 +37,8 @@ namespace ui {
   };
 
   void set_bg(Field &fld, chtype ch);
+  size_t label_width(const Field &fld);
+
   void open(Field &fld, const Pos &pos);
   void paint(Field &fld);
   void focus(Field &fld);

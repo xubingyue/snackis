@@ -29,22 +29,13 @@ namespace ui {
     bool allow_clear;
     
     EnumField(Form &frm, const Dim &dim, const str &lbl);
-    void paint() override;
     void drive(chtype ch) override;
   };
 
   template <typename T>
   EnumField<T>::EnumField(Form &frm, const Dim &dim, const str &lbl):
     Field(frm, dim, lbl), allow_clear(false) {
-    margin_right = 1;
-  }
-
-  template <typename T>
-  void EnumField<T>::paint() {
-    Field::paint();
-    Window &wnd(form.window);
-    move(wnd, Pos(pos.y, pos.x+dim.w));
-    print(wnd, "=");
+    symbol = '=';
   }
 
   template <typename T>

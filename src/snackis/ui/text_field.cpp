@@ -10,6 +10,7 @@ namespace ui {
   void TextField::open(const Pos &pos) {
     Field::open(pos);
     if (!echo) { field_opts_off(ptr, O_PUBLIC); }
+    if (on_complete) { symbol = '*'; }
   }
 
   void TextField::drive(chtype ch) {

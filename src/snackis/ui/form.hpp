@@ -27,7 +27,7 @@ namespace ui {
     FORM *ptr;
     std::vector<Field *> fields;
     std::vector<FIELD *> field_ptrs;
-    int label_width, margin_top;
+    int margin_top;
     str label, status;
     Form(Window &wnd, Footer &ftr);
     virtual ~Form();

@@ -1,5 +1,6 @@
 #include <cassert>
 
+#include "snackis/core/fmt.hpp"
 #include "snackis/core/utils.hpp"
 #include "snackis/ui/field.hpp"
 #include "snackis/ui/form.hpp"
@@ -10,6 +11,8 @@ namespace ui {
   void set_bg(Field &fld, chtype ch) {
     set_field_back(fld.ptr, ch);
   }
+
+  size_t label_width(const Field &fld) { return fld.label.size() + 2; }
 
   void open(Field &fld, const Pos &pos) { fld.open(pos); }
 
@@ -39,20 +42,13 @@ namespace ui {
     form(frm), 
     pos(-1, -1),
     dim(dim),
-    margin_left(0), margin_right(0), margin_top(0), 
-    label(lbl), ptr(nullptr), 
+    margin_top(0), 
+    label(lbl), symbol(':'), ptr(nullptr), 
     active(true) {
     frm.fields.push_back(this);
-    frm.label_width = max(frm.label_width, lbl.size());
   }
 
   Field::~Field() { free_field(ptr); }
-
-  void Field::paint() {
-    Window &wnd(form.window);
-    move(wnd, Pos(pos.y, pos.x-margin_left-label.size()));
-    print(wnd, label);
-  }
 
   void Field::open(const Pos &pos) {
     assert(!ptr);
@@ -62,5 +58,11 @@ namespace ui {
     if (active) { set_bg(*this, A_UNDERLINE); }
     else { field_opts_off(ptr, O_ACTIVE); }
     this->pos = pos;
+  }
+
+  void Field::paint() {
+    Window &wnd(form.window);
+    move(wnd, Pos(pos.y, pos.x-label_width(*this)));
+    print(wnd, fmt("%0%1 ", label, str(1, symbol)));
   }
 }}

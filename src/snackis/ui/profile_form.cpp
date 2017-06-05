@@ -73,19 +73,19 @@ namespace ui {
   ProfileForm::ProfileForm(View &view, Footer &ftr):
     ViewForm(view, ftr),
     
-    name(*this, Dim(1, 50), "Name: "),
-    email(*this, Dim(1, 50), "Email: "),
-    editor(*this, Dim(1, 50), "Editor: "),
+    name(*this, Dim(1, 50), "Name"),
+    email(*this, Dim(1, 50), "Email"),
+    editor(*this, Dim(1, 50), "Editor"),
 
-    imap_url(*this, Dim(1, 50), "Imap Url: "),
-    imap_port(*this, Dim(1, 10), "Imap Port: "),
-    imap_user(*this, Dim(1, 50), "Imap User: "),
-    imap_pass(*this, Dim(1, 50), "Imap Pass: "),
+    imap_url(*this, Dim(1, 50), "Imap Url"),
+    imap_port(*this, Dim(1, 10), "Imap Port"),
+    imap_user(*this, Dim(1, 50), "Imap User"),
+    imap_pass(*this, Dim(1, 50), "Imap Pass"),
 
-    smtp_url(*this, Dim(1, 50), "Smtp Url: "),
-    smtp_port(*this, Dim(1, 10), "Smtp Port: "),
-    smtp_user(*this, Dim(1, 50), "Smtp User: "),
-    smtp_pass(*this, Dim(1, 50), "Smtp Pass: ") {
+    smtp_url(*this, Dim(1, 50), "Smtp Url"),
+    smtp_port(*this, Dim(1, 10), "Smtp Port"),
+    smtp_user(*this, Dim(1, 50), "Smtp User"),
+    smtp_pass(*this, Dim(1, 50), "Smtp Pass") {
     label = "Profile";
     status = "Press Ctrl-s to save profile, or Ctrl-q to cancel";
     margin_top = 1;

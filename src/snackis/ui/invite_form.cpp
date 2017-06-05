@@ -8,10 +8,10 @@ namespace snackis {
 namespace ui {
   InviteForm::InviteForm(View &view, Footer &ftr):
     ViewForm(view, ftr),
-    email(*this, Dim(1, 50), "Email: "),
-    name(*this, Dim(1, 50), "Name: "),
-    last_invite(*this, Dim(1, 50), "Last Invite: "),
-    send_now(*this, Dim(1, 5), "Send Now: ") {
+    email(*this, Dim(1, 50), "Email"),
+    name(*this, Dim(1, 50), "Name"),
+    last_invite(*this, Dim(1, 50), "Last Invite"),
+    send_now(*this, Dim(1, 5), "Send Now") {
     label = "Invite";
     status = "Press Ctrl-s to send invite, or Ctrl-q to cancel";
     margin_top = 1;

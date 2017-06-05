@@ -9,7 +9,7 @@ namespace snackis {
 namespace ui {
   LoginForm::LoginForm(View &view, Footer &ftr):
     ViewForm(view, ftr),
-    pass(*this, Dim(1, 50), "Password: ") {
+    pass(*this, Dim(1, 50), "Password") {
     label = "Login";
     status = "Press Ctrl-q to cancel and exit";
 
