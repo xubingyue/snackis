@@ -19,6 +19,8 @@ namespace ui {
     last_invite.margin_top = 1;
     last_invite.active = false;
     send_now.margin_top = 1;
+    push(send_now, "yes", true);
+    push(send_now, "no", false);
   }
 
   static Invite load_invite(InviteForm &frm) {
@@ -39,6 +41,7 @@ namespace ui {
   }
   
   bool run(InviteForm &frm) {
+    select(frm.send_now, true);
     Ctx &ctx(frm.window.ctx);
     db::Trans trans(ctx);
     
