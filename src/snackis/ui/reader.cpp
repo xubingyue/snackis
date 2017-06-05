@@ -27,8 +27,12 @@ namespace ui {
 	}));
 
     push(rdr.field, "send", Reader::Cmd([&rdr]() { 
-	  Smtp smtp(rdr.ctx);
-	  send(smtp); 
+	  if (rdr.ctx.db.outbox.recs.empty()) {
+	    log(rdr.ctx, "Nothing to send");
+	  } else {
+	    Smtp smtp(rdr.ctx);
+	    send(smtp);
+	  }
 	}));
 
     push(rdr.field, "quit", Reader::Cmd([&rdr]() { rdr.quitting = true; }));

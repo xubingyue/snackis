@@ -109,6 +109,8 @@ namespace snackis {
     if (resp_buf.str() != "") {
       ERROR(Smtp, fmt("Invalid send response: %0", resp_buf.str()));
     }
+
+    log(smtp.ctx, fmt("Sent message %0 to %1", msg.id, msg.to));
   }
   
   void send(struct Smtp &smtp) {
