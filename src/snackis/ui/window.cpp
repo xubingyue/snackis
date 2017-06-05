@@ -26,9 +26,11 @@ namespace ui {
   
   void refresh(Window &wnd) { wrefresh(wnd.ptr); }
 
+  void redraw(Window &wnd) { redrawwin(wnd.ptr); }
+
   void redraw() {
     for (auto w: windows) {
-      redrawwin(w->ptr);
+      redraw(*w);
       keypad(w->ptr, true);
     }
   }

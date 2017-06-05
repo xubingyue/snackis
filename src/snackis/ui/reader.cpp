@@ -2,6 +2,7 @@
 #include "snackis/core/fmt.hpp"
 #include "snackis/net/imap.hpp"
 #include "snackis/net/smtp.hpp"
+#include "snackis/ui/invite_form.hpp"
 #include "snackis/ui/reader.hpp"
 #include "snackis/ui/profile_form.hpp"
 
@@ -21,6 +22,18 @@ namespace ui {
   }
 
   void init_cmds(Reader &rdr) {
+    rdr.cmds["profile"] = [&rdr]() {
+      ProfileForm prof(rdr.view, rdr.form.footer);
+      open(prof);
+      run(prof);
+    };
+
+    rdr.cmds["invite"] = [&rdr]() {
+      InviteForm inv(rdr.view, rdr.form.footer);
+      open(inv);
+      run(inv);
+    };
+
     rdr.cmds["fetch"] = [&rdr]() { 
       Imap imap(rdr.ctx);
       fetch(imap); 
@@ -29,12 +42,6 @@ namespace ui {
     rdr.cmds["send"] = [&rdr]() { 
       Smtp smtp(rdr.ctx);
       send(smtp); 
-    };
-
-    rdr.cmds["profile"] = [&rdr]() {
-      ProfileForm prof(rdr.view, rdr.form.footer);
-      open(prof);
-      run(prof);
     };
 
     rdr.cmds["quit"] = [&rdr]() { rdr.quitting = true; };

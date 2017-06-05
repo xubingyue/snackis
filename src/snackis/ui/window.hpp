@@ -34,6 +34,7 @@ namespace ui {
   void print(Window &wnd, const str &msg);
   void clear(Window &wnd);
   void refresh(Window &wnd);
+  void redraw(Window &wnd);
   void redraw();
   int get_key(Window &wnd);
 }}

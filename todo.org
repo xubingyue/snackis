@@ -1,5 +1,4 @@
-* add invite form
-** email, name, last_invite (inactive) & send now
+* finish invite form
 ** add invites table
 *** sent_to, sent_at, accepted_at, rejected_at
 ** extract Field baseclass with drive method

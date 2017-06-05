@@ -13,7 +13,10 @@ namespace ui {
     View &view;
     
     ViewForm(View &view, Footer &ftr);
+    virtual ~ViewForm();
   };
+
+  void open(ViewForm &frm);
 }}
 
 #endif

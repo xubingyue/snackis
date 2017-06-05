@@ -1,4 +1,5 @@
-#include "snackis/core/defer.hpp"
+#include "snackis/ctx.hpp"
+#include "snackis/core/fmt.hpp"
 #include "snackis/ui/footer.hpp"
 #include "snackis/ui/header.hpp"
 #include "snackis/ui/view.hpp"
@@ -8,8 +9,12 @@ namespace snackis {
 namespace ui {
   ViewForm::ViewForm(View &view, Footer &ftr): Form(view, ftr), view(view) { }
 
+  ViewForm::~ViewForm() {
+    if (ptr) { pop_label(view.header); }
+  }
+
   void open(ViewForm &frm) {
     open(dynamic_cast<Form &>(frm));
-    set_label(frm.view.header, frm.label);    
+    push_label(frm.view.header, frm.label);
   }
 }}
