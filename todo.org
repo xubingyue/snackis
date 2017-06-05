@@ -1,8 +1,8 @@
 * finish invite form
-** extract Field baseclass with drive method
+** extract Field baseclass with drive fn
 *** move to separate file
 *** add TextField
-**** call form.drive
+**** call form.drive in drive
 *** add EnumField<T> 
 **** cycle list of alts on space
 **** clear on backspace if allow_clear
