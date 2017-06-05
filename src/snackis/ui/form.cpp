@@ -11,12 +11,13 @@ namespace snackis {
 namespace ui {
   void open(Form &frm) {
     assert(!frm.ptr);
-    Pos pos(frm.margin_top, frm.label_width);
-
+    Pos pos(frm.margin_top, -1);
     for (auto f: frm.fields) {
-      f->dim.w = min(f->dim.w, frm.window.dim.w-frm.label_width);
+      f->dim.w = min(f->dim.w+f->margin_left+f->margin_right,
+		     frm.window.dim.w-frm.label_width);
       pos.y += f->margin_top;
-      show(*f, pos);
+      pos.x = frm.label_width + f->margin_left;
+      open(*f, pos);
       pos.y += f->dim.h+1;
       frm.field_ptrs.push_back(f->ptr);
     }
@@ -26,15 +27,8 @@ namespace ui {
     set_form_win(frm.ptr, frm.window.ptr);
     set_form_sub(frm.ptr, frm.window.ptr);
     post_form(frm.ptr);
-
-    pos = Pos(frm.margin_top, frm.label_width);
-    for (auto f: frm.fields) {
-      pos.y += f->margin_top;
-      move(frm.window, Pos(pos.y, pos.x - f->label.size()));
-      print(frm.window, f->label);
-      pos.y += f->dim.h+1;      
-    }
-
+    
+    for (auto f: frm.fields) { paint(*f); }
     focus(frm);
   }
 

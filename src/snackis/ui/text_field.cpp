@@ -4,10 +4,11 @@
 namespace snackis {
 namespace ui {
   TextField::TextField(Form &frm, const Dim &dim, const str &lbl):
-    Field(frm, dim, lbl), echo(true) { }
+    Field(frm, dim, lbl), echo(true) {
+  }
 
-  void TextField::show(const Pos &pos) {
-    Field::show(pos);
+  void TextField::open(const Pos &pos) {
+    Field::open(pos);
     if (!echo) { field_opts_off(ptr, O_PUBLIC); }
   }
 

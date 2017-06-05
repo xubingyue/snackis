@@ -11,13 +11,14 @@ namespace ui {
     email(*this, Dim(1, 50), "Email: "),
     name(*this, Dim(1, 50), "Name: "),
     last_invite(*this, Dim(1, 50), "Last Invite: "),
-    send_now(*this, Dim(1, 3), "Send Now: ") {
+    send_now(*this, Dim(1, 5), "Send Now: ") {
     label = "Invite";
     status = "Press Ctrl-s to send invite, or Ctrl-q to cancel";
     margin_top = 1;
 
     last_invite.margin_top = 1;
     last_invite.active = false;
+
     send_now.margin_top = 1;
     push(send_now, "yes", true);
     push(send_now, "no", false);

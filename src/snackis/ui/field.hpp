@@ -20,8 +20,9 @@ namespace ui {
     using OnAction = func<void ()>;
     
     Form &form;
+    Pos pos;
     Dim dim;
-    int margin_top;
+    int margin_left, margin_right, margin_top;
     str label;
     FIELD *ptr;
     bool active;
@@ -30,11 +31,13 @@ namespace ui {
     Field(Form &frm, const Dim &dim, const str &lbl);
     virtual ~Field();
     virtual void drive(chtype ch) = 0;
-    virtual void show(const Pos &pos);
+    virtual void open(const Pos &pos);
+    virtual void paint();
   };
 
   void set_bg(Field &fld, chtype ch);
-  void show(Field &fld, const Pos &pos);
+  void open(Field &fld, const Pos &pos);
+  void paint(Field &fld);
   void focus(Field &fld);
   void drive(Field &fld, chtype ch);
   str get_str(Field &fld);

@@ -14,7 +14,7 @@ namespace ui {
     opt<OnComplete> on_complete;
     
     TextField(Form &frm, const Dim &dim, const str &lbl);
-    void show(const Pos &pos) override;
+    void open(const Pos &pos) override;
     void drive(chtype ch) override;
   };
 }}

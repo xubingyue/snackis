@@ -1,11 +1,8 @@
 * finish invite form
-*** finish EnumField<T>
-**** add yes/no alts to send_now 
-**** cycle list of alts on space
-**** trigger on_select when selection changes on behalf of user
-**** clear on backspace if allow_clear
-**** autocomplete on first letter on char input
-***** as far as possible, keep current in field
+** finish EnumField<T>
+*** fix space cycling past end
+*** autocomplete on first letter on char input
+** commit
 * switch reader to use EnumField
 ** add commands as alts
 * implement Data encode(Msg)
