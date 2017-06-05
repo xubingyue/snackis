@@ -25,4 +25,8 @@
 * add inbox form
 ** use menus
 * add reader tab-completion
+* add backup support
+** backup folder in root
+** use bzip.org
+** store as db_timestamp.bz2
 * replace virtual methods with free functions / dynamic_cast
