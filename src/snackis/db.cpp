@@ -55,9 +55,9 @@ namespace snackis {
 	  {&msg_type, &msg_proto_rev, &msg_fetched_at, &msg_peer_name,
 	      &msg_peer_email, &msg_crypt_key}),
     
-    msg_sent_to("sent_to", str_type, &Msg::sent_to),
+    msg_to("to", str_type, &Msg::to),
     outbox(ctx, "outbox", {&msg_id},
-	   {&msg_type, &msg_proto_rev, &msg_sent_to,
+	   {&msg_type, &msg_proto_rev, &msg_to,
 	       &msg_peer_name, &msg_peer_email, &msg_crypt_key}) {
     peers.indexes.insert(&peer_names);
     peers.indexes.insert(&peer_emails);

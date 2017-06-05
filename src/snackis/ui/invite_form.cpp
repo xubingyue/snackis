@@ -49,12 +49,9 @@ namespace ui {
 	  (ch == KEY_RETURN && &active_field(frm) == frm.fields.back())) {
 	validate(frm);
 	Invite inv(load_invite(frm));
-	inv.sent_at = now();
-	inv.accept_at = nulltime;
-	inv.reject_at = nulltime;
-	upsert(ctx.db.invites, inv);
+	send(inv);
 	db::commit(trans);
-	log(frm.window.ctx, "Saved new invite to outbox");
+	log(frm.window.ctx, "OK");
 	return true;
       }
 

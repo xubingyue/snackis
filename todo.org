@@ -1,8 +1,4 @@
 * finish invite form
-** add send(invite)
-*** call from invite_form
-**** move init-code & upsert from form to send
-**** create new msg in outbox
 ** extract Field baseclass with drive method
 *** move to separate file
 *** add TextField

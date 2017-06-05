@@ -14,12 +14,12 @@ namespace snackis {
     str type;
     int64_t proto_rev;
     Time fetched_at;
-    str sent_to;
+    str to;
     str peer_name, peer_email;
     crypt::PubKey crypt_key;
     
     Msg(Ctx &ctx);
-    Msg(Ctx &ctx, const str &type);
+    Msg(Ctx &ctx, const str &type, const str &to);
     Msg(const db::Table<Msg> &tbl, const db::Rec<Msg> &rec);    
   };
 }

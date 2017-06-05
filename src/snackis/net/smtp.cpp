@@ -89,9 +89,9 @@ namespace snackis {
     while (tbl.recs.size() > 0) {
       Msg msg(tbl, *tbl.recs.begin());
       curl_easy_setopt(smtp.client, CURLOPT_MAIL_FROM, msg.peer_email.c_str());
-      struct curl_slist *sent_to = nullptr;
-      sent_to = curl_slist_append(sent_to, msg.sent_to.c_str());
-      curl_easy_setopt(smtp.client, CURLOPT_MAIL_RCPT, sent_to);
+      struct curl_slist *to = nullptr;
+      to = curl_slist_append(to, msg.to.c_str());
+      curl_easy_setopt(smtp.client, CURLOPT_MAIL_RCPT, to);
       
       smtp.data.clear();
       //TODO: encode msg to smtp.data

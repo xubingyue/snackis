@@ -16,6 +16,8 @@ namespace snackis {
     Invite(Ctx &ctx, const str &to);
     Invite(const db::Table<Invite> &tbl, const db::Rec<Invite> &rec);
   };
+
+  void send(Invite &inv);
 }
 
 #endif
