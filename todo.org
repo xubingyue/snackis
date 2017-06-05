@@ -21,6 +21,10 @@
 * add db/ver file
 ** add support for migrations
 ** store keyed on from_ver
+* add encrypt command/form
+** encrypt external file for peer and write to file
+* add decrypt command/form
+** decrypt external file from peer and write to file
 * add inbox form
 ** use menus
 * add reader tab-completion
