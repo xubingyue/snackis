@@ -18,9 +18,6 @@
 * add bool decode(Msg, unsigned char *data, size_t len)
 ** change imap fetch_uid to return opt<Msg>
 ** change imap fetch to insert into inbox
-* add db/ver file
-** add support for migrations
-** store keyed on from_ver
 * add encrypt command/form
 ** encrypt external file for peer and write to file
 * add decrypt command/form

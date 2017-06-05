@@ -5,7 +5,7 @@
 
 namespace snackis {
   extern const int VERSION[3];
-  extern const int64_t PROTO_REV;
+  extern const int64_t DB_REV, PROTO_REV;
   
   void init();
   str version_str();

@@ -7,6 +7,7 @@
 
 namespace snackis {
   const int VERSION[3] = {0, 5, 0};
+  const int64_t DB_REV = 1;
   const int64_t PROTO_REV = 1;
   
   void init() {

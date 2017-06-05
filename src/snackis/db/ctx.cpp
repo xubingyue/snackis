@@ -1,4 +1,5 @@
 #include <fstream>
+#include "snackis/snackis.hpp"
 #include "snackis/crypt/error.hpp"
 #include "snackis/ctx.hpp"
 
@@ -16,6 +17,30 @@ namespace db {
 
   void log(const Ctx &ctx, const str &msg) {
     if (ctx.log) { (*ctx.log)(msg); }
+  }
+
+  void init_db_rev(Ctx &ctx) {
+    const Path p(get_path(ctx, "rev"));
+    
+    if (path_exists(p)) {
+      std::ifstream in;
+      in.open(p.string(), std::ios::in | std::ios::binary);
+      int64_t rev = -1;
+      in.read(reinterpret_cast<char *>(&rev), sizeof rev);
+      in.close();
+
+      if (rev < DB_REV) {
+	ERROR(Db, fmt("This version of Snackis requires database revision #%0 to run",
+		      DB_REV));
+      }
+    } else {
+      log(ctx, fmt("New database initialized with revision #%0", DB_REV));
+    }
+    
+    std::ofstream out;
+    out.open(p.string(), std::ios::out | std::ios::trunc | std::ios::binary);
+    out.write(reinterpret_cast<const char *>(&DB_REV), sizeof(DB_REV));
+    out.close();
   }
 
   bool pass_exists(const Ctx &ctx) {
@@ -65,6 +90,7 @@ namespace db {
   }
 
   void open(Ctx &ctx) {
+    init_db_rev(ctx);
     for (auto t: ctx.tables) { open(*t); }
   }
 

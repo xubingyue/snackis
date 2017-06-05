@@ -30,6 +30,7 @@ namespace db {
 
   Path get_path(const Ctx &ctx, const str &fname);
   void log(const Ctx &ctx, const str &msg);
+  void init_db_ver(Ctx &ctx);
   bool pass_exists(const Ctx &ctx);
   void init_pass(Ctx &ctx, const str &pass);
   bool login(Ctx &ctx, const str &pass);
