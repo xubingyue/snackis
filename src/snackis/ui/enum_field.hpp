@@ -23,6 +23,7 @@ namespace ui {
     std::vector<EnumAlt<T>> alts;
     std::map<str, size_t> lbl_lookup;
     std::map<T, size_t> alt_lookup;
+    opt<EnumAlt<T>> selected;
     using OnSelect = func<void (const opt<T> &val)>;
     opt<OnSelect> on_select;
     str search;
@@ -62,7 +63,11 @@ namespace ui {
       }
       break;
     case KEY_DC:
-      if (allow_clear) { clear(*this); }
+      if (allow_clear) {
+	selected = nullopt;
+	clear(*this);
+      }
+      
       search.clear();
       break;
     default:
@@ -95,15 +100,16 @@ namespace ui {
   bool select(EnumField<T> &fld, const T &val, bool trig = true) {
     auto found(fld.alt_lookup.find(val));
     if (found == fld.alt_lookup.end()) { return false; } 
-    const EnumAlt<T> alt(fld.alts[found->second]);
-    set_str(fld, alt.lbl);
-    if (trig && fld.on_select) { (*fld.on_select)(val); }
+    fld.selected = fld.alts[found->second];
+    set_str(fld, fld.selected->lbl);
+    if (trig && fld.on_select) { (*fld.on_select)(val); } 
     return true;
   }
 
   template <typename T>
   void clear(EnumField<T> &fld, bool trig = true) {
       set_str(fld, "");
+      fld.selected = nullopt;
       if (trig && fld.on_select) { (*fld.on_select)(nullopt); }
   }
 }}

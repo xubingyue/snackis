@@ -13,7 +13,6 @@
 * add decrypt command/form
 ** decrypt external file from peer and write to file
 * add inbox form
-* add reader tab-completion
 * add backup support
 ** backup folder in root
 ** run tar -z proc

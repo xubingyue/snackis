@@ -53,7 +53,7 @@ namespace ui {
 	  (ch == KEY_RETURN && &active_field(frm) == frm.fields.back())) {
 	validate(frm);
 	Invite inv(load_invite(frm));
-	send(inv);
+	if (frm.send_now.selected->val) { send(inv); }
 	db::commit(trans);
 	log(frm.window.ctx, "OK");
 	return true;
