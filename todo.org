@@ -1,15 +1,11 @@
 * finish invite form
-** extract Field baseclass with drive fn
-*** move to separate file
-*** add TextField
-**** call form.drive in drive
-*** add EnumField<T> 
+*** finish EnumField<T>
+**** add yes/no alts to send_now 
 **** cycle list of alts on space
+**** trigger on_select when selection changes on behalf of user
 **** clear on backspace if allow_clear
 **** autocomplete on input
 ***** as far as possible, keep current in field
-**** add on_select callback (opt<T>)
-***** trigger when selection changes
 * switch reader to use EnumField
 ** add commands as alts
 * implement Data encode(Msg)

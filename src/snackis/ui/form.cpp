@@ -55,13 +55,9 @@ namespace ui {
     form_driver(frm.ptr, REQ_END_FIELD);
     validate(frm);
   }
-
-  void validate(Form &frm) {
-    form_driver(frm.ptr, REQ_VALIDATION);
-  }
   
-  void drive(Form &frm, int key) {
-    switch (key) {
+  void drive(Form &frm, chtype ch) {
+    switch (ch) {
     case KEY_BACKSPACE:
       form_driver(frm.ptr, REQ_DEL_PREV);
       break;
@@ -93,9 +89,9 @@ namespace ui {
     case KEY_TAB: {
       Field &fld(active_field(frm));
 
-      if (fld.complete) {
+      if (fld.on_complete) {
 	validate(frm);
-	str in(get_str(fld)), out((*fld.complete)(in));
+	str in(get_str(fld)), out((*fld.on_complete)(in));
 	
 	if (out != in) {
 	  set_str(fld, out);
@@ -108,16 +104,20 @@ namespace ui {
     case KEY_CTRL(KEY_SPACE): {
       Field &fld(active_field(frm));
       
-      if (fld.action) { 
+      if (fld.on_action) { 
 	validate(frm);
-	(*fld.action)(); 
+	(*fld.on_action)(); 
       }
       
       break;
     }
     default:
-      form_driver(frm.ptr, key);
+      drive(active_field(frm), ch);
     }
+  }
+
+  void validate(Form &frm) {
+    form_driver(frm.ptr, REQ_VALIDATION);
   }
 
   Field &active_field(Form &frm) {
@@ -132,34 +132,6 @@ namespace ui {
     form_driver(frm.ptr, REQ_CLR_FIELD);
   }
 
-  void set_bg(Field &fld, chtype ch) { set_field_back(fld.ptr, ch); }
-
-  void show(Field &fld, const Pos &pos) {
-    assert(!fld.ptr);
-    fld.ptr = new_field(fld.dim.h, fld.dim.w, pos.y, pos.x, 0, 0);
-    set_field_userptr(fld.ptr, reinterpret_cast<char *>(&fld));
-    field_opts_off(fld.ptr, O_AUTOSKIP);
-    if (fld.active) { set_bg(fld, A_UNDERLINE); }
-    else { field_opts_off(fld.ptr, O_ACTIVE); }
-    if (!fld.echo) { field_opts_off(fld.ptr, O_PUBLIC); }
-  }
-
-  void focus(Field &fld) {
-    assert(fld.form.ptr);
-    assert(fld.ptr);
-    set_current_field(fld.form.ptr, fld.ptr);
-  }
-
-  str get_str(Field &fld) {
-    assert(fld.ptr);
-    return trim(str(field_buffer(fld.ptr, 0)));
-  }
-
-  void set_str(Field &fld, const str &val) {
-    assert(fld.ptr);
-    set_field_buffer(fld.ptr, 0, val.c_str());
-  }
-
   Form::Form(Window &wnd, Footer &ftr):
     window(wnd), footer(ftr), ctx(wnd.ctx), ptr(nullptr), label_width(0),
     margin_top(0) { }
@@ -167,15 +139,4 @@ namespace ui {
   Form::~Form() {
     if (ptr) { close(*this); }
   }
-
-  Field::Field(Form &frm, const Dim &dim, const str &lbl):
-    form(frm), 
-    dim(dim), margin_top(0), 
-    label(lbl), ptr(nullptr), 
-    active(true), echo(true) {
-    frm.fields.push_back(this);
-    frm.label_width = max(frm.label_width, lbl.size());
-  }
-
-  Field::~Field() { free_field(ptr); }
 }}

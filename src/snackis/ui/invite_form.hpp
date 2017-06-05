@@ -2,12 +2,13 @@
 #define SNACKIS_UI_INVITE_FORM_HPP
 
 #include "snackis/ui/view_form.hpp"
+#include "snackis/ui/enum_field.hpp"
 
 namespace snackis {
 namespace ui {
   struct InviteForm: public ViewForm {
-    Field email, name, last_invite, send_now;
-    
+    Field email, name, last_invite;
+    EnumField<bool> send_now;
     InviteForm(View &view, Footer &ftr);
   };
 

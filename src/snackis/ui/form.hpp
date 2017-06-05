@@ -8,14 +8,16 @@
 #include "snackis/core/func.hpp"
 #include "snackis/core/opt.hpp"
 #include "snackis/core/str.hpp"
+#include "snackis/ui/field.hpp"
 #include "snackis/ui/ui.hpp"
 
 namespace snackis {
+  struct Ctx;
+  
 namespace ui {
   using namespace snackis;
   
   struct Window;
-  struct Field;
   struct Footer;
   
   struct Form {
@@ -31,37 +33,14 @@ namespace ui {
     virtual ~Form();
   };
 
-  struct Field {
-    using Complete = func<str (const str &)>;
-    using Action = func<void ()>;
-    
-    Form &form;
-    Dim dim;
-    int margin_top;
-    str label;
-    FIELD *ptr;
-    bool active, echo;
-    opt<Complete> complete;
-    opt<Action> action;
-    
-    Field(Form &frm, const Dim &dim, const str &lbl);
-    virtual ~Field();
-  };
-
   void open(Form &frm);
   void close(Form &frxm);
   void focus(Form &frm);
   void eol(Form &frm);
+  void drive(Form &frm, chtype ch);
   void validate(Form &frm);
-  void drive(Form &frm, int key);
   Field &active_field(Form &frm);
   void clear_field(Form &frm);
-    
-  void set_bg(Field &fld, chtype ch);
-  void show(Field &fld, const Pos &pos);
-  void focus(Field &fld);
-  str get_str(Field &fld);
-  void set_str(Field &fld, const str &val);  
 }}
 
 #endif

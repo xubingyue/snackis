@@ -90,22 +90,22 @@ namespace ui {
     status = "Press Ctrl-s to save profile, or Ctrl-q to cancel";
     margin_top = 1;
     
-    editor.action = [this]() { test_editor(ctx, get_str(editor)); };
+    editor.on_action = [this]() { test_editor(ctx, get_str(editor)); };
     
     auto imap_action([this]() { test_imap(*this); });
-    imap_url.action = imap_action;
-    imap_port.action = imap_action;
-    imap_user.action = imap_action;
-    imap_pass.action = imap_action;
+    imap_url.on_action = imap_action;
+    imap_port.on_action = imap_action;
+    imap_user.on_action = imap_action;
+    imap_pass.on_action = imap_action;
 
     imap_url.margin_top = 1;
     imap_pass.echo = false;
 
     auto smtp_action([this]() { test_smtp(*this); });
-    smtp_url.action = smtp_action;
-    smtp_port.action = smtp_action;
-    smtp_user.action = smtp_action;
-    smtp_pass.action = smtp_action;
+    smtp_url.on_action = smtp_action;
+    smtp_port.on_action = smtp_action;
+    smtp_user.on_action = smtp_action;
+    smtp_pass.on_action = smtp_action;
     
     smtp_url.margin_top = 1;
     smtp_pass.echo = false;
