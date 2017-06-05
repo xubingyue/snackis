@@ -46,7 +46,7 @@ namespace ui {
 
   void focus(Form &frm) {
     form_driver(frm.ptr, REQ_FIRST_FIELD);
-    eol(frm);
+    on_focus(active_field(frm));
     set_status(frm.footer, frm.status);
   }
 
@@ -59,13 +59,13 @@ namespace ui {
     switch (ch) {
     case KEY_UP:
       form_driver(frm.ptr, REQ_PREV_FIELD);
-      eol(frm);
+      on_focus(active_field(frm));
       break;
     case KEY_RETURN:
       validate(frm);
     case KEY_DOWN:
       form_driver(frm.ptr, REQ_NEXT_FIELD);
-      eol(frm);
+      on_focus(active_field(frm));
       break;
     case KEY_CTRL(KEY_SPACE): {
       Field &fld(active_field(frm));

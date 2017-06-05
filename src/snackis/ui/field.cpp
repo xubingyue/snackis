@@ -16,6 +16,8 @@ namespace ui {
 
   void open(Field &fld, const Pos &pos) { fld.open(pos); }
 
+  void on_focus(Field &fld) { fld.on_focus(); }
+
   void paint(Field &fld) { fld.paint(); }
 
   void focus(Field &fld) {
@@ -60,6 +62,8 @@ namespace ui {
     this->pos = pos;
   }
 
+  void Field::on_focus() { }
+  
   void Field::paint() {
     Window &wnd(form.window);
     move(wnd, Pos(pos.y, pos.x-label_width(*this)));

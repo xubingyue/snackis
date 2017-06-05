@@ -15,6 +15,7 @@ namespace ui {
     
     TextField(Form &frm, const Dim &dim, const str &lbl);
     void open(const Pos &pos) override;
+    void on_focus() override;
     void drive(chtype ch) override;
   };
 }}

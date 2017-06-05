@@ -29,6 +29,7 @@ namespace ui {
     bool allow_clear;
     
     EnumField(Form &frm, const Dim &dim, const str &lbl);
+    void on_focus() override;
     void drive(chtype ch) override;
   };
 
@@ -37,6 +38,9 @@ namespace ui {
     Field(frm, dim, lbl), allow_clear(false) {
     symbol = '=';
   }
+
+  template <typename T>
+  void EnumField<T>::on_focus() { search.clear(); }
 
   template <typename T>
   void EnumField<T>::drive(chtype ch) {
@@ -52,15 +56,28 @@ namespace ui {
       
       break;
     case KEY_BACKSPACE:
+      if (!search.empty()) {
+	search.pop_back();
+	form_driver(form.ptr, REQ_PREV_CHAR);
+      }
+      break;
+    case KEY_DC:
       if (allow_clear) { clear(*this); }
       search.clear();
+      break;
     default:
       if (std::isgraph(ch)) {
-	search.push_back(ch);
-	auto found(lbl_lookup.lower_bound(search));
-	if (found != lbl_lookup.end() && found->first.find(search) != str::npos) {
+	str nsearch(search);
+	nsearch.push_back(ch);
+	auto found(lbl_lookup.lower_bound(nsearch));
+	if (found != lbl_lookup.end() && found->first.find(nsearch) != str::npos) {
+	  search.push_back(ch);
 	  const EnumAlt<T> alt(alts[found->second]);
 	  select(*this, alt.val);
+	  
+	  for (int i=0; i < search.size(); i++) {
+	    form_driver(form.ptr, REQ_NEXT_CHAR);
+	  }
 	}
       }
     }
@@ -80,9 +97,7 @@ namespace ui {
     if (found == fld.alt_lookup.end()) { return false; } 
     const EnumAlt<T> alt(fld.alts[found->second]);
     set_str(fld, alt.lbl);
-
     if (trig && fld.on_select) { (*fld.on_select)(val); }
-    eol(fld.form);
     return true;
   }
 

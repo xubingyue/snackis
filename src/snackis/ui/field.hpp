@@ -33,6 +33,7 @@ namespace ui {
     virtual ~Field();
     virtual void drive(chtype ch) = 0;
     virtual void open(const Pos &pos);
+    virtual void on_focus();
     virtual void paint();
   };
 
@@ -40,6 +41,7 @@ namespace ui {
   size_t label_width(const Field &fld);
 
   void open(Field &fld, const Pos &pos);
+  void on_focus(Field &fld);
   void paint(Field &fld);
   void focus(Field &fld);
   void drive(Field &fld, chtype ch);

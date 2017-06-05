@@ -13,6 +13,8 @@ namespace ui {
     if (on_complete) { symbol = '*'; }
   }
 
+  void TextField::on_focus() { eol(form); }
+
   void TextField::drive(chtype ch) {
     switch (ch) {
     case KEY_BACKSPACE:
