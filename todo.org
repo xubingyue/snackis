@@ -1,14 +1,16 @@
-* implement Data encode(Msg)
-** finish net/smtp
-*** format email body
+* add Data encode(Msg)
 * add bool decode(Msg, unsigned char *data, size_t len)
 ** change imap fetch_uid to return opt<Msg>
 ** change imap fetch to insert into inbox
+** finish net/smtp
+*** format email body
+* add inbox form
+** add enum field accept/reject for invites
+** send accept on accept
 * add encrypt command/form
 ** encrypt external file for peer and write to file
 * add decrypt command/form
 ** decrypt external file from peer and write to file
-* add inbox form
 * add backup support
 ** backup folder in root
 ** run tar -z proc
