@@ -78,39 +78,41 @@ namespace snackis {
     }
   }
 
-  void send(struct Smtp &smtp) {
-    log(smtp.ctx, "Sending email");
+  void send(struct Smtp &smtp, const Msg &msg) {
     curl_easy_setopt(smtp.client, CURLOPT_UPLOAD, 1L);
-
+    curl_easy_setopt(smtp.client, CURLOPT_MAIL_FROM, msg.peer_email.c_str());
+    struct curl_slist *to = nullptr;
+    to = curl_slist_append(to, msg.to.c_str());
+    curl_easy_setopt(smtp.client, CURLOPT_MAIL_RCPT, to);
+    
+    smtp.data.clear();
+    //TODO: encode msg to smtp.data
     Stream resp_buf;
     curl_easy_setopt(smtp.client, CURLOPT_WRITEDATA, &resp_buf);
+    CURLcode res(curl_easy_perform(smtp.client));
+    
+    if (res != CURLE_OK) {
+      ERROR(Smtp, fmt("Failed sending email: %0", curl_easy_strerror(res)));
+    }
+    
+    std::vector<str> resp {
+      std::istream_iterator<str>{resp_buf}, std::istream_iterator<str>{}
+    };
+    
+    if (resp.size() < 3 || resp[2] != "OK") {
+      ERROR(Smtp, fmt("Invalid send response: %0", resp_buf.str()));
+    }
+  }
+  
+  void send(struct Smtp &smtp) {
+    log(smtp.ctx, "Sending email");
 
     db::Table<Msg> &tbl(smtp.ctx.db.outbox);
     while (tbl.recs.size() > 0) {
-      Msg msg(tbl, *tbl.recs.begin());
-      curl_easy_setopt(smtp.client, CURLOPT_MAIL_FROM, msg.peer_email.c_str());
-      struct curl_slist *to = nullptr;
-      to = curl_slist_append(to, msg.to.c_str());
-      curl_easy_setopt(smtp.client, CURLOPT_MAIL_RCPT, to);
-      
-      smtp.data.clear();
-      //TODO: encode msg to smtp.data
-      resp_buf.str("");
-      CURLcode res(curl_easy_perform(smtp.client));
-      
-      if (res != CURLE_OK) {
-	ERROR(Smtp, fmt("Failed sending email: %0", curl_easy_strerror(res)));
-      }
-
-      std::vector<str> resp {
-	std::istream_iterator<str>{resp_buf}, std::istream_iterator<str>{}
-      };
-
-      if (resp.size() < 3 || resp[2] != "OK") {
-	ERROR(Smtp, fmt("Invalid send response: %0", resp_buf.str()));
-      }
-
-      tbl.recs.erase(tbl.recs.begin());
+      auto i = tbl.recs.begin();
+      Msg msg(tbl, *i);
+      send(smtp, msg);
+      tbl.recs.erase(i);
     }
     
     db::commit(smtp.trans);

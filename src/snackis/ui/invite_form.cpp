@@ -1,5 +1,6 @@
 #include "snackis/ctx.hpp"
 #include "snackis/db/ctx.hpp"
+#include "snackis/net/smtp.hpp"
 #include "snackis/ui/invite_form.hpp"
 #include "snackis/ui/view.hpp"
 #include "snackis/ui/window.hpp"
@@ -53,9 +54,15 @@ namespace ui {
 	  (ch == KEY_RETURN && &active_field(frm) == frm.fields.back())) {
 	validate(frm);
 	Invite inv(load_invite(frm));
-	if (frm.send_now.selected->val) { send(inv); }
+	send(inv);
+
+	if (frm.send_now.selected->val) {
+	  Smtp smtp(ctx);
+	  send(smtp);
+	}
+	
 	db::commit(trans);
-	log(frm.window.ctx, "OK");
+	log(ctx, "OK");
 	return true;
       }
 

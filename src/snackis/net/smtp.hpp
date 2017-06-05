@@ -14,7 +14,8 @@ namespace snackis {
   };
 
   struct Ctx;
-
+  struct Msg;
+  
   struct Smtp {
     Ctx &ctx;
     db::Trans trans;
@@ -26,6 +27,7 @@ namespace snackis {
   };
     
   void noop(const struct Smtp &smtp);
+  void send(struct Smtp &smtp, const Msg &msg);
   void send(struct Smtp &smtp);
 }
 
