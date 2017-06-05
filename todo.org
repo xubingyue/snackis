@@ -4,7 +4,7 @@
 **** cycle list of alts on space
 **** trigger on_select when selection changes on behalf of user
 **** clear on backspace if allow_clear
-**** autocomplete on input
+**** autocomplete on first letter on char input
 ***** as far as possible, keep current in field
 * switch reader to use EnumField
 ** add commands as alts
