@@ -4,6 +4,8 @@
 #include "snackis/core/time.hpp"
 
 namespace snackis {
+  const Time nulltime;
+
   Time now() {
     Time tim(Clock::now());
     return std::chrono::time_point_cast<std::chrono::milliseconds>(tim);

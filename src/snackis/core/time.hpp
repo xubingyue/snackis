@@ -8,6 +8,8 @@ namespace snackis {
   using Clock = std::chrono::system_clock;
   using Time = std::chrono::time_point<Clock>;
 
+  extern const Time nulltime;
+  
   Time now();
   str fmt(const Time &time, const str &spec);
 };

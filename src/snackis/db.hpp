@@ -1,6 +1,7 @@
 #ifndef SNACKIS_DB_HPP
 #define SNACKIS_DB_HPP
 
+#include "snackis/invite.hpp"
 #include "snackis/msg.hpp"
 #include "snackis/peer.hpp"
 #include "snackis/setting.hpp"
@@ -17,18 +18,19 @@ namespace snackis {
     db::Col<BasicSetting, str> setting_val;
     db::Table<BasicSetting> settings;
     
+    db::Col<Invite, str> invite_to;
+    db::Col<Invite, Time> invite_sent_at, invite_accept_at, invite_reject_at;
+    db::Table<Invite> invites;
+	    
     db::Col<Peer, UId> peer_id;
-    db::Col<Peer, str> peer_name;
-    db::Col<Peer, str> peer_email;
+    db::Col<Peer, str> peer_name, peer_email;
     db::Col<Peer, crypt::PubKey> peer_crypt_key;
-    db::Col<Peer, Time> peer_invited_at;
-    db::Col<Peer, Time> peer_accepted_at;
+    db::Col<Peer, Time> peer_invited_at, peer_accepted_at;
     db::Table<Peer> peers, peer_names, peer_emails;
 
     db::Col<Thread, UId> thread_id;
     db::Col<Thread, str> thread_name;
-    db::Col<Thread, Time> thread_started_at;
-    db::Col<Thread, Time> thread_posted_at;
+    db::Col<Thread, Time> thread_started_at, thread_posted_at;
     db::Col<Thread, db::Rec<Peer>> thread_started_by;
     db::Table<Thread> threads, thread_names;
     
@@ -38,8 +40,7 @@ namespace snackis {
     db::Col<Msg, str> msg_type;
     db::Col<Msg, int64_t> msg_proto_rev;
     db::Col<Msg, Time> msg_fetched_at;
-    db::Col<Msg, str> msg_peer_name;
-    db::Col<Msg, str> msg_peer_email;
+    db::Col<Msg, str> msg_peer_name, msg_peer_email;
     db::Col<Msg, crypt::PubKey> msg_crypt_key;
     db::Table<Msg> inbox;
 

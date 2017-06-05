@@ -21,6 +21,23 @@ namespace ui {
     send_now.margin_top = 1;
   }
 
+  static Invite load_invite(InviteForm &frm) {
+    Ctx &ctx(frm.window.ctx);
+    Invite inv(ctx, get_str(frm.email));
+
+    if (load(ctx.db.invites, inv)) {
+      const str time_fmt("YYYY-MM-DD");
+      
+      set_str(frm.last_invite,
+	      fmt("%0/%1/%2",
+		  fmt(inv.sent_at, time_fmt),
+		  fmt(inv.accept_at, time_fmt),
+		  fmt(inv.reject_at, time_fmt)));
+    }
+    
+    return inv;
+  }
+  
   bool run(InviteForm &frm) {
     Ctx &ctx(frm.window.ctx);
     db::Trans trans(ctx);
@@ -31,8 +48,13 @@ namespace ui {
       if (ch == KEY_CTRL('s') ||
 	  (ch == KEY_RETURN && &active_field(frm) == frm.fields.back())) {
 	validate(frm);
+	Invite inv(load_invite(frm));
+	inv.sent_at = now();
+	inv.accept_at = nulltime;
+	inv.reject_at = nulltime;
+	upsert(ctx.db.invites, inv);
 	db::commit(trans);
-	log(frm.window.ctx, "Saved invite to outbox");
+	log(frm.window.ctx, "Saved new invite to outbox");
 	return true;
       }
 
