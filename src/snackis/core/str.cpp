@@ -13,4 +13,12 @@ namespace snackis {
   int64_t to_int64(const str &in) {
     return std::stoll(in);
   }
+
+  str bin_hex(const char *in, size_t len) {
+    //TODO: convert using sodium
+  }
+  
+  Data hex_bin(const str &in) {
+    //TODO: convert using sodium
+  }
 }

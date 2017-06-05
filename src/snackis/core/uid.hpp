@@ -2,6 +2,7 @@
 #define SNACKIS_UID_HPP
 
 #include <uuid/uuid.h>
+#include "snackis/core/fmt.hpp"
 #include "snackis/core/str.hpp"
 
 namespace snackis {
@@ -12,6 +13,9 @@ namespace snackis {
   };
   
   bool operator<(const UId &x, const UId &y);
+
+  template <>
+  str fmt_arg(const UId &arg);
 }
 
 #endif

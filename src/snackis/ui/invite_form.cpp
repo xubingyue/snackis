@@ -60,9 +60,11 @@ namespace ui {
 	if (frm.send_now.selected->val) {
 	  Smtp smtp(ctx);
 	  send(smtp);
+	  log(ctx, "New invite sent");
+	} else {
+	  log(ctx, "New invite created in outbox");
 	}
 
-	log(ctx, "OK");
 	return true;
       }
 

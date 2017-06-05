@@ -14,6 +14,9 @@ namespace snackis {
   str to_str(const T &in) {
     return std::to_string(in);
   }
+
+  str bin_hex(const char *in, size_t len);
+  Data hex_bin(const str &in);
 }
 
 #endif
