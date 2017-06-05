@@ -27,6 +27,6 @@
 * add reader tab-completion
 * add backup support
 ** backup folder in root
-** use bzip.org
-** store as db_timestamp.bz2
+** run tar -z proc
+** store as db_timestamp.tar.gz
 * replace virtual methods with free functions / dynamic_cast
