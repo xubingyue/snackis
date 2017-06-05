@@ -20,8 +20,10 @@ namespace snackis {
     
     Msg(Ctx &ctx);
     Msg(Ctx &ctx, const str &type, const str &to);
-    Msg(const db::Table<Msg> &tbl, const db::Rec<Msg> &rec);    
+    Msg(const db::Table<Msg> &tbl, const db::Rec<Msg> &rec);
   };
+
+  str encode(const Msg &msg);
 }
 
 #endif

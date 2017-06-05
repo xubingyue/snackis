@@ -2,6 +2,7 @@
 #define SNACKIS_STR_HPP
 
 #include <string>
+#include "snackis/core/data.hpp"
 
 namespace snackis {
   using str = std::string;
@@ -15,7 +16,7 @@ namespace snackis {
     return std::to_string(in);
   }
 
-  str bin_hex(const char *in, size_t len);
+  str bin_hex(const unsigned char *in, size_t len);
   Data hex_bin(const str &in);
 }
 

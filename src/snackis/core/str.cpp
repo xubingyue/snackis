@@ -1,3 +1,6 @@
+#include <sodium.h>
+
+#include "snackis/core/error.hpp"
 #include "snackis/core/str.hpp"
 
 namespace snackis {
@@ -14,11 +17,26 @@ namespace snackis {
     return std::stoll(in);
   }
 
-  str bin_hex(const char *in, size_t len) {
-    //TODO: convert using sodium
+  str bin_hex(const unsigned char *in, size_t len) {
+    const size_t out_len = len*2+1;
+    Data out(out_len);
+    if (!sodium_bin2hex(reinterpret_cast<char *>(&out[0]), out_len, in, len)) {
+      ERROR(Core, "Hex-encoding failed");
+    }
+    return str(out.begin(), out.end());
   }
   
   Data hex_bin(const str &in) {
-    //TODO: convert using sodium
+    Data out(in.size()/2);
+
+    if (sodium_hex2bin(&out[0], out.size(),
+		       in.c_str(), in.size(),
+		       nullptr,
+		       nullptr,
+		       nullptr)) {
+      ERROR(Core, "Hex-decoding failed");
+    }
+    
+    return out;
   }
 }

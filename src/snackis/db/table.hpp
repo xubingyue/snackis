@@ -180,7 +180,6 @@ namespace db {
     auto found(tbl.recs.find(rec));
     if (found == tbl.recs.end()) { return false; }
     for (auto idx: tbl.indexes) { erase(*idx, *found); }
-    
     assert(tbl.ctx.trans);
     log_change(*tbl.ctx.trans, new Erase<RecT>(tbl, *found));
     tbl.recs.erase(found);

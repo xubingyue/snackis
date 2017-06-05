@@ -55,7 +55,6 @@ namespace ui {
 	validate(frm);
 	Invite inv(load_invite(frm));
 	send(inv);	
-	db::commit(trans);
 
 	if (frm.send_now.selected->val) {
 	  Smtp smtp(ctx);
@@ -65,6 +64,7 @@ namespace ui {
 	  log(ctx, "New invite created in outbox");
 	}
 
+	db::commit(trans);
 	return true;
       }
 
