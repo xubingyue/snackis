@@ -1,6 +1,7 @@
 #ifndef SNACKIS_UI_ENUM_FIELD_HPP
 #define SNACKIS_UI_ENUM_FIELD_HPP
 
+#include <cctype>
 #include <map>
 #include "snackis/ui/field.hpp"
 #include "snackis/ui/window.hpp"
@@ -24,6 +25,7 @@ namespace ui {
     std::map<T, size_t> alt_lookup;
     using OnSelect = func<void (const opt<T> &val)>;
     opt<OnSelect> on_select;
+    str search;
     bool allow_clear;
     
     EnumField(Form &frm, const Dim &dim, const str &lbl);
@@ -42,7 +44,7 @@ namespace ui {
     Field::paint();
     Window &wnd(form.window);
     move(wnd, Pos(pos.y, pos.x+dim.w));
-    print(wnd, "|");
+    print(wnd, "=");
   }
 
   template <typename T>
@@ -60,6 +62,16 @@ namespace ui {
       break;
     case KEY_BACKSPACE:
       if (allow_clear) { clear(*this); }
+      search.clear();
+    default:
+      if (std::isgraph(ch)) {
+	search.push_back(ch);
+	auto found(lbl_lookup.lower_bound(search));
+	if (found != lbl_lookup.end() && found->first.find(search) != str::npos) {
+	  const EnumAlt<T> alt(alts[found->second]);
+	  select(*this, alt.val);
+	}
+      }
     }
   }
 

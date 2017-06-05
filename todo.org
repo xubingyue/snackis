@@ -1,10 +1,7 @@
-* finish invite form
-** finish EnumField<T>
-*** fix space cycling past end
-*** autocomplete on first letter on char input
-** commit
 * switch reader to use EnumField
+** allow_clear
 ** add commands as alts
+* finish invite form
 * implement Data encode(Msg)
 ** finish net/smtp
 *** format email body
@@ -16,10 +13,8 @@
 * add decrypt command/form
 ** decrypt external file from peer and write to file
 * add inbox form
-** use menus
 * add reader tab-completion
 * add backup support
 ** backup folder in root
 ** run tar -z proc
 ** store as db_timestamp.tar.gz
-* replace virtual methods with free functions / dynamic_cast
