@@ -7,6 +7,7 @@
 #include "snackis/core/opt.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/ui/form.hpp"
+#include "snackis/ui/text_field.hpp"
 #include "snackis/ui/window.hpp"
 
 namespace snackis {
@@ -18,7 +19,7 @@ namespace ui {
     using Cmd = func<void ()>;
     
     Form form;
-    Field field;
+    TextField field;
     std::map<str, Cmd> cmds;
     opt<Cmd> last_cmd;
     bool quitting;

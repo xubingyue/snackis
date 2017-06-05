@@ -17,7 +17,6 @@ namespace ui {
   struct Form;
   
   struct Field {
-    using OnComplete = func<str (const str &)>;
     using OnAction = func<void ()>;
     
     Form &form;
@@ -25,13 +24,13 @@ namespace ui {
     int margin_top;
     str label;
     FIELD *ptr;
-    bool active, echo;
-    opt<OnComplete> on_complete;
+    bool active;
     opt<OnAction> on_action;
     
     Field(Form &frm, const Dim &dim, const str &lbl);
     virtual ~Field();
-    virtual void drive(chtype ch);
+    virtual void drive(chtype ch) = 0;
+    virtual void show(const Pos &pos);
   };
 
   void set_bg(Field &fld, chtype ch);

@@ -2,6 +2,7 @@
 
 #include "snackis/ctx.hpp"
 #include "snackis/core/utils.hpp"
+#include "snackis/ui/field.hpp"
 #include "snackis/ui/form.hpp"
 #include "snackis/ui/footer.hpp"
 #include "snackis/ui/window.hpp"
@@ -58,24 +59,6 @@ namespace ui {
   
   void drive(Form &frm, chtype ch) {
     switch (ch) {
-    case KEY_BACKSPACE:
-      form_driver(frm.ptr, REQ_DEL_PREV);
-      break;
-    case KEY_DC:
-      form_driver(frm.ptr, REQ_CLR_EOF);
-      break;
-    case KEY_HOME:
-      form_driver(frm.ptr, REQ_BEG_FIELD);
-      break;
-    case KEY_END:
-      eol(frm);
-      break;
-    case KEY_LEFT:
-      form_driver(frm.ptr, REQ_PREV_CHAR);
-      break;
-    case KEY_RIGHT:
-      form_driver(frm.ptr, REQ_NEXT_CHAR);
-      break;
     case KEY_UP:
       form_driver(frm.ptr, REQ_PREV_FIELD);
       eol(frm);
@@ -86,21 +69,6 @@ namespace ui {
       form_driver(frm.ptr, REQ_NEXT_FIELD);
       eol(frm);
       break;
-    case KEY_TAB: {
-      Field &fld(active_field(frm));
-
-      if (fld.on_complete) {
-	validate(frm);
-	str in(get_str(fld)), out((*fld.on_complete)(in));
-	
-	if (out != in) {
-	  set_str(fld, out);
-	  eol(frm);
-	}
-      }
-
-      break;
-    }
     case KEY_CTRL(KEY_SPACE): {
       Field &fld(active_field(frm));
       

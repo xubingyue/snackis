@@ -15,7 +15,7 @@ namespace ui {
     opt<OnSelect> on_select;
     
     EnumField(Form &frm, const Dim &dim, const str &lbl);
-    virtual void drive(chtype ch) override;
+    void drive(chtype ch) override;
   };
 
   template <typename T>

@@ -4,12 +4,13 @@
 #include <memory>
 
 #include "snackis/ui/view_form.hpp"
+#include "snackis/ui/text_field.hpp"
 
 namespace snackis {
 namespace ui {
   struct LoginForm: public ViewForm {
-    Field pass;
-    std::unique_ptr<Field> repeat;
+    TextField pass;
+    std::unique_ptr<TextField> repeat;
     
     LoginForm(View &view, Footer &ftr);
   };

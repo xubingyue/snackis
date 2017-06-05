@@ -8,7 +8,6 @@
 #include "snackis/core/func.hpp"
 #include "snackis/core/opt.hpp"
 #include "snackis/core/str.hpp"
-#include "snackis/ui/field.hpp"
 #include "snackis/ui/ui.hpp"
 
 namespace snackis {
@@ -18,6 +17,7 @@ namespace ui {
   using namespace snackis;
   
   struct Window;
+  struct Field;
   struct Footer;
   
   struct Form {
