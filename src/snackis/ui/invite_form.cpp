@@ -54,14 +54,14 @@ namespace ui {
 	  (ch == KEY_RETURN && &active_field(frm) == frm.fields.back())) {
 	validate(frm);
 	Invite inv(load_invite(frm));
-	send(inv);
+	send(inv);	
+	db::commit(trans);
 
 	if (frm.send_now.selected->val) {
 	  Smtp smtp(ctx);
 	  send(smtp);
 	}
-	
-	db::commit(trans);
+
 	log(ctx, "OK");
 	return true;
       }
