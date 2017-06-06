@@ -2,14 +2,17 @@
 ** insert into msgs tbl in imap
 ** check msgs table in imap
 * add encrypt command/form
-** bin/hex selection
-** add in_path/out_path settings
+** add load_path/save_path settings
 *** create on demand if not exists
-** add enum field for all files in in_path
+** format: bin/hex
+** add enum field for all files in load_path
+*** refresh & resync on ctrl+space action
+*** use filesystem iterator
 ** add field for name
-*** default same
-** store in out_path
+*** default same, update on_select
+** store result in save_path
 * add decrypt command/form
+** extract FileField from encrypt form
 * add backup command
 ** backup folder setting, default /backup
 ** run tar -z proc
