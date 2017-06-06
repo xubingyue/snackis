@@ -29,8 +29,17 @@ namespace ui {
   }
 
   bool run(EncryptForm &frm) {
-    select(frm.encode_result, 1);
     Ctx &ctx(frm.window.ctx);
+
+    const str ldf(*get_val(ctx.settings.load_folder));
+
+    if (!path_exists(ldf)) {
+      create_path(ldf);
+      log(ctx, fmt("Nothing to load"));
+      return false;
+    }
+    
+    select(frm.encode_result, 1);
     db::Trans trans(ctx);
     
     while (true) {
@@ -38,11 +47,12 @@ namespace ui {
       
       if (ch == KEY_CTRL('s') || ch == KEY_RETURN) {
 	validate(frm);
+	create_path(*get_val(ctx.settings.save_folder));
 	const str save_to(get_str(frm.save_to));
 	//TODO: write encrypted data
 	db::commit(trans);
 	log(ctx, fmt("Encrypted data saved to: %0", save_to));
-	return true;
+	break;
       }
 
       switch (ch) {
@@ -52,5 +62,7 @@ namespace ui {
 	drive(frm, ch);
       }
     }
+
+    return true;
   }
 }}

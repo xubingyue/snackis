@@ -8,6 +8,8 @@ namespace snackis {
     Setting<db::Rec<Peer>> whoami;
     Setting<crypt::Key> crypt_key;
     Setting<str> editor;
+
+    Setting<str> load_folder, save_folder;
     
     Setting<str> imap_url;
     Setting<int64_t> imap_port;

@@ -9,6 +9,9 @@ namespace snackis {
     whoami(ctx,    "whoami",    ctx.db.peers.rec_type, nullopt),
     crypt_key(ctx, "crypt_key", crypt::key_type,       nullopt),
     editor(ctx,    "editor",    str_type,              str("nano")),
+
+    load_folder(ctx, "load_folder", str_type, str("load/")),
+    save_folder(ctx, "save_folder", str_type, str("save/")),
     
     imap_url(ctx,    "imap_url",    str_type,   str("imap.gmail.com")),
     imap_port(ctx,   "imap_port",   int64_type, 993),

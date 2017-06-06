@@ -8,6 +8,7 @@ namespace snackis {
 namespace ui {
   struct ProfileForm: public ViewForm {
     TextField name, email, editor,
+      load_folder, save_folder,
       imap_url, imap_port, imap_user, imap_pass,
       smtp_url, smtp_port, smtp_user, smtp_pass;
     

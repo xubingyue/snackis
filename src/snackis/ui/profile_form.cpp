@@ -77,6 +77,9 @@ namespace ui {
     email(*this, Dim(1, 50), "Email"),
     editor(*this, Dim(1, 50), "Editor"),
 
+    load_folder(*this, Dim(1, 50), "Load Folder"),
+    save_folder(*this, Dim(1, 50), "Save Folder"),
+
     imap_url(*this, Dim(1, 50), "Imap Url"),
     imap_port(*this, Dim(1, 10), "Imap Port"),
     imap_user(*this, Dim(1, 50), "Imap User"),
@@ -89,26 +92,24 @@ namespace ui {
     label = "Profile";
     status = "Press Ctrl-s to save profile, or Ctrl-q to cancel";
     margin_top = 1;
-    
     editor.on_action = [this]() { test_editor(ctx, get_str(editor)); };
+    load_folder.margin_top = 1;
     
+    imap_url.margin_top = 1;
+    imap_pass.echo = false;
     auto imap_action([this]() { test_imap(*this); });
     imap_url.on_action = imap_action;
     imap_port.on_action = imap_action;
     imap_user.on_action = imap_action;
     imap_pass.on_action = imap_action;
 
-    imap_url.margin_top = 1;
-    imap_pass.echo = false;
-
+    smtp_url.margin_top = 1;
+    smtp_pass.echo = false;
     auto smtp_action([this]() { test_smtp(*this); });
     smtp_url.on_action = smtp_action;
     smtp_port.on_action = smtp_action;
     smtp_user.on_action = smtp_action;
-    smtp_pass.on_action = smtp_action;
-    
-    smtp_url.margin_top = 1;
-    smtp_pass.echo = false;
+    smtp_pass.on_action = smtp_action;    
   }
 
   bool run(ProfileForm &frm) {
@@ -119,22 +120,19 @@ namespace ui {
     set_str(frm.name, me.name);
     set_str(frm.email, me.email);
     
-    auto editor(get_val(ctx.settings.editor));
-    if (editor) { set_str(frm.editor, *editor); }
+    set_str(frm.editor, *get_val(ctx.settings.editor));
+    set_str(frm.load_folder, *get_val(ctx.settings.load_folder));
+    set_str(frm.save_folder, *get_val(ctx.settings.save_folder));
     
-    auto imap_url(get_val(ctx.settings.imap_url));
-    if (imap_url) { set_str(frm.imap_url, *imap_url); }
-    auto imap_port(get_val(ctx.settings.imap_port));
-    if (imap_port) { set_str(frm.imap_port, to_str(*imap_port)); }
+    set_str(frm.imap_url, *get_val(ctx.settings.imap_url));
+    set_str(frm.imap_port, to_str(*get_val(ctx.settings.imap_port)));
     auto imap_user(get_val(ctx.settings.imap_user));
     if (imap_user) { set_str(frm.imap_user, *imap_user); }
     auto imap_pass(get_val(ctx.settings.imap_pass));
     if (imap_pass) { set_str(frm.imap_pass, *imap_pass); }
 
-    auto smtp_url(get_val(ctx.settings.smtp_url));
-    if (smtp_url) { set_str(frm.smtp_url, *smtp_url); }
-    auto smtp_port(get_val(ctx.settings.smtp_port));
-    if (smtp_port) { set_str(frm.smtp_port, to_str(*smtp_port)); }
+    set_str(frm.smtp_url, *get_val(ctx.settings.smtp_url));
+    set_str(frm.smtp_port, to_str(*get_val(ctx.settings.smtp_port)));
     auto smtp_user(get_val(ctx.settings.smtp_user));
     if (smtp_user) { set_str(frm.smtp_user, *smtp_user); }
     auto smtp_pass(get_val(ctx.settings.smtp_pass));
@@ -151,9 +149,11 @@ namespace ui {
 	me.email = get_str(frm.email);
 	if (!update(ctx.db.peers, me)) { ERROR(db::Db, "Failed updating me"); }
 	set_val(ctx.settings.editor, get_str(frm.editor));
-
+	set_val(ctx.settings.load_folder, get_str(frm.load_folder));
+	set_val(ctx.settings.save_folder, get_str(frm.save_folder));
 	copy_imap(frm);
 	copy_smtp(frm);
+	
 	db::commit(trans);
 	log(frm.window.ctx, "Saved profile");
 	return true;
