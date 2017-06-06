@@ -1,5 +1,7 @@
 * add inbox ok fields for accepts/rejects
 ** validate invite_id
+** remove invite accepted_at/rejected_at
+** remove invite when accepted/rejected
 * skip seen messages
 ** insert into msgs tbl in imap
 ** check msgs table in imap
