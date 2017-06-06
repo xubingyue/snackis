@@ -1,12 +1,10 @@
-* add encrypt command/form
+* finish encrypt command/form
 ** add load_path/save_path settings
 *** create on demand if not exists
-** format: bin/hex
-** add enum field for all files in load_path
-*** refresh & resync on ctrl+space action
+** finishx load_from
 *** use filesystem iterator
-** add field for name
-*** default same, update on_select
+*** load on access if alts.empty()
+*** refresh & resync on ctrl+space action
 ** store result in save_path
 * add decrypt command/form
 ** extract FileField from encrypt form

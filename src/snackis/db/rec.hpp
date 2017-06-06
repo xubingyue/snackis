@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 
+#include "snackis/core/opt.hpp"
 #include "snackis/core/val.hpp"
 
 namespace snackis {
@@ -16,6 +17,12 @@ namespace db {
 
   template <typename RecT>
   using Rec = std::map<const BasicCol<RecT> *, Val>;
+
+  template <typename RecT, typename ValT>
+  opt<ValT> get(Rec<RecT> &rec, const Col<RecT, ValT> &col) {
+    auto found(rec.find(&col));
+    return (found == rec.end()) ? nullopt : opt<ValT>(get<ValT>(found->second));
+  }
 
   template <typename RecT, typename ValT>
   void set(Rec<RecT> &rec, const Col<RecT, ValT> &col, const ValT &val) {
