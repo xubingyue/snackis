@@ -16,6 +16,11 @@ find_library(CURL NAMES libcurl.a)
 find_library(SODIUM NAMES libsodium.a)
 find_library(UUID NAMES libuuid.a)
 
+add_library(libsnackis STATIC ${core_src} ${crypt_src} ${db_src} ${net_src} ${snackis_src})
+target_include_directories(libsnackis PUBLIC src/ ${CURL_INCLUDE_DIR} ${SODIUM_INCLUDE_DIR} ${UUID_INCLUDE_DIR})
+target_link_libraries(libsnackis c++experimental curl sodium uuid)
+set_target_properties(libsnackis PROPERTIES PREFIX "")
+
 add_executable(tests ${core_src} ${crypt_src} ${db_src} ${net_src} ${snackis_src} src/tests.cpp)
 target_include_directories(tests PUBLIC src/ ${CURL_INCLUDE_DIR} ${SODIUM_INCLUDE_DIR} ${UUID_INCLUDE_DIR})
 target_link_libraries(tests c++experimental curl sodium uuid)

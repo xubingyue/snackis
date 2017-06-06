@@ -1,5 +1,4 @@
 * add readme/license
-* add libsnackis.a target
 * setup repository
 * add decrypt command/form
 ** extract FileField
