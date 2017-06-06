@@ -18,6 +18,8 @@ namespace snackis {
     Peer(Ctx &ctx);
     Peer(const db::Table<Peer> &tbl, const db::Rec<Peer> &rec);
   };
+
+  Peer get_email_peer(Ctx &ctx, const str &email);
 }
 
 #endif

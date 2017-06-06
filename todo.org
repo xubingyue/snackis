@@ -1,4 +1,3 @@
-* add encryption to msg encode
 * add inbox form
 ** add enum field accept/reject for invites
 * add bool decode(Msg, const unsigned char *data, size_t len)
@@ -6,10 +5,14 @@
 ** change imap fetch to insert into inbox
 ** send accept on accept
 * add encrypt command/form
+** bin/hex selection
 ** encrypt external file for peer and write to file
 * add decrypt command/form
+** bin/hex selection
 ** decrypt external file from peer and write to file
 * add backup command
 ** backup folder setting, default /backup
 ** run tar -z proc
 ** store as db_timestamp.tar.gz
+* move package error types into snackis ns
+** remove namespace where used
