@@ -2,6 +2,7 @@
 #include "snackis/core/fmt.hpp"
 #include "snackis/net/imap.hpp"
 #include "snackis/net/smtp.hpp"
+#include "snackis/ui/inbox_form.hpp"
 #include "snackis/ui/invite_form.hpp"
 #include "snackis/ui/reader.hpp"
 #include "snackis/ui/profile_form.hpp"
@@ -10,15 +11,15 @@ namespace snackis {
 namespace ui {
   static void init_cmds(Reader &rdr) {
     push(rdr.field, "profile", Reader::Cmd([&rdr]() {
-	  ProfileForm prof(rdr.view, rdr.form.footer);
-	  open(prof);
-	  run(prof);
+	  ProfileForm frm(rdr.view, rdr.form.footer);
+	  open(frm);
+	  run(frm);
 	}));
 
     push(rdr.field, "invite", Reader::Cmd([&rdr]() {
-	  InviteForm inv(rdr.view, rdr.form.footer);
-	  open(inv);
-	  run(inv);
+	  InviteForm frm(rdr.view, rdr.form.footer);
+	  open(frm);
+	  run(frm);
 	}));
 
     push(rdr.field, "fetch", Reader::Cmd([&rdr]() { 
@@ -35,6 +36,16 @@ namespace ui {
 	  }
 	}));
 
+    push(rdr.field, "inbox", Reader::Cmd([&rdr]() { 
+	  if (rdr.ctx.db.inbox.recs.empty()) {
+	    log(rdr.ctx, "Inbox is empty");
+	  } else {
+	    InboxForm frm(rdr.view, rdr.form.footer);
+	    open(frm);
+	    run(frm);
+	  }
+	}));
+    
     push(rdr.field, "quit", Reader::Cmd([&rdr]() { rdr.quitting = true; }));
   }
 

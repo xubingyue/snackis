@@ -1,8 +1,8 @@
-* add inbox form
-** add enum field accept/reject for invites
 * add bool decode(Msg, const unsigned char *data, size_t len)
 ** change imap fetch_uid to return opt<Msg>
 ** change imap fetch to insert into inbox
+* finish inbox form
+** add enum field accept/reject for invites
 ** send accept on accept
 * add encrypt command/form
 ** bin/hex selection
