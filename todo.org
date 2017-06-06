@@ -1,4 +1,4 @@
-* add bool decode(Msg, const unsigned char *data, size_t len)
+* add void decode(Msg, const unsigned char *data, size_t len)
 ** change imap fetch_uid to return opt<Msg>
 ** change imap fetch to insert into inbox
 * finish inbox form

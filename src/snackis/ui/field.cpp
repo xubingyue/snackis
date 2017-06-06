@@ -45,7 +45,7 @@ namespace ui {
     pos(-1, -1),
     dim(dim),
     margin_top(0), 
-    label(lbl), symbol(':'), ptr(nullptr), 
+    label(lbl), symbol(' '), ptr(nullptr), 
     active(true) {
     frm.fields.push_back(this);
   }
@@ -67,6 +67,6 @@ namespace ui {
   void Field::paint() {
     Window &wnd(form.window);
     move(wnd, Pos(pos.y, pos.x-label_width(*this)));
-    print(wnd, fmt("%0%1 ", label, str(1, symbol)));
+    print(wnd, fmt("%0 %1", label, str(1, symbol)));
   }
 }}
