@@ -1,6 +1,3 @@
-* add readme/license
-* setup repository
-* update old readme
 * add decrypt command/form
 ** extract FileField
 *** add clear(FileField &)
