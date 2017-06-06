@@ -1,3 +1,6 @@
+* add readme/license
+* add libsnackis.a target
+* setup repository
 * add decrypt command/form
 ** extract FileField
 *** add clear(FileField &)
@@ -6,9 +9,6 @@
 *** take form in constructor
 *** email, name, opt<OnSelect> on_select, opt<UId> selected 
 *** hook up on_select
-* add readme/license
-* add libsnackis.a target
-* setup repository
 * add non-debug dist-files
 * update old readme
 *---
