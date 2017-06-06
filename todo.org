@@ -1,6 +1,3 @@
-* add inbox ok fields for accepts/rejects
-** validate invite_id
-*** log & skip if not found
 ** remove invite accepted_at/rejected_at
 ** remove invite when accepted/rejected
 * add proto rev to message before message type in encode

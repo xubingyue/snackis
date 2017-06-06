@@ -38,7 +38,6 @@ namespace snackis {
     insert(ctx.db.peers, peer);
 
     Msg out(ctx, Msg::ACCEPT, in.from);
-    out.invite_id = in.id;
     Peer &me(whoami(ctx));
     out.crypt_key = me.crypt_key;
     out.peer_name = me.name;
@@ -48,7 +47,6 @@ namespace snackis {
   void reject_invite(const Msg &in) {
     Ctx &ctx(in.ctx);
     Msg out(ctx, Msg::REJECT, in.from);
-    out.invite_id = in.id;
     insert(ctx.db.outbox, out);
   }
 }

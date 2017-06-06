@@ -11,9 +11,11 @@ namespace ui {
     label = "Inbox";
     status = "Press Ctrl-s to perform selected actions, or Ctrl-q to cancel";
     margin_top = 1;
+    db::Trans trans(ctx);
 
-    for (auto rec: ctx.db.inbox.recs) {
-      const Msg msg(ctx.db.inbox, rec);
+    while (!ctx.db.inbox.recs.empty()) {
+      const db::Rec<Msg> msg_rec(*ctx.db.inbox.recs.begin());
+      const Msg msg(ctx.db.inbox, msg_rec);
       if (msg.type == Msg::INVITE) {
 	auto fld(new EnumField<bool>(*this, Dim(1, 10),
 				     fmt("Invite from %0 (%1)",
@@ -22,10 +24,29 @@ namespace ui {
 	push(*fld, "accept", true);
 	push(*fld, "reject", false);
 	field_lookup[msg.id] = fld;
+      } else if (msg.type == Msg::ACCEPT || msg.type == Msg::REJECT) {
+	db::Rec<Invite> inv_rec;
+	set(inv_rec, ctx.db.invite_to, msg.from);
+	
+	if (load(ctx.db.invites, inv_rec)) {
+	  auto fld(new EnumField<bool>(*this, Dim(1, 10),
+				       fmt("Invite to %0 (%1) was %2",
+					   msg.peer_name, msg.from,
+					   (msg.type == Msg::ACCEPT)
+					   ? "accepted"
+					   : "rejected")));
+	  fld->allow_clear = true;
+	  push(*fld, "ok", true);
+	  field_lookup[msg.id] = fld;
+	} else {
+	  erase(ctx.db.inbox, msg_rec);
+	}
       } else {
 	ERROR(db::Db, fmt("Invalid message type: %0", msg.type));
       }
     }
+
+    db::commit(trans);
   }
 
   bool run(InboxForm &frm) {
@@ -61,6 +82,11 @@ namespace ui {
 
 	      erase(ctx.db.inbox, rec);
 	    }
+	  } else if (msg.type == Msg::ACCEPT || msg.type == Msg::REJECT) {
+	    auto resp_fld(dynamic_cast<EnumField<bool> *>(i.second));
+	    if (resp_fld->selected) { erase(ctx.db.inbox, rec); }
+	  } else {
+	    ERROR(db::Db, fmt("Invalid message type: %0", msg.type));
 	  }
 	}
 	

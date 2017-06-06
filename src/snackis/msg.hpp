@@ -12,7 +12,7 @@ namespace snackis {
   struct Msg: public Rec {
     static const str INVITE, ACCEPT, REJECT;
     
-    UId id, invite_id;
+    UId id;
     str type;
     int64_t proto_rev;
     Time fetched_at;

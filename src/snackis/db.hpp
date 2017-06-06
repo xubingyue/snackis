@@ -43,7 +43,6 @@ namespace snackis {
     db::Col<Msg, Time> msg_fetched_at;
     db::Col<Msg, str> msg_peer_name;
     db::Col<Msg, crypt::PubKey> msg_crypt_key;
-    db::Col<Msg, UId> msg_invite_id;
     db::Table<Msg> inbox;
 
     db::Table<Msg> outbox;

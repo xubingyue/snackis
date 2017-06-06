@@ -47,10 +47,9 @@ namespace snackis {
     msg_fetched_at("fetched_at",    time_type,           &Msg::fetched_at),
     msg_peer_name("peer_name",      str_type,            &Msg::peer_name),
     msg_crypt_key("crypt_key",      crypt::pub_key_type, &Msg::crypt_key),
-    msg_invite_id("invite_id",      uid_type,            &Msg::invite_id),
     inbox(ctx, "inbox", {&msg_id},
 	  {&msg_type, &msg_proto_rev, &msg_fetched_at, &msg_peer_name,
-	      &msg_from, &msg_crypt_key, &msg_invite_id}),
+	      &msg_from, &msg_crypt_key}),
     
     outbox(ctx, "outbox", {&msg_id},
 	   {&msg_type, &msg_proto_rev, &msg_to, &msg_peer_name, &msg_crypt_key}) {
