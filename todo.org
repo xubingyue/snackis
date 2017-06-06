@@ -1,6 +1,3 @@
-* skip seen messages
-** insert into msgs tbl in imap
-** check msgs table in imap
 * add encrypt command/form
 ** add load_path/save_path settings
 *** create on demand if not exists

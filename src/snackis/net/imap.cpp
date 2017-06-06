@@ -140,6 +140,12 @@ namespace snackis {
 	continue;
       }
 
+      if (load(imap.ctx.db.msgs, *msg)) {
+	log(imap.ctx, fmt("Skipped duplicate message %0", msg->id));
+	continue;
+      }
+      
+      insert(imap.ctx.db.msgs, *msg);
       insert(imap.ctx.db.inbox, *msg);
       delete_uid(imap, uid);
       log(imap.ctx, fmt("Fetched message %0 from %1", msg->id, msg->from));
