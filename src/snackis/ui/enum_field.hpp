@@ -6,6 +6,7 @@
 #include <unordered_map>
 
 #include "snackis/ui/field.hpp"
+#include "snackis/ui/form.hpp"
 #include "snackis/ui/window.hpp"
 
 namespace snackis {

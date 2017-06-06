@@ -3,6 +3,8 @@
 #include "snackis/snackis.hpp"
 
 namespace snackis {
+  const str Msg::INVITE("invite");
+
   Msg::Msg(Ctx &ctx): Rec(ctx) { }
 
   Msg::Msg(Ctx &ctx, const str &type, const str &to):
@@ -22,9 +24,9 @@ namespace snackis {
     write(ctx.db.outbox, rec, buf, nullopt);
     const str data(buf.str());
 
-    if (msg.type == "invite") {
+    if (msg.type == Msg::INVITE) {
       return
-	str("invite\r\n") +
+	fmt("%0\r\n", Msg::INVITE) +
 	bin_hex(reinterpret_cast<const unsigned char *>(data.c_str()), data.size());
     }
 
@@ -42,7 +44,7 @@ namespace snackis {
     Ctx &ctx(msg.ctx);
     Data dat(hex_bin(in.substr(i+2)));
 
-    if (msg.type != "invite") {
+    if (msg.type != Msg::INVITE) {
       const Peer peer(get_email_peer(ctx, msg.peer_email));
       dat = crypt::decrypt(*get_val(ctx.settings.crypt_key), peer.crypt_key,
 			   &dat[0],

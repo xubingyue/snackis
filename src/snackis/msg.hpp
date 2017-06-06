@@ -10,6 +10,8 @@
 
 namespace snackis {
   struct Msg: public Rec {
+    static const str INVITE;
+    
     UId id;
     str type;
     int64_t proto_rev;
@@ -22,7 +24,7 @@ namespace snackis {
     Msg(Ctx &ctx, const str &type, const str &to);
     Msg(const db::Table<Msg> &tbl, const db::Rec<Msg> &rec);
   };
-
+  
   str encode(const Msg &msg);
   bool decode(Msg &msg, const str &in);
 }

@@ -1,7 +1,10 @@
 * rename msg.peer_email to msg.from
+* remove to from inbox again
 * finish inbox form
-** add enum field accept/reject for invites
+** create / update peer on accept
 ** send accept on accept
+** send reject on reject
+** use inbox instead of outbox for encoding
 * add encrypt command/form
 ** bin/hex selection
 ** encrypt external file for peer and write to file
