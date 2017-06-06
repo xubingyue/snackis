@@ -1,9 +1,11 @@
 * finish encrypt form
 ** add encode support
 ** extract encryption
-*** move to encrypt(const Peer &peer, const Path &in, const Path &out)
+*** move to encrypt(const Peer &peer, const Path &in, const Path &out, bool encode)
 * add decrypt command/form
 ** extract FileField
+*** add clear(FileField &)
+*** add load(FileField &, const Path &dir)
 ** extract PeerPanel
 *** take form in constructor
 *** email, name, opt<OnSelect> on_select, opt<UId> selected 
