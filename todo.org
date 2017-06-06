@@ -1,7 +1,3 @@
-* finish encrypt form
-** add encode support
-** extract encryption
-*** move to encrypt(const Peer &peer, const Path &in, const Path &out, bool encode)
 * add decrypt command/form
 ** extract FileField
 *** add clear(FileField &)

@@ -2,6 +2,7 @@
 #define SNACKIS_PEER_HPP
 
 #include "snackis/rec.hpp"
+#include "snackis/core/path.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/core/time.hpp"
 #include "snackis/core/uid.hpp"
@@ -20,6 +21,7 @@ namespace snackis {
   };
 
   Peer get_email_peer(Ctx &ctx, const str &email);
+  void encrypt(const Peer &peer, const Path &in, const Path &out, bool encode);
 }
 
 #endif
