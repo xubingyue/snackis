@@ -20,3 +20,5 @@
 ** empty in folder, later/ok
 ** empty out folder, later/ok
 ** backup database, later/ok
+* add scroll-support to Window
+** forward pg-up/down from reader to console scroll
