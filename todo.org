@@ -1,9 +1,8 @@
 * add inbox ok fields for accepts/rejects
 ** validate invite_id
 * skip seen messages
-** add msg id right after snackis in smtp
-*** parse in imap
-** check msgs table
+** insert into msgs tbl in imap
+** check msgs table in imap
 * finish invite form
 ** load info on email ctrl+space
 *** add separate field for each timestamp
