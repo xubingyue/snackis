@@ -38,18 +38,17 @@ namespace snackis {
     msgs(ctx, "msgs", {&msg_id}, {}),
     
     msg_type("type",                str_type,            &Msg::type),
-    msg_proto_rev("proto_rev",      int64_type,          &Msg::proto_rev),
     msg_from("from",                str_type,            &Msg::from),
     msg_to("to",                    str_type,            &Msg::to),
     msg_fetched_at("fetched_at",    time_type,           &Msg::fetched_at),
     msg_peer_name("peer_name",      str_type,            &Msg::peer_name),
     msg_crypt_key("crypt_key",      crypt::pub_key_type, &Msg::crypt_key),
     inbox(ctx, "inbox", {&msg_id},
-	  {&msg_type, &msg_proto_rev, &msg_fetched_at, &msg_peer_name,
+	  {&msg_type, &msg_fetched_at, &msg_peer_name,
 	      &msg_from, &msg_crypt_key}),
     
     outbox(ctx, "outbox", {&msg_id},
-	   {&msg_type, &msg_proto_rev, &msg_to, &msg_peer_name, &msg_crypt_key}) {
+	   {&msg_type, &msg_to, &msg_peer_name, &msg_crypt_key}) {
     peers.indexes.insert(&peer_emails);
   }
 }

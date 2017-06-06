@@ -8,7 +8,7 @@ namespace snackis {
   Msg::Msg(Ctx &ctx): Rec(ctx) { }
 
   Msg::Msg(Ctx &ctx, const str &type, const str &to):
-    Rec(ctx), type(type), proto_rev(PROTO_REV), to(to) { }
+    Rec(ctx), type(type), to(to) { }
 
   Msg::Msg(const db::Table<Msg> &tbl, const db::Rec<Msg> &rec):
     Rec(dynamic_cast<Ctx &>(tbl.ctx)), id(false) {
@@ -26,7 +26,7 @@ namespace snackis {
 
     if (msg.type == Msg::INVITE) {
       return
-	fmt("%0\r\n%1", Msg::INVITE,
+	fmt("%0\r\n%1\r\n%2", PROTO_REV, Msg::INVITE,
 	    bin_hex(reinterpret_cast<const unsigned char *>(data.c_str()),
 		    data.size()));
     }
@@ -36,18 +36,29 @@ namespace snackis {
 			    reinterpret_cast<const unsigned char *>(data.c_str()),
 			    data.size()));
 
-    return fmt("%0\r\n%1\r\n%2",
-	       msg.type, msg.from, bin_hex(&out[0], out.size()));
+    return fmt("%0\r\n%1\r\n%2\r\n%3",
+	       PROTO_REV, msg.type, msg.from, bin_hex(&out[0], out.size()));
   }
 
   bool decode(Msg &msg, const str &in) {
     auto i(in.find("\r\n"));
     if (i == str::npos) { return false; }
-    msg.type = in.substr(0, i);
+    int64_t proto_rev = to_int64(in.substr(0, i));
+    
+    if (proto_rev != PROTO_REV) {
+      log(msg.ctx, "Failed decoding message due to protocol revision mismatch");
+      return false;
+    }
+    
     i += 2;
 
+    auto j(in.find("\r\n", i));
+    if (j == str::npos) { return false; }
+    msg.type = in.substr(i, j-i);
+    i = j+2;
+
     if (msg.type != Msg::INVITE) {
-      auto j(in.find("\r\n", i));
+      j = in.find("\r\n", i);
       if (j == str::npos) { return false; }
       msg.from = in.substr(i, j-i);
       i = j+2;

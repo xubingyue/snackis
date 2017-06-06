@@ -38,7 +38,6 @@ namespace snackis {
     db::Table<Msg> msgs;
 
     db::Col<Msg, str> msg_type;
-    db::Col<Msg, int64_t> msg_proto_rev;
     db::Col<Msg, str> msg_from, msg_to;
     db::Col<Msg, Time> msg_fetched_at;
     db::Col<Msg, str> msg_peer_name;

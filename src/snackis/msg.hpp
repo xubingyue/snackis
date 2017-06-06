@@ -14,7 +14,6 @@ namespace snackis {
     
     UId id;
     str type;
-    int64_t proto_rev;
     Time fetched_at;
     str from, to;
     str peer_name;
