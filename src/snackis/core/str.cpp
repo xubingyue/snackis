@@ -20,13 +20,12 @@ namespace snackis {
   str bin_hex(const unsigned char *in, size_t len) {
     const size_t out_len = len*2+1;
     Data out(out_len, 0);
+    
     if (!sodium_bin2hex(reinterpret_cast<char *>(&out[0]), out_len, in, len)) {
       ERROR(Core, "Hex-encoding failed");
     }
 
-    auto found = std::find_if(out.begin(), out.end(),
-			      [](auto &v) { return v == 0; });
-    return str(out.begin(), found);
+    return str(reinterpret_cast<const char *>(&out[0]));
   }
   
   Data hex_bin(const str &in) {
