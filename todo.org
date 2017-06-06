@@ -7,6 +7,7 @@
 *** email, name, opt<OnSelect> on_select, opt<UId> selected 
 *** hook up on_select
 * add readme/license
+* add libsnackis.a target
 * setup repository
 * add non-debug dist-files
 * update old readme
