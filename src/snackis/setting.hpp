@@ -38,13 +38,7 @@ namespace snackis {
       load(stn.ctx.db.settings, dynamic_cast<BasicSetting &>(stn));
     }
 
-    if (stn.val.empty() && stn.init_val) { 
-	set_val(stn, *stn.init_val); 
-	return stn.init_val;
-    }
-
-    if (stn.val.empty()) { return nullopt; }
-
+    if (stn.val.empty()) { return stn.init_val; }
     Stream buf(stn.val);
     return stn.type.read(buf);
   }
