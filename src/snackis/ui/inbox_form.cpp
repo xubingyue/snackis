@@ -22,8 +22,8 @@ namespace ui {
 				     fmt("Invite from %0 (%1)",
 					 msg.peer_name, msg.from)));
 	fld->allow_clear = true;
-	push(*fld, "accept", true);
-	push(*fld, "reject", false);
+	insert(*fld, "accept", true);
+	insert(*fld, "reject", false);
 	field_lookup[msg.id] = fld;
       } else if (msg.type == Msg::ACCEPT || msg.type == Msg::REJECT) {
 	db::Rec<Invite> inv_rec;
@@ -37,7 +37,7 @@ namespace ui {
 					   ? "accepted"
 					   : "rejected")));
 	  fld->allow_clear = true;
-	  push(*fld, "ok", true);
+	  insert(*fld, "ok", true);
 	  field_lookup[msg.id] = fld;
 	} else {
 	  erase(ctx.db.inbox, msg_rec);

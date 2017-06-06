@@ -19,14 +19,14 @@ namespace ui {
     
     for (auto p: ctx.db.peers.recs) {
       auto id(*get(p, ctx.db.peer_id));
-      push(peer_name, *get(p, ctx.db.peer_name), id);
-      push(peer_email, *get(p, ctx.db.peer_email), id);
+      insert(peer_name, *get(p, ctx.db.peer_name), id);
+      insert(peer_email, *get(p, ctx.db.peer_email), id);
     }
 
     peer_name.on_select = [this]() {
       auto &sel(peer_name.selected);
       if (sel) {
-	select_val(peer_email, sel->val, false);
+	select(peer_email, sel->val, false);
       } else {
 	clear(peer_email, false);
       }
@@ -35,15 +35,15 @@ namespace ui {
     peer_email.on_select = [this]() {
       auto &sel(peer_email.selected);
       if (sel) {
-	select_val(peer_name, sel->val, false);
+	select(peer_name, sel->val, false);
       } else {
 	clear(peer_name, false);
       }
     };
 
     load_from.margin_top = 1;
-    push(encode_result, "yes", true);
-    push(encode_result, "no", false);
+    insert(encode_result, "yes", true);
+    insert(encode_result, "no", false);
   }
 
   bool run(EncryptForm &frm) {
@@ -57,7 +57,7 @@ namespace ui {
       return false;
     }
     
-    select(frm.encode_result, 1);
+    select(frm.encode_result, false);
     db::Trans trans(ctx);
     
     while (true) {

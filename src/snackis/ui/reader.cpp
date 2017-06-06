@@ -11,24 +11,24 @@
 namespace snackis {
 namespace ui {
   static void init_cmds(Reader &rdr) {
-    push(rdr.field, "profile", Reader::Cmd([&rdr]() {
+    insert(rdr.field, "profile", Reader::Cmd([&rdr]() {
 	  ProfileForm frm(rdr.view, rdr.form.footer);
 	  open(frm);
 	  run(frm);
 	}));
 
-    push(rdr.field, "invite", Reader::Cmd([&rdr]() {
+    insert(rdr.field, "invite", Reader::Cmd([&rdr]() {
 	  InviteForm frm(rdr.view, rdr.form.footer);
 	  open(frm);
 	  run(frm);
 	}));
 
-    push(rdr.field, "fetch", Reader::Cmd([&rdr]() { 
+    insert(rdr.field, "fetch", Reader::Cmd([&rdr]() { 
 	  Imap imap(rdr.ctx);
 	  fetch(imap); 
 	}));
 
-    push(rdr.field, "send", Reader::Cmd([&rdr]() { 
+    insert(rdr.field, "send", Reader::Cmd([&rdr]() { 
 	  if (rdr.ctx.db.outbox.recs.empty()) {
 	    log(rdr.ctx, "Nothing to send");
 	  } else {
@@ -37,7 +37,7 @@ namespace ui {
 	  }
 	}));
 
-    push(rdr.field, "inbox", Reader::Cmd([&rdr]() { 
+    insert(rdr.field, "inbox", Reader::Cmd([&rdr]() { 
 	  if (rdr.ctx.db.inbox.recs.empty()) {
 	    log(rdr.ctx, "Inbox is empty");
 	  } else {
@@ -47,13 +47,13 @@ namespace ui {
 	  }
 	}));
     
-    push(rdr.field, "encrypt", Reader::Cmd([&rdr]() {
+    insert(rdr.field, "encrypt", Reader::Cmd([&rdr]() {
 	  EncryptForm frm(rdr.view, rdr.form.footer);
 	  open(frm);
 	  run(frm);
 	}));
     
-    push(rdr.field, "quit", Reader::Cmd([&rdr]() { rdr.quitting = true; }));
+    insert(rdr.field, "quit", Reader::Cmd([&rdr]() { rdr.quitting = true; }));
   }
 
   Reader::Reader(Ctx &ctx, View &view, Footer &ftr):

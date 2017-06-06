@@ -23,8 +23,7 @@ namespace ui {
   
   template <typename T>
   struct EnumField: public Field {
-    std::vector<EnumAlt<T>> alts;
-    std::map<str, size_t> lbl_lookup;
+    std::map<str, EnumAlt<T>> alts;
     opt<EnumAlt<T>> selected;
     using OnSelect = func<void ()>;
     opt<OnSelect> on_select;
@@ -50,9 +49,9 @@ namespace ui {
     switch (ch) {
     case KEY_SPACE:
       if (!alts.empty()) {
-	auto found = lbl_lookup.find(get_str(*this));
-	if (found != lbl_lookup.end()) { found++; }
-	if (found == lbl_lookup.end()) { found = lbl_lookup.begin(); }
+	auto found = alts.find(get_str(*this));
+	if (found != alts.end()) { found++; }
+	if (found == alts.end()) { found = alts.begin(); }
 	select(*this, found->second);
       }
       
@@ -80,8 +79,8 @@ namespace ui {
       if (std::isgraph(ch)) {
 	str nsearch(search);
 	nsearch.push_back(ch);
-	auto found(lbl_lookup.lower_bound(nsearch));
-	if (found != lbl_lookup.end() && found->first.find(nsearch) != str::npos) {
+	auto found(alts.lower_bound(nsearch));
+	if (found != alts.end() && found->first.find(nsearch) != str::npos) {
 	  search.push_back(ch);
 	  select(*this, found->second);
 	  
@@ -94,29 +93,23 @@ namespace ui {
   }
 
   template <typename T>
-  void push(EnumField<T> &fld, const str &lbl, const T &val) {
-    const size_t pos = fld.alts.size();
-    fld.lbl_lookup[lbl] = pos;
-    fld.alts.push_back(EnumAlt<T>(lbl, val));
+  void insert(EnumField<T> &fld, const str &lbl, const T &val) {
+    fld.alts.emplace(lbl, EnumAlt<T>(lbl, val));
   }
 
   template <typename T>
-  bool select(EnumField<T> &fld, size_t pos, bool trig = true) {
-    assert(pos < fld.alts.size());
-    fld.selected = fld.alts[pos];
-    set_str(fld, fld.selected->lbl);
-    if (trig && fld.on_select) { (*fld.on_select)(); } 
-    return true;
-  }
-
-  template <typename T>
-  bool select_val(EnumField<T> &fld, const T &val, bool trig = true) {
-    auto found(std::find_if(fld.alts.begin(), fld.alts.end(),
-			    [&val](auto &a) { return a.val == val; }));
-    if (found == fld.alts.end()) { return false; }
-    fld.selected = *found;
-    set_str(fld, fld.selected->lbl);    
+  void select(EnumField<T> &fld, const EnumAlt<T> &alt, bool trig = true) {
+    fld.selected = alt;
+    set_str(fld, alt.lbl);    
     if (trig && fld.on_select) { (*fld.on_select)(); }
+  }
+
+  template <typename T>
+  bool select(EnumField<T> &fld, const T &val, bool trig = true) {
+    auto found(std::find_if(fld.alts.begin(), fld.alts.end(),
+			    [&val](auto &a) { return a.second.val == val; }));
+    if (found == fld.alts.end()) { return false; }
+    select(fld, found->second, trig);
     return true;
   }
 
