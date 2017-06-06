@@ -69,11 +69,41 @@ namespace ui {
       if (ch == KEY_CTRL('s') || ch == KEY_RETURN) {
 	validate(frm);
 	create_path(*get_val(ctx.settings.save_folder));
+	auto peer(frm.peer_email.selected);
+	auto load_from(frm.load_from.selected);
 	const str save_to(get_str(frm.save_to));
-	//TODO: write encrypted data
-	db::commit(trans);
-	log(ctx, fmt("Encrypted data saved to: %0", save_to));
-	break;
+
+	if (peer && load_from && save_to != "") {
+	  const str
+	    in_path(load_from->val),
+	    out_path(Path(*get_val(ctx.settings.save_folder)) / save_to);
+	    
+	  log(ctx, fmt("Encrypting from '%0' to '%1'", in_path, out_path));
+
+	  std::ifstream in_file;
+	  in_file.open(in_path, std::ios::in | std::ios::binary);
+	  in_file.seekg(0, std::ios::end);
+	  Data in(in_file.tellg(), 0);
+	  in_file.seekg(0);
+	  in_file.read(reinterpret_cast<char *>(&in[0]), in.size());
+	  in_file.close();
+	  
+	  db::Rec<Peer> peer_rec;
+	  set(peer_rec, ctx.db.peer_id, peer->val);
+	  load(ctx.db.peers, peer_rec);
+	
+	  Data out(crypt::encrypt(*get_val(ctx.settings.crypt_key),
+				  *get(peer_rec, ctx.db.peer_crypt_key),
+				  &in[0], in.size()));
+	  
+	  std::ofstream out_file;
+	  out_file.open(out_path, std::ios::out | std::ios::trunc | std::ios::binary);
+	  out_file.write(reinterpret_cast<const char *>(&out[0]), out.size());
+	  out_file.close();
+
+	  db::commit(trans);
+	  break;
+	}
       }
 
       switch (ch) {

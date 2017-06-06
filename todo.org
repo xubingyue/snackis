@@ -1,5 +1,6 @@
 * finish encrypt form
-** encrypt, encode and store result in save_to
+** add encode support
+** extract encryption into encrypt(peer, );
 * add decrypt command/form
 ** extract FileField
 ** extract PeerPanel
