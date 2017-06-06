@@ -1,7 +1,4 @@
 * finish encrypt form
-** finish encrypt load_from
-*** use filesystem iterator
-*** sync save_to with load_from via on_select
 ** encrypt, encode and store result in save_to
 * add decrypt command/form
 ** extract FileField

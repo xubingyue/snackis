@@ -25,23 +25,26 @@ namespace ui {
 
     peer_name.on_select = [this]() {
       auto &sel(peer_name.selected);
-      if (sel) {
-	select(peer_email, sel->val, false);
-      } else {
-	clear(peer_email, false);
-      }
+      assert(sel);
+      select(peer_email, sel->val, false);
     };
 
     peer_email.on_select = [this]() {
       auto &sel(peer_email.selected);
-      if (sel) {
-	select(peer_name, sel->val, false);
-      } else {
-	clear(peer_name, false);
-      }
+      assert(sel);
+      select(peer_name, sel->val, false);
     };
 
     load_from.margin_top = 1;
+    for (auto &i: PathIter(*get_val(ctx.settings.load_folder))) {
+      const Path p(i);
+      insert(load_from, p.filename(), p);
+    }
+    
+    load_from.on_select = [this]() {
+      set_str(save_to, load_from.selected->lbl);
+    };
+
     insert(encode, "yes", true);
     insert(encode, "no", false);
   }

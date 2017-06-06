@@ -9,7 +9,7 @@ namespace snackis {
 namespace ui {
   struct EncryptForm: public ViewForm {
     EnumField<UId> peer_name, peer_email;
-    EnumField<str> load_from;
+    EnumField<Path> load_from;
     TextField save_to;
     EnumField<bool> encode;
     EncryptForm(View &view, Footer &ftr);
