@@ -11,7 +11,7 @@ namespace ui {
     EnumField<UId> peer_name, peer_email;
     EnumField<str> load_from;
     TextField save_to;
-    EnumField<bool> encode_result;
+    EnumField<bool> encode;
     EncryptForm(View &view, Footer &ftr);
   };
 

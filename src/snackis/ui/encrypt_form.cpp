@@ -12,7 +12,7 @@ namespace ui {
     peer_email(*this, Dim(1, 50), "Peer Email"),
     load_from(*this, Dim(1, 50), "Load From"),
     save_to(*this, Dim(1, 50), "Save To"),
-    encode_result(*this, Dim(1, 5), "Encode Result") {
+    encode(*this, Dim(1, 5), "Encode") {
     label = "Encrypt";
     status = "Press Ctrl-s to encrypt, or Ctrl-q to cancel";
     margin_top = 1;
@@ -42,8 +42,8 @@ namespace ui {
     };
 
     load_from.margin_top = 1;
-    insert(encode_result, "yes", true);
-    insert(encode_result, "no", false);
+    insert(encode, "yes", true);
+    insert(encode, "no", false);
   }
 
   bool run(EncryptForm &frm) {
@@ -57,7 +57,7 @@ namespace ui {
       return false;
     }
     
-    select(frm.encode_result, false);
+    select(frm.encode, false);
     db::Trans trans(ctx);
     
     while (true) {
