@@ -1,11 +1,12 @@
 * finish encrypt command/form
+** sync peer email and peer name via on_select
 ** add load_path/save_path settings
 *** create on demand if not exists
-** finishx load_from
+** finish encrypt load_from
 *** use filesystem iterator
 *** load on access if alts.empty()
 *** refresh & resync on ctrl+space action
-** store result in save_path
+** encrypt, encode and store result in save_path
 * add decrypt command/form
 ** extract FileField from encrypt form
 * add backup command
