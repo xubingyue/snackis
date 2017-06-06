@@ -1,5 +1,6 @@
 * add readme/license
 * setup repository
+* update old readme
 * add decrypt command/form
 ** extract FileField
 *** add clear(FileField &)
@@ -9,7 +10,6 @@
 *** email, name, opt<OnSelect> on_select, opt<UId> selected 
 *** hook up on_select
 * add non-debug dist-files
-* update old readme
 *---
 * add backup command
 ** backup folder setting, default /backup
