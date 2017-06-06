@@ -12,12 +12,12 @@
 * ---
 * add encrypt command/form
 ** bin/hex selection
-** add encrypt_path/decrypt_path settings
+** add clear_path/crypt_path settings
 *** create on demand if not exists
-** add enum field for all files in decrypt_path
+** add enum field for all files in clear_path
 ** add field for name
 *** default same
-** store in encrypt_path
+** store in crypt_path
 * add decrypt command/form
 ** inverse of encrypt
 * add backup command

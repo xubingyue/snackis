@@ -6,8 +6,6 @@
 
 namespace snackis {
 namespace ui {
-  enum InviteResponse {INVITE_ACCEPT, INVITE_REJECT};
-
   InboxForm::InboxForm(View &view, Footer &ftr):
     ViewForm(view, ftr) {
     label = "Inbox";
@@ -17,12 +15,12 @@ namespace ui {
     for (auto rec: ctx.db.inbox.recs) {
       const Msg msg(ctx.db.inbox, rec);
       if (msg.type == Msg::INVITE) {
-	auto fld(new EnumField<InviteResponse>(*this, Dim(1, 10),
-					       fmt("Invite from %0 (%1)",
-						   msg.peer_name, msg.from)));
+	auto fld(new EnumField<bool>(*this, Dim(1, 10),
+				     fmt("Invite from %0 (%1)",
+					 msg.peer_name, msg.from)));
 	fld->allow_clear = true;
-	push(*fld, "accept", INVITE_ACCEPT);
-	push(*fld, "reject", INVITE_REJECT);
+	push(*fld, "accept", true);
+	push(*fld, "reject", false);
 	field_lookup[msg.id] = fld;
       } else {
 	ERROR(db::Db, fmt("Invalid message type: %0", msg.type));
@@ -48,20 +46,17 @@ namespace ui {
 	  const Msg msg(ctx.db.inbox, rec);
 
 	  if (msg.type == Msg::INVITE) {
-	    auto resp_fld(dynamic_cast<EnumField<InviteResponse> *>(i.second));
+	    auto resp_fld(dynamic_cast<EnumField<bool> *>(i.second));
 
 	    if (resp_fld->selected) {
-	      switch(resp_fld->selected->val) {
-	      case INVITE_ACCEPT:
+	      if (resp_fld->selected->val) {
 		accept_invite(msg);
 		log(ctx, fmt("Accept of %0 (%1) posted to outbox",
 			     msg.peer_name, msg.from));
-		break;
-	      case INVITE_REJECT:
+	      } else {
 		reject_invite(msg);
 		log(ctx, fmt("Reject of %0 (%1) posted to outbox",
 			     msg.peer_name, msg.from));
-		break;
 	      }
 
 	      erase(ctx.db.inbox, rec);
