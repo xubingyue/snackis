@@ -78,7 +78,7 @@ namespace ui {
 	    in_path(load_from->val),
 	    out_path(Path(*get_val(ctx.settings.save_folder)) / save_to);
 	    
-	  log(ctx, fmt("Encrypting from '%0' to '%1'", in_path, out_path));
+	  log(ctx, fmt("Encrypting from '%0' to '%1'...", in_path, out_path));
 
 	  std::ifstream in_file;
 	  in_file.open(in_path, std::ios::in | std::ios::binary);
@@ -95,6 +95,11 @@ namespace ui {
 	  Data out(crypt::encrypt(*get_val(ctx.settings.crypt_key),
 				  *get(peer_rec, ctx.db.peer_crypt_key),
 				  &in[0], in.size()));
+
+	  if (frm.encode.selected->val) {
+	    const str hex(bin_hex(&out[0], out.size()));
+	    out.assign(hex.begin(), hex.end());
+	  }
 	  
 	  std::ofstream out_file;
 	  out_file.open(out_path, std::ios::out | std::ios::trunc | std::ios::binary);
@@ -102,6 +107,7 @@ namespace ui {
 	  out_file.close();
 
 	  db::commit(trans);
+	  log(ctx, "Done encrypting");
 	  break;
 	}
       }

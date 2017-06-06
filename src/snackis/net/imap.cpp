@@ -107,7 +107,7 @@ namespace snackis {
   }
   
   void fetch(struct Imap &imap) {
-    log(imap.ctx, "Fetching email");
+    log(imap.ctx, "Fetching email...");
     curl_easy_setopt(imap.client,
 		     CURLOPT_CUSTOMREQUEST,
 		     "UID SEARCH Subject \"__SNACKIS__\"");
