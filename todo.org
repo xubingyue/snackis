@@ -1,8 +1,6 @@
 * finish inbox form
-** create / update peer on accept
-** send accept on accept
-** send reject on reject
-** skip if empty
+** create / update peer & send accept response
+** send reject response
 * finish invite form
 ** load info on enter in email
 * add encrypt command/form
