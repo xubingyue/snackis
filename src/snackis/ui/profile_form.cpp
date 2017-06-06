@@ -77,18 +77,18 @@ namespace ui {
     email(*this, Dim(1, 50), "Email"),
     editor(*this, Dim(1, 50), "Editor"),
 
-    load_folder(*this, Dim(1, 50), "Load Folder"),
-    save_folder(*this, Dim(1, 50), "Save Folder"),
+    load_folder(*this, Dim(1, 50), "Load-folder"),
+    save_folder(*this, Dim(1, 50), "Save-folder"),
 
-    imap_url(*this, Dim(1, 50), "Imap Url"),
-    imap_port(*this, Dim(1, 10), "Imap Port"),
-    imap_user(*this, Dim(1, 50), "Imap User"),
-    imap_pass(*this, Dim(1, 50), "Imap Pass"),
+    imap_url(*this, Dim(1, 50), "Imap-url"),
+    imap_port(*this, Dim(1, 10), "Imap-port"),
+    imap_user(*this, Dim(1, 50), "Imap-user"),
+    imap_pass(*this, Dim(1, 50), "Imap-password"),
 
-    smtp_url(*this, Dim(1, 50), "Smtp Url"),
-    smtp_port(*this, Dim(1, 10), "Smtp Port"),
-    smtp_user(*this, Dim(1, 50), "Smtp User"),
-    smtp_pass(*this, Dim(1, 50), "Smtp Pass") {
+    smtp_url(*this, Dim(1, 50), "Smtp-url"),
+    smtp_port(*this, Dim(1, 10), "Smtp-port"),
+    smtp_user(*this, Dim(1, 50), "Smtp-user"),
+    smtp_pass(*this, Dim(1, 50), "Smtp-pass") {
     label = "Profile";
     status = "Press Ctrl-s to save profile, or Ctrl-q to cancel";
     margin_top = 1;

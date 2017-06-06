@@ -10,6 +10,10 @@
 *** take form in constructor
 *** email, name, opt<OnSelect> on_select, opt<UId> selected 
 *** hook up on_select
+* add readme/license
+* setup repository
+* update old readme
+*---
 * add backup command
 ** backup folder setting, default /backup
 ** run tar -z proc
