@@ -1,7 +1,7 @@
 * finish encrypt form
 ** add encode support
 ** extract encryption
-*** move to encrypt(const Peer &peer, unsigned char *in, size_t len)
+*** move to encrypt(const Peer &peer, const Path &in, const Path &out)
 * add decrypt command/form
 ** extract FileField
 ** extract PeerPanel
