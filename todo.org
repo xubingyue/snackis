@@ -1,3 +1,7 @@
+* replace EnumFields alts with lbl_lookup
+** map<str, T>
+** sorted by label
+** remove EnumAlt
 * finish encrypt form
 ** finish encrypt load_from
 *** use filesystem iterator
