@@ -5,7 +5,11 @@
 *** sync save_to with load_from via on_select
 ** encrypt, encode and store result in save_to
 * add decrypt command/form
-** extract FileField from encrypt form
+** extract FileField
+** extract PeerPanel
+*** take form in constructor
+*** email, name, opt<OnSelect> on_select, opt<UId> selected 
+*** hook up on_select
 * add backup command
 ** backup folder setting, default /backup
 ** run tar -z proc
