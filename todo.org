@@ -8,6 +8,7 @@
 *** hook up on_select
 * add readme/license
 * setup repository
+* add non-debug dist-files
 * update old readme
 *---
 * add backup command
