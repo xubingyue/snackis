@@ -1,5 +1,4 @@
 * finish encrypt form
-** sync peer email and peer name via on_select
 ** finish encrypt load_from
 *** use filesystem iterator
 *** sync save_to with load_from via on_select

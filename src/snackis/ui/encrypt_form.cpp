@@ -23,6 +23,24 @@ namespace ui {
       push(peer_email, *get(p, ctx.db.peer_email), id);
     }
 
+    peer_name.on_select = [this]() {
+      auto &sel(peer_name.selected);
+      if (sel) {
+	select_val(peer_email, sel->val, false);
+      } else {
+	clear(peer_email, false);
+      }
+    };
+
+    peer_email.on_select = [this]() {
+      auto &sel(peer_email.selected);
+      if (sel) {
+	select_val(peer_name, sel->val, false);
+      } else {
+	clear(peer_name, false);
+      }
+    };
+
     load_from.margin_top = 1;
     push(encode_result, "yes", true);
     push(encode_result, "no", false);

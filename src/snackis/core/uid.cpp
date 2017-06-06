@@ -7,6 +7,10 @@ namespace snackis {
     else { uuid_clear(val); }
   }
 
+  bool operator==(const UId &x, const UId &y) {
+    return uuid_compare(x.val, y.val) == 0;
+  }
+
   bool operator<(const UId &x, const UId &y) {
     return uuid_compare(x.val, y.val) < 0;
   }

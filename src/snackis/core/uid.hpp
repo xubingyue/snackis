@@ -12,6 +12,7 @@ namespace snackis {
     UId(bool init=true);
   };
   
+  bool operator==(const UId &x, const UId &y);
   bool operator<(const UId &x, const UId &y);
 
   template <>
