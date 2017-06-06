@@ -3,7 +3,11 @@
 ** send reject response
 * finish invite form
 ** load info on enter in email
+* ---
 * add encrypt command/form
+** optional password for outer encryption
+*** use secret
+*** repeat
 ** bin/hex selection
 ** encrypt external file for peer and write to file
 * add decrypt command/form
