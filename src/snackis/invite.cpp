@@ -35,7 +35,7 @@ namespace snackis {
     peer.email = in.from;
     peer.name = in.peer_name;
     peer.crypt_key = in.crypt_key;
-    insert(ctx.db.peers, peer);
+    upsert(ctx.db.peers, peer);
 
     Msg out(ctx, Msg::ACCEPT, in.from);
     Peer &me(whoami(ctx));
