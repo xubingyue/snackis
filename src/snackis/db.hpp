@@ -39,12 +39,12 @@ namespace snackis {
 
     db::Col<Msg, str> msg_type;
     db::Col<Msg, int64_t> msg_proto_rev;
+    db::Col<Msg, str> msg_to;
     db::Col<Msg, Time> msg_fetched_at;
     db::Col<Msg, str> msg_peer_name, msg_peer_email;
     db::Col<Msg, crypt::PubKey> msg_crypt_key;
     db::Table<Msg> inbox;
 
-    db::Col<Msg, str> msg_to;
     db::Table<Msg> outbox;
 
     Db(db::Ctx &ctx);

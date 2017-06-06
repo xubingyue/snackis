@@ -24,6 +24,7 @@ namespace snackis {
   };
 
   str encode(const Msg &msg);
+  bool decode(Msg &msg, const str &in);
 }
 
 #endif

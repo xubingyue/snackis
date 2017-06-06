@@ -17,7 +17,6 @@ namespace snackis {
     Ctx &ctx(msg.ctx);
     
     Stream buf;
-    buf << msg.type << "\r\n";
     db::Rec<Msg> rec;
     copy(ctx.db.outbox, rec, msg);
     write(ctx.db.outbox, rec, buf, nullopt);
@@ -34,5 +33,26 @@ namespace snackis {
 			    reinterpret_cast<const unsigned char *>(data.c_str()),
 			    data.size()));
     return fmt("%0\r\n%1", msg.type, bin_hex(&out[0], out.size()));
+  }
+
+  bool decode(Msg &msg, const str &in) {
+    auto i(in.find("\r\n"));
+    if (i == str::npos) { return false; }
+    msg.type = in.substr(0, i);
+    Ctx &ctx(msg.ctx);
+    Data dat(hex_bin(in.substr(i+2)));
+
+    if (msg.type != "invite") {
+      const Peer peer(get_email_peer(ctx, msg.peer_email));
+      dat = crypt::decrypt(*get_val(ctx.settings.crypt_key), peer.crypt_key,
+			   &dat[0],
+			   dat.size());
+    }
+    
+    Stream buf(str(dat.begin(), dat.end()));
+    db::Rec<Msg> rec;
+    read(ctx.db.inbox, buf, rec, nullopt);
+    copy(ctx.db.inbox, msg, rec);
+    return true;
   }
 }

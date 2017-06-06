@@ -82,7 +82,7 @@ namespace snackis {
     }
   }
 
-  static str fetch_uid(const struct Imap &imap, const str &uid) {
+  static opt<Msg> fetch_uid(const struct Imap &imap, const str &uid) {
     curl_easy_setopt(imap.client,
 		     CURLOPT_CUSTOMREQUEST,
 		     fmt("UID FETCH %0 BODY[TEXT]", uid).c_str());
@@ -111,8 +111,14 @@ namespace snackis {
 	 i++) {
       out << *i << std::endl;
     }
-    
-    return out.str();
+
+    db::Rec<Msg> rec;
+    Msg msg(imap.ctx.db.msgs, rec);
+    const str body(out.str());
+    const str tag("__SNACKIS__\r\n");
+    auto i(body.find(tag) + tag.size());
+    if (i == str::npos || !decode(msg, body.substr(i))) { return nullopt; }
+    return msg;
   }
   
   void fetch(struct Imap &imap) {
@@ -142,8 +148,16 @@ namespace snackis {
     
     for (auto tok = std::next(tokens.begin(), 2); tok != tokens.end(); tok++) {
       const str uid(*tok);
-      auto msg = fetch_uid(imap, uid);
+      opt<Msg> msg = fetch_uid(imap, uid);
+
+      if (!msg) {
+	log(imap.ctx, "Skipped message due to failed decoding");
+	continue;
+      }
+
+      insert(imap.ctx.db.inbox, *msg);
       delete_uid(imap, uid);
+      log(imap.ctx, fmt("Fetched message %0 from %1", msg->id, msg->peer_email));
     }
 
     if (tokens.size() > 2) {
@@ -151,6 +165,6 @@ namespace snackis {
     }
 
     db::commit(imap.trans);
-    log(imap.ctx, "OK");
+    log(imap.ctx, "Done fetching email");
   }
 }

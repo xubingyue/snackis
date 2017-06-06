@@ -1,6 +1,4 @@
-* add void decode(Msg, const unsigned char *data, size_t len)
-** change imap fetch_uid to return opt<Msg>
-** change imap fetch to insert into inbox
+* rename msg.peer_email to msg.from
 * finish inbox form
 ** add enum field accept/reject for invites
 ** send accept on accept
