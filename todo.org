@@ -1,13 +1,14 @@
-* finish inbox form
-** create / update peer & send accept response
-** send reject response
+* add inbox ok fields for accepts/rejects
+** validate invite_id
+* skip seen messages
+** add msg id right after snackis in smtp
+*** parse in imap
+** check msgs table
 * finish invite form
-** load info on enter in email
+** load info on email ctrl+space
+*** add separate field for each timestamp
 * ---
 * add encrypt command/form
-** optional password for outer encryption
-*** use secret
-*** repeat
 ** bin/hex selection
 ** encrypt external file for peer and write to file
 * add decrypt command/form

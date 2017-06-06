@@ -19,24 +19,29 @@ namespace snackis {
 
   str bin_hex(const unsigned char *in, size_t len) {
     const size_t out_len = len*2+1;
-    Data out(out_len);
+    Data out(out_len, 0);
     if (!sodium_bin2hex(reinterpret_cast<char *>(&out[0]), out_len, in, len)) {
       ERROR(Core, "Hex-encoding failed");
     }
-    return str(out.begin(), out.end());
+
+    auto found = std::find_if(out.begin(), out.end(),
+			      [](auto &v) { return v == 0; });
+    return str(out.begin(), found);
   }
   
   Data hex_bin(const str &in) {
-    Data out(in.size()/2);
-
+    Data out(in.size()/2, 0);
+    size_t len;
+    
     if (sodium_hex2bin(&out[0], out.size(),
 		       in.c_str(), in.size(),
 		       nullptr,
-		       nullptr,
+		       &len,
 		       nullptr)) {
       ERROR(Core, "Hex-decoding failed");
     }
-    
+
+    out.resize(len);
     return out;
   }
 }

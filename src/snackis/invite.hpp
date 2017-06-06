@@ -9,6 +9,8 @@
 #include "snackis/db/rec.hpp"
 
 namespace snackis {
+  struct Msg;
+  
   struct Invite: public Rec {
     str to;
     Time posted_at, accepted_at, rejected_at;
@@ -18,6 +20,8 @@ namespace snackis {
   };
 
   void post(Invite &inv);
+  void accept_invite(const Msg &in);
+  void reject_invite(const Msg &in);
 }
 
 #endif

@@ -1,6 +1,5 @@
 #include "snackis/ctx.hpp"
 #include "snackis/db/ctx.hpp"
-#include "snackis/net/smtp.hpp"
 #include "snackis/ui/invite_form.hpp"
 #include "snackis/ui/view.hpp"
 #include "snackis/ui/window.hpp"
@@ -10,19 +9,13 @@ namespace ui {
   InviteForm::InviteForm(View &view, Footer &ftr):
     ViewForm(view, ftr),
     email(*this, Dim(1, 50), "Email"),
-    name(*this, Dim(1, 50), "Name"),
-    last_invite(*this, Dim(1, 50), "Last Invite"),
-    send_now(*this, Dim(1, 5), "Send Now") {
+    last_invite(*this, Dim(1, 50), "Last Invite") {
     label = "Invite";
     status = "Press Ctrl-s to send invite, or Ctrl-q to cancel";
     margin_top = 1;
 
     last_invite.margin_top = 1;
     last_invite.active = false;
-
-    send_now.margin_top = 1;
-    push(send_now, "yes", true);
-    push(send_now, "no", false);
   }
 
   static Invite load_invite(InviteForm &frm) {
@@ -43,25 +36,17 @@ namespace ui {
   }
   
   bool run(InviteForm &frm) {
-    select(frm.send_now, 0);
     Ctx &ctx(frm.window.ctx);
     db::Trans trans(ctx);
     
     while (true) {
       chtype ch = get_key(frm.window);
       
-      if (ch == KEY_CTRL('s') ||
-	  (ch == KEY_RETURN && &active_field(frm) == frm.fields.back())) {
+      if (ch == KEY_CTRL('s') || ch == KEY_RETURN) {
 	validate(frm);
 	Invite inv(load_invite(frm));
 	post(inv);	
 	log(ctx, "New invite posted to outbox");
-
-	if (frm.send_now.selected->val) {
-	  Smtp smtp(ctx);
-	  send(smtp);
-	}
-
 	db::commit(trans);
 	return true;
       }

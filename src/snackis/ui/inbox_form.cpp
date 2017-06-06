@@ -25,9 +25,7 @@ namespace ui {
 	push(*fld, "reject", INVITE_REJECT);
 	field_lookup[msg.id] = fld;
       } else {
-	erase(ctx.db.inbox, msg);
-	log(ctx, fmt("Removed message %0 due to invalid type: %1",
-		     msg.id, msg.type));
+	ERROR(db::Db, fmt("Invalid message type: %0", msg.type));
       }
     }
   }
@@ -55,8 +53,14 @@ namespace ui {
 	    if (resp_fld->selected) {
 	      switch(resp_fld->selected->val) {
 	      case INVITE_ACCEPT:
+		accept_invite(msg);
+		log(ctx, fmt("Accept of %0 (%1) posted to outbox",
+			     msg.peer_name, msg.from));
 		break;
 	      case INVITE_REJECT:
+		reject_invite(msg);
+		log(ctx, fmt("Reject of %0 (%1) posted to outbox",
+			     msg.peer_name, msg.from));
 		break;
 	      }
 

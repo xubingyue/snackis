@@ -4,6 +4,7 @@
 namespace snackis {
   UId::UId(bool init) {
     if (init) { uuid_generate_random(val); }
+    else { uuid_clear(val); }
   }
 
   bool operator<(const UId &x, const UId &y) {

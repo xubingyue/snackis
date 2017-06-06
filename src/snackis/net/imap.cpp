@@ -96,22 +96,6 @@ namespace snackis {
       ERROR(Imap, fmt("Failed fetching uid: %0", curl_easy_strerror(res)));
     }
 
-    std::vector<str> lines;
-    str line;
-    
-    while (std::getline(out, line, '\n')) {
-      lines.push_back(line);
-    }
-      
-    out.str("");
-    out.clear();
-    
-    for (auto i = std::next(lines.begin(), 1);
-	 i != std::next(lines.begin(), lines.size()-2);
-	 i++) {
-      out << *i << std::endl;
-    }
-
     db::Rec<Msg> rec;
     Msg msg(imap.ctx.db.msgs, rec);
     const str body(out.str());

@@ -3,17 +3,12 @@
 #include "snackis/snackis.hpp"
 
 namespace snackis {
-  const str Msg::INVITE("invite");
+  const str Msg::INVITE("invite"), Msg::ACCEPT("accept"), Msg::REJECT("reject");
 
   Msg::Msg(Ctx &ctx): Rec(ctx) { }
 
   Msg::Msg(Ctx &ctx, const str &type, const str &to):
-    Rec(ctx), type(type), proto_rev(PROTO_REV), to(to) {
-    Peer &me(whoami(ctx));
-    crypt_key = me.crypt_key;
-    peer_name = me.name;
-    from = me.email;
-  }
+    Rec(ctx), type(type), proto_rev(PROTO_REV), to(to) { }
 
   Msg::Msg(const db::Table<Msg> &tbl, const db::Rec<Msg> &rec):
     Rec(dynamic_cast<Ctx &>(tbl.ctx)), id(false) {
@@ -25,29 +20,41 @@ namespace snackis {
     
     Stream buf;
     db::Rec<Msg> rec;
-    copy(ctx.db.outbox, rec, msg);
+    copy(ctx.db.inbox, rec, msg);
     write(ctx.db.inbox, rec, buf, nullopt);
     const str data(buf.str());
 
     if (msg.type == Msg::INVITE) {
       return
-	fmt("%0\r\n", Msg::INVITE) +
-	bin_hex(reinterpret_cast<const unsigned char *>(data.c_str()), data.size());
+	fmt("%0\r\n%1", Msg::INVITE,
+	    bin_hex(reinterpret_cast<const unsigned char *>(data.c_str()),
+		    data.size()));
     }
 
     Peer peer(get_email_peer(ctx, msg.to));
     Data out(crypt::encrypt(*get_val(ctx.settings.crypt_key), peer.crypt_key,
 			    reinterpret_cast<const unsigned char *>(data.c_str()),
 			    data.size()));
-    return fmt("%0\r\n%1", msg.type, bin_hex(&out[0], out.size()));
+
+    return fmt("%0\r\n%1\r\n%2",
+	       msg.type, msg.from, bin_hex(&out[0], out.size()));
   }
 
   bool decode(Msg &msg, const str &in) {
     auto i(in.find("\r\n"));
     if (i == str::npos) { return false; }
     msg.type = in.substr(0, i);
+    i += 2;
+
+    if (msg.type != Msg::INVITE) {
+      auto j(in.find("\r\n", i));
+      if (j == str::npos) { return false; }
+      msg.from = in.substr(i, j-i);
+      i = j+2;
+    }
+
     Ctx &ctx(msg.ctx);
-    Data dat(hex_bin(in.substr(i+2)));
+    Data dat(hex_bin(in.substr(i)));
 
     if (msg.type != Msg::INVITE) {
       const Peer peer(get_email_peer(ctx, msg.from));

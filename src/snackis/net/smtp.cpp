@@ -79,7 +79,10 @@ namespace snackis {
     }
   }
 
-  void send(struct Smtp &smtp, const Msg &msg) {
+  void send(struct Smtp &smtp, Msg &msg) {
+    Peer &me(whoami(smtp.ctx));
+    msg.from = me.email;
+    
     curl_easy_setopt(smtp.client, CURLOPT_UPLOAD, 1L);
     curl_easy_setopt(smtp.client, CURLOPT_MAIL_FROM, msg.from.c_str());
     struct curl_slist *to = nullptr;

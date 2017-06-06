@@ -8,8 +8,7 @@
 namespace snackis {
 namespace ui {
   struct InviteForm: public ViewForm {
-    TextField email, name, last_invite;
-    EnumField<bool> send_now;
+    TextField email, last_invite;
     InviteForm(View &view, Footer &ftr);
   };
 

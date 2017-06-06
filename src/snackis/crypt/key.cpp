@@ -24,8 +24,7 @@ namespace crypt {
   Data encrypt(const Key &key, const PubKey &pub_key,
 	       const unsigned char *in,
 	       size_t len) {
-    Data out;
-    out.resize(crypto_box_NONCEBYTES+crypto_box_MACBYTES+len, 0);
+    Data out(crypto_box_NONCEBYTES+crypto_box_MACBYTES+len);
     randombytes_buf(&out[0], crypto_box_NONCEBYTES);
     
     if (crypto_box_easy(&out[crypto_box_NONCEBYTES],
@@ -41,8 +40,7 @@ namespace crypt {
   Data decrypt(const Key &key, const PubKey &pub_key,
 	       const unsigned char *in,
 	       size_t len) {
-    Data out;
-    out.resize(len-crypto_box_NONCEBYTES-crypto_box_MACBYTES, 0);
+    Data out(len-crypto_box_NONCEBYTES-crypto_box_MACBYTES);
     
     if (crypto_box_open_easy(&out[0],
 			     &in[crypto_box_NONCEBYTES], len-crypto_box_NONCEBYTES,

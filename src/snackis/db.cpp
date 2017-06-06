@@ -26,7 +26,6 @@ namespace snackis {
     peers(ctx, "peers", {&peer_id},
 	  {&peer_name, &peer_email, &peer_crypt_key, &peer_created_at}),
 
-    peer_names(ctx, "peer_names", {&peer_name}, {&peer_id}),
     peer_emails(ctx, "peer_emails", {&peer_email}, {&peer_id}),
 
     thread_id("id",                 uid_type,       &Thread::id),
@@ -38,8 +37,6 @@ namespace snackis {
 	    {&thread_name, &thread_started_at, &thread_posted_at,
 		&thread_started_by}),
 
-    thread_names(ctx, "thread_names", {&thread_name}, {&thread_id}),
-
     msg_id("id", uid_type, &Msg::id),
     msgs(ctx, "msgs", {&msg_id}, {}),
     
@@ -49,17 +46,14 @@ namespace snackis {
     msg_to("to",                    str_type,            &Msg::to),
     msg_fetched_at("fetched_at",    time_type,           &Msg::fetched_at),
     msg_peer_name("peer_name",      str_type,            &Msg::peer_name),
-    msg_crypt_key("peer_crypt_key", crypt::pub_key_type, &Msg::crypt_key),
+    msg_crypt_key("crypt_key",      crypt::pub_key_type, &Msg::crypt_key),
+    msg_invite_id("invite_id",      uid_type,            &Msg::invite_id),
     inbox(ctx, "inbox", {&msg_id},
 	  {&msg_type, &msg_proto_rev, &msg_fetched_at, &msg_peer_name,
-	      &msg_from, &msg_crypt_key}),
+	      &msg_from, &msg_crypt_key, &msg_invite_id}),
     
     outbox(ctx, "outbox", {&msg_id},
-	   {&msg_type, &msg_proto_rev, &msg_from, &msg_to,
-	       &msg_peer_name, &msg_crypt_key}) {
-    peers.indexes.insert(&peer_names);
+	   {&msg_type, &msg_proto_rev, &msg_to, &msg_peer_name, &msg_crypt_key}) {
     peers.indexes.insert(&peer_emails);
-
-    threads.indexes.insert(&thread_names);
   }
 }
