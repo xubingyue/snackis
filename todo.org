@@ -3,14 +3,13 @@
 ** check msgs table in imap
 * add encrypt command/form
 ** bin/hex selection
-** add decrypt_path/encrypt_path settings
+** add in_path/out_path settings
 *** create on demand if not exists
-** add enum field for all files in decrypt_path
+** add enum field for all files in in_path
 ** add field for name
 *** default same
-** store in encrypt_path
+** store in out_path
 * add decrypt command/form
-** inverse of encrypt
 * add backup command
 ** backup folder setting, default /backup
 ** run tar -z proc
@@ -19,5 +18,6 @@
 ** remove namespace where used
 * add logout form
 ** send N messages in outbox, later/ok
-** empty decrypt folder, later/ok
+** empty in folder, later/ok
+** empty out folder, later/ok
 ** backup database, later/ok
