@@ -13,10 +13,7 @@ namespace snackis {
 
     invite_to("to",                   str_type,  &Invite::to),
     invite_posted_at("posted_at",     time_type, &Invite::posted_at),
-    invite_accepted_at("accepted_at", time_type, &Invite::accepted_at),
-    invite_rejected_at("rejected_at", time_type, &Invite::rejected_at),
-    invites(ctx, "invites", {&invite_to},
-	    {&invite_posted_at, &invite_accepted_at, &invite_rejected_at}),
+    invites(ctx, "invites", {&invite_to}, {&invite_posted_at}),
     
     peer_id("id",                  uid_type,            &Peer::id),
     peer_name("name",              str_type,            &Peer::name),

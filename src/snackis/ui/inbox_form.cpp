@@ -12,9 +12,10 @@ namespace ui {
     status = "Press Ctrl-s to perform selected actions, or Ctrl-q to cancel";
     margin_top = 1;
     db::Trans trans(ctx);
-
-    while (!ctx.db.inbox.recs.empty()) {
-      const db::Rec<Msg> msg_rec(*ctx.db.inbox.recs.begin());
+    std::set<db::Rec<Msg>> temp_recs(ctx.db.inbox.recs.begin(),
+				     ctx.db.inbox.recs.end());
+    
+    for (auto msg_rec: temp_recs) {
       const Msg msg(ctx.db.inbox, msg_rec);
       if (msg.type == Msg::INVITE) {
 	auto fld(new EnumField<bool>(*this, Dim(1, 10),
@@ -83,6 +84,10 @@ namespace ui {
 	      erase(ctx.db.inbox, rec);
 	    }
 	  } else if (msg.type == Msg::ACCEPT || msg.type == Msg::REJECT) {
+	    db::Rec<Invite> inv_rec;
+	    set(inv_rec, ctx.db.invite_to, msg.from);
+	    erase(ctx.db.invites, inv_rec);
+	    
 	    auto resp_fld(dynamic_cast<EnumField<bool> *>(i.second));
 	    if (resp_fld->selected) { erase(ctx.db.inbox, rec); }
 	  } else {

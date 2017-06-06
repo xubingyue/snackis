@@ -19,7 +19,7 @@ namespace snackis {
     db::Table<BasicSetting> settings;
     
     db::Col<Invite, str> invite_to;
-    db::Col<Invite, Time> invite_posted_at, invite_accepted_at, invite_rejected_at;
+    db::Col<Invite, Time> invite_posted_at;
     db::Table<Invite> invites;
 	    
     db::Col<Peer, UId> peer_id;
