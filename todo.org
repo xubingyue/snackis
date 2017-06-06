@@ -1,15 +1,14 @@
 * skip seen messages
 ** insert into msgs tbl in imap
 ** check msgs table in imap
-* ---
 * add encrypt command/form
 ** bin/hex selection
-** add clear_path/crypt_path settings
+** add decrypt_path/encrypt_path settings
 *** create on demand if not exists
-** add enum field for all files in clear_path
+** add enum field for all files in decrypt_path
 ** add field for name
 *** default same
-** store in crypt_path
+** store in encrypt_path
 * add decrypt command/form
 ** inverse of encrypt
 * add backup command
@@ -18,3 +17,7 @@
 ** store as db_timestamp.tar.gz
 * move package error types into snackis ns
 ** remove namespace where used
+* add logout form
+** send N messages in outbox, later/ok
+** empty decrypt folder, later/ok
+** backup database, later/ok
