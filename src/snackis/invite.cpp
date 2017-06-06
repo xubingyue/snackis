@@ -13,8 +13,6 @@ namespace snackis {
   void post(Invite &inv) {
     Ctx &ctx(inv.ctx);
     inv.posted_at = now();
-    inv.accepted_at = nulltime;
-    inv.rejected_at = nulltime;
     upsert(ctx.db.invites, inv);
 
     Msg msg(ctx, Msg::INVITE, inv.to);

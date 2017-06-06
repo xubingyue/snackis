@@ -1,4 +1,3 @@
-* remove last_invite from invite form
 * add inbox ok fields for accepts/rejects
 ** validate invite_id
 ** remove invite accepted_at/rejected_at
@@ -12,10 +11,11 @@
 * ---
 * add encrypt command/form
 ** bin/hex selection
-** encrypt external file for peer and write to file
+** add in_path/out_path settings
+*** create on demand if not exists
+** add enum field for all files in in_path
 * add decrypt command/form
-** bin/hex selection
-** decrypt external file from peer and write to file
+** inverse of encrypt
 * add backup command
 ** backup folder setting, default /backup
 ** run tar -z proc
