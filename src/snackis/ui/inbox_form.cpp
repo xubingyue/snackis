@@ -19,7 +19,7 @@ namespace ui {
       if (msg.type == Msg::INVITE) {
 	auto fld(new EnumField<InviteResponse>(*this, Dim(1, 10),
 					       fmt("Invite from %0 (%1)",
-						   msg.peer_name, msg.peer_email)));
+						   msg.peer_name, msg.from)));
 	fld->allow_clear = true;
 	push(*fld, "accept", INVITE_ACCEPT);
 	push(*fld, "reject", INVITE_REJECT);
@@ -43,13 +43,15 @@ namespace ui {
 	  (ch == KEY_RETURN && &active_field(frm) == frm.fields.back())) {
 	validate(frm);
 
-	while (!ctx.db.inbox.recs.empty()) {
-	  db::Rec<Msg> rec(*ctx.db.inbox.recs.begin());
+	for (auto i: frm.field_lookup) {
+	  db::Rec<Msg> rec;
+	  set(rec, ctx.db.msg_id, i.first);
+	  load(ctx.db.inbox, rec);
 	  const Msg msg(ctx.db.inbox, rec);
-	  auto fld(frm.field_lookup[msg.id]);
 
 	  if (msg.type == Msg::INVITE) {
-	    auto resp_fld(dynamic_cast<EnumField<InviteResponse> *>(fld));
+	    auto resp_fld(dynamic_cast<EnumField<InviteResponse> *>(i.second));
+
 	    if (resp_fld->selected) {
 	      switch(resp_fld->selected->val) {
 	      case INVITE_ACCEPT:
@@ -57,10 +59,10 @@ namespace ui {
 	      case INVITE_REJECT:
 		break;
 	      }
+
+	      erase(ctx.db.inbox, rec);
 	    }
 	  }
-
-	  erase(ctx.db.inbox, rec);
 	}
 	
 	db::commit(trans);

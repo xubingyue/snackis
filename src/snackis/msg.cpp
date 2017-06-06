@@ -8,7 +8,12 @@ namespace snackis {
   Msg::Msg(Ctx &ctx): Rec(ctx) { }
 
   Msg::Msg(Ctx &ctx, const str &type, const str &to):
-    Rec(ctx), type(type), proto_rev(PROTO_REV), to(to) { }
+    Rec(ctx), type(type), proto_rev(PROTO_REV), to(to) {
+    Peer &me(whoami(ctx));
+    crypt_key = me.crypt_key;
+    peer_name = me.name;
+    from = me.email;
+  }
 
   Msg::Msg(const db::Table<Msg> &tbl, const db::Rec<Msg> &rec):
     Rec(dynamic_cast<Ctx &>(tbl.ctx)), id(false) {
@@ -21,7 +26,7 @@ namespace snackis {
     Stream buf;
     db::Rec<Msg> rec;
     copy(ctx.db.outbox, rec, msg);
-    write(ctx.db.outbox, rec, buf, nullopt);
+    write(ctx.db.inbox, rec, buf, nullopt);
     const str data(buf.str());
 
     if (msg.type == Msg::INVITE) {
@@ -45,12 +50,12 @@ namespace snackis {
     Data dat(hex_bin(in.substr(i+2)));
 
     if (msg.type != Msg::INVITE) {
-      const Peer peer(get_email_peer(ctx, msg.peer_email));
+      const Peer peer(get_email_peer(ctx, msg.from));
       dat = crypt::decrypt(*get_val(ctx.settings.crypt_key), peer.crypt_key,
 			   &dat[0],
 			   dat.size());
     }
-    
+
     Stream buf(str(dat.begin(), dat.end()));
     db::Rec<Msg> rec;
     read(ctx.db.inbox, buf, rec, nullopt);

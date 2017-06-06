@@ -11,22 +11,20 @@ namespace snackis {
     setting_val("val", str_type, &BasicSetting::val),
     settings(ctx, "settings", {&setting_key}, {&setting_val}),
 
-    invite_to("to",               str_type,  &Invite::to),
-    invite_sent_at("sent_at",     time_type, &Invite::sent_at),
-    invite_accept_at("accept_at", time_type, &Invite::accept_at),
-    invite_reject_at("reject_at", time_type, &Invite::reject_at),
+    invite_to("to",                   str_type,  &Invite::to),
+    invite_posted_at("posted_at",     time_type, &Invite::posted_at),
+    invite_accepted_at("accepted_at", time_type, &Invite::accepted_at),
+    invite_rejected_at("rejected_at", time_type, &Invite::rejected_at),
     invites(ctx, "invites", {&invite_to},
-	    {&invite_sent_at, &invite_accept_at, &invite_reject_at}),
+	    {&invite_posted_at, &invite_accepted_at, &invite_rejected_at}),
     
-    peer_id("id",                 uid_type,            &Peer::id),
-    peer_name("name",             str_type,            &Peer::name),
-    peer_email("email",           str_type,            &Peer::email),
-    peer_crypt_key("crypt_key",   crypt::pub_key_type, &Peer::crypt_key),
-    peer_invited_at("invited_at", time_type,           &Peer::invited_at),
-    peer_accepted_at("accepted_at", time_type,         &Peer::accepted_at),
+    peer_id("id",                  uid_type,            &Peer::id),
+    peer_name("name",              str_type,            &Peer::name),
+    peer_email("email",            str_type,            &Peer::email),
+    peer_crypt_key("crypt_key",    crypt::pub_key_type, &Peer::crypt_key),
+    peer_created_at("created_at",  time_type,           &Peer::created_at),
     peers(ctx, "peers", {&peer_id},
-	  {&peer_name, &peer_email, &peer_crypt_key, &peer_invited_at,
-	      &peer_accepted_at}),
+	  {&peer_name, &peer_email, &peer_crypt_key, &peer_created_at}),
 
     peer_names(ctx, "peer_names", {&peer_name}, {&peer_id}),
     peer_emails(ctx, "peer_emails", {&peer_email}, {&peer_id}),
@@ -47,18 +45,18 @@ namespace snackis {
     
     msg_type("type",                str_type,            &Msg::type),
     msg_proto_rev("proto_rev",      int64_type,          &Msg::proto_rev),
+    msg_from("from",                str_type,            &Msg::from),
     msg_to("to",                    str_type,            &Msg::to),
     msg_fetched_at("fetched_at",    time_type,           &Msg::fetched_at),
     msg_peer_name("peer_name",      str_type,            &Msg::peer_name),
-    msg_peer_email("peer_email",    str_type,            &Msg::peer_email),
     msg_crypt_key("peer_crypt_key", crypt::pub_key_type, &Msg::crypt_key),
     inbox(ctx, "inbox", {&msg_id},
-	  {&msg_type, &msg_proto_rev, &msg_to, &msg_fetched_at, &msg_peer_name,
-	      &msg_peer_email, &msg_crypt_key}),
+	  {&msg_type, &msg_proto_rev, &msg_fetched_at, &msg_peer_name,
+	      &msg_from, &msg_crypt_key}),
     
     outbox(ctx, "outbox", {&msg_id},
-	   {&msg_type, &msg_proto_rev, &msg_to,
-	       &msg_peer_name, &msg_peer_email, &msg_crypt_key}) {
+	   {&msg_type, &msg_proto_rev, &msg_from, &msg_to,
+	       &msg_peer_name, &msg_crypt_key}) {
     peers.indexes.insert(&peer_names);
     peers.indexes.insert(&peer_emails);
 

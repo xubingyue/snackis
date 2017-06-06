@@ -117,6 +117,7 @@ namespace snackis {
     const str body(out.str());
     const str tag("__SNACKIS__\r\n");
     auto i(body.find(tag) + tag.size());
+
     if (i == str::npos || !decode(msg, body.substr(i))) { return nullopt; }
     return msg;
   }
@@ -145,7 +146,7 @@ namespace snackis {
     if (tokens.size() < 2 || tokens[1] != "SEARCH") {
       ERROR(Imap, fmt("Invalid fetch result:\n%0", out.str())); 
     }
-    
+
     for (auto tok = std::next(tokens.begin(), 2); tok != tokens.end(); tok++) {
       const str uid(*tok);
       opt<Msg> msg = fetch_uid(imap, uid);
@@ -157,7 +158,7 @@ namespace snackis {
 
       insert(imap.ctx.db.inbox, *msg);
       delete_uid(imap, uid);
-      log(imap.ctx, fmt("Fetched message %0 from %1", msg->id, msg->peer_email));
+      log(imap.ctx, fmt("Fetched message %0 from %1", msg->id, msg->from));
     }
 
     if (tokens.size() > 2) {

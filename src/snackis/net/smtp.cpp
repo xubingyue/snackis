@@ -81,7 +81,7 @@ namespace snackis {
 
   void send(struct Smtp &smtp, const Msg &msg) {
     curl_easy_setopt(smtp.client, CURLOPT_UPLOAD, 1L);
-    curl_easy_setopt(smtp.client, CURLOPT_MAIL_FROM, msg.peer_email.c_str());
+    curl_easy_setopt(smtp.client, CURLOPT_MAIL_FROM, msg.from.c_str());
     struct curl_slist *to = nullptr;
     to = curl_slist_append(to, msg.to.c_str());
     curl_easy_setopt(smtp.client, CURLOPT_MAIL_RCPT, to);
@@ -94,7 +94,7 @@ namespace snackis {
 			  "visit https://github.com/andreas-gone-wild/snackis "
 			  "for more information.\r\n\r\n"
 			  "__SNACKIS__\r\n",
-			  msg.peer_email, msg.to, msg.id, version_str()) +
+			  msg.from, msg.to, msg.id, version_str()) +
 		      encode(msg));
     smtp.data.assign(msg_str.begin(), msg_str.end());
 		  

@@ -16,8 +16,8 @@ namespace snackis {
     str type;
     int64_t proto_rev;
     Time fetched_at;
-    str to;
-    str peer_name, peer_email;
+    str from, to;
+    str peer_name;
     crypt::PubKey crypt_key;
     
     Msg(Ctx &ctx);

@@ -61,11 +61,12 @@ namespace ui {
       if (!search.empty()) {
 	search.pop_back();
 	form_driver(form.ptr, REQ_PREV_CHAR);
-
-	if (allow_clear && search.empty()) {
-	  set_str(*this, "");
-	}
       }
+
+      if (allow_clear && search.empty()) {
+	clear(*this);
+      }
+
       break;
     case KEY_DC:
       if (allow_clear) {

@@ -231,12 +231,22 @@ namespace db {
 	out.write((char *)&size, sizeof size);
 	out.write((char *)&edata[0], size);
     } else {
-      const int32_t cnt(rec.size());
+      int32_t cnt(0);
+
+      for (auto c: tbl.cols) {
+	auto found = rec.find(c);
+	if (found != rec.end()) { cnt++; }
+      }
+
       out.write((const char *)&cnt, sizeof cnt);
     
-      for (auto f: rec) {
-	str_type.write(f.first->name, out);
-	f.first->write(f.second, out);
+      for (auto c: tbl.cols) {
+	auto found = rec.find(c);
+	
+	if (found != rec.end()) {
+	  str_type.write(c->name, out);
+	  c->write(rec.at(c), out);
+	}
       }
     }
   }

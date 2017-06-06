@@ -34,9 +34,9 @@ namespace ui {
       
       set_str(frm.last_invite,
 	      fmt("%0/%1/%2",
-		  fmt(inv.sent_at, time_fmt),
-		  fmt(inv.accept_at, time_fmt),
-		  fmt(inv.reject_at, time_fmt)));
+		  fmt(inv.posted_at, time_fmt),
+		  fmt(inv.accepted_at, time_fmt),
+		  fmt(inv.rejected_at, time_fmt)));
     }
     
     return inv;
@@ -54,14 +54,12 @@ namespace ui {
 	  (ch == KEY_RETURN && &active_field(frm) == frm.fields.back())) {
 	validate(frm);
 	Invite inv(load_invite(frm));
-	send(inv);	
+	post(inv);	
+	log(ctx, "New invite posted to outbox");
 
 	if (frm.send_now.selected->val) {
 	  Smtp smtp(ctx);
 	  send(smtp);
-	  log(ctx, "New invite sent");
-	} else {
-	  log(ctx, "New invite created in outbox");
 	}
 
 	db::commit(trans);

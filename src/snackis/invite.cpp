@@ -10,17 +10,13 @@ namespace snackis {
     copy(tbl, *this, rec);
   }
 
-  void send(Invite &inv) {
-    inv.sent_at = now();
-    inv.accept_at = nulltime;
-    inv.reject_at = nulltime;
+  void post(Invite &inv) {
+    inv.posted_at = now();
+    inv.accepted_at = nulltime;
+    inv.rejected_at = nulltime;
     upsert(inv.ctx.db.invites, inv);
 
     Msg msg(inv.ctx, "invite", inv.to);
-    Peer &me(whoami(inv.ctx));
-    msg.crypt_key = me.crypt_key;
-    msg.peer_name = me.name;
-    msg.peer_email = me.email;
     insert(inv.ctx.db.outbox, msg);
   }
 }

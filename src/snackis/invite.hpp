@@ -11,13 +11,13 @@
 namespace snackis {
   struct Invite: public Rec {
     str to;
-    Time sent_at, accept_at, reject_at;
+    Time posted_at, accepted_at, rejected_at;
     
     Invite(Ctx &ctx, const str &to);
     Invite(const db::Table<Invite> &tbl, const db::Rec<Invite> &rec);
   };
 
-  void send(Invite &inv);
+  void post(Invite &inv);
 }
 
 #endif

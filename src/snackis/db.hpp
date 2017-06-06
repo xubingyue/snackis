@@ -19,13 +19,13 @@ namespace snackis {
     db::Table<BasicSetting> settings;
     
     db::Col<Invite, str> invite_to;
-    db::Col<Invite, Time> invite_sent_at, invite_accept_at, invite_reject_at;
+    db::Col<Invite, Time> invite_posted_at, invite_accepted_at, invite_rejected_at;
     db::Table<Invite> invites;
 	    
     db::Col<Peer, UId> peer_id;
     db::Col<Peer, str> peer_name, peer_email;
     db::Col<Peer, crypt::PubKey> peer_crypt_key;
-    db::Col<Peer, Time> peer_invited_at, peer_accepted_at;
+    db::Col<Peer, Time> peer_created_at;
     db::Table<Peer> peers, peer_names, peer_emails;
 
     db::Col<Thread, UId> thread_id;
@@ -39,9 +39,9 @@ namespace snackis {
 
     db::Col<Msg, str> msg_type;
     db::Col<Msg, int64_t> msg_proto_rev;
-    db::Col<Msg, str> msg_to;
+    db::Col<Msg, str> msg_from, msg_to;
     db::Col<Msg, Time> msg_fetched_at;
-    db::Col<Msg, str> msg_peer_name, msg_peer_email;
+    db::Col<Msg, str> msg_peer_name;
     db::Col<Msg, crypt::PubKey> msg_crypt_key;
     db::Table<Msg> inbox;
 
