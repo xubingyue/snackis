@@ -17,6 +17,15 @@ Once inside, the first thing you probably want to do is to have a look at the se
 
 ![settings example](images/settings.png?raw=true)
 
+#### Sending Invites
+Type ```invite``` in the reader and press ```Return``` to open the invite form. Snackis will sent an email containing your public key to the specified address. Try it with your own address to get an idea of how it works, Snackis wont mind.
+
+![invite example](images/invite.png?raw=true)
+
+Don't forget to send the actual message. Snackis stores all outgoing messages in an outbox that may be emptied by typing ```send``` followed by ```Return``` in the reader.
+
+![send example](images/send.png?raw=true)
+
 ### License
 Snackis is licensed under the GNU General Public License Version 3.
 

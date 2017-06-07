@@ -80,15 +80,15 @@ namespace ui {
     load_folder(*this, Dim(1, 50), "Load-folder"),
     save_folder(*this, Dim(1, 50), "Save-folder"),
 
-    imap_url(*this, Dim(1, 50), "Imap-url"),
-    imap_port(*this, Dim(1, 10), "Imap-port"),
-    imap_user(*this, Dim(1, 50), "Imap-user"),
-    imap_pass(*this, Dim(1, 50), "Imap-password"),
+    imap_url(*this, Dim(1, 50), "Imap Url"),
+    imap_port(*this, Dim(1, 10), "Imap Port"),
+    imap_user(*this, Dim(1, 50), "Imap User"),
+    imap_pass(*this, Dim(1, 50), "Imap Password"),
 
-    smtp_url(*this, Dim(1, 50), "Smtp-url"),
-    smtp_port(*this, Dim(1, 10), "Smtp-port"),
-    smtp_user(*this, Dim(1, 50), "Smtp-user"),
-    smtp_pass(*this, Dim(1, 50), "Smtp-pass") {
+    smtp_url(*this, Dim(1, 50), "Smtp Url"),
+    smtp_port(*this, Dim(1, 10), "Smtp Port"),
+    smtp_user(*this, Dim(1, 50), "Smtp User"),
+    smtp_pass(*this, Dim(1, 50), "Smtp Password") {
     label = "Settings";
     status = "Press Ctrl-s to save settings, or Ctrl-q to cancel";
     margin_top = 1;
