@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 set(CMAKE_CXX_COMPILER clang++)
 project(snackis)
 
-add_compile_options(-std=c++1z -stdlib=libc++ -Wall -Werror -g)
+add_compile_options(-std=c++1z -stdlib=libc++ -Wall -Werror -O2)
 set(CMAKE_EXE_LINKER_FLAGS "-stdlib=libc++")
 
 file(GLOB_RECURSE core_src src/snackis/core/*.cpp)
@@ -14,18 +14,18 @@ file(GLOB snackis_src src/snackis/*.cpp)
 
 add_library(libsnackis STATIC ${core_src} ${crypt_src} ${db_src} ${net_src} ${snackis_src})
 target_include_directories(libsnackis PUBLIC src/)
-target_link_libraries(libsnackis libc++abi.a libc++experimental.a curl sodium pthread uuid)
+target_link_libraries(libsnackis libc++abi.a libc++experimental.a libsodium.a libuuid.a curl pthread)
 set_target_properties(libsnackis PROPERTIES PREFIX "")
 
 add_executable(tests EXCLUDE_FROM_ALL ${core_src} ${crypt_src} ${db_src} ${net_src} ${snackis_src} src/tests.cpp)
 target_include_directories(tests PUBLIC src/)
-target_link_libraries(tests libc++abi.a libc++experimental.a curl sodium pthread uuid)
+target_link_libraries(tests libc++abi.a libc++experimental.a libsodium.a libuuid.a curl pthread)
 
 file(GLOB_RECURSE ui_src src/snackis/ui/*.cpp)
 
 add_executable(snackis ${core_src} ${crypt_src} ${db_src} ${net_src} ${snackis_src} ${ui_src} src/main.cpp)
 target_include_directories(snackis PUBLIC src/)
-target_link_libraries(snackis libc++abi.a libc++experimental.a curl sodium pthread uuid curses form)
+target_link_libraries(snackis libc++abi.a libc++experimental.a libsodium.a libuuid.a curl pthread curses form)
 
 file(GLOB core_inc src/snackis/core/*.hpp)
 install(FILES ${core_inc} DESTINATION include/snackis/core)
