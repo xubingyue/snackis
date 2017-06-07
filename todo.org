@@ -1,4 +1,3 @@
-* add quick start with screen shots to README
 * add backup command
 ** backup folder setting, default /backup
 ** run tar -z proc
