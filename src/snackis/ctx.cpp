@@ -8,6 +8,9 @@ namespace snackis {
 
   void open(Ctx &ctx) {
     open(dynamic_cast<db::Ctx &>(ctx));
+    create_path(*get_val(ctx.settings.load_folder));
+    create_path(*get_val(ctx.settings.save_folder));
+
     slurp(ctx);
 
     db::Trans trans(ctx);

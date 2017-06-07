@@ -36,30 +36,18 @@ namespace ui {
     };
 
     load_from.margin_top = 1;
-    for (auto &i: PathIter(*get_val(ctx.settings.load_folder))) {
-      const Path p(i);
-      insert(load_from, p.filename(), p);
-    }
-    
+    init(load_from, *get_val(ctx.settings.load_folder));
     load_from.on_select = [this]() {
       set_str(save_to, load_from.selected->lbl);
     };
 
+    save_to.margin_top = 1;
     insert(encode, "yes", true);
     insert(encode, "no", false);
   }
 
   bool run(EncryptForm &frm) {
     Ctx &ctx(frm.window.ctx);
-
-    const str ldf(*get_val(ctx.settings.load_folder));
-
-    if (!path_exists(ldf)) {
-      create_path(ldf);
-      log(ctx, fmt("Nothing to load"));
-      return false;
-    }
-    
     select(frm.encode, false);
     db::Trans trans(ctx);
     
@@ -69,7 +57,6 @@ namespace ui {
       if (ch == KEY_CTRL('s') || (active_field(frm).ptr == frm.encode.ptr &&
 				  ch == KEY_RETURN)) {
 	validate(frm);
-	create_path(*get_val(ctx.settings.save_folder));
 	auto peer_sel(frm.peer_email.selected);
 	auto load_from(frm.load_from.selected);
 	const str save_to(get_str(frm.save_to));
