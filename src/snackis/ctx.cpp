@@ -19,7 +19,7 @@ namespace snackis {
     if (found_me) {
       copy(ctx.db.peers, ctx.whoami, *found_me);
       if (!load(ctx.db.peers, ctx.whoami)) {
-	ERROR(db::Db, "Failed loading me");
+	ERROR(Db, "Failed loading me");
       }
     } else {
       db::Rec<Peer> me;
@@ -42,7 +42,7 @@ namespace snackis {
 
   Peer &whoami(Ctx &ctx) {
     if (!load(ctx.db.peers, ctx.whoami)) {
-      ERROR(db::Db, "Failed loading whoami");
+      ERROR(Db, "Failed loading me");
     }
 
     return ctx.whoami;

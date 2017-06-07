@@ -43,7 +43,7 @@ namespace ui {
 	  erase(ctx.db.inbox, msg_rec);
 	}
       } else {
-	ERROR(db::Db, fmt("Invalid message type: %0", msg.type));
+	ERROR(Db, fmt("Invalid message type: %0", msg.type));
       }
     }
 
@@ -91,7 +91,7 @@ namespace ui {
 	    auto resp_fld(dynamic_cast<EnumField<bool> *>(i.second));
 	    if (resp_fld->selected) { erase(ctx.db.inbox, rec); }
 	  } else {
-	    ERROR(db::Db, fmt("Invalid message type: %0", msg.type));
+	    ERROR(Db, fmt("Invalid message type: %0", msg.type));
 	  }
 	}
 	

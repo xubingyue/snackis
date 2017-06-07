@@ -1,6 +1,3 @@
-* fold BasicSetting into Setting
-* move package error types into snackis ns
-** remove namespace where used
 * add quick start with screen shots to README
 * add backup command
 ** backup folder setting, default /backup

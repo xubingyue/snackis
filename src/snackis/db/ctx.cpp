@@ -80,7 +80,7 @@ namespace db {
     Data ddata;
     try {
       ddata = crypt::decrypt(secret, &edata[0], edata.size());
-    } catch (const crypt::CryptError &e) {
+    } catch (const CryptError &e) {
       return false;
     }
     

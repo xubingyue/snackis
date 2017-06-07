@@ -12,7 +12,7 @@ namespace snackis {
   
   void init() {
     if (sodium_init() == -1) {
-      ERROR(crypt::Crypt, "Failed initializing libsodium");
+      ERROR(Crypt, "Failed initializing libsodium");
     }
   }
 

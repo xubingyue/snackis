@@ -150,7 +150,7 @@ namespace ui {
 
 	me.name = get_str(frm.name);
 	me.email = get_str(frm.email);
-	if (!update(ctx.db.peers, me)) { ERROR(db::Db, "Failed updating me"); }
+	if (!update(ctx.db.peers, me)) { ERROR(Db, "Failed updating me"); }
 	set_val(ctx.settings.editor, get_str(frm.editor));
 	set_val(ctx.settings.load_folder, get_str(frm.load_folder));
 	set_val(ctx.settings.save_folder, get_str(frm.save_folder));

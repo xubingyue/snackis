@@ -5,10 +5,9 @@
 #include "snackis/core/str.hpp"
 
 namespace snackis {
-namespace crypt {
   struct CryptError: public Error {
     CryptError(const str &msg);
   };
-}}
+}
 
 #endif

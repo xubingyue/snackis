@@ -4,10 +4,9 @@
 #include "snackis/core/error.hpp"
 
 namespace snackis {
-namespace db {
   struct DbError: public Error {
     DbError(const str &msg);
   };
-}}
+}
 
 #endif
