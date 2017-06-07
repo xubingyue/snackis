@@ -5,7 +5,7 @@
 Snackis requires a ```C++1z``` capable compiler/standard library to build, and defaults to using ```clang``` with ```libc++```; it further depends on ```libcurl```, ```libpthread```, ```libsodium``` and ```libuuid``` for core functionality, as well as ```NCurses``` for the UI. All dependencies except ```libcurl``` and ```NCurses``` are statically linked into the provided [Linux/64-binaries](https://github.com/andreas-gone-wild/snackis/tree/master/dist).
 
 ### Getting started
-If you're running Linux/64, grab the ```snackis```-executable from ```/dist``` and put it in its own separate catalog somewhere. Snackis is designed to run completely self-contained and will create anything it needs in the directory where it's started.
+If you're running Linux/64, grab the ```snackis```-executable from [here](https://github.com/andreas-gone-wild/snackis/tree/master/dist) and put it in its own directory. Snackis is designed to run completely self-contained and will create everything it needs in the directory where it's started.
 
 #### Master Password
 Each snackis installation is protected by a master password that is used to encrypt the database; pick a good one, because changing it means re-encrypting the entire database.
