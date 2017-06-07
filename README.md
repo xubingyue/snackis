@@ -20,7 +20,7 @@ Once inside, the first thing you probably want to do is to have a look at the se
 #### Encryption
 Snackis supports encrypting arbitrary data for decryption by a specific peer. Type ```encrypt``` and press ```Return``` in the reader to open the encryption form. Files are loaded from the load-folder specified in ```Settings```. On top of being encrypted, the resulting file is cryptographically signed and the signature is verified when decrypting. Encoding converts the output to hexadecimal text to enable transferring the encrypted data reliably over text protocols like email, it also rougly doubles the size of the output.
 
-![encrypt example](images/accept.png?raw=true)
+![encrypt example](images/encrypt.png?raw=true)
 
 #### Decryption
 To decrypt files that have been encrypted by Snackis, put them in the load-folder and type ```decrypt``` and press return in the reader to open the decryption form. Files that were encrypted with encoding turned on need decoding turned on to be decrypted.
@@ -37,7 +37,7 @@ Don't forget to send the actual message. Snackis stores all outgoing messages in
 ![send example](images/send.png?raw=true)
 
 #### Messages
-All Snackis-messages look more or less the same to the outside world. Invites are the exception by only being encoded, not encrypted; since the sender by definition doesn't know the receivers encryption key yet.
+All Snackis-messages look more or less the same to the outside world. Invites are the exception by only being encoded, not encrypted; since the sender by definition doesn't know the receivers encryption-key yet.
 
 ![message example](images/message.png?raw=true)
 
@@ -47,9 +47,12 @@ All incoming traffic arrives in the inbox, type ```fetch``` and press ```Return`
 ![inbox example](images/inbox.png?raw=true)
 
 #### Peers
-Whenever an invite is accepted/rejected, a message is sent to inform the inviting peer. Peers are uniquely identified by their email address and may be invited any number of times, encryption keys are exchanged each time an invitation is accepted.
+Whenever an invite is accepted/rejected, a message is sent to inform the inviting peer. Peers are uniquely identified by their email address and may be invited any number of times, encryption-keys are exchanged each time an invitation is accepted.
 
 ![accept example](images/accept.png?raw=true)
+
+### Algorithms
+Snackis delegates anything concerning encryption to [libsodium](https://github.com/jedisct1/libsodium). The IETF variant of ChaCha20-Poly1305 is used to encrypt the database and XSalsa20 with X25519 key exchange and Poly2305 MAC authentication for everything else. The master password is hashed using ```Scrypt```, and the password is then encrypted using the hash as key for future validation.
 
 ### License
 Snackis is licensed under the GNU General Public License Version 3.
