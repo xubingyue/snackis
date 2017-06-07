@@ -12,6 +12,7 @@ file(GLOB_RECURSE db_src src/snackis/db/*.cpp)
 file(GLOB_RECURSE net_src src/snackis/net/*.cpp)
 file(GLOB snackis_src src/snackis/*.cpp)
 
+find_library(UUID NAMES libc++abi.a)
 find_library(CURL NAMES libcurl.a)
 find_library(SODIUM NAMES libsodium.a)
 find_library(UUID NAMES libuuid.a)
