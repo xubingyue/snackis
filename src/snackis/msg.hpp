@@ -1,7 +1,6 @@
 #ifndef SNACKIS_MSG_HPP
 #define SNACKIS_MSG_HPP
 
-#include "snackis/peer.hpp"
 #include "snackis/rec.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/core/time.hpp"
