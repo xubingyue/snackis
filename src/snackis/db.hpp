@@ -18,33 +18,31 @@ namespace snackis {
     db::Col<BasicSetting, str> setting_val;
     db::Table<BasicSetting> settings;
     
-    db::Col<Invite, str> invite_to;
+    db::Col<Invite, str>  invite_to;
     db::Col<Invite, Time> invite_posted_at;
     db::Table<Invite> invites;
 	    
-    db::Col<Peer, UId> peer_id;
-    db::Col<Peer, str> peer_name, peer_email;
+    db::Col<Peer, UId>           peer_id;
+    db::Col<Peer, str>           peer_name;
+    db::Col<Peer, str>           peer_email;
     db::Col<Peer, crypt::PubKey> peer_crypt_key;
-    db::Col<Peer, Time> peer_created_at;
+    db::Col<Peer, Time>          peer_created_at;
     db::Table<Peer> peers, peer_emails;
 
-    db::Col<Thread, UId> thread_id;
-    db::Col<Thread, str> thread_name;
-    db::Col<Thread, Time> thread_started_at, thread_posted_at;
+    db::Col<Thread, UId>  thread_id;
+    db::Col<Thread, str>  thread_name;
+    db::Col<Thread, Time> thread_started_at;
     db::Col<Thread, db::Rec<Peer>> thread_started_by;
     db::Table<Thread> threads;
     
-    db::Col<Msg, UId> msg_id;
-    db::Table<Msg> msgs;
-
-    db::Col<Msg, str> msg_type;
-    db::Col<Msg, str> msg_from, msg_to;
+    db::Col<Msg, UId>  msg_id;
+    db::Col<Msg, str>  msg_type;
+    db::Col<Msg, str>  msg_from;
+    db::Col<Msg, str>  msg_to;
     db::Col<Msg, Time> msg_fetched_at;
-    db::Col<Msg, str> msg_peer_name;
+    db::Col<Msg, str>  msg_peer_name;
     db::Col<Msg, crypt::PubKey> msg_crypt_key;
-    db::Table<Msg> inbox;
-
-    db::Table<Msg> outbox;
+    db::Table<Msg> msgs, inbox, outbox;
 
     Db(db::Ctx &ctx);
   };
