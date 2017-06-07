@@ -8,8 +8,7 @@ namespace snackis {
 namespace ui {
   EncryptForm::EncryptForm(View &view, Footer &ftr):
     ViewForm(view, ftr),
-    peer_name(*this, Dim(1, 50), "Peer Name"),
-    peer_email(*this, Dim(1, 50), "Peer Email"),
+    peer(*this, "Peer"),
     load_from(*this, Dim(1, 50), "Load From"),
     save_to(*this, Dim(1, 50), "Save To"),
     encode(*this, Dim(1, 5), "Encode") {
@@ -17,24 +16,6 @@ namespace ui {
     status = "Press Ctrl-s to encrypt, or Ctrl-q to cancel";
     margin_top = 1;
     
-    for (auto p: ctx.db.peers.recs) {
-      auto id(*get(p, ctx.db.peer_id));
-      insert(peer_name, *get(p, ctx.db.peer_name), id);
-      insert(peer_email, *get(p, ctx.db.peer_email), id);
-    }
-
-    peer_name.on_select = [this]() {
-      auto &sel(peer_name.selected);
-      assert(sel);
-      select(peer_email, sel->val, false);
-    };
-
-    peer_email.on_select = [this]() {
-      auto &sel(peer_email.selected);
-      assert(sel);
-      select(peer_name, sel->val, false);
-    };
-
     load_from.margin_top = 1;
     init(load_from, *get_val(ctx.settings.load_folder));
     load_from.on_select = [this]() {
@@ -57,18 +38,16 @@ namespace ui {
       if (ch == KEY_CTRL('s') || (active_field(frm).ptr == frm.encode.ptr &&
 				  ch == KEY_RETURN)) {
 	validate(frm);
-	auto peer_sel(frm.peer_email.selected);
-	auto load_from(frm.load_from.selected);
 	const str save_to(get_str(frm.save_to));
 
-	if (peer_sel && load_from && save_to != "") {
+	if (frm.peer.selected && frm.load_from.selected && save_to != "") {
 	  const str
-	    in_path(load_from->val),
+	    in_path(frm.load_from.selected->val),
 	    out_path(Path(*get_val(ctx.settings.save_folder)) / save_to);
 	    
 	  log(ctx, fmt("Encrypting from '%0' to '%1'...", in_path, out_path));
 	  db::Rec<Peer> peer_rec;
-	  set(peer_rec, ctx.db.peer_id, peer_sel->val);
+	  set(peer_rec, ctx.db.peer_id, *frm.peer.selected);
 	  load(ctx.db.peers, peer_rec);
 	  Peer peer(ctx.db.peers, peer_rec);
 	  encrypt(peer, in_path, out_path, frm.encode.selected->val);	    

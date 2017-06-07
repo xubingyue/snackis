@@ -1,8 +1,5 @@
-* extract PeerPanel
-** take form in constructor
-** email, name, opt<OnSelect> on_select, opt<UId> selected 
-** hook up on_select
 * add decrypt command/form
+* Fold status into reader
 * update dist
 *---
 * add backup command
@@ -18,3 +15,5 @@
 ** backup database, later/ok
 * add scroll-support to Window
 ** forward pg-up/down from reader to console scroll
+* add post form
+* add post support in inbox
