@@ -22,6 +22,7 @@ namespace snackis {
 
   Peer get_email_peer(Ctx &ctx, const str &email);
   void encrypt(const Peer &peer, const Path &in, const Path &out, bool encode);
+  void decrypt(const Peer &peer, const Path &in, const Path &out, bool encode);
 }
 
 #endif

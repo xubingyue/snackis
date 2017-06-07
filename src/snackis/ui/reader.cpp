@@ -2,6 +2,7 @@
 #include "snackis/core/fmt.hpp"
 #include "snackis/net/imap.hpp"
 #include "snackis/net/smtp.hpp"
+#include "snackis/ui/decrypt_form.hpp"
 #include "snackis/ui/encrypt_form.hpp"
 #include "snackis/ui/inbox_form.hpp"
 #include "snackis/ui/invite_form.hpp"
@@ -52,7 +53,13 @@ namespace ui {
 	  open(frm);
 	  run(frm);
 	}));
-    
+
+    insert(rdr.field, "decrypt", Reader::Cmd([&rdr]() {
+	  DecryptForm frm(rdr.view, rdr.form.footer);
+	  open(frm);
+	  run(frm);
+	}));
+
     insert(rdr.field, "quit", Reader::Cmd([&rdr]() { rdr.quitting = true; }));
   }
 

@@ -29,7 +29,7 @@ file(GLOB_RECURSE ui_src src/snackis/ui/*.cpp)
 find_library(CURSES NAMES libcurses.a)
 find_library(FORM NAMES libform.a)
 
-add_executable(snackis EXCLUDE_FROM_ALL ${core_src} ${crypt_src} ${db_src} ${net_src} ${snackis_src} ${ui_src} src/main.cpp)
+add_executable(snackis ${core_src} ${crypt_src} ${db_src} ${net_src} ${snackis_src} ${ui_src} src/main.cpp)
 target_include_directories(snackis PUBLIC src/ ${CURL_INCLUDE_DIR} ${SODIUM_INCLUDE_DIR} ${UUID_INCLUDE_DIR} ${CURSES_INCLUDE_DIR} ${FORM_INCLUDE_DIR})
 target_link_libraries(snackis c++experimental curl sodium uuid curses form)
 
