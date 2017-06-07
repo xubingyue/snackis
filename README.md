@@ -10,12 +10,12 @@ If you're running Linux/64, grab the ```snackis```-executable from ```/dist``` a
 #### Master Password
 Each snackis installation is protected by a master password that is used to encrypt the database; pick a good one, because changing it means re-encrypting the entire database.
 
-![login example](images/login.jpg?raw=true)
+![login example](images/login.png?raw=true)
 
 #### Settings
 Once inside, the first thing you probably want to do is to have a look at the settings. Type ```settings``` and press ```Enter``` to open the settings form. Imap and Smtp settings are needed to do anything beyond encrypting/decrypting information for personal use.
 
-![settings example](images/settings.jpg?raw=true)
+![settings example](images/settings.png?raw=true)
 
 ### License
 Snackis is licensed under the GNU General Public License Version 3.
