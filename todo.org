@@ -1,12 +1,12 @@
 * Fold status into reader
+* move package error types into snackis ns
+** remove namespace where used
 * update dist
 *---
 * add backup command
 ** backup folder setting, default /backup
 ** run tar -z proc
 ** store as db_timestamp.tar.gz
-* move package error types into snackis ns
-** remove namespace where used
 * add logout form
 ** send N messages in outbox, later/ok
 ** empty in folder, later/ok
