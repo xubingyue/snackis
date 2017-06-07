@@ -9,17 +9,22 @@ namespace snackis {
   Db::Db(db::Ctx &ctx):
     setting_key("key", str_type, &BasicSetting::key),
     setting_val("val", str_type, &BasicSetting::val),
-    settings(ctx, "settings", {&setting_key}, {&setting_val}),
+    
+    settings(ctx, "settings",
+	     {&setting_key}, {&setting_val}),
 
     invite_to(       "to",        str_type,  &Invite::to),
     invite_posted_at("posted_at", time_type, &Invite::posted_at),
-    invites(ctx, "invites", {&invite_to}, {&invite_posted_at}),
+
+    invites(ctx, "invites",
+	    {&invite_to}, {&invite_posted_at}),
     
     peer_id(        "id",         uid_type,            &Peer::id),
     peer_name(      "name",       str_type,            &Peer::name),
     peer_email(     "email",      str_type,            &Peer::email),
     peer_crypt_key( "crypt_key",  crypt::pub_key_type, &Peer::crypt_key),
     peer_created_at("created_at", time_type,           &Peer::created_at),
+
     peers(ctx, "peers", {&peer_id},
 	  {&peer_name, &peer_email, &peer_crypt_key, &peer_created_at}),
 
@@ -29,17 +34,20 @@ namespace snackis {
     thread_name(      "name",       str_type,       &Thread::name),
     thread_started_at("started_at", time_type,      &Thread::started_at),
     thread_started_by("started_by", peers.rec_type, &Thread::started_by),
+
     threads(ctx, "threads", {&thread_id},
 	    {&thread_name, &thread_started_at, &thread_started_by}),
 
-    msg_id("id", uid_type, &Msg::id),
+    msg_id(        "id",            uid_type,            &Msg::id),
     msg_type(      "type",          str_type,            &Msg::type),
     msg_from(      "from",          str_type,            &Msg::from),
     msg_to(        "to",            str_type,            &Msg::to),
     msg_fetched_at("fetched_at",    time_type,           &Msg::fetched_at),
     msg_peer_name( "peer_name",     str_type,            &Msg::peer_name),
     msg_crypt_key( "crypt_key",     crypt::pub_key_type, &Msg::crypt_key),
-    msgs(ctx, "msgs", {&msg_id}, {}),
+
+    msgs(ctx, "msgs", {&msg_id},
+	 {}),
     
     inbox(ctx, "inbox", {&msg_id},
 	  {&msg_type, &msg_fetched_at, &msg_peer_name,
