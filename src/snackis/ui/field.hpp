@@ -23,7 +23,7 @@ namespace ui {
     Pos pos;
     Dim dim;
     int margin_top;
-    str label;
+    str label, info;
     char symbol;
     FIELD *ptr;
     bool active;

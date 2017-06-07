@@ -10,7 +10,7 @@ namespace ui {
   void TextField::open(const Pos &pos) {
     Field::open(pos);
     if (!echo) { field_opts_off(ptr, O_PUBLIC); }
-    if (on_complete) { symbol = '*'; }
+    symbol = ':';
   }
 
   void TextField::on_focus() { eol(form); }
