@@ -5,7 +5,7 @@
 #include "snackis/db/ctx.hpp"
 #include "snackis/net/imap.hpp"
 #include "snackis/net/smtp.hpp"
-#include "snackis/ui/profile_form.hpp"
+#include "snackis/ui/settings_form.hpp"
 #include "snackis/ui/view.hpp"
 #include "snackis/ui/window.hpp"
 
@@ -18,7 +18,7 @@ namespace ui {
     ui::redraw();
   }
 
-  static bool copy_imap(ProfileForm &frm) {
+  static bool copy_imap(SettingsForm &frm) {
     const str
       url = get_str(frm.imap_url),
       port = get_str(frm.imap_port),
@@ -33,7 +33,7 @@ namespace ui {
     return !url.empty() && !port.empty() && !user.empty() && !pass.empty();
   }
 
-  static void test_imap(ProfileForm &frm) {
+  static void test_imap(SettingsForm &frm) {
     if (copy_imap(frm)) {
       try {
 	Imap imap(frm.ctx);
@@ -44,7 +44,7 @@ namespace ui {
     }
   }
 
-  static bool copy_smtp(ProfileForm &frm) {
+  static bool copy_smtp(SettingsForm &frm) {
     const str
       url = get_str(frm.smtp_url),
       port = get_str(frm.smtp_port),
@@ -59,7 +59,7 @@ namespace ui {
     return !url.empty() && !port.empty() && !user.empty() && !pass.empty();
   }
 
-  static void test_smtp(ProfileForm &frm) {
+  static void test_smtp(SettingsForm &frm) {
     if (copy_smtp(frm)) {
       try {
 	Smtp smtp(frm.ctx);
@@ -70,7 +70,7 @@ namespace ui {
     }
   }
   
-  ProfileForm::ProfileForm(View &view, Footer &ftr):
+  SettingsForm::SettingsForm(View &view, Footer &ftr):
     ViewForm(view, ftr),
     
     name(*this, Dim(1, 50), "Name"),
@@ -89,8 +89,8 @@ namespace ui {
     smtp_port(*this, Dim(1, 10), "Smtp-port"),
     smtp_user(*this, Dim(1, 50), "Smtp-user"),
     smtp_pass(*this, Dim(1, 50), "Smtp-pass") {
-    label = "Profile";
-    status = "Press Ctrl-s to save profile, or Ctrl-q to cancel";
+    label = "Settings";
+    status = "Press Ctrl-s to save settings, or Ctrl-q to cancel";
     margin_top = 1;
     editor.on_action = [this]() { test_editor(ctx, get_str(editor)); };
     editor.info = "Press Ctrl-Space to test launching";
@@ -115,7 +115,7 @@ namespace ui {
     smtp_pass.info = "Press Ctrl-Space to test connecting";
   }
 
-  bool run(ProfileForm &frm) {
+  bool run(SettingsForm &frm) {
     Ctx &ctx(frm.window.ctx);
     db::Trans trans(ctx);
     
@@ -158,7 +158,7 @@ namespace ui {
 	copy_smtp(frm);
 	
 	db::commit(trans);
-	log(frm.window.ctx, "Saved profile");
+	log(frm.window.ctx, "Saved settings");
 	return true;
       }
 

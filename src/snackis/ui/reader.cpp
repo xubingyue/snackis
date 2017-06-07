@@ -7,13 +7,13 @@
 #include "snackis/ui/inbox_form.hpp"
 #include "snackis/ui/invite_form.hpp"
 #include "snackis/ui/reader.hpp"
-#include "snackis/ui/profile_form.hpp"
+#include "snackis/ui/settings_form.hpp"
 
 namespace snackis {
 namespace ui {
   static void init_cmds(Reader &rdr) {
-    insert(rdr.field, "profile", Reader::Cmd([&rdr]() {
-	  ProfileForm frm(rdr.view, rdr.form.footer);
+    insert(rdr.field, "settings", Reader::Cmd([&rdr]() {
+	  SettingsForm frm(rdr.view, rdr.form.footer);
 	  open(frm);
 	  run(frm);
 	}));

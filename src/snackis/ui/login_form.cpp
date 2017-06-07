@@ -16,7 +16,7 @@ namespace ui {
     pass.echo = false;
     
     if (!pass_exists(view.ctx)) {
-      repeat.reset(new TextField(*this, Dim(1, 50), "Repeat: "));
+      repeat.reset(new TextField(*this, Dim(1, 50), "Repeat"));
       repeat->echo = false;
     }
     
