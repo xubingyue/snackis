@@ -28,7 +28,7 @@ To decrypt files that have been encrypted by Snackis, put them in the load-folde
 ![decrypt example](images/decrypt.png?raw=true)
 
 #### Sending Invites
-Type ```invite``` in the reader and press ```Return``` to open the invite form. Snackis will sent an email containing your public key to the specified address. Try it with your own address to get an idea of how it works.
+Type ```invite``` in the reader and press ```Return``` to open the invite form. Snackis will send an email containing your public key to the specified address. The easiest way to see how it works is to try with your own address.
 
 ![invite example](images/invite.png?raw=true)
 
