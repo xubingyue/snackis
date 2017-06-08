@@ -1,6 +1,9 @@
 # Snackis
 #### sugar-free co-creation
 
+### Introduction
+Snackis is aiming for something that might be described as a post-modern enigma-device; a simple and convenient one-stop shop for most secure communication needs. It provides a curses-based UI on top of [libsodium](https://github.com/jedisct1/libsodium) and supports using any regular email-account as transport. Peers, encryption keys, history and settings are stored locally in an encrypted database. Non-UI functionality is exposed as a static library for easy reuse. At present, Snackis supports key-exchange via invites/accepts and encryption/decryption of arbitrary data for a specific peer. Coming up around the corner is threaded group-conversations; followed by events, wikis, shared resource scheduling and more built on the same platform.
+
 ### Dependencies
 Snackis requires a ```C++1z``` capable compiler/standard library to build, and defaults to using ```clang``` with ```libc++```; it further depends on ```libcurl```, ```libpthread```, ```libsodium``` and ```libuuid``` for core functionality, as well as ```NCurses``` for the UI. All dependencies except ```libcurl``` and ```NCurses``` are statically linked into the provided [Linux/64-binaries](https://github.com/andreas-gone-wild/snackis/tree/master/dist).
 
