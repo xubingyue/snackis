@@ -4,18 +4,11 @@
 #include "snackis/core/str.hpp"
 
 namespace snackis {
-  template <typename... Args, typename Func, std::size_t... Idx>
-  void for_each(const std::tuple<Args...>& t,
-		const Func& f,
-		std::index_sequence<Idx...>) {
-    (f(std::get<Idx>(t)), ...);
-  }
-
   template <typename... Args, typename Func>
   void for_each(const std::tuple<Args...>& t, const Func& f) {
-    for_each(t, f, std::index_sequence_for<Args...>{});
+    std::apply([&f](const auto&... args) { (f(args), ...); }, t);
   }
-
+  
   template <typename T>
   str fmt_arg(const T &arg) { return std::to_string(arg); }
 
