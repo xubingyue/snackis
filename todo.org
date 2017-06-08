@@ -1,8 +1,6 @@
-* trigger text field on_change
-** validate on every input
-** trigger on_change if text changed
 * switch enum field alts to set
 ** order by label (check tbl recs)
+* add post message & support in inbox
 * add backup command
 ** backup folder setting, default /backup
 ** run tar -z proc
@@ -14,5 +12,3 @@
 ** backup database, later/ok
 * add scroll-support to Window
 ** forward pg-up/down from reader to console scroll
-* add post form
-* add post support in inbox

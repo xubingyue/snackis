@@ -45,7 +45,7 @@ namespace ui {
   template <typename T>
   void EnumField<T>::drive(chtype ch) {
     switch (ch) {
-    case KEY_SPACE:
+    case KEY_TAB:
       if (!alts.empty()) {
 	auto found = alts.find(get_str(*this));
 	if (found != alts.end()) { found++; }
@@ -74,17 +74,15 @@ namespace ui {
       search.clear();
       break;
     default:
-      if (std::isgraph(ch)) {
-	str nsearch(search);
-	nsearch.push_back(ch);
-	auto found(alts.lower_bound(nsearch));
-	if (found != alts.end() && found->first.find(nsearch) != str::npos) {
-	  search.push_back(ch);
-	  select(*this, found->second);
-	  
-	  for (int i=0; i < search.size(); i++) {
-	    form_driver(form.ptr, REQ_NEXT_CHAR);
-	  }
+      str nsearch(search);
+      nsearch.push_back(ch);
+      auto found(alts.lower_bound(nsearch));
+      if (found != alts.end() && found->first.find(nsearch) != str::npos) {
+	search.push_back(ch);
+	select(*this, found->second);
+	
+	for (int i=0; i < search.size(); i++) {
+	  form_driver(form.ptr, REQ_NEXT_CHAR);
 	}
       }
     }

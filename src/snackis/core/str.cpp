@@ -43,4 +43,9 @@ namespace snackis {
     out.resize(len);
     return out;
   }
+
+  size_t prefix_len(str x, str y) {
+    if( x.size() > y.size() ) std::swap(x,y) ;
+    return std::mismatch(x.begin(), x.end(), y.begin()).first - x.begin();
+  }
 }
