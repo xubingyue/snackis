@@ -16,12 +16,12 @@ Each snackis installation is protected by a master password that is used to encr
 ![login example](images/login.png?raw=true)
 
 #### Settings
-Once inside, the first thing you probably want to do is to have a look at the settings. Type ```settings``` and press ```Enter``` to open the settings form. Imap and Smtp settings are needed to do anything beyond encrypting/decrypting information for personal use.
+Once inside, the first thing you probably want to do is to have a look at the settings. Type ```settings``` and press ```Enter``` to open the settings form. Imap and Smtp settings are needed to do anything beyond encrypting/decrypting data for personal use.
 
 ![settings example](images/settings.png?raw=true)
 
 #### Encryption
-Snackis supports encrypting arbitrary data for decryption by a specific peer. Type ```encrypt``` and press ```Return``` in the reader to open the encryption form. Files are loaded from the load-folder, and saved to the save-folder specified in ```Settings```. On top of being encrypted, the resulting file is cryptographically signed and the signature is verified when decrypting. Encoding converts the output to hexadecimal text to enable transferring the encrypted data reliably over text protocols like email, it also rougly doubles the size of the output.
+Snackis supports encrypting arbitrary data for decryption by a specific peer. Type ```encrypt``` and press ```Return``` in the reader to open the encryption form. Files are loaded from the load-folder, and saved to the save-folder specified in ```Settings```. On top of being encrypted, the resulting file is cryptographically signed and the signature is verified when decrypting. Encoding converts the output to hexadecimal text to enable transferring encrypted data reliably over text protocols like email, it also rougly doubles the size of the output.
 
 ![encrypt example](images/encrypt.png?raw=true)
 
