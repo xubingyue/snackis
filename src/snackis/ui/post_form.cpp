@@ -24,7 +24,7 @@ namespace ui {
     };
     
     subject.on_change = [this]() {
-      if (!get_str(subject).empty()) { clear(thread); }
+      if (!get_str(subject).empty()) { clear(thread, false); }
     };
   }
 

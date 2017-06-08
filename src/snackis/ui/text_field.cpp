@@ -1,3 +1,4 @@
+#include "snackis/ctx.hpp"
 #include "snackis/ui/form.hpp"
 #include "snackis/ui/text_field.hpp"
 
@@ -49,7 +50,11 @@ namespace ui {
       break;
     }    
     default:
+      validate(form);
+      const str prev(get_str(*this));
       form_driver(form.ptr, ch);
+      validate(form);
+      if (on_change && get_str(*this) != prev) { (*on_change)(); }
     };
   }
 }}
