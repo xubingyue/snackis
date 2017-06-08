@@ -16,7 +16,7 @@ namespace ui {
       insert(email, *get(p, ctx.db.peer_email), id);
     }
 
-    name.on_select = [this]() {
+    name.on_change = [this]() {
       if (name.selected) {
 	auto &sel(name.selected);
 	assert(sel);
@@ -29,7 +29,7 @@ namespace ui {
 
     };
 
-    email.on_select = [this]() {
+    email.on_change = [this]() {
       if (email.selected) {
 	auto &sel(email.selected);
 	assert(sel);

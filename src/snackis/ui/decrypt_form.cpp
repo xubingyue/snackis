@@ -18,7 +18,7 @@ namespace ui {
     
     load_from.margin_top = 1;
     init(load_from, *get_val(ctx.settings.load_folder));
-    load_from.on_select = [this]() {
+    load_from.on_change = [this]() {
       set_str(save_to, load_from.selected->lbl);
     };
 

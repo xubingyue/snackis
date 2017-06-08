@@ -17,6 +17,7 @@ namespace ui {
   struct Form;
   
   struct Field {
+    using OnChange = func<void ()>;
     using OnAction = func<void ()>;
     
     Form &form;
@@ -27,6 +28,7 @@ namespace ui {
     char symbol;
     FIELD *ptr;
     bool active;
+    opt<OnChange> on_change;
     opt<OnAction> on_action;
     
     Field(Form &frm, const Dim &dim, const str &lbl);

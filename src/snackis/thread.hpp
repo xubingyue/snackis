@@ -11,7 +11,7 @@ namespace snackis {
   
   struct Thread: public Rec {
     UId id;
-    str name;
+    str subject;
     Time started_at;
     db::Rec<Peer> started_by;
     

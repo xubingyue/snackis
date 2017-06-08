@@ -17,6 +17,9 @@ namespace snackis {
     str from, to;
     str peer_name;
     crypt::PubKey crypt_key;
+    UId thread_id;
+    str post_body;
+    Time post_at;
     
     Msg(Ctx &ctx);
     Msg(Ctx &ctx, const str &type, const str &to);

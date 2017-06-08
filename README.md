@@ -18,12 +18,12 @@ Once inside, the first thing you probably want to do is to have a look at the se
 ![settings example](images/settings.png?raw=true)
 
 #### Encryption
-Snackis supports encrypting arbitrary data for decryption by a specific peer. Type ```encrypt``` and press ```Return``` in the reader to open the encryption form. Files are loaded from the load-folder specified in ```Settings```. On top of being encrypted, the resulting file is cryptographically signed and the signature is verified when decrypting. Encoding converts the output to hexadecimal text to enable transferring the encrypted data reliably over text protocols like email, it also rougly doubles the size of the output.
+Snackis supports encrypting arbitrary data for decryption by a specific peer. Type ```encrypt``` and press ```Return``` in the reader to open the encryption form. Files are loaded from the load-folder, and saved to the save-folder specified in ```Settings```. On top of being encrypted, the resulting file is cryptographically signed and the signature is verified when decrypting. Encoding converts the output to hexadecimal text to enable transferring the encrypted data reliably over text protocols like email, it also rougly doubles the size of the output.
 
 ![encrypt example](images/encrypt.png?raw=true)
 
 #### Decryption
-To decrypt files that have been encrypted by Snackis, put them in the load-folder and type ```decrypt``` and press return in the reader to open the decryption form. Files that were encrypted with encoding turned on need decoding turned on to be decrypted.
+To decrypt files that have been encrypted by Snackis, put them in the load-folder and type ```decrypt``` and press return in the reader to open the decryption form. Decoding is mandatory for files that were encoded as part of the encryption process.
 
 ![decrypt example](images/decrypt.png?raw=true)
 

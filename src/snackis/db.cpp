@@ -31,13 +31,22 @@ namespace snackis {
     peer_emails(ctx, "peer_emails", {&peer_email}, {&peer_id}),
 
     thread_id(        "id",         uid_type,       &Thread::id),
-    thread_name(      "name",       str_type,       &Thread::name),
+    thread_subject(   "subject",    str_type,       &Thread::subject),
     thread_started_at("started_at", time_type,      &Thread::started_at),
     thread_started_by("started_by", peers.rec_type, &Thread::started_by),
 
     threads(ctx, "threads", {&thread_id},
-	    {&thread_name, &thread_started_at, &thread_started_by}),
+	    {&thread_subject, &thread_started_at, &thread_started_by}),
 
+    post_id(    "id",     uid_type,         &Post::id),
+    post_thread("thread", threads.rec_type, &Post::thread),
+    post_at(    "at",     time_type,        &Post::at),
+    post_by(    "by",     peers.rec_type,   &Post::by),
+    post_body(  "body",   str_type,         &Post::body),
+
+    posts(ctx, "posts", {&post_id},
+	  {&post_id, &post_thread, &post_at, &post_by, &post_body}),
+    
     msg_id(        "id",            uid_type,            &Msg::id),
     msg_type(      "type",          str_type,            &Msg::type),
     msg_from(      "from",          str_type,            &Msg::from),
@@ -45,16 +54,20 @@ namespace snackis {
     msg_fetched_at("fetched_at",    time_type,           &Msg::fetched_at),
     msg_peer_name( "peer_name",     str_type,            &Msg::peer_name),
     msg_crypt_key( "crypt_key",     crypt::pub_key_type, &Msg::crypt_key),
-
+    msg_thread_id( "thread_id",     uid_type,            &Msg::thread_id),
+    msg_post_at(   "post_at",       time_type,           &Msg::post_at),
+    msg_post_body( "post_body",     str_type,            &Msg::post_body),
     msgs(ctx, "msgs", {&msg_id},
 	 {}),
     
     inbox(ctx, "inbox", {&msg_id},
 	  {&msg_type, &msg_fetched_at, &msg_peer_name,
-	      &msg_from, &msg_crypt_key}),
+	      &msg_from, &msg_crypt_key, &msg_thread_id, &msg_post_at,
+	      &msg_post_body}),
     
     outbox(ctx, "outbox", {&msg_id},
-	   {&msg_type, &msg_to, &msg_peer_name, &msg_crypt_key}) {
+	   {&msg_type, &msg_to, &msg_peer_name, &msg_crypt_key, &msg_thread_id,
+	       &msg_post_at, &msg_post_body}) {
     peers.indexes.insert(&peer_emails);
   }
 }

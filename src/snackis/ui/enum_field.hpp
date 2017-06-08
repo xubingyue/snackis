@@ -25,8 +25,6 @@ namespace ui {
   struct EnumField: public Field {
     std::map<str, EnumAlt<T>> alts;
     opt<EnumAlt<T>> selected;
-    using OnSelect = func<void ()>;
-    opt<OnSelect> on_select;
     str search;
     bool allow_clear;
     
@@ -101,7 +99,7 @@ namespace ui {
   void select(EnumField<T> &fld, const EnumAlt<T> &alt, bool trig = true) {
     fld.selected = alt;
     set_str(fld, alt.lbl);    
-    if (trig && fld.on_select) { (*fld.on_select)(); }
+    if (trig && fld.on_change) { (*fld.on_change)(); }
   }
 
   template <typename T>
@@ -117,7 +115,7 @@ namespace ui {
   void clear(EnumField<T> &fld, bool trig = true) {
       set_str(fld, "");
       fld.selected = nullopt;
-      if (trig && fld.on_select) { (*fld.on_select)(); }
+      if (trig && fld.on_change) { (*fld.on_change)(); }
   }
 }}
 

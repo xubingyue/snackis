@@ -73,11 +73,11 @@ namespace ui {
 	    if (resp_fld->selected) {
 	      if (resp_fld->selected->val) {
 		accept_invite(msg);
-		log(ctx, fmt("Accept of %0 (%1) posted to outbox",
+		log(ctx, fmt("Accept of %0 (%1) saved to outbox",
 			     msg.peer_name, msg.from));
 	      } else {
 		reject_invite(msg);
-		log(ctx, fmt("Reject of %0 (%1) posted to outbox",
+		log(ctx, fmt("Reject of %0 (%1) saved to outbox",
 			     msg.peer_name, msg.from));
 	      }
 

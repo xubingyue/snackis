@@ -7,6 +7,7 @@
 #include "snackis/ui/inbox_form.hpp"
 #include "snackis/ui/invite_form.hpp"
 #include "snackis/ui/reader.hpp"
+#include "snackis/ui/post_form.hpp"
 #include "snackis/ui/settings_form.hpp"
 
 namespace snackis {
@@ -18,8 +19,26 @@ namespace ui {
 	  run(frm);
 	}));
 
+    insert(rdr.field, "encrypt", Reader::Cmd([&rdr]() {
+	  EncryptForm frm(rdr.view, rdr.form.footer);
+	  open(frm);
+	  run(frm);
+	}));
+
+    insert(rdr.field, "decrypt", Reader::Cmd([&rdr]() {
+	  DecryptForm frm(rdr.view, rdr.form.footer);
+	  open(frm);
+	  run(frm);
+	}));
+
     insert(rdr.field, "invite", Reader::Cmd([&rdr]() {
 	  InviteForm frm(rdr.view, rdr.form.footer);
+	  open(frm);
+	  run(frm);
+	}));
+
+    insert(rdr.field, "post", Reader::Cmd([&rdr]() {
+	  PostForm frm(rdr.view, rdr.form.footer);
 	  open(frm);
 	  run(frm);
 	}));
@@ -48,18 +67,6 @@ namespace ui {
 	  }
 	}));
     
-    insert(rdr.field, "encrypt", Reader::Cmd([&rdr]() {
-	  EncryptForm frm(rdr.view, rdr.form.footer);
-	  open(frm);
-	  run(frm);
-	}));
-
-    insert(rdr.field, "decrypt", Reader::Cmd([&rdr]() {
-	  DecryptForm frm(rdr.view, rdr.form.footer);
-	  open(frm);
-	  run(frm);
-	}));
-
     insert(rdr.field, "quit", Reader::Cmd([&rdr]() { rdr.quitting = true; }));
   }
 
