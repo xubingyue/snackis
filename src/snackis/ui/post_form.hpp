@@ -11,7 +11,7 @@ namespace ui {
   struct PostForm: public ViewForm {
     EnumField<UId> thread;
     TextField subject;
-    TextField post_to;
+    TextField send_to;
     PeerPanel peer;
     PostForm(View &view, Footer &ftr);
   };

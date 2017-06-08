@@ -10,7 +10,7 @@ namespace ui {
     ViewForm(view, ftr),
     thread(*this, Dim(1, 50), "Existing Thread"),
     subject(*this, Dim(1, 50), "New Subject"),
-    post_to(*this, Dim(5, 50), "Post To"),
+    send_to(*this, Dim(5, 50), "Send To"),
     peer(*this, "Peer") {
     label = "Post";
     status = "Press Ctrl-s to edit post, or Ctrl-q to cancel";
@@ -29,8 +29,8 @@ namespace ui {
       if (!get_str(subject).empty()) { clear(thread, false); }
     };
 
-    post_to.margin_top = 1;
-    post_to.active = false;
+    send_to.margin_top = 1;
+    send_to.active = false;
     peer.email.info = "Press Return to add/remove specified peer";
   }
 
