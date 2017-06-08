@@ -2,13 +2,9 @@
 #define SNACKIS_FMT_HPP
 
 #include "snackis/core/str.hpp"
+#include "snackis/core/tuple.hpp"
 
-namespace snackis {
-  template <typename... Args, typename Func>
-  void for_each(const std::tuple<Args...>& t, const Func& f) {
-    std::apply([&f](const auto&... args) { (f(args), ...); }, t);
-  }
-  
+namespace snackis {  
   template <typename T>
   str fmt_arg(const T &arg) { return std::to_string(arg); }
 
