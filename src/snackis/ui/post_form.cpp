@@ -8,12 +8,13 @@ namespace snackis {
 namespace ui {
   PostForm::PostForm(View &view, Footer &ftr):
     ViewForm(view, ftr),
-    thread(*this, Dim(1, 50), "Existing Thread"),
-    subject(*this, Dim(1, 50), "New Subject"),
-    send_to(*this, Dim(5, 50), "Send To"),
-    peer(*this, "Peer") {
+    thread(*this, Dim(1, view.dim.w), "Existing Thread"),
+    subject(*this, Dim(1, view.dim.w), "New Subject"),
+    peer(*this, "Peer"),
+    send_to(*this, Dim(5, view.dim.w), "Send To"),
+    body(*this, Dim(5, view.dim.w), "Body") {
     label = "Post";
-    status = "Press Ctrl-s to edit post, or Ctrl-q to cancel";
+    status = "Press Ctrl-s to post, or Ctrl-q to cancel";
     margin_top = 1;
 
     for (auto p: ctx.db.threads.recs) {
@@ -29,9 +30,12 @@ namespace ui {
       if (!get_str(subject).empty()) { clear(thread, false); }
     };
 
+    peer.name.margin_top = 1;
+    peer.email.info = "Press Return to add/remove specified peer";
     send_to.margin_top = 1;
     send_to.active = false;
-    peer.email.info = "Press Return to add/remove specified peer";
+
+    body.margin_top = 1;
   }
 
   bool run(PostForm &frm) {
@@ -41,8 +45,7 @@ namespace ui {
     while (true) {
       chtype ch = get_key(frm.window);
       
-      if (ch == KEY_CTRL('s') ||
-	  (ch == KEY_RETURN && active_field(frm).ptr == frm.subject.ptr)) {
+      if (ch == KEY_CTRL('s')) {
 	validate(frm);
 	db::Rec<Thread> thread_rec;
 	
@@ -61,6 +64,7 @@ namespace ui {
 	Post post(ctx, thread_rec);
 	post.at = now();
 	copy(ctx.db.peers.key, post.by, whoami(ctx));
+	post.body = get_str(frm.body);
 	insert(ctx.db.posts, post);
 	
 	log(ctx, "New post created");

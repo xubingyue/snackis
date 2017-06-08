@@ -56,29 +56,44 @@ namespace ui {
   }
   
   void drive(Form &frm, chtype ch) {
+    Field &f(active_field(frm));
+
     switch (ch) {
     case KEY_UP:
+      if (f.dim.h > 1) {
+	drive(f, ch);
+	break;
+      }
+      
       form_driver(frm.ptr, REQ_PREV_FIELD);
-      on_focus(active_field(frm));
+      on_focus(f);
       break;
     case KEY_RETURN:
+      if (f.dim.h > 1) {
+	drive(f, ch);
+	break;
+      }
+
       validate(frm);
     case KEY_DOWN:
+      if (f.dim.h > 1) {
+	drive(f, ch);
+	break;
+      }
+
       form_driver(frm.ptr, REQ_NEXT_FIELD);
       on_focus(active_field(frm));
       break;
     case KEY_CTRL(KEY_SPACE): {
-      Field &fld(active_field(frm));
-      
-      if (fld.on_action) { 
+      if (f.on_action) { 
 	validate(frm);
-	(*fld.on_action)(); 
+	(*f.on_action)(); 
       }
       
       break;
     }
     default:
-      drive(active_field(frm), ch);
+      drive(f, ch);
     }
   }
 

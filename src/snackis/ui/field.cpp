@@ -61,7 +61,7 @@ namespace ui {
     ptr = new_field(dim.h, dim.w, pos.y, pos.x, 0, 0);
     set_field_userptr(ptr, reinterpret_cast<char *>(this));
     field_opts_off(ptr, O_AUTOSKIP);
-    if (active) { set_bg(*this, A_UNDERLINE); }
+    if (active) { set_bg(*this, (dim.h == 1) ? A_UNDERLINE : A_REVERSE); }
     else { field_opts_off(ptr, O_ACTIVE); }
     this->pos = pos;
   }

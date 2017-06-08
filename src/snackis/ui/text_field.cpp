@@ -49,6 +49,15 @@ namespace ui {
     case KEY_END:
       eol(form);
       break;
+    case KEY_RETURN:
+      form_driver(form.ptr, REQ_NEW_LINE);
+      break;
+    case KEY_UP:
+      form_driver(form.ptr, REQ_PREV_LINE);
+      break;
+    case KEY_DOWN:
+      form_driver(form.ptr, REQ_NEXT_LINE);
+      break;
     default:
       validate(form);
       const str prev(get_str(*this));

@@ -7,7 +7,6 @@ namespace snackis {
   struct Settings {
     Setting<db::Rec<Peer>> whoami;
     Setting<crypt::Key> crypt_key;
-    Setting<str> editor;
 
     Setting<str> load_folder, save_folder;
     

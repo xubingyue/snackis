@@ -8,7 +8,6 @@ namespace snackis {
   Settings::Settings(Ctx &ctx):
     whoami(ctx,    "whoami",    ctx.db.peers.rec_type, nullopt),
     crypt_key(ctx, "crypt_key", crypt::key_type,       nullopt),
-    editor(ctx,    "editor",    str_type,              str("nano")),
 
     load_folder(ctx, "load_folder", str_type, str("load/")),
     save_folder(ctx, "save_folder", str_type, str("save/")),

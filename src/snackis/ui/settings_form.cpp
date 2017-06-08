@@ -11,13 +11,6 @@
 
 namespace snackis {
 namespace ui {
-  static void test_editor(Ctx &ctx, const str &path) {
-    log(ctx, fmt("Launching editor: %0", path));
-    int ret(run_proc(path, {"test.txt"}));
-    log(ctx, ret ? fmt("Editor exited with code %0", ret) : "OK");
-    ui::redraw();
-  }
-
   static bool copy_imap(SettingsForm &frm) {
     const str
       url = get_str(frm.imap_url),
@@ -75,7 +68,6 @@ namespace ui {
     
     name(*this, Dim(1, 50), "Name"),
     email(*this, Dim(1, 50), "Email"),
-    editor(*this, Dim(1, 50), "Editor"),
 
     load_folder(*this, Dim(1, 50), "Load-folder"),
     save_folder(*this, Dim(1, 50), "Save-folder"),
@@ -92,9 +84,7 @@ namespace ui {
     label = "Settings";
     status = "Press Ctrl-s to save settings, or Ctrl-q to cancel";
     margin_top = 1;
-    editor.on_action = [this]() { test_editor(ctx, get_str(editor)); };
-    editor.info = "Press Ctrl-Space to try launching";
-    load_folder.margin_top = 2;
+    load_folder.margin_top = 1;
     
     imap_url.margin_top = 1;
     imap_pass.echo = false;
@@ -123,7 +113,6 @@ namespace ui {
     set_str(frm.name, me.name);
     set_str(frm.email, me.email);
     
-    set_str(frm.editor, *get_val(ctx.settings.editor));
     set_str(frm.load_folder, *get_val(ctx.settings.load_folder));
     set_str(frm.save_folder, *get_val(ctx.settings.save_folder));
     
@@ -151,7 +140,6 @@ namespace ui {
 	me.name = get_str(frm.name);
 	me.email = get_str(frm.email);
 	if (!update(ctx.db.peers, me)) { ERROR(Db, "Failed updating me"); }
-	set_val(ctx.settings.editor, get_str(frm.editor));
 	set_val(ctx.settings.load_folder, get_str(frm.load_folder));
 	set_val(ctx.settings.save_folder, get_str(frm.save_folder));
 	copy_imap(frm);

@@ -1,9 +1,10 @@
-* add post form body
-** remove editor setting
 * add/remove peer on return in post form
 ** keep list and update field comma_separated
 ** return in empty field goes to next
 ** add body field
+** copy peers to post
+*** set-col?
+* extract code from post form
 * add post message & support in inbox
 * add backup command
 ** backup folder setting, default /backup
