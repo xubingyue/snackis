@@ -3,7 +3,7 @@
 ** return in empty field goes to next
 ** add body field
 ** copy peers to post
-*** set-col?
+*** set-type?
 * extract code from post form
 * add post message & support in inbox
 * add backup command

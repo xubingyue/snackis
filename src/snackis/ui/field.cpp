@@ -74,7 +74,7 @@ namespace ui {
     print(wnd, fmt("%0%1 ", label, str(1, symbol)));
 
     if (!info.empty()) {
-      move(wnd, Pos(pos.y+1, pos.x));
+      move(wnd, Pos(pos.y+dim.h, pos.x));
       print(wnd, info);
     }
   }

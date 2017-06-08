@@ -31,11 +31,10 @@ namespace ui {
     };
 
     peer.name.margin_top = 1;
-    peer.email.info = "Press Return to add/remove specified peer";
-    send_to.margin_top = 1;
     send_to.active = false;
+    send_to.info = "Press Return to add/remove specified peer";
 
-    body.margin_top = 1;
+    body.margin_top = 2;
   }
 
   bool run(PostForm &frm) {
