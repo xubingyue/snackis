@@ -73,6 +73,31 @@ namespace ui {
       
       search.clear();
       break;
+    case KEY_HOME:
+      form_driver(form.ptr, REQ_BEG_FIELD);
+      search = "";
+      break;
+    case KEY_END:
+      eol(form);
+      search = get_str(*this);
+      break;
+    case KEY_LEFT:
+      if (!search.empty()) {
+	form_driver(form.ptr, REQ_PREV_CHAR);
+	search.pop_back();
+      }
+      
+      break;      
+    case KEY_RIGHT: {
+      str fld(get_str(*this));
+      
+      if (search.size() < fld.size()) {
+	search.push_back(fld[search.size()]);
+	form_driver(form.ptr, REQ_NEXT_CHAR);
+      }
+      
+      break;
+    }
     default:
       str nsearch(search);
       nsearch.push_back(ch);

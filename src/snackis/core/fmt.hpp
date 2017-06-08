@@ -30,7 +30,7 @@ namespace snackis {
     auto args(std::make_tuple(std::forward<Args>(_args)...));
     str out(in);
     size_t i = 0;
-    
+
     for_each(args, [&i, &in, &out](auto &a) {
 	const str val(fmt_arg(a));
 	const str id("%" + to_str(i));

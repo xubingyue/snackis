@@ -33,7 +33,7 @@ namespace ui {
     
     Field(Form &frm, const Dim &dim, const str &lbl);
     virtual ~Field();
-    virtual void drive(chtype ch) = 0;
+    virtual void drive(chtype ch);
     virtual void open(const Pos &pos);
     virtual void on_focus();
     virtual void paint();

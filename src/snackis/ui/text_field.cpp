@@ -24,17 +24,11 @@ namespace ui {
     case KEY_DC:
       form_driver(form.ptr, REQ_CLR_EOF);
       break;
-    case KEY_END:
-      eol(form);
-      break;
     case KEY_LEFT:
       form_driver(form.ptr, REQ_PREV_CHAR);
       break;
     case KEY_RIGHT:
       form_driver(form.ptr, REQ_NEXT_CHAR);
-      break;
-    case KEY_HOME:
-      form_driver(form.ptr, REQ_BEG_FIELD);
       break;
     case KEY_TAB: {
       if (on_complete) {
@@ -49,10 +43,16 @@ namespace ui {
     
       break;
     }    
+    case KEY_HOME:
+      form_driver(form.ptr, REQ_BEG_FIELD);
+      break;
+    case KEY_END:
+      eol(form);
+      break;
     default:
       validate(form);
       const str prev(get_str(*this));
-      form_driver(form.ptr, ch);
+      Field::drive(ch);
       validate(form);
       if (on_change && get_str(*this) != prev) { (*on_change)(); }
     };

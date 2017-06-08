@@ -52,6 +52,10 @@ namespace ui {
 
   Field::~Field() { free_field(ptr); }
 
+  void Field::drive(chtype ch) {
+    form_driver(form.ptr, ch);
+  }
+
   void Field::open(const Pos &pos) {
     assert(!ptr);
     ptr = new_field(dim.h, dim.w, pos.y, pos.x, 0, 0);
