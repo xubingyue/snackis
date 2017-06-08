@@ -9,7 +9,9 @@ namespace ui {
   PostForm::PostForm(View &view, Footer &ftr):
     ViewForm(view, ftr),
     thread(*this, Dim(1, 50), "Existing Thread"),
-    subject(*this, Dim(1, 50), "New Subject") {
+    subject(*this, Dim(1, 50), "New Subject"),
+    post_to(*this, Dim(5, 50), "Post To"),
+    peer(*this, "Peer") {
     label = "Post";
     status = "Press Ctrl-s to edit post, or Ctrl-q to cancel";
     margin_top = 1;
@@ -26,6 +28,10 @@ namespace ui {
     subject.on_change = [this]() {
       if (!get_str(subject).empty()) { clear(thread, false); }
     };
+
+    post_to.margin_top = 1;
+    post_to.active = false;
+    peer.email.info = "Press Return to add/remove specified peer";
   }
 
   bool run(PostForm &frm) {

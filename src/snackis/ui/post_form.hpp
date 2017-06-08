@@ -3,6 +3,7 @@
 
 #include "snackis/ui/view_form.hpp"
 #include "snackis/ui/enum_field.hpp"
+#include "snackis/ui/peer_panel.hpp"
 #include "snackis/ui/text_field.hpp"
 
 namespace snackis {
@@ -10,6 +11,8 @@ namespace ui {
   struct PostForm: public ViewForm {
     EnumField<UId> thread;
     TextField subject;
+    TextField post_to;
+    PeerPanel peer;
     PostForm(View &view, Footer &ftr);
   };
 

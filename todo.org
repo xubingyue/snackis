@@ -1,4 +1,6 @@
 * add way to specify peers in post form
+* add/remove peer on enter in post form
+** keep list and update field comma_separated
 * add post message & support in inbox
 * add backup command
 ** backup folder setting, default /backup
