@@ -1,5 +1,4 @@
-* switch enum field alts to set
-** order by label (check tbl recs)
+* add way to specify peers in post form
 * add post message & support in inbox
 * add backup command
 ** backup folder setting, default /backup
