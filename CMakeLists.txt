@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 set(CMAKE_CXX_COMPILER clang++)
 project(snackis)
 
-add_compile_options(-std=c++1z -stdlib=libc++ -Wall -Werror -O2)
+add_compile_options(-std=c++1z -stdlib=libc++ -Wall -Werror -g)
 set(CMAKE_EXE_LINKER_FLAGS "-stdlib=libc++")
 
 file(GLOB_RECURSE core_src src/snackis/core/*.cpp)
