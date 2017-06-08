@@ -93,7 +93,7 @@ namespace ui {
     status = "Press Ctrl-s to save settings, or Ctrl-q to cancel";
     margin_top = 1;
     editor.on_action = [this]() { test_editor(ctx, get_str(editor)); };
-    editor.info = "Press Ctrl-Space to test launching";
+    editor.info = "Press Ctrl-Space to try launching";
     load_folder.margin_top = 2;
     
     imap_url.margin_top = 1;
@@ -103,7 +103,7 @@ namespace ui {
     imap_port.on_action = imap_action;
     imap_user.on_action = imap_action;
     imap_pass.on_action = imap_action;
-    imap_pass.info = "Press Ctrl-Space to test connecting";
+    imap_pass.info = "Press Ctrl-Space to try connecting";
 
     smtp_url.margin_top = 2;
     smtp_pass.echo = false;
@@ -112,7 +112,7 @@ namespace ui {
     smtp_port.on_action = smtp_action;
     smtp_user.on_action = smtp_action;
     smtp_pass.on_action = smtp_action;    
-    smtp_pass.info = "Press Ctrl-Space to test connecting";
+    smtp_pass.info = "Press Ctrl-Space to try connecting";
   }
 
   bool run(SettingsForm &frm) {
