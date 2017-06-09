@@ -19,7 +19,7 @@ namespace db {
   using Rec = std::map<const BasicCol<RecT> *, Val>;
 
   template <typename RecT, typename ValT>
-  opt<ValT> get(Rec<RecT> &rec, const Col<RecT, ValT> &col) {
+  opt<ValT> get(const Rec<RecT> &rec, const Col<RecT, ValT> &col) {
     auto found(rec.find(&col));
     return (found == rec.end()) ? nullopt : opt<ValT>(get<ValT>(found->second));
   }

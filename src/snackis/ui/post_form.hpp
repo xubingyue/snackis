@@ -1,6 +1,9 @@
 #ifndef SNACKIS_UI_POST_FORM_HPP
 #define SNACKIS_UI_POST_FORM_HPP
 
+#include <set>
+
+#include "snackis/peer.hpp"
 #include "snackis/ui/view_form.hpp"
 #include "snackis/ui/enum_field.hpp"
 #include "snackis/ui/peer_panel.hpp"
@@ -9,6 +12,8 @@
 namespace snackis {
 namespace ui {
   struct PostForm: public ViewForm {
+    std::set<db::Rec<Peer>> peers;
+
     EnumField<UId> thread;
     TextField subject;
     PeerPanel peer;
