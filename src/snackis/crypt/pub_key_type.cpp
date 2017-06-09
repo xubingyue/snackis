@@ -2,7 +2,7 @@
 
 namespace snackis {
 namespace crypt {
-  const PubKeyType pub_key_type;
+  PubKeyType pub_key_type;
 
   PubKeyType::PubKeyType(): Type<PubKey>("crypt::PubKey") {
   }

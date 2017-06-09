@@ -2,6 +2,7 @@
 #define SNACKIS_VAL_HPP
 
 #include <variant>
+#include <vector>
 #include <cstdint>
 
 #include "snackis/core/str.hpp"

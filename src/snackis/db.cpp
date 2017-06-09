@@ -3,6 +3,7 @@
 #include "snackis/core/str_type.hpp"
 #include "snackis/core/time_type.hpp"
 #include "snackis/core/uid_type.hpp"
+#include "snackis/core/vector_type.hpp"
 #include "snackis/crypt/pub_key_type.hpp"
 
 namespace snackis {
@@ -29,14 +30,16 @@ namespace snackis {
 	  {&peer_name, &peer_email, &peer_crypt_key, &peer_created_at}),
 
     peer_emails(ctx, "peer_emails", {&peer_email}, {&peer_id}),
+    peers_type(vector(peers.rec_type)),
 
     thread_id(        "id",         uid_type,       &Thread::id),
     thread_subject(   "subject",    str_type,       &Thread::subject),
     thread_started_at("started_at", time_type,      &Thread::started_at),
     thread_started_by("started_by", peers.rec_type, &Thread::started_by),
-
+    thread_peers(     "peers",      peers_type,     &Thread::peers),
+    
     threads(ctx, "threads", {&thread_id},
-	    {&thread_subject, &thread_started_at, &thread_started_by}),
+	    {&thread_subject, &thread_started_at, &thread_started_by, &thread_peers}),
 
     post_id(    "id",     uid_type,         &Post::id),
     post_thread("thread", threads.rec_type, &Post::thread),

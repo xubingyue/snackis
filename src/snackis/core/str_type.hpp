@@ -12,7 +12,7 @@ namespace snackis {
     void write(const str &val, std::ostream &out) const override;
   };
 
-  extern const StrType str_type;
+  extern StrType str_type;
 }
 
 #endif

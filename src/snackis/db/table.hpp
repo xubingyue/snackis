@@ -41,7 +41,7 @@ namespace db {
     using Cols = std::initializer_list<const BasicCol<RecT> *>;
     
     const Schema<RecT> key;
-    const RecType<RecT> rec_type;
+    RecType<RecT> rec_type;
     std::set<Table<RecT> *> indexes;
     std::set<Rec<RecT>, CmpRec> recs;
     
@@ -378,17 +378,15 @@ namespace db {
 
   template <typename RecT>
   Rec<RecT> RecType<RecT>::from_val(const Val &in) const {
-    Stream buf(get<str>(in));
-    Rec<RecT> rec;
-    db::read(table, buf, rec, nullopt);
-    return rec;
+    Stream out(get<str>(in));
+    return read(out);
   }
 
   template <typename RecT>
   Val RecType<RecT>::to_val(const Rec<RecT> &in) const {
-    Stream buf;
-    db::write(table, in, buf, nullopt);
-    return buf.str();
+    Stream out;
+    write(in, out);
+    return out.str();
   }
 
   template <typename RecT>

@@ -8,6 +8,7 @@
 #include "snackis/setting.hpp"
 #include "snackis/thread.hpp"
 #include "snackis/core/str.hpp"
+#include "snackis/core/vector_type.hpp"
 #include "snackis/crypt/pub_key.hpp"
 #include "snackis/db/col.hpp"
 #include "snackis/db/ctx.hpp"
@@ -30,10 +31,13 @@ namespace snackis {
     db::Col<Peer, Time>          peer_created_at;
     db::Table<Peer> peers, peer_emails;
 
+    VectorType<db::Rec<Peer>> peers_type;
+
     db::Col<Thread, UId>           thread_id;
     db::Col<Thread, str>           thread_subject;
     db::Col<Thread, Time>          thread_started_at;
     db::Col<Thread, db::Rec<Peer>> thread_started_by;
+    db::Col<Thread, Peers>         thread_peers;
     db::Table<Thread> threads;
 
     db::Col<Post, UId>             post_id;

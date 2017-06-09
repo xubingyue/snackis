@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
 set(CMAKE_CXX_COMPILER clang++)
+
 project(snackis)
 
 add_compile_options(-std=c++1z -stdlib=libc++ -Wall -Werror -g)

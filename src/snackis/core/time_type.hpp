@@ -14,7 +14,7 @@ namespace snackis {
     void write(const Time &val, std::ostream &out) const override;
   };
 
-  extern const TimeType time_type;
+  extern TimeType time_type;
 }
 
 #endif

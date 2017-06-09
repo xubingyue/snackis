@@ -1,7 +1,7 @@
 #include "snackis/core/str_type.hpp"
 
 namespace snackis {
-  const StrType str_type;
+  StrType str_type;
 
   StrType::StrType(): Type<str>("Str") { }
 

@@ -15,7 +15,7 @@ namespace crypt {
     void write(const Key &val, std::ostream &out) const override;
   };
 
-  extern const KeyType key_type;
+  extern KeyType key_type;
 }}
 
 #endif

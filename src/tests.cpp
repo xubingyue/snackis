@@ -9,6 +9,7 @@
 #include "snackis/core/stream.hpp"
 #include "snackis/core/time_type.hpp"
 #include "snackis/core/uid_type.hpp"
+#include "snackis/core/vector_type.hpp"
 #include "snackis/crypt/key.hpp"
 #include "snackis/crypt/secret.hpp"
 #include "snackis/db/col.hpp"
@@ -49,7 +50,7 @@ struct Foo {
   str fstr;
   Time ftime;
   UId fuid;
-
+  std::vector<int64_t> fvector;
   Foo(): fint64(0), ftime(now()) { }
 
   Foo(db::Table<Foo> &tbl, db::Rec<Foo> &rec): fuid(false) {
@@ -89,6 +90,10 @@ const Col<Foo, int64_t> int64_col("int64", int64_type, &Foo::fint64);
 const Col<Foo, str> str_col("str", str_type, &Foo::fstr); 
 const Col<Foo, Time> time_col("time", time_type, &Foo::ftime); 
 const Col<Foo, UId> uid_col("uid", uid_type, &Foo::fuid); 
+VectorType<int64_t> vector_type(int64_type);
+const Col<Foo, std::vector<int64_t>> vector_col("vector",
+						vector_type,
+						&Foo::fvector); 
 
 void table_insert_tests() {
   db::Ctx ctx("testdb/");
@@ -128,18 +133,21 @@ static void table_slurp_tests() {
 static void read_write_tests() {
   db::Ctx ctx("testdb/");
   Table<Foo> tbl(ctx, "read_write_tests", {&uid_col},
-		 {&int64_col, &str_col, &time_col});
+		 {&int64_col, &str_col, &time_col, &vector_col});
   open(tbl);
   
   crypt::Secret sec;
   init(sec, "secret key");
 
+  Foo foo;
+  foo.fint64 = 42;
+  foo.fstr = "abc";
+  foo.ftime = now();
+  //for (int i = 0; i < 100; i++) { foo.fvector.push_back(i); }
+  
   Rec<Foo> rec;
-  rec[&int64_col] = 42;
-  rec[&str_col] = str("abc");
-  rec[&time_col] = now();
-  rec[&uid_col] = UId();
-
+  copy(tbl, rec, foo);
+  
   Stream buf;
   write(tbl, rec, buf, sec);
   Rec<Foo> rrec;

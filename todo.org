@@ -1,3 +1,7 @@
+* change Val to str
+** move type to Rec header
+** change default implementation of type.from/to_val to use read/write
+** remove custom implementations in rec/vector
 * add/remove peer on return in post form
 ** keep list and update field comma_separated
 ** return in empty field goes to next

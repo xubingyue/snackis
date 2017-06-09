@@ -2,10 +2,10 @@
 
 namespace snackis {
 namespace crypt {
-  const KeyType key_type;
+  KeyType key_type;
 
-  KeyType::KeyType(): Type<Key>("crypt::Key") {
-  }
+  KeyType::KeyType(): Type<Key>("crypt::Key")
+  { }
 
   Key KeyType::from_val(const Val &in) const { return get<Key>(in); }
 

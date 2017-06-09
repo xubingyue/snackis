@@ -12,10 +12,10 @@ namespace snackis {
 namespace db {
   template <typename RecT, typename ValT>
   struct Col: public BasicCol<RecT> {
-    const Type<ValT> &type;
+    Type<ValT> &type;
     ValT RecT::* field;
     
-    Col(const str &name, const Type<ValT> &type, ValT RecT::* fld);
+    Col(const str &name, Type<ValT> &type, ValT RecT::* fld);
     void copy(RecT &dest, const RecT &src) const override;
     void copy(Rec<RecT> &dest, const RecT &src) const override;
     void copy(RecT &dest, const Rec<RecT> &src) const override;
@@ -25,12 +25,8 @@ namespace db {
   };
 
   template <typename RecT, typename ValT>
-  Col<RecT, ValT>::Col(const str &name,
-			     const Type<ValT> &type,
-			     ValT RecT::* fld):
-    BasicCol<RecT>(name),
-    type(type),
-    field(fld)
+  Col<RecT, ValT>::Col(const str &name, Type<ValT> &type, ValT RecT::* fld):
+    BasicCol<RecT>(name), type(type), field(fld)
   { }
 
   template <typename RecT, typename ValT>

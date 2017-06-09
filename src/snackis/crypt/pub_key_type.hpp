@@ -15,7 +15,7 @@ namespace crypt {
     void write(const PubKey &val, std::ostream &out) const override;
   };
 
-  extern const PubKeyType pub_key_type;
+  extern PubKeyType pub_key_type;
 }}
 
 #endif

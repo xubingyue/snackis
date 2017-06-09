@@ -13,7 +13,7 @@ namespace snackis {
     void write(const UId &val, std::ostream &out) const override;
   };
 
-  extern const UIdType uid_type;
+  extern UIdType uid_type;
 }
 
 #endif

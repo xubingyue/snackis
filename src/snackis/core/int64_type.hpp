@@ -13,7 +13,7 @@ namespace snackis {
     void write(const int64_t &val, std::ostream &out) const override;
   };
 
-  extern const Int64Type int64_type;
+  extern Int64Type int64_type;
 }
 
 #endif
