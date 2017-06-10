@@ -64,6 +64,7 @@ namespace ui {
 
     body.margin_top = 2;
     history.active = false;
+    history.rows = 100;
   }
   
   static void toggle_peer(PostForm &frm, const db::Rec<Peer> &peer) {

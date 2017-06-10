@@ -45,7 +45,8 @@ namespace ui {
     pos(-1, -1),
     dim(dim),
     margin_top(0), 
-    label(lbl), symbol(' '), ptr(nullptr), 
+    label(lbl), symbol(' '), ptr(nullptr),
+    rows(dim.h),
     active(true) {
     frm.fields.push_back(this);
   }
@@ -58,7 +59,7 @@ namespace ui {
 
   void Field::open(const Pos &pos) {
     assert(!ptr);
-    ptr = new_field(dim.h, dim.w, pos.y, pos.x, 0, 0);
+    ptr = new_field(dim.h, dim.w, pos.y, pos.x, rows-dim.h, 0);
     set_field_userptr(ptr, reinterpret_cast<char *>(this));
     field_opts_off(ptr, O_AUTOSKIP);
     if (active) { set_bg(*this, (dim.h == 1) ? A_UNDERLINE : A_REVERSE); }

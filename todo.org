@@ -1,5 +1,3 @@
-* add offline backing rows to post history
-** add field rows
 * add thread_posts table
 ** add as posts idx
 ** use to populate history field
