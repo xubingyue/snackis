@@ -22,6 +22,9 @@ namespace ui {
 
   PostForm::PostForm(View &view, Footer &ftr):
     ViewForm(view, ftr),
+    peers([this](const auto &x, const auto &y) {
+	return *get(x, ctx.db.peer_name) < *get(y, ctx.db.peer_name);
+      }),
     thread(*this, Dim(1, view.dim.w), "Existing Thread"),
     subject(*this, Dim(1, view.dim.w), "New Subject"),
     peer(*this, "Peer"),

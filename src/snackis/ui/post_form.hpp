@@ -12,7 +12,9 @@
 namespace snackis {
 namespace ui {
   struct PostForm: public ViewForm {
-    std::set<db::Rec<Peer>> peers;
+    using CmpPeer = func<bool (const db::Rec<Peer> &, const db::Rec<Peer> &)>;
+
+    std::set<db::Rec<Peer>, CmpPeer> peers;
 
     EnumField<UId> thread;
     TextField subject;

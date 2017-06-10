@@ -1,3 +1,8 @@
+* add non-public post history field
+** backing rows
+** scroll with pg-up/down in body
+* remove static linking
+** update readme
 * add post message & support in inbox
 * add backup command
 ** backup folder setting, default /backup
