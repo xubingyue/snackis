@@ -1,5 +1,5 @@
-* figure out why full post history isn't loaded/saved
-* convert rec types to uids
+* fix history display in post form
+** dynamic field size?
 * add post history scrolling with pg-up/down
 * extract code from post_form
 * add post message & support in inbox

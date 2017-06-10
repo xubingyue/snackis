@@ -59,7 +59,7 @@ namespace ui {
 	
 	update_peers(*this);
 	
-	set_str(this->history, snackis::history(thread, this->thread.rows));
+	set_str(this->history, snackis::history(thread, 100));
       }
     };
     
@@ -73,7 +73,7 @@ namespace ui {
 
     body.margin_top = 2;
     history.active = false;
-    history.rows = 100;
+    //history.rows = 100;
   }
   
   static void toggle_peer(PostForm &frm, const db::Rec<Peer> &peer) {
