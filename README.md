@@ -7,7 +7,11 @@ Snackis is aiming for something that might be described as a post-modern enigma-
 ![enigma](images/enigma.jpg?raw=true)
 
 ### Dependencies
-Snackis requires a ```C++1z```-capable compiler and standard library to build, and defaults to using ```clang``` with ```libc++```; it further depends on ```libcurl```, ```libpthread```, ```libsodium``` and ```libuuid``` for core functionality, as well as ```NCurses``` for the UI. All dependencies except ```libcurl```, ```libpthread``` and ```NCurses``` are statically linked into the provided [Linux/64-binaries](https://github.com/andreas-gone-wild/snackis/tree/master/dist).
+Snackis requires a ```C++1z```-capable compiler and standard library to build, and defaults to using ```clang``` with ```libc++```; it further depends on ```libcurl```, ```libpthread```, ```libsodium``` and ```libuuid``` for core functionality, as well as ```NCurses``` for the UI.
+
+```
+sudo apt-get install libc++-dev libcurl4-openssl-dev libsodium-dev libuuid1 libncurses-dev
+```
 
 ### Getting started
 If you're running ```Linux/64```, grab the ```snackis```-executable from [here](https://github.com/andreas-gone-wild/snackis/tree/master/dist) and put it in its own directory. Snackis is designed to run completely self-contained and will create everything it needs in the directory where it's started.

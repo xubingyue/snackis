@@ -1,8 +1,9 @@
-* add non-public post history field
-** backing rows
-** scroll with pg-up/down in body
-* remove static linking
-** update readme
+* add offline backing rows to post history
+** add field rows
+* add thread_posts table
+** add as posts idx
+** use to populate history field
+* add post history scroll with pg-up/down
 * add post message & support in inbox
 * add backup command
 ** backup folder setting, default /backup

@@ -29,7 +29,8 @@ namespace ui {
     subject(*this, Dim(1, view.dim.w), "New Subject"),
     peer(*this, "Peer"),
     send_to(*this, Dim(5, view.dim.w), "Send To"),
-    body(*this, Dim(5, view.dim.w), "Body") {
+    body(*this, Dim(5, view.dim.w), "Body"),
+    history(*this, Dim(10, view.dim.w), "History") {
     label = "Post";
     status = "Press Ctrl-s to post, or Ctrl-q to cancel";
     margin_top = 1;
@@ -62,6 +63,7 @@ namespace ui {
     send_to.info = "Press Return to add/remove specified peer";
 
     body.margin_top = 2;
+    history.active = false;
   }
   
   static void toggle_peer(PostForm &frm, const db::Rec<Peer> &peer) {
