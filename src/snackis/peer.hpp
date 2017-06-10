@@ -22,8 +22,6 @@ namespace snackis {
     Peer(const db::Table<Peer> &tbl, const db::Rec<Peer> &rec);
   };
 
-  using Peers = std::vector<db::Rec<Peer>>;
-
   Peer get_email_peer(Ctx &ctx, const str &email);
   void encrypt(const Peer &peer, const Path &in, const Path &out, bool encode);
   void decrypt(const Peer &peer, const Path &in, const Path &out, bool encode);

@@ -49,8 +49,17 @@ namespace ui {
 	set(rec, ctx.db.thread_id, thread.selected->val);
 	load(ctx.db.threads, rec);
 	Thread thread(ctx.db.threads, rec);
-	for (const auto &p: thread.peers) { peers.insert(p); }
+
+	for (const auto &id: thread.peer_ids) {
+	  db::Rec<Peer> peer_rec;
+	  set(peer_rec, ctx.db.peer_id, id);
+	  load(ctx.db.peers, peer_rec);
+	  peers.insert(peer_rec);
+	}
+	
 	update_peers(*this);
+	
+	set_str(this->history, snackis::history(thread, this->thread.rows));
       }
     };
     
@@ -111,14 +120,24 @@ namespace ui {
 	  set(thread_rec, ctx.db.thread_id, frm.thread.selected->val);
 	  load(ctx.db.threads, thread_rec);
 	  Thread thread(ctx.db.threads, thread_rec);
-	  thread.peers.assign(frm.peers.begin(), frm.peers.end());
+
+	  thread.peer_ids.clear();
+	  for (const auto &p: frm.peers) {
+	    thread.peer_ids.push_back(*get(p, ctx.db.peer_id));
+	  }
+	  
 	  copy(ctx.db.threads, thread_rec, thread);
 	  update(ctx.db.threads, thread_rec);
 	} else {
 	  Thread thread(ctx);
 	  thread.subject = get_str(frm.subject);
 	  copy(ctx.db.peers.key, thread.started_by, whoami(ctx));
-	  thread.peers.assign(frm.peers.begin(), frm.peers.end());
+
+	  thread.peer_ids.clear();
+	  for (const auto &p: frm.peers) {
+	    thread.peer_ids.push_back(*get(p, ctx.db.peer_id));
+	  }
+ 
 	  copy(ctx.db.threads, thread_rec, thread);
 	  insert(ctx.db.threads, thread_rec);
 	  log(ctx, fmt("New thread created: %0", thread.subject));

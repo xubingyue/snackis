@@ -12,11 +12,13 @@ namespace snackis {
     str subject;
     Time started_at;
     db::Rec<Peer> started_by;
-    Peers peers;
+    RecVector peer_ids;
     
     Thread(Ctx &ctx);
     Thread(const db::Table<Thread> &tbl, const db::Rec<Thread> &rec);   
   };
+
+  str history(const Thread &thread, size_t max);
 }
 
 #endif

@@ -11,8 +11,7 @@ namespace snackis {
   struct Thread;
   
   struct Post: public Rec {
-    UId id;
-    db::Rec<Thread> thread;
+    UId id, thread_id;
     Time at;
     db::Rec<Peer> by;
     str body;

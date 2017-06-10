@@ -30,25 +30,28 @@ namespace snackis {
 	  {&peer_name, &peer_email, &peer_crypt_key, &peer_created_at}),
 
     peer_emails(ctx, "peer_emails", {&peer_email}, {&peer_id}),
-    peers_type(vector(peers.rec_type)),
 
-    thread_id(        "id",         uid_type,       &Thread::id),
-    thread_subject(   "subject",    str_type,       &Thread::subject),
-    thread_started_at("started_at", time_type,      &Thread::started_at),
-    thread_started_by("started_by", peers.rec_type, &Thread::started_by),
-    thread_peers(     "peers",      peers_type,     &Thread::peers),
+    thread_id(        "id",         uid_type,        &Thread::id),
+    thread_subject(   "subject",    str_type,        &Thread::subject),
+    thread_started_at("started_at", time_type,       &Thread::started_at),
+    thread_started_by("started_by", peers.rec_type,  &Thread::started_by),
+    thread_peer_ids(  "peer_ids",   rec_vector_type, &Thread::peer_ids),
     
     threads(ctx, "threads", {&thread_id},
-	    {&thread_subject, &thread_started_at, &thread_started_by, &thread_peers}),
+	    {&thread_subject, &thread_started_at, &thread_started_by, 
+		&thread_peer_ids}),
 
-    post_id(    "id",     uid_type,         &Post::id),
-    post_thread("thread", threads.rec_type, &Post::thread),
-    post_at(    "at",     time_type,        &Post::at),
-    post_by(    "by",     peers.rec_type,   &Post::by),
-    post_body(  "body",   str_type,         &Post::body),
+    post_id(       "id",        uid_type,       &Post::id),
+    post_thread_id("thread_id", uid_type,       &Post::thread_id),
+    post_at(       "at",        time_type,      &Post::at),
+    post_by(       "by",        peers.rec_type, &Post::by),
+    post_body(     "body",      str_type,       &Post::body),
 
     posts(ctx, "posts", {&post_id},
-	  {&post_id, &post_thread, &post_at, &post_by, &post_body}),
+	  {&post_id, &post_thread_id, &post_at, &post_by, &post_body}),
+
+    thread_posts(ctx, "thread_posts", {&post_thread_id, &post_at, &post_id},
+	  {}),
     
     msg_id(        "id",            uid_type,            &Msg::id),
     msg_type(      "type",          str_type,            &Msg::type),
@@ -72,5 +75,6 @@ namespace snackis {
 	   {&msg_type, &msg_to, &msg_peer_name, &msg_crypt_key, &msg_thread_id,
 	       &msg_post_at, &msg_post_body}) {
     peers.indexes.insert(&peer_emails);
+    posts.indexes.insert(&thread_posts);
   }
 }

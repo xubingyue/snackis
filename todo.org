@@ -1,7 +1,7 @@
-* add thread_posts table
-** add as posts idx
-** use to populate history field
-* add post history scroll with pg-up/down
+* figure out why full post history isn't loaded/saved
+* convert rec types to uids
+* add post history scrolling with pg-up/down
+* extract code from post_form
 * add post message & support in inbox
 * add backup command
 ** backup folder setting, default /backup

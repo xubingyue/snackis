@@ -31,22 +31,20 @@ namespace snackis {
     db::Col<Peer, Time>          peer_created_at;
     db::Table<Peer> peers, peer_emails;
 
-    VectorType<db::Rec<Peer>> peers_type;
-
     db::Col<Thread, UId>           thread_id;
     db::Col<Thread, str>           thread_subject;
     db::Col<Thread, Time>          thread_started_at;
     db::Col<Thread, db::Rec<Peer>> thread_started_by;
-    db::Col<Thread, Peers>         thread_peers;
+    db::Col<Thread, RecVector>     thread_peer_ids;
     db::Table<Thread> threads;
 
     db::Col<Post, UId>             post_id;
-    db::Col<Post, db::Rec<Thread>> post_thread;
+    db::Col<Post, UId>             post_thread_id;
     db::Col<Post, Time>            post_at;
     db::Col<Post, db::Rec<Peer>>   post_by;
     db::Col<Post, str>             post_body;
-    db::Table<Post> posts;
-
+    db::Table<Post> posts, thread_posts;
+    
     db::Col<Msg, UId>  msg_id;
     db::Col<Msg, str>  msg_type;
     db::Col<Msg, str>  msg_from;

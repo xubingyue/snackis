@@ -3,7 +3,7 @@
 
 namespace snackis {
   Post::Post(Ctx &ctx, const db::Rec<Thread> &thread):
-    Rec(ctx), thread(thread)
+    Rec(ctx), thread_id(*get(thread, ctx.db.thread_id))
   { }
 
   Post::Post(const db::Table<Post> &tbl, const db::Rec<Post> &rec):
