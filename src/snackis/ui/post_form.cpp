@@ -67,7 +67,7 @@ namespace ui {
 
     peer.name.margin_top = 1;
     send_to.active = false;
-    send_to.info = "Press Return to add/remove specified peer";
+    send_to.info = "Press Return to add/remove peer";
 
     body.margin_top = 1;
     body.rows = 10;

@@ -1,3 +1,6 @@
+* move send_to above peer in post_form
+** move info to peer_email
+** take new shot for readme
 * add fetch_interval setting
 ** start fetch_thread in main if set
 ** sleep for fetch_interval seconds and then fetch
