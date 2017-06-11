@@ -44,9 +44,9 @@ namespace ui {
       }),
     thread(*this, Dim(1, view.dim.w), "Existing Thread"),
     subject(*this, Dim(1, view.dim.w), "New Subject"),
+    body(*this, Dim(5, view.dim.w), "Body"),
     peer(*this, "Peer"),
     send_to(*this, Dim(5, view.dim.w), "Send To"),
-    body(*this, Dim(5, view.dim.w), "Body"),
     history(*this, Dim(view.dim.h-26, view.dim.w), "History") {
     label = "Post";
     status = "Press Ctrl-s to post, or Ctrl-q to cancel";
@@ -105,10 +105,60 @@ namespace ui {
 
     update_peers(frm);
   }
+
+  static bool save(PostForm &frm) {
+    validate(frm);
+    const str &subject(get_str(frm.subject));
+    const str &body(get_str(frm.body));
+    
+    if ((!frm.thread.selected && subject == "") ||
+	frm.peers.empty() ||
+	body == "") { return false; }
+    
+    Ctx &ctx(frm.ctx);
+    db::Trans trans(ctx);
+    db::Rec<Thread> thread_rec;
+    
+    if (frm.thread.selected) {
+      set(thread_rec, ctx.db.thread_id, frm.thread.selected->val);
+      load(ctx.db.threads, thread_rec);
+      Thread thread(ctx.db.threads, thread_rec);
+      
+      thread.peer_ids.clear();
+      for (const auto &p: frm.peers) {
+	thread.peer_ids.push_back(*get(p, ctx.db.peer_id));
+      }
+      
+      copy(ctx.db.threads, thread_rec, thread);
+      update(ctx.db.threads, thread_rec);
+    } else {
+      Thread thread(ctx);
+      thread.subject = subject;
+      copy(ctx.db.peers.key, thread.started_by, whoami(ctx));
+      
+      thread.peer_ids.clear();
+      for (const auto &p: frm.peers) {
+	thread.peer_ids.push_back(*get(p, ctx.db.peer_id));
+      }
+      
+      copy(ctx.db.threads, thread_rec, thread);
+      insert(ctx.db.threads, thread_rec);
+      log(ctx, fmt("New thread created: %0", thread.subject));
+    }
+
+    Post post(ctx, thread_rec);
+    post.at = now();
+    copy(ctx.db.peers.key, post.by, whoami(ctx));
+    post.body = body;
+    insert(ctx.db.posts, post);
+	
+    db::commit(trans);
+    log(ctx, "New post created");
+    return true;
+  }
   
   bool run(PostForm &frm) {
-    Ctx &ctx(frm.window.ctx);
-    db::Trans trans(ctx);
+    Ctx &ctx(frm.ctx);
     
     while (true) {
       chtype ch = get_key(frm.window);
@@ -120,8 +170,8 @@ namespace ui {
 	if (frm.peer.selected &&
 	    (f.ptr == frm.peer.name.ptr || f.ptr == frm.peer.email.ptr)) {
 	  db::Rec<Peer> rec;
-	  set(rec, frm.ctx.db.peer_id, *frm.peer.selected);
-	  load(frm.ctx.db.peers, rec);
+	  set(rec, ctx.db.peer_id, *frm.peer.selected);
+	  load(ctx.db.peers, rec);
 	  toggle_peer(frm, rec);
 	  clear(dynamic_cast<EnumField<UId> &>(f));
 	} else {
@@ -130,47 +180,9 @@ namespace ui {
 	
 	break;
       }
-      case KEY_CTRL('s'): {
-	validate(frm);
-	db::Rec<Thread> thread_rec;
-	
-	if (frm.thread.selected) {
-	  set(thread_rec, ctx.db.thread_id, frm.thread.selected->val);
-	  load(ctx.db.threads, thread_rec);
-	  Thread thread(ctx.db.threads, thread_rec);
-
-	  thread.peer_ids.clear();
-	  for (const auto &p: frm.peers) {
-	    thread.peer_ids.push_back(*get(p, ctx.db.peer_id));
-	  }
-	  
-	  copy(ctx.db.threads, thread_rec, thread);
-	  update(ctx.db.threads, thread_rec);
-	} else {
-	  Thread thread(ctx);
-	  thread.subject = get_str(frm.subject);
-	  copy(ctx.db.peers.key, thread.started_by, whoami(ctx));
-
-	  thread.peer_ids.clear();
-	  for (const auto &p: frm.peers) {
-	    thread.peer_ids.push_back(*get(p, ctx.db.peer_id));
-	  }
- 
-	  copy(ctx.db.threads, thread_rec, thread);
-	  insert(ctx.db.threads, thread_rec);
-	  log(ctx, fmt("New thread created: %0", thread.subject));
-	}
-
-	Post post(ctx, thread_rec);
-	post.at = now();
-	copy(ctx.db.peers.key, post.by, whoami(ctx));
-	post.body = get_str(frm.body);
-	insert(ctx.db.posts, post);
-	
-	log(ctx, "New post created");
-	db::commit(trans);
-	return true;
-      }
+      case KEY_CTRL('s'):
+	if (save(frm)) { return true; }
+	break;
       case KEY_CTRL('q'):
 	return false;
       default:
