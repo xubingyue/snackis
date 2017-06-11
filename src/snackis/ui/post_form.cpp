@@ -87,9 +87,9 @@ namespace ui {
     send_to.active = false;
     send_to.info = "Press Return to add/remove specified peer";
 
-    body.margin_top = 2;
+    body.margin_top = 1;
     body.rows = 10;
-    history.margin_top = 1;
+    history.margin_top = 2;
     history.editable = false;
     history.rows = 100;
   }
