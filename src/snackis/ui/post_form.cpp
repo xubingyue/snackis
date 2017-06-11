@@ -32,6 +32,7 @@ namespace ui {
 		      peer.name, peer.email),
 		  ' ', width);
       out << fill(post.body, ' ', width);
+      out << fill("", ' ', width);
     }
     return out.str();
   }
@@ -74,7 +75,6 @@ namespace ui {
 	}
 	
 	update_peers(*this);
-	
 	set_str(history, load_history(thread, history.dim.w));
       }
     };
@@ -88,8 +88,9 @@ namespace ui {
     send_to.info = "Press Return to add/remove specified peer";
 
     body.margin_top = 2;
-    body.rows = 100;
+    body.rows = 10;
     history.margin_top = 1;
+    history.editable = false;
     history.rows = 100;
   }
   
@@ -160,7 +161,6 @@ namespace ui {
 	  log(ctx, fmt("New thread created: %0", thread.subject));
 	}
 
-	
 	Post post(ctx, thread_rec);
 	post.at = now();
 	copy(ctx.db.peers.key, post.by, whoami(ctx));

@@ -28,7 +28,7 @@ namespace ui {
     char symbol;
     FIELD *ptr;
     int rows;
-    bool active;
+    bool active, editable;
     opt<OnChange> on_change;
     opt<OnAction> on_action;
     

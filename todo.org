@@ -1,8 +1,6 @@
-* set history field to read-only
-** add field.editable (no bg)
-* ---
-* extract code from post_form
-* add post message & support in inbox
+* write post.send
+** call from post_form
+* add post support in inbox
 * add backup command
 ** backup folder setting, default /backup
 ** run tar -z proc

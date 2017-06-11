@@ -47,7 +47,7 @@ namespace ui {
     margin_top(0), 
     label(lbl), symbol(' '), ptr(nullptr),
     rows(dim.h),
-    active(true) {
+    active(true), editable(true) {
     frm.fields.push_back(this);
   }
 
@@ -62,8 +62,9 @@ namespace ui {
     ptr = new_field(dim.h, dim.w, pos.y, pos.x, rows-dim.h, 0);
     set_field_userptr(ptr, reinterpret_cast<char *>(this));
     field_opts_off(ptr, O_AUTOSKIP);
-    if (active) { set_bg(*this, (dim.h == 1) ? A_UNDERLINE : A_REVERSE); }
-    else { field_opts_off(ptr, O_ACTIVE); }
+    if (!active) { field_opts_off(ptr, O_ACTIVE); }
+    if (!editable) { field_opts_off(ptr, O_EDIT); }
+    if (active && editable) { set_bg(*this, (dim.h == 1) ? A_UNDERLINE : A_REVERSE); }
     this->pos = pos;
   }
 
