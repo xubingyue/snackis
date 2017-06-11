@@ -19,6 +19,8 @@ namespace snackis {
     Post(Ctx &ctx, const db::Rec<Thread> &thread);
     Post(const db::Table<Post> &tbl, const db::Rec<Post> &rec);   
   };
+
+  void post_msgs(Post &post);
 }
 
 #endif

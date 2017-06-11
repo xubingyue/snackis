@@ -9,7 +9,7 @@
 
 namespace snackis {
   struct Msg: public Rec {
-    static const str INVITE, ACCEPT, REJECT;
+    static const str INVITE, ACCEPT, REJECT, POST;
     
     UId id;
     str type;
@@ -22,7 +22,7 @@ namespace snackis {
     Time post_at;
     
     Msg(Ctx &ctx);
-    Msg(Ctx &ctx, const str &type, const str &to);
+    Msg(Ctx &ctx, const str &type, const str &to, bool init=true);
     Msg(const db::Table<Msg> &tbl, const db::Rec<Msg> &rec);
   };
   

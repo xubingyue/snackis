@@ -77,7 +77,7 @@ namespace ui {
     last_cmd(nullopt),
     quitting(false),
     view(view) {
-    form.status = "Type 'quit' followed by Return to exit";
+    form.status = "Type 'quit' and press Return to exit";
     field.allow_clear = true;
     open(form);
     refresh(*this);

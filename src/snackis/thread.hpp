@@ -20,6 +20,7 @@ namespace snackis {
     Thread(const db::Table<Thread> &tbl, const db::Rec<Thread> &rec);   
   };
 
+  Thread get_thread_id(Ctx &ctx, UId id);
   std::vector<Post> last_posts(const Thread &thread, size_t max);
 }
 

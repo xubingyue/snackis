@@ -3,12 +3,21 @@
 #include "snackis/snackis.hpp"
 
 namespace snackis {
-  const str Msg::INVITE("invite"), Msg::ACCEPT("accept"), Msg::REJECT("reject");
+  const str
+  Msg::INVITE("invite"), Msg::ACCEPT("accept"), Msg::REJECT("reject"),
+    Msg::POST("post");
 
   Msg::Msg(Ctx &ctx): Rec(ctx) { }
 
-  Msg::Msg(Ctx &ctx, const str &type, const str &to):
-    Rec(ctx), type(type), to(to) { }
+  Msg::Msg(Ctx &ctx, const str &type, const str &to, bool init):
+    Rec(ctx), type(type), to(to) {
+
+    if (init) {
+      Peer &me(whoami(ctx));
+      crypt_key = me.crypt_key;
+      peer_name = me.name;
+    }
+  }
 
   Msg::Msg(const db::Table<Msg> &tbl, const db::Rec<Msg> &rec):
     Rec(dynamic_cast<Ctx &>(tbl.ctx)), id(false) {
@@ -31,7 +40,7 @@ namespace snackis {
 		    data.size()));
     }
 
-    Peer peer(get_email_peer(ctx, msg.to));
+    Peer peer(get_peer_email(ctx, msg.to));
     Data out(crypt::encrypt(*get_val(ctx.settings.crypt_key), peer.crypt_key,
 			    reinterpret_cast<const unsigned char *>(data.c_str()),
 			    data.size()));
@@ -68,7 +77,7 @@ namespace snackis {
     Data dat(hex_bin(in.substr(i)));
 
     if (msg.type != Msg::INVITE) {
-      const Peer peer(get_email_peer(ctx, msg.from));
+      const Peer peer(get_peer_email(ctx, msg.from));
       dat = crypt::decrypt(*get_val(ctx.settings.crypt_key), peer.crypt_key,
 			   &dat[0],
 			   dat.size());

@@ -9,6 +9,17 @@ namespace snackis {
     copy(tbl, *this, rec);
   }
 
+  Thread get_thread_id(Ctx &ctx, UId id) {
+    db::Rec<Thread> rec;
+    set(rec, ctx.db.thread_id, id);
+
+    if (!load(ctx.db.threads, rec)) {
+      ERROR(Db, fmt("Thread id not found: %0", id));
+    }
+
+    return Thread(ctx.db.threads, rec);
+  }
+
   std::vector<Post> last_posts(const Thread &thread, size_t max) {
     Ctx &ctx(thread.ctx);
     db::Rec<Post> post_rec;

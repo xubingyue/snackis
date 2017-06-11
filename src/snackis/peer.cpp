@@ -9,7 +9,18 @@ namespace snackis {
     copy(tbl, *this, rec);
   }
 
-  Peer get_email_peer(Ctx &ctx, const str &email) {
+  Peer get_peer_id(Ctx &ctx, const UId &id) {
+    db::Rec<Peer> rec;
+    set(rec, ctx.db.peer_id, id);
+
+    if (!load(ctx.db.peers, rec)) {
+      ERROR(Db, fmt("Peer id not found: %0", id));
+    }
+
+    return Peer(ctx.db.peers, rec);
+  }
+  
+  Peer get_peer_email(Ctx &ctx, const str &email) {
     db::Rec<Peer> rec;
     db::set(rec, ctx.db.peer_email, email);
     

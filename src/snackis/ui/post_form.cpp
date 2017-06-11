@@ -151,7 +151,8 @@ namespace ui {
     copy(ctx.db.peers.key, post.by, whoami(ctx));
     post.body = body;
     insert(ctx.db.posts, post);
-	
+    log(ctx, "Saving messages to outbox...");
+    post_msgs(post);
     db::commit(trans);
     log(ctx, "New post created");
     return true;

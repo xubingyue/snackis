@@ -10,15 +10,12 @@ namespace snackis {
     copy(tbl, *this, rec);
   }
 
-  void post(Invite &inv) {
+  void post_msg(Invite &inv) {
     Ctx &ctx(inv.ctx);
     inv.posted_at = now();
     upsert(ctx.db.invites, inv);
 
     Msg msg(ctx, Msg::INVITE, inv.to);
-    Peer &me(whoami(ctx));
-    msg.crypt_key = me.crypt_key;
-    msg.peer_name = me.name;
     insert(inv.ctx.db.outbox, msg);
   }
 
@@ -38,15 +35,12 @@ namespace snackis {
     upsert(ctx.db.peers, peer);
 
     Msg out(ctx, Msg::ACCEPT, in.from);
-    Peer &me(whoami(ctx));
-    out.crypt_key = me.crypt_key;
-    out.peer_name = me.name;
     insert(ctx.db.outbox, out);
   }
 
   void reject_invite(const Msg &in) {
     Ctx &ctx(in.ctx);
-    Msg out(ctx, Msg::REJECT, in.from);
+    Msg out(ctx, Msg::REJECT, in.from, false);
     insert(ctx.db.outbox, out);
   }
 }

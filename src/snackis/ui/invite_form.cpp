@@ -25,7 +25,7 @@ namespace ui {
 	validate(frm);
 	Invite inv(ctx, get_str(frm.email));
 	load(ctx.db.invites, inv);
-	post(inv);	
+	post_msg(inv);	
 	log(ctx, "New invite saved to outbox");
 	db::commit(trans);
 	return true;
