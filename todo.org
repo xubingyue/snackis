@@ -1,6 +1,5 @@
 * add post support in inbox
 ** join thread / new post
-* purge c++ libs from make file
 * convert db to use uid instead of rec types
 ** remove table rectype
 * add backup command
