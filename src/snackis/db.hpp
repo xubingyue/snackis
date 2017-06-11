@@ -30,10 +30,10 @@ namespace snackis {
     db::Col<Peer, Time>          peer_created_at;
     db::Table<Peer> peers, peer_emails;
 
-    db::Col<Thread, UId>           thread_id;
-    db::Col<Thread, str>           thread_subj;
-    db::Col<Thread, Time>          thread_started_at;
-    db::Col<Thread, db::Rec<Peer>> thread_started_by;
+    db::Col<Thread, UId>  thread_id;
+    db::Col<Thread, str>  thread_subj;
+    db::Col<Thread, Time> thread_at;
+    db::Col<Thread, UId>  thread_by_id;
     db::Table<Thread> threads;
 
     db::Col<Post, UId>             post_id;
@@ -44,17 +44,17 @@ namespace snackis {
     db::Col<Post, std::set<UId>>   post_peer_ids;
     db::Table<Post> posts, thread_posts;
     
-    db::Col<Msg, UId>  msg_id;
-    db::Col<Msg, str>  msg_type;
-    db::Col<Msg, str>  msg_from;
-    db::Col<Msg, str>  msg_to;
-    db::Col<Msg, Time> msg_fetched_at;
-    db::Col<Msg, str>  msg_peer_name;
+    db::Col<Msg, UId>           msg_id;
+    db::Col<Msg, str>           msg_type;
+    db::Col<Msg, str>           msg_from;
+    db::Col<Msg, str>           msg_to;
+    db::Col<Msg, Time>          msg_fetched_at;
+    db::Col<Msg, str>           msg_peer_name;
     db::Col<Msg, crypt::PubKey> msg_crypt_key;
-    db::Col<Msg, UId>  msg_thread_id;
-    db::Col<Msg, str>  msg_thread_subj;
-    db::Col<Msg, Time> msg_post_at;
-    db::Col<Msg, str>  msg_post_body;
+    db::Col<Msg, UId>           msg_thread_id;
+    db::Col<Msg, str>           msg_thread_subj;
+    db::Col<Msg, Time>          msg_post_at;
+    db::Col<Msg, str>           msg_post_body;
     db::Table<Msg> msgs, inbox, outbox;
 
     Db(db::Ctx &ctx);

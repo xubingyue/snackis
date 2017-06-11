@@ -31,13 +31,13 @@ namespace snackis {
 
     peer_emails(ctx, "peer_emails", {&peer_email}, {&peer_id}),
 
-    thread_id(        "id",         uid_type,        &Thread::id),
-    thread_subj(      "subj",       str_type,        &Thread::subj),
-    thread_started_at("started_at", time_type,       &Thread::started_at),
-    thread_started_by("started_by", peers.rec_type,  &Thread::started_by),
+    thread_id(   "id",         uid_type,  &Thread::id),
+    thread_subj( "subj",       str_type,  &Thread::subj),
+    thread_at(   "at",         time_type, &Thread::at),
+    thread_by_id("by_id",      uid_type,  &Thread::by_id),
     
     threads(ctx, "threads", {&thread_id},
-	    {&thread_subj, &thread_started_at, &thread_started_by}),
+	    {&thread_subj, &thread_at, &thread_by_id}),
 
     post_id(       "id",        uid_type,       &Post::id),
     post_thread_id("thread_id", uid_type,       &Post::thread_id),

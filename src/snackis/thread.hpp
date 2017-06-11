@@ -12,8 +12,8 @@ namespace snackis {
   struct Thread: public Rec {   
     UId id;
     str subj;
-    Time started_at;
-    db::Rec<Peer> started_by;
+    Time at;
+    UId by_id;
     
     Thread(Ctx &ctx);
     Thread(const db::Table<Thread> &tbl, const db::Rec<Thread> &rec);   

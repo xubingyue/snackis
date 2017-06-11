@@ -13,7 +13,7 @@ namespace snackis {
   struct Thread;
   
   struct Post: public Rec {
-    UId ird, thread_id;
+    UId id, thread_id;
     Time at;
     db::Rec<Peer> by;
     str body;

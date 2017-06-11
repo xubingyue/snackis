@@ -13,8 +13,8 @@ namespace snackis {
     if (!exists) {
       thread.subj = msg.thread_subj;
       Peer peer(get_peer_email(ctx, msg.from));
-      copy(ctx.db.peers.key, thread.started_by, peer);
-      thread.started_at = now();
+      thread.at = now();
+      thread.by_id = peer.id;
       insert(ctx.db.threads, thread);
     }
 

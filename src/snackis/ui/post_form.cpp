@@ -121,7 +121,7 @@ namespace ui {
     } else {
       Thread thread(ctx);
       thread.subj = subj;
-      copy(ctx.db.peers.key, thread.started_by, whoami(ctx));
+      thread.by_id = whoami(ctx).id;
       insert(ctx.db.threads, thread);
       log(ctx, fmt("New thread created: %0", thread.subj));
       post(frm, thread, body);
