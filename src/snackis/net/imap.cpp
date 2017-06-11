@@ -143,7 +143,6 @@ namespace snackis {
 	continue;
       }
       
-      insert(imap.ctx.db.msgs, *msg);
       insert(imap.ctx.db.inbox, *msg);
       delete_uid(imap, uid);
       log(imap.ctx, fmt("Fetched message from %0", msg->from));

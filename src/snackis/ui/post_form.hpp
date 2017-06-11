@@ -19,8 +19,8 @@ namespace ui {
     EnumField<UId> thread;
     TextField subj;
     TextField body;
-    PeerPanel peer;
     TextField send_to;
+    PeerPanel peer;
     TextField history;
     PostForm(View &view, Footer &ftr);
   };

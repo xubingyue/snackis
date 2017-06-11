@@ -75,6 +75,7 @@ namespace snackis {
 	   {&msg_type, &msg_to, &msg_peer_name, &msg_crypt_key,
 	       &msg_thread_id, &msg_thread_subj,
 	       &msg_post_id, &msg_post_at, &msg_post_body}) {
+    inbox.indexes.insert(&msgs);
     peers.indexes.insert(&peer_emails);
     posts.indexes.insert(&thread_posts);
   }

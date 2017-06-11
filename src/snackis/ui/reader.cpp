@@ -62,8 +62,11 @@ namespace ui {
 	    log(rdr.ctx, "Inbox is empty");
 	  } else {
 	    InboxForm frm(rdr.view, rdr.form.footer);
-	    open(frm);
-	    run(frm);
+	    if (frm.fields.empty()) { log(rdr.ctx, "Inbox is empty"); }
+	    else {
+	      open(frm);
+	      run(frm);
+	    }
 	  }
 	}));
     
