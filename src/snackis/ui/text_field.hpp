@@ -10,8 +10,6 @@ namespace ui {
 
   struct TextField: public Field {
     bool echo;
-    using OnComplete = func<str (const str &)>;
-    opt<OnComplete> on_complete;
     
     TextField(Form &frm, const Dim &dim, const str &lbl);
     void open(const Pos &pos) override;

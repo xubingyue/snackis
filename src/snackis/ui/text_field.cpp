@@ -28,19 +28,6 @@ namespace ui {
     case KEY_RIGHT:
       form_driver(form.ptr, REQ_NEXT_CHAR);
       break;
-    case KEY_TAB: {
-      if (on_complete) {
-	validate(form);
-	str in(get_str(*this)), out((*on_complete)(in));
-      
-	if (out != in) {
-	  set_str(*this, out);
-	  eol(form);
-	}
-      }
-    
-      break;
-    }    
     case KEY_HOME:
       form_driver(form.ptr, REQ_BEG_FIELD);
       break;
