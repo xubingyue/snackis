@@ -36,12 +36,12 @@ namespace snackis {
     db::Col<Thread, UId>  thread_by_id;
     db::Table<Thread> threads;
 
-    db::Col<Post, UId>             post_id;
-    db::Col<Post, UId>             post_thread_id;
-    db::Col<Post, Time>            post_at;
-    db::Col<Post, db::Rec<Peer>>   post_by;
-    db::Col<Post, str>             post_body;
-    db::Col<Post, std::set<UId>>   post_peer_ids;
+    db::Col<Post, UId>           post_id;
+    db::Col<Post, UId>           post_thread_id;
+    db::Col<Post, Time>          post_at;
+    db::Col<Post, UId>           post_by_id;
+    db::Col<Post, str>           post_body;
+    db::Col<Post, std::set<UId>> post_peer_ids;
     db::Table<Post> posts, thread_posts;
     
     db::Col<Msg, UId>           msg_id;

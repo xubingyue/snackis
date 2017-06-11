@@ -26,10 +26,11 @@ namespace snackis {
 
   Post::Post(const Msg &msg):
     Rec(msg.ctx),
-    thread_id(get_thread(msg).id), at(msg.post_at), body(msg.post_body) {
-    Peer peer(get_peer_email(ctx, msg.from));
-    copy(ctx.db.peers.key, by, peer);
-  }
+    thread_id(get_thread(msg).id), 
+    at(msg.post_at), 
+    by_id(get_peer_email(ctx, msg.from).id),
+    body(msg.post_body) 
+  { }
 
   Post::Post(const db::Table<Post> &tbl, const db::Rec<Post> &rec):
     Rec(dynamic_cast<Ctx &>(tbl.ctx)), id(false) {

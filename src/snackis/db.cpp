@@ -39,15 +39,15 @@ namespace snackis {
     threads(ctx, "threads", {&thread_id},
 	    {&thread_subj, &thread_at, &thread_by_id}),
 
-    post_id(       "id",        uid_type,       &Post::id),
-    post_thread_id("thread_id", uid_type,       &Post::thread_id),
-    post_at(       "at",        time_type,      &Post::at),
-    post_by(       "by",        peers.rec_type, &Post::by),
-    post_body(     "body",      str_type,       &Post::body),
-    post_peer_ids( "peer_ids",  uid_set_type,   &Post::peer_ids),
+    post_id(       "id",        uid_type,     &Post::id),
+    post_thread_id("thread_id", uid_type,     &Post::thread_id),
+    post_at(       "at",        time_type,    &Post::at),
+    post_by_id(    "by_id",     uid_type,     &Post::by_id),
+    post_body(     "body",      str_type,     &Post::body),
+    post_peer_ids( "peer_ids",  uid_set_type, &Post::peer_ids),
 
     posts(ctx, "posts", {&post_id},
-	  {&post_id, &post_thread_id, &post_at, &post_by, &post_body,
+	  {&post_id, &post_thread_id, &post_at, &post_by_id, &post_body,
 	      &post_peer_ids}),
 
     thread_posts(ctx, "thread_posts", {&post_thread_id, &post_at, &post_id}, {}),

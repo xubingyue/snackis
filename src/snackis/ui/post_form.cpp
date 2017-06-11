@@ -23,11 +23,10 @@ namespace ui {
 	       
     Stream out;
     for (auto &post: last_posts(thread, 7)) {
-      load(ctx.db.peers, post.by);
-      Peer peer(ctx.db.peers, post.by);
+      Peer by(get_peer_id(ctx, post.by_id));
       out << fill(fmt("%0 | %1 (%2)",
 		      fmt(post.at, "%a %b %d, %H:%M:%S"),
-		      peer.name, peer.email),
+		      by.name, by.email),
 		  ' ', width);
       out << fill(post.body, ' ', width);
       out << fill("", ' ', width);
@@ -93,7 +92,7 @@ namespace ui {
     Ctx &ctx(frm.ctx);
     Post post(thread);
     post.at = now();
-    copy(ctx.db.peers.key, post.by, whoami(ctx));
+    post.by_id = whoami(ctx).id;
     post.body = body;
     for (const auto &p: frm.peers) { post.peer_ids.insert(p.id); }
     insert(ctx.db.posts, post);

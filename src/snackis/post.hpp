@@ -15,7 +15,7 @@ namespace snackis {
   struct Post: public Rec {
     UId id, thread_id;
     Time at;
-    db::Rec<Peer> by;
+    UId by_id;
     str body;
     std::set<UId> peer_ids;
 
