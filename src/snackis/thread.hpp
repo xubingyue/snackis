@@ -7,6 +7,8 @@
 #include "snackis/core/uid.hpp"
 
 namespace snackis {
+  struct Post;
+  
   struct Thread: public Rec {   
     UId id;
     str subject;
@@ -17,6 +19,8 @@ namespace snackis {
     Thread(Ctx &ctx);
     Thread(const db::Table<Thread> &tbl, const db::Rec<Thread> &rec);   
   };
+
+  std::vector<Post> last_posts(const Thread &thread, size_t max);
 }
 
 #endif

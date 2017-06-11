@@ -22,23 +22,9 @@ namespace ui {
   
   static str load_history(const Thread &thread, size_t width) {
     Ctx &ctx(thread.ctx);
-    db::Rec<Post> post_rec;
-    set(post_rec, ctx.db.post_thread_id, thread.id);
-    size_t i = 0;
-    std::vector<Post> posts;
-    
-    for (auto found(ctx.db.thread_posts.recs.lower_bound(post_rec));
-	 found != ctx.db.thread_posts.recs.end() && i < 7;
-	 found++, i++) {
-      post_rec.clear();
-      copy(ctx.db.posts.key, post_rec, *found);
-      load(ctx.db.posts, post_rec);
-      posts.emplace_back(ctx.db.posts, post_rec);
-    }
-
+	       
     Stream out;
-    for (auto i(posts.rbegin()); i != posts.rend(); i++) {
-      auto &post(*i);
+    for (auto &post: last_posts(thread, 7)) {
       load(ctx.db.peers, post.by);
       Peer peer(ctx.db.peers, post.by);
       out << fill(fmt("%0 | %1 (%2)",
@@ -60,7 +46,7 @@ namespace ui {
     peer(*this, "Peer"),
     send_to(*this, Dim(5, view.dim.w), "Send To"),
     body(*this, Dim(5, view.dim.w), "Body"),
-    history(*this, Dim(10, view.dim.w), "History") {
+    history(*this, Dim(view.dim.h-26, view.dim.w), "History") {
     label = "Post";
     status = "Press Ctrl-s to post, or Ctrl-q to cancel";
     margin_top = 1;
@@ -103,6 +89,7 @@ namespace ui {
 
     body.margin_top = 2;
     body.rows = 100;
+    history.margin_top = 1;
     history.rows = 100;
   }
   

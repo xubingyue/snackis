@@ -1,6 +1,5 @@
 * set history field to read-only
 ** add field.editable (no bg)
-* break history loading loop on new thread
 * ---
 * extract code from post_form
 * add post message & support in inbox
