@@ -2,12 +2,13 @@
 #include "snackis/settings.hpp"
 #include "snackis/core/int64_type.hpp"
 #include "snackis/core/str_type.hpp"
+#include "snackis/core/uid_type.hpp"
 #include "snackis/crypt/key_type.hpp"
 
 namespace snackis {
   Settings::Settings(Ctx &ctx):
-    whoami(ctx,    "whoami",    ctx.db.peers.rec_type, nullopt),
-    crypt_key(ctx, "crypt_key", crypt::key_type,       nullopt),
+    whoami(ctx,    "whoami",    uid_type,        nullopt),
+    crypt_key(ctx, "crypt_key", crypt::key_type, nullopt),
 
     load_folder(ctx, "load_folder", str_type, str("load/")),
     save_folder(ctx, "save_folder", str_type, str("save/")),

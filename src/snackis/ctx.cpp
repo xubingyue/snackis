@@ -15,16 +15,15 @@ namespace snackis {
 
     db::Trans trans(ctx);
 
-    opt<db::Rec<Peer>> found_me = get_val(ctx.settings.whoami);
-    if (found_me) {
-      copy(ctx.db.peers, ctx.whoami, *found_me);
+    opt<UId> me_id = get_val(ctx.settings.whoami);
+    
+    if (me_id) {
+      ctx.whoami.id = *me_id;
       if (!load(ctx.db.peers, ctx.whoami)) {
 	ERROR(Db, "Failed loading me");
       }
     } else {
-      db::Rec<Peer> me;
-      copy(ctx.db.peers.key, me, ctx.whoami);
-      set_val(ctx.settings.whoami, me);
+      set_val(ctx.settings.whoami, ctx.whoami.id);
     }
     
     opt<crypt::Key> found_crypt_key(get_val(ctx.settings.crypt_key));
