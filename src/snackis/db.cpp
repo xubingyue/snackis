@@ -1,9 +1,9 @@
 #include "snackis/db.hpp"
 #include "snackis/core/int64_type.hpp"
+#include "snackis/core/set_type.hpp"
 #include "snackis/core/str_type.hpp"
 #include "snackis/core/time_type.hpp"
 #include "snackis/core/uid_type.hpp"
-#include "snackis/core/vector_type.hpp"
 #include "snackis/crypt/pub_key_type.hpp"
 
 namespace snackis {
@@ -35,20 +35,20 @@ namespace snackis {
     thread_subj(      "subj",       str_type,        &Thread::subj),
     thread_started_at("started_at", time_type,       &Thread::started_at),
     thread_started_by("started_by", peers.rec_type,  &Thread::started_by),
-    thread_peer_ids(  "peer_ids",   rec_vector_type, &Thread::peer_ids),
     
     threads(ctx, "threads", {&thread_id},
-	    {&thread_subj, &thread_started_at, &thread_started_by, 
-		&thread_peer_ids}),
+	    {&thread_subj, &thread_started_at, &thread_started_by}),
 
     post_id(       "id",        uid_type,       &Post::id),
     post_thread_id("thread_id", uid_type,       &Post::thread_id),
     post_at(       "at",        time_type,      &Post::at),
     post_by(       "by",        peers.rec_type, &Post::by),
     post_body(     "body",      str_type,       &Post::body),
+    post_peer_ids( "peer_ids",  uid_set_type,   &Post::peer_ids),
 
     posts(ctx, "posts", {&post_id},
-	  {&post_id, &post_thread_id, &post_at, &post_by, &post_body}),
+	  {&post_id, &post_thread_id, &post_at, &post_by, &post_body,
+	      &post_peer_ids}),
 
     thread_posts(ctx, "thread_posts", {&post_thread_id, &post_at, &post_id}, {}),
     

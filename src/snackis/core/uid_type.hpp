@@ -1,6 +1,7 @@
 #ifndef SNACKIS_UID_TYPE_HPP
 #define SNACKIS_UID_TYPE_HPP
 
+#include "snackis/core/set_type.hpp"
 #include "snackis/core/type.hpp"
 #include "snackis/core/uid.hpp"
 
@@ -14,6 +15,7 @@ namespace snackis {
   };
 
   extern UIdType uid_type;
+  extern SetType<UId> uid_set_type;
 }
 
 #endif

@@ -11,9 +11,7 @@ namespace ui {
     str sep;
     
     for (const auto &p: frm.peers) {
-      buf <<
-	sep << *get(p, frm.ctx.db.peer_name) <<
-	'(' << *get(p, frm.ctx.db.peer_email) << ')';
+      buf << fmt("%0 %1 (%2)", sep, p.name, p.email);
       sep = ", ";
     }
 
@@ -39,9 +37,7 @@ namespace ui {
 
   PostForm::PostForm(View &view, Footer &ftr):
     ViewForm(view, ftr),
-    peers([this](const auto &x, const auto &y) {
-	return *get(x, ctx.db.peer_name) < *get(y, ctx.db.peer_name);
-      }),
+    peers([this](const auto &x, const auto &y) { return x.name < y.name; }),
     thread(*this, Dim(1, view.dim.w), "Existing Thread"),
     subj(*this, Dim(1, view.dim.w), "New Subject"),
     body(*this, Dim(5, view.dim.w), "Body"),
@@ -60,22 +56,9 @@ namespace ui {
     thread.on_change = [this]() {
       if (thread.selected) {
 	set_str(subj, "");
-
-	peers.clear();
-	db::Rec<Thread> rec;
-	set(rec, ctx.db.thread_id, thread.selected->val);
-	load(ctx.db.threads, rec);
-	Thread thread(ctx.db.threads, rec);
-
-	for (const auto &id: thread.peer_ids) {
-	  db::Rec<Peer> peer_rec;
-	  set(peer_rec, ctx.db.peer_id, id);
-	  load(ctx.db.peers, peer_rec);
-	  peers.insert(peer_rec);
-	}
-	
-	update_peers(*this);
-	set_str(history, load_history(thread, history.dim.w));
+	set_str(history,
+		load_history(get_thread_id(ctx, thread.selected->val),
+			     history.dim.w));
       }
     };
     
@@ -94,7 +77,7 @@ namespace ui {
     history.rows = 100;
   }
   
-  static void toggle_peer(PostForm &frm, const db::Rec<Peer> &peer) {
+  static void toggle_peer(PostForm &frm, const Peer &peer) {
     auto found(frm.peers.find(peer));
 
     if (found == frm.peers.end()) {
@@ -112,6 +95,7 @@ namespace ui {
     post.at = now();
     copy(ctx.db.peers.key, post.by, whoami(ctx));
     post.body = body;
+    for (const auto &p: frm.peers) { post.peer_ids.insert(p.id); }
     insert(ctx.db.posts, post);
     log(ctx, "Saving messages to outbox...");
     post_msgs(post);
@@ -124,37 +108,21 @@ namespace ui {
     
     if ((!frm.thread.selected && subj == "") ||
 	frm.peers.empty() ||
-	body == "") { return false; }
+	body == "") {
+      return false;
+    }
     
     Ctx &ctx(frm.ctx);
     db::Trans trans(ctx);
-    db::Rec<Thread> thread_rec;
     
     if (frm.thread.selected) {
-      set(thread_rec, ctx.db.thread_id, frm.thread.selected->val);
-      load(ctx.db.threads, thread_rec);
-      Thread thread(ctx.db.threads, thread_rec);
-      
-      thread.peer_ids.clear();
-      for (const auto &p: frm.peers) {
-	thread.peer_ids.push_back(*get(p, ctx.db.peer_id));
-      }
-      
-      copy(ctx.db.threads, thread_rec, thread);
-      update(ctx.db.threads, thread_rec);
+      Thread thread(get_thread_id(ctx, frm.thread.selected->val));
       post(frm, thread, body);
     } else {
       Thread thread(ctx);
       thread.subj = subj;
       copy(ctx.db.peers.key, thread.started_by, whoami(ctx));
-      
-      thread.peer_ids.clear();
-      for (const auto &p: frm.peers) {
-	thread.peer_ids.push_back(*get(p, ctx.db.peer_id));
-      }
-      
-      copy(ctx.db.threads, thread_rec, thread);
-      insert(ctx.db.threads, thread_rec);
+      insert(ctx.db.threads, thread);
       log(ctx, fmt("New thread created: %0", thread.subj));
       post(frm, thread, body);
     }
@@ -176,10 +144,7 @@ namespace ui {
 	
 	if (frm.peer.selected &&
 	    (f.ptr == frm.peer.name.ptr || f.ptr == frm.peer.email.ptr)) {
-	  db::Rec<Peer> rec;
-	  set(rec, ctx.db.peer_id, *frm.peer.selected);
-	  load(ctx.db.peers, rec);
-	  toggle_peer(frm, rec);
+	  toggle_peer(frm, get_peer_id(ctx, *frm.peer.selected));
 	  clear(dynamic_cast<EnumField<UId> &>(f));
 	} else {
 	  drive(frm, ch);

@@ -1,9 +1,3 @@
-* change vector type to set type
-** std::set
-** add uid_set_type var
-** change peers field
-* move thread.peers to post.peers
-** remove loading of peers from post form
 * convert db to use uid instead of rec types
 ** remove table rectype
 * add backup command

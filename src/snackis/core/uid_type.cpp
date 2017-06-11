@@ -2,6 +2,7 @@
 
 namespace snackis {
   UIdType uid_type;
+  SetType<UId> uid_set_type(uid_type);
 
   UIdType::UIdType(): Type<UId>("UId") { }
 

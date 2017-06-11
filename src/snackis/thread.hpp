@@ -14,7 +14,6 @@ namespace snackis {
     str subj;
     Time started_at;
     db::Rec<Peer> started_by;
-    RecVector peer_ids;
     
     Thread(Ctx &ctx);
     Thread(const db::Table<Thread> &tbl, const db::Rec<Thread> &rec);   

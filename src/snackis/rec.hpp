@@ -1,8 +1,6 @@
 #ifndef SNACKIS_REC_HPP
 #define SNACKIS_REC_HPP
 
-#include "snackis/core/uid_type.hpp"
-#include "snackis/core/vector_type.hpp"
 #include "snackis/db/rec.hpp"
 
 namespace snackis {
@@ -20,9 +18,6 @@ namespace snackis {
 
     Rec(Ctx &ctx);
   };
-
-  using RecVector = std::vector<UId>;
-  extern VectorType<UId> rec_vector_type;
 }
 
 #endif

@@ -8,7 +8,6 @@
 #include "snackis/setting.hpp"
 #include "snackis/thread.hpp"
 #include "snackis/core/str.hpp"
-#include "snackis/core/vector_type.hpp"
 #include "snackis/crypt/pub_key.hpp"
 #include "snackis/db/col.hpp"
 #include "snackis/db/ctx.hpp"
@@ -35,7 +34,6 @@ namespace snackis {
     db::Col<Thread, str>           thread_subj;
     db::Col<Thread, Time>          thread_started_at;
     db::Col<Thread, db::Rec<Peer>> thread_started_by;
-    db::Col<Thread, RecVector>     thread_peer_ids;
     db::Table<Thread> threads;
 
     db::Col<Post, UId>             post_id;
@@ -43,6 +41,7 @@ namespace snackis {
     db::Col<Post, Time>            post_at;
     db::Col<Post, db::Rec<Peer>>   post_by;
     db::Col<Post, str>             post_body;
+    db::Col<Post, std::set<UId>>   post_peer_ids;
     db::Table<Post> posts, thread_posts;
     
     db::Col<Msg, UId>  msg_id;

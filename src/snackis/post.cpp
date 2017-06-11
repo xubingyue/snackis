@@ -40,7 +40,7 @@ namespace snackis {
     Ctx &ctx(post.ctx);
     Thread thread(get_thread_id(ctx, post.thread_id));
     
-    for (auto &pid: thread.peer_ids) {
+    for (auto &pid: post.peer_ids) {
       Peer peer(get_peer_id(ctx, pid));
       Msg msg(ctx, Msg::POST, peer.email);
       msg.thread_id = thread.id;

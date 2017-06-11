@@ -1,13 +1,11 @@
 #ifndef SNACKIS_PEER_HPP
 #define SNACKIS_PEER_HPP
 
-#include <vector>
 #include "snackis/rec.hpp"
 #include "snackis/core/path.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/core/time.hpp"
 #include "snackis/core/uid.hpp"
-#include "snackis/core/vector_type.hpp"
 #include "snackis/crypt/pub_key.hpp"
 #include "snackis/db/rec.hpp"
 
