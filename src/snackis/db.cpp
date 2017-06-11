@@ -61,6 +61,7 @@ namespace snackis {
     msg_crypt_key(  "crypt_key",   crypt::pub_key_type, &Msg::crypt_key),
     msg_thread_id(  "thread_id",   uid_type,            &Msg::thread_id),
     msg_thread_subj("thread_subj", str_type,            &Msg::thread_subj),
+    msg_post_id(    "post_id",     uid_type,            &Msg::post_id),
     msg_post_at(    "post_at",     time_type,           &Msg::post_at),
     msg_post_body(  "post_body",   str_type,            &Msg::post_body),
     msgs(ctx, "msgs", {&msg_id}, {}),
@@ -68,12 +69,12 @@ namespace snackis {
     inbox(ctx, "inbox", {&msg_id},
 	  {&msg_type, &msg_fetched_at, &msg_peer_name, &msg_from, &msg_crypt_key,
 	      &msg_thread_id, &msg_thread_subj,
-	      &msg_post_at, &msg_post_body}),
+	      &msg_post_id, &msg_post_at, &msg_post_body}),
     
     outbox(ctx, "outbox", {&msg_id},
 	   {&msg_type, &msg_to, &msg_peer_name, &msg_crypt_key,
 	       &msg_thread_id, &msg_thread_subj,
-	       &msg_post_at, &msg_post_body}) {
+	       &msg_post_id, &msg_post_at, &msg_post_body}) {
     peers.indexes.insert(&peer_emails);
     posts.indexes.insert(&thread_posts);
   }

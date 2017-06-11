@@ -24,6 +24,7 @@ namespace snackis {
     Post(const db::Table<Post> &tbl, const db::Rec<Post> &rec);   
   };
 
+  opt<Post> find_post_id(Ctx &ctx, UId id);
   void post_msgs(const Post &post);
 }
 

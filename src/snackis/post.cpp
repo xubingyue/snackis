@@ -26,6 +26,7 @@ namespace snackis {
 
   Post::Post(const Msg &msg):
     Rec(msg.ctx),
+    id(msg.post_id),
     thread_id(get_thread(msg).id), 
     at(msg.post_at), 
     by_id(get_peer_email(ctx, msg.from).id),
@@ -36,7 +37,14 @@ namespace snackis {
     Rec(dynamic_cast<Ctx &>(tbl.ctx)), id(false) {
     copy(tbl, *this, rec);
   }
-  
+
+  opt<Post> find_post_id(Ctx &ctx, UId id) {
+    db::Rec<Post> rec;
+    set(rec, ctx.db.post_id, id);
+    if (!load(ctx.db.posts, rec)) { return nullopt; }
+    return Post(ctx.db.posts, rec);
+  }
+
   void post_msgs(const Post &post) {
     Ctx &ctx(post.ctx);
     Thread thread(get_thread_id(ctx, post.thread_id));
@@ -46,6 +54,7 @@ namespace snackis {
       Msg msg(ctx, Msg::POST, peer.email);
       msg.thread_id = thread.id;
       msg.thread_subj = thread.subj;
+      msg.post_id = post.id;
       msg.post_at = post.at;
       msg.post_body = post.body;
       insert(ctx.db.outbox, msg);

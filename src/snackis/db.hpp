@@ -53,6 +53,7 @@ namespace snackis {
     db::Col<Msg, crypt::PubKey> msg_crypt_key;
     db::Col<Msg, UId>           msg_thread_id;
     db::Col<Msg, str>           msg_thread_subj;
+    db::Col<Msg, UId>           msg_post_id;
     db::Col<Msg, Time>          msg_post_at;
     db::Col<Msg, str>           msg_post_body;
     db::Table<Msg> msgs, inbox, outbox;

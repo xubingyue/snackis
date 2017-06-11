@@ -19,6 +19,7 @@ namespace snackis {
     crypt::PubKey crypt_key;
     UId thread_id;
     str thread_subj;
+    UId post_id;
     Time post_at;
     str post_body;
     

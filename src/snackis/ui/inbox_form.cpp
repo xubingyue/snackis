@@ -40,9 +40,17 @@ namespace ui {
 	  insert(*fld, "Ok", true);
 	  field_lookup[msg.id] = fld;
 	} else {
-	  erase(ctx.db.inbox, msg_rec);
+	  erase(ctx.db.inbox, msg);
 	}
       } else if (msg.type == Msg::POST) {
+	opt<Post> post(find_post_id(ctx, msg.post_id));
+	
+	if (post) {
+	  log(ctx, "Skipping duplicate post");
+	  erase(ctx.db.inbox, msg);
+	  continue;
+	}
+   
 	opt<Thread> thread(find_thread_id(ctx, msg.thread_id));
 	  
 	auto fld(new EnumField<bool>(*this, Dim(1, 10),
@@ -105,7 +113,6 @@ namespace ui {
 	    if (fld->selected) {
 	      log(ctx, fmt("%0:\n%1", fld->label, msg.post_body));
 	      Post post(msg);
-	      insert(ctx.db.posts, post);
 	      erase(ctx.db.inbox, rec);
 	    }
 	  } else {

@@ -2,6 +2,7 @@
 ** start fetch_thread in main if set
 ** sleep for fetch_interval seconds and then fetch
 ** use same context
+** remove text_field.complete
 * add send_interval setting
 * add backup command
 ** backup folder setting, default /backup
