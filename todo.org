@@ -1,15 +1,14 @@
-* add post support in inbox
-** join thread / new post
+* change vector type to set type
+** std::set
+** add uid_set_type var
+** change peers field
+* move thread.peers to post.peers
+** remove loading of peers from post form
 * convert db to use uid instead of rec types
 ** remove table rectype
 * add backup command
 ** backup folder setting, default /backup
 ** run tar -z proc
 ** store as db_timestamp.tar.gz
-* add logout form
-** send N messages in outbox, later/ok
-** empty in folder, later/ok
-** empty out folder, later/ok
-** backup database, later/ok
 * add scroll-support to Window
 ** forward pg-up/down from reader to console scroll

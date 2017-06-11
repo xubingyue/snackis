@@ -32,7 +32,7 @@ namespace snackis {
     db::Table<Peer> peers, peer_emails;
 
     db::Col<Thread, UId>           thread_id;
-    db::Col<Thread, str>           thread_subject;
+    db::Col<Thread, str>           thread_subj;
     db::Col<Thread, Time>          thread_started_at;
     db::Col<Thread, db::Rec<Peer>> thread_started_by;
     db::Col<Thread, RecVector>     thread_peer_ids;
@@ -53,6 +53,7 @@ namespace snackis {
     db::Col<Msg, str>  msg_peer_name;
     db::Col<Msg, crypt::PubKey> msg_crypt_key;
     db::Col<Msg, UId>  msg_thread_id;
+    db::Col<Msg, str>  msg_thread_subj;
     db::Col<Msg, Time> msg_post_at;
     db::Col<Msg, str>  msg_post_body;
     db::Table<Msg> msgs, inbox, outbox;

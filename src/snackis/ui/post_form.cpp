@@ -43,7 +43,7 @@ namespace ui {
 	return *get(x, ctx.db.peer_name) < *get(y, ctx.db.peer_name);
       }),
     thread(*this, Dim(1, view.dim.w), "Existing Thread"),
-    subject(*this, Dim(1, view.dim.w), "New Subject"),
+    subj(*this, Dim(1, view.dim.w), "New Subject"),
     body(*this, Dim(5, view.dim.w), "Body"),
     peer(*this, "Peer"),
     send_to(*this, Dim(5, view.dim.w), "Send To"),
@@ -53,13 +53,13 @@ namespace ui {
     margin_top = 1;
 
     for (auto t: ctx.db.threads.recs) {
-      insert(thread, *get(t, ctx.db.thread_subject), *get(t, ctx.db.thread_id));
+      insert(thread, *get(t, ctx.db.thread_subj), *get(t, ctx.db.thread_id));
     }
 
     thread.allow_clear = true;
     thread.on_change = [this]() {
       if (thread.selected) {
-	set_str(subject, "");
+	set_str(subj, "");
 
 	peers.clear();
 	db::Rec<Thread> rec;
@@ -79,8 +79,8 @@ namespace ui {
       }
     };
     
-    subject.on_change = [this]() {
-      if (!get_str(subject).empty()) { clear(thread, false); }
+    subj.on_change = [this]() {
+      if (!get_str(subj).empty()) { clear(thread, false); }
     };
 
     peer.name.margin_top = 1;
@@ -106,12 +106,23 @@ namespace ui {
     update_peers(frm);
   }
 
+  static void post(PostForm &frm, Thread &thread, const str &body) {
+    Ctx &ctx(frm.ctx);
+    Post post(thread);
+    post.at = now();
+    copy(ctx.db.peers.key, post.by, whoami(ctx));
+    post.body = body;
+    insert(ctx.db.posts, post);
+    log(ctx, "Saving messages to outbox...");
+    post_msgs(post);
+  }
+  
   static bool save(PostForm &frm) {
     validate(frm);
-    const str &subject(get_str(frm.subject));
+    const str &subj(get_str(frm.subj));
     const str &body(get_str(frm.body));
     
-    if ((!frm.thread.selected && subject == "") ||
+    if ((!frm.thread.selected && subj == "") ||
 	frm.peers.empty() ||
 	body == "") { return false; }
     
@@ -131,9 +142,10 @@ namespace ui {
       
       copy(ctx.db.threads, thread_rec, thread);
       update(ctx.db.threads, thread_rec);
+      post(frm, thread, body);
     } else {
       Thread thread(ctx);
-      thread.subject = subject;
+      thread.subj = subj;
       copy(ctx.db.peers.key, thread.started_by, whoami(ctx));
       
       thread.peer_ids.clear();
@@ -143,16 +155,10 @@ namespace ui {
       
       copy(ctx.db.threads, thread_rec, thread);
       insert(ctx.db.threads, thread_rec);
-      log(ctx, fmt("New thread created: %0", thread.subject));
+      log(ctx, fmt("New thread created: %0", thread.subj));
+      post(frm, thread, body);
     }
-
-    Post post(ctx, thread_rec);
-    post.at = now();
-    copy(ctx.db.peers.key, post.by, whoami(ctx));
-    post.body = body;
-    insert(ctx.db.posts, post);
-    log(ctx, "Saving messages to outbox...");
-    post_msgs(post);
+    
     db::commit(trans);
     log(ctx, "New post created");
     return true;

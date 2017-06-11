@@ -23,8 +23,8 @@ namespace ui {
     };
 
     save_to.margin_top = 1;
-    insert(decode, "yes", true);
-    insert(decode, "no", false);
+    insert(decode, "Yes", true);
+    insert(decode, "No", false);
   }
 
   bool run(DecryptForm &frm) {

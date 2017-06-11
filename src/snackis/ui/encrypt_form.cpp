@@ -23,8 +23,8 @@ namespace ui {
     };
 
     save_to.margin_top = 1;
-    insert(encode, "yes", true);
-    insert(encode, "no", false);
+    insert(encode, "Yes", true);
+    insert(encode, "No", false);
   }
 
   bool run(EncryptForm &frm) {

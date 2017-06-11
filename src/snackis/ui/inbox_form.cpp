@@ -22,8 +22,8 @@ namespace ui {
 				     fmt("Invite from %0 (%1)",
 					 msg.peer_name, msg.from)));
 	fld->allow_clear = true;
-	insert(*fld, "accept", true);
-	insert(*fld, "reject", false);
+	insert(*fld, "Accept", true);
+	insert(*fld, "Reject", false);
 	field_lookup[msg.id] = fld;
       } else if (msg.type == Msg::ACCEPT || msg.type == Msg::REJECT) {
 	db::Rec<Invite> inv_rec;
@@ -37,11 +37,21 @@ namespace ui {
 					   ? "accepted"
 					   : "rejected")));
 	  fld->allow_clear = true;
-	  insert(*fld, "ok", true);
+	  insert(*fld, "Remove", true);
 	  field_lookup[msg.id] = fld;
 	} else {
 	  erase(ctx.db.inbox, msg_rec);
 	}
+      } else if (msg.type == Msg::POST) {
+	opt<Thread> thread(find_thread_id(ctx, msg.thread_id));
+	  
+	auto fld(new EnumField<bool>(*this, Dim(1, 10),
+				     fmt("New post by %0 (%1) in '%2'",
+					 msg.peer_name, msg.from,
+					 thread ? thread->subj : msg.thread_subj)));
+	fld->allow_clear = true;
+	insert(*fld, "Read", true);
+	field_lookup[msg.id] = fld;
       } else {
 	ERROR(Db, fmt("Invalid message type: %0", msg.type));
       }
@@ -68,10 +78,10 @@ namespace ui {
 	  const Msg msg(ctx.db.inbox, rec);
 
 	  if (msg.type == Msg::INVITE) {
-	    auto resp_fld(dynamic_cast<EnumField<bool> *>(i.second));
+	    auto fld(dynamic_cast<EnumField<bool> *>(i.second));
 
-	    if (resp_fld->selected) {
-	      if (resp_fld->selected->val) {
+	    if (fld->selected) {
+	      if (fld->selected->val) {
 		accept_invite(msg);
 		log(ctx, fmt("Accept of %0 (%1) saved to outbox",
 			     msg.peer_name, msg.from));
@@ -88,8 +98,16 @@ namespace ui {
 	    set(inv_rec, ctx.db.invite_to, msg.from);
 	    erase(ctx.db.invites, inv_rec);
 	    
-	    auto resp_fld(dynamic_cast<EnumField<bool> *>(i.second));
-	    if (resp_fld->selected) { erase(ctx.db.inbox, rec); }
+	    auto fld(dynamic_cast<EnumField<bool> *>(i.second));
+	    if (fld->selected) { erase(ctx.db.inbox, rec); }
+	  } else if (msg.type == Msg::POST) {
+	    auto fld(dynamic_cast<EnumField<bool> *>(i.second));
+	    if (fld->selected) {
+	      log(ctx, fmt("%0:\n%1", fld->label, msg.post_body));
+	      Post post(msg);
+	      insert(ctx.db.posts, post);
+	      erase(ctx.db.inbox, rec);
+	    }
 	  } else {
 	    ERROR(Db, fmt("Invalid message type: %0", msg.type));
 	  }

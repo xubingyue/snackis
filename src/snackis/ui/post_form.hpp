@@ -17,7 +17,7 @@ namespace ui {
     std::set<db::Rec<Peer>, CmpPeer> peers;
 
     EnumField<UId> thread;
-    TextField subject;
+    TextField subj;
     TextField body;
     PeerPanel peer;
     TextField send_to;

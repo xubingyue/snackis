@@ -113,12 +113,12 @@ namespace snackis {
       ERROR(Smtp, fmt("Invalid send response: %0", resp_buf.str()));
     }
 
-    log(smtp.ctx, fmt("Sent message %0 to %1", msg.id, msg.to));
+    log(smtp.ctx, fmt("Sent message to %0", msg.to));
   }
   
   void send(struct Smtp &smtp) {
-    log(smtp.ctx, "Sending email...");
     db::Table<Msg> &tbl(smtp.ctx.db.outbox);
+    log(smtp.ctx, fmt("Sending %0 emails...", tbl.recs.size()));
     
     while (tbl.recs.size() > 0) {
       auto i = tbl.recs.begin();

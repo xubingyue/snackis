@@ -16,11 +16,12 @@ namespace snackis {
     db::Rec<Peer> by;
     str body;
     
-    Post(Ctx &ctx, const db::Rec<Thread> &thread);
+    Post(Thread &thread);
+    Post(const Msg &msg);
     Post(const db::Table<Post> &tbl, const db::Rec<Post> &rec);   
   };
 
-  void post_msgs(Post &post);
+  void post_msgs(const Post &post);
 }
 
 #endif

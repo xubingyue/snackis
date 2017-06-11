@@ -11,7 +11,7 @@ namespace snackis {
   
   struct Thread: public Rec {   
     UId id;
-    str subject;
+    str subj;
     Time started_at;
     db::Rec<Peer> started_by;
     RecVector peer_ids;
@@ -20,6 +20,7 @@ namespace snackis {
     Thread(const db::Table<Thread> &tbl, const db::Rec<Thread> &rec);   
   };
 
+  opt<Thread> find_thread_id(Ctx &ctx, UId id);
   Thread get_thread_id(Ctx &ctx, UId id);
   std::vector<Post> last_posts(const Thread &thread, size_t max);
 }

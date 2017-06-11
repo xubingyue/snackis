@@ -96,12 +96,10 @@ namespace snackis {
       ERROR(Imap, fmt("Failed fetching uid: %0", curl_easy_strerror(res)));
     }
 
-    db::Rec<Msg> rec;
-    Msg msg(imap.ctx.db.msgs, rec);
+    Msg msg(imap.ctx);
     const str body(out.str());
     const str tag("__SNACKIS__\r\n");
     auto i(body.find(tag) + tag.size());
-
     if (i == str::npos || !decode(msg, body.substr(i))) { return nullopt; }
     return msg;
   }
@@ -148,7 +146,7 @@ namespace snackis {
       insert(imap.ctx.db.msgs, *msg);
       insert(imap.ctx.db.inbox, *msg);
       delete_uid(imap, uid);
-      log(imap.ctx, fmt("Fetched message %0 from %1", msg->id, msg->from));
+      log(imap.ctx, fmt("Fetched message from %0", msg->from));
     }
 
     if (tokens.size() > 2) {
