@@ -17,7 +17,7 @@ sudo apt-get install libc++-dev libcurl4-openssl-dev libsodium-dev libuuid1 libn
 If you're running ```Linux/64```, grab the ```snackis```-executable from [here](https://github.com/andreas-gone-wild/snackis/tree/master/dist) and put it in its own directory. Snackis is designed to run completely self-contained and will create everything it needs in the directory where it's started.
 
 #### Navigation
-Use Return to go to the next field. Fields with names ending in ```=``` provide a fixed set of alternatives, use Tab to cycle or type in field to search. Home, End, Backspace and arrow keys work as expected. Pressing Delete deletes from the current position until end of field.
+Use ```Return``` to go to the next field. Fields with names ending in ```=``` provide a fixed set of alternatives, use ```Tab``` to cycle or type in field to search. ```Home```, ```End```, ```Backspace``` and arrow keys work as expected. Pressing ```Delete``` deletes from the current position until end of field.
 
 #### Master Password
 Each snackis installation is protected by a master password that is used to encrypt the database; pick a good one, because changing it means re-encrypting the entire database.
