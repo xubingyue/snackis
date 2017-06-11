@@ -16,7 +16,7 @@ namespace snackis {
   str fill(const str &in, char ch, size_t len) {
     str out(in);
     const auto rem(out.size() % len);
-    if (rem) { out.append(len - rem, ch); }
+    if (rem || in.empty()) { out.append(len - rem, ch); }
     return out;
   }
 
