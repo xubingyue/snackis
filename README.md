@@ -2,7 +2,7 @@
 #### sugar-free co-creation
 
 ### Introduction
-Snackis is aiming for something that might be described as a post-modern enigma-device; a simple and convenient one-stop shop for most secure communication needs. It provides a curses-based UI on top of [libsodium](https://github.com/jedisct1/libsodium) and supports using any regular email-account as transport. Peers, encryption keys, history and settings are stored locally in a custom-written, encrypted database. Non-UI functionality is exposed as a static library for easy reuse. At present, Snackis supports key-exchange via invites/accepts and encryption/decryption of arbitrary data for a specific peer and threaded group-communication.
+Snackis is aiming for something that might be described as a post-modern enigma-device; a simple and convenient one-stop shop for most secure communication needs. It provides a curses-based UI on top of [libsodium](https://github.com/jedisct1/libsodium) and supports using any regular email-account as transport. Peers, encryption keys, history and settings are stored encrypted locally. At present, Snackis supports key-exchange via invites/accepts and encryption/decryption of arbitrary data for a specific peer and threaded group-communication.
 
 ![enigma](images/enigma.jpg?raw=true)
 
