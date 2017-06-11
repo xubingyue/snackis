@@ -46,8 +46,8 @@ namespace ui {
 	opt<Thread> thread(find_thread_id(ctx, msg.thread_id));
 	  
 	auto fld(new EnumField<bool>(*this, Dim(1, 10),
-				     fmt("New post by %0 (%1) in '%2'",
-					 msg.peer_name, msg.from,
+				     fmt("New post by %0 in '%1'",
+					 msg.peer_name,
 					 thread ? thread->subj : msg.thread_subj)));
 	fld->allow_clear = true;
 	insert(*fld, "Ok", true);
