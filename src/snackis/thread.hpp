@@ -17,8 +17,6 @@ namespace snackis {
     Thread(Ctx &ctx);
     Thread(const db::Table<Thread> &tbl, const db::Rec<Thread> &rec);   
   };
-
-  str history(const Thread &thread, size_t max);
 }
 
 #endif

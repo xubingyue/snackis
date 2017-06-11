@@ -9,6 +9,7 @@ namespace snackis {
   extern const str whitespace;
 
   str trim(const str& in);
+  str fill(const str &in, char ch, size_t len);
   int64_t to_int64(const str &in);
 
   template <typename T>

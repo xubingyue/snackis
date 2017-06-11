@@ -1,6 +1,9 @@
-* fix history display in post form
-** dynamic field size?
-* add post history scrolling with pg-up/down
+* switch history to reverse order
+** reverse vector
+* print post.at in history
+* set history field to read-only
+** add field.read_only (fix fill)
+* ---
 * extract code from post_form
 * add post message & support in inbox
 * add backup command

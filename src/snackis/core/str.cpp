@@ -13,6 +13,12 @@ namespace snackis {
     return in.substr(i, (j-i+1));
   }
 
+  str fill(const str &in, char ch, size_t len) {
+    str out(in);
+    out.append(len - (out.size() % len), ch);
+    return out;
+  }
+
   int64_t to_int64(const str &in) {
     return std::stoll(in);
   }

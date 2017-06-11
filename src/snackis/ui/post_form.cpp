@@ -19,6 +19,29 @@ namespace ui {
 
     set_str(frm.send_to, buf.str());
   }
+  
+  static str load_history(const Thread &thread, size_t width) {
+    Ctx &ctx(thread.ctx);
+    db::Rec<Post> post_rec;
+    set(post_rec, ctx.db.post_thread_id, thread.id);
+    Stream out;
+    size_t i = 0;
+    
+    for (auto found(ctx.db.thread_posts.recs.lower_bound(post_rec));
+	 found != ctx.db.thread_posts.recs.end() && i < 7;
+	 found++, i++) {
+      post_rec.clear();
+      copy(ctx.db.posts.key, post_rec, *found);
+      load(ctx.db.posts, post_rec);
+      Post post(ctx.db.posts, post_rec);
+      load(ctx.db.peers, post.by);
+      Peer peer(ctx.db.peers, post.by);
+      out << fill(fmt("%0 (%1)", peer.name, peer.email), ' ', width);
+      out << fill(post.body, ' ', width);
+    }
+
+    return out.str();
+  }
 
   PostForm::PostForm(View &view, Footer &ftr):
     ViewForm(view, ftr),
@@ -59,7 +82,7 @@ namespace ui {
 	
 	update_peers(*this);
 	
-	set_str(this->history, snackis::history(thread, 100));
+	set_str(history, load_history(thread, history.dim.w));
       }
     };
     
@@ -72,8 +95,8 @@ namespace ui {
     send_to.info = "Press Return to add/remove specified peer";
 
     body.margin_top = 2;
-    history.active = false;
-    //history.rows = 100;
+    body.rows = 100;
+    history.rows = 100;
   }
   
   static void toggle_peer(PostForm &frm, const db::Rec<Peer> &peer) {
