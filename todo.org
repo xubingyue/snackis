@@ -1,5 +1,8 @@
-* convert db to use uid instead of rec types
-** remove table rectype
+* add fetch_interval setting
+** start fetch_thread in main
+** sleep for fetch_interval seconds and then fetch
+** use same context
+* add send_interval setting
 * add backup command
 ** backup folder setting, default /backup
 ** run tar -z proc

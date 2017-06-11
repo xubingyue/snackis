@@ -30,7 +30,7 @@ namespace ui {
     if (copy_imap(frm)) {
       try {
 	Imap imap(frm.ctx);
-	log(frm.ctx, "OK");
+	log(frm.ctx, "Ok");
       } catch (const ImapError &e) {
 	log(frm.ctx, e.what());
       }
@@ -56,7 +56,7 @@ namespace ui {
     if (copy_smtp(frm)) {
       try {
 	Smtp smtp(frm.ctx);
-	log(frm.ctx, "OK");
+	log(frm.ctx, "Ok");
       } catch (const SmtpError &e) {
 	log(frm.ctx, e.what());
       }

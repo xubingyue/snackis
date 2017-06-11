@@ -25,23 +25,11 @@ namespace db {
   struct Table;
 
   template <typename RecT>
-  struct RecType: public Type<Rec<RecT>> {
-    Table<RecT> &table;
-    
-    RecType(Table<RecT> &tbl);
-    Rec<RecT> from_val(const Val &in) const override;
-    Val to_val(const Rec<RecT> &in) const override;
-    Rec<RecT> read(std::istream &in) const override;
-    void write(const Rec<RecT> &val, std::ostream &out) const override;
-  };
-  
-  template <typename RecT>
   struct Table: public BasicTable, public Schema<RecT> {
     using CmpRec = func<bool (const Rec<RecT> &, const Rec<RecT> &)>;
     using Cols = std::initializer_list<const BasicCol<RecT> *>;
     
     const Schema<RecT> key;
-    RecType<RecT> rec_type;
     std::set<Table<RecT> *> indexes;
     std::set<Rec<RecT>, CmpRec> recs;
     
@@ -315,7 +303,6 @@ namespace db {
     BasicTable(ctx, name),
     Schema<RecT>(cols),
     key(key_cols),
-    rec_type(*this),
     recs([this](const Rec<RecT> &x, const Rec<RecT> &y) {
 	return compare(key, x, y) < 0;
       }) {
@@ -370,35 +357,6 @@ namespace db {
   template <typename RecT>
   void Erase<RecT>::rollback() const {
     this->table.recs.insert(this->rec);
-  }
-
-  template <typename RecT>
-  RecType<RecT>::RecType(Table<RecT> &tbl):
-    Type<Rec<RecT>>(fmt("Rec(%0)", tbl.name)), table(tbl) { }
-
-  template <typename RecT>
-  Rec<RecT> RecType<RecT>::from_val(const Val &in) const {
-    Stream out(get<str>(in));
-    return read(out);
-  }
-
-  template <typename RecT>
-  Val RecType<RecT>::to_val(const Rec<RecT> &in) const {
-    Stream out;
-    write(in, out);
-    return out.str();
-  }
-
-  template <typename RecT>
-  Rec<RecT> RecType<RecT>::read(std::istream &in) const {
-    Rec<RecT> rec;
-    db::read(table, in, rec, nullopt);
-    return rec;
-  }
-  
-  template <typename RecT>
-  void RecType<RecT>::write(const Rec<RecT> &val, std::ostream &out) const {
-    db::write(table, val, out, nullopt);
   }
 }}
 

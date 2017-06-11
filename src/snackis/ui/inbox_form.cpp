@@ -37,7 +37,7 @@ namespace ui {
 					   ? "accepted"
 					   : "rejected")));
 	  fld->allow_clear = true;
-	  insert(*fld, "Remove", true);
+	  insert(*fld, "Ok", true);
 	  field_lookup[msg.id] = fld;
 	} else {
 	  erase(ctx.db.inbox, msg_rec);
@@ -50,7 +50,7 @@ namespace ui {
 					 msg.peer_name, msg.from,
 					 thread ? thread->subj : msg.thread_subj)));
 	fld->allow_clear = true;
-	insert(*fld, "Read", true);
+	insert(*fld, "Ok", true);
 	field_lookup[msg.id] = fld;
       } else {
 	ERROR(Db, fmt("Invalid message type: %0", msg.type));
