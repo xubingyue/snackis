@@ -75,8 +75,7 @@ namespace ui {
     while (true) {
       chtype ch = get_key(frm.window);
       
-      if (ch == KEY_CTRL('s') ||
-	  (ch == KEY_RETURN && &active_field(frm) == frm.fields.back())) {
+      if (ch == KEY_CTRL('s')) {
 	validate(frm);
 
 	for (auto i: frm.field_lookup) {
