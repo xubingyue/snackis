@@ -1,8 +1,6 @@
-* switch history to reverse order
-** reverse vector
-* print post.at in history
 * set history field to read-only
-** add field.read_only (fix fill)
+** add field.editable (no bg)
+* break history loading loop on new thread
 * ---
 * extract code from post_form
 * add post message & support in inbox

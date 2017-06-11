@@ -69,12 +69,10 @@ namespace ui {
       on_focus(f);
       break;
     case KEY_RETURN:
-      if (f.dim.h > 1) {
-	drive(f, ch);
-	break;
-      }
-
       validate(frm);
+      form_driver(frm.ptr, REQ_NEXT_FIELD);
+      on_focus(active_field(frm));
+      break;
     case KEY_DOWN:
       if (f.dim.h > 1) {
 	drive(f, ch);

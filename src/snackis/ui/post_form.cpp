@@ -24,8 +24,8 @@ namespace ui {
     Ctx &ctx(thread.ctx);
     db::Rec<Post> post_rec;
     set(post_rec, ctx.db.post_thread_id, thread.id);
-    Stream out;
     size_t i = 0;
+    std::vector<Post> posts;
     
     for (auto found(ctx.db.thread_posts.recs.lower_bound(post_rec));
 	 found != ctx.db.thread_posts.recs.end() && i < 7;
@@ -33,13 +33,20 @@ namespace ui {
       post_rec.clear();
       copy(ctx.db.posts.key, post_rec, *found);
       load(ctx.db.posts, post_rec);
-      Post post(ctx.db.posts, post_rec);
-      load(ctx.db.peers, post.by);
-      Peer peer(ctx.db.peers, post.by);
-      out << fill(fmt("%0 (%1)", peer.name, peer.email), ' ', width);
-      out << fill(post.body, ' ', width);
+      posts.emplace_back(ctx.db.posts, post_rec);
     }
 
+    Stream out;
+    for (auto i(posts.rbegin()); i != posts.rend(); i++) {
+      auto &post(*i);
+      load(ctx.db.peers, post.by);
+      Peer peer(ctx.db.peers, post.by);
+      out << fill(fmt("%0 | %1 (%2)",
+		      fmt(post.at, "%a %b %d, %H:%M:%S"),
+		      peer.name, peer.email),
+		  ' ', width);
+      out << fill(post.body, ' ', width);
+    }
     return out.str();
   }
 

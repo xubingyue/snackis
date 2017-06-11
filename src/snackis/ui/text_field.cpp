@@ -14,8 +14,6 @@ namespace ui {
     symbol = ':';
   }
 
-  void TextField::on_focus() { eol(form); }
-
   void TextField::drive(chtype ch) {
     switch (ch) {
     case KEY_BACKSPACE:
@@ -48,9 +46,6 @@ namespace ui {
       break;
     case KEY_END:
       eol(form);
-      break;
-    case KEY_RETURN:
-      form_driver(form.ptr, REQ_NEW_LINE);
       break;
     case KEY_UP:
       form_driver(form.ptr, REQ_PREV_LINE);
