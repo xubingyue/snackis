@@ -1,10 +1,10 @@
-* add smtp_freq setting
-* add sender in ctx
 * add finer grained locking
 ** remove transaction lock
 ** add vector<lock>
 ** add recursive_mutex to each table
 ** lock in trans on access
+** add ctx->mutex
+** lock while logging & updating trans stack
 * add backup command
 ** backup folder setting, default /backup
 ** run tar -z proc

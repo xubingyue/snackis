@@ -17,11 +17,12 @@ namespace snackis {
     imap_port(ctx, "imap_port", int64_type, 993),
     imap_user(ctx, "imap_user", str_type,   nullopt),
     imap_pass(ctx, "imap_pass", str_type,   nullopt),
-    imap_freq(ctx, "imap_freq", int64_type, nullopt),
+    imap_poll(ctx, "imap_poll", int64_type, nullopt),
     
-    smtp_url(ctx,    "smtp_url",    str_type,   str("smtp.gmail.com")),
-    smtp_port(ctx,   "smtp_port",   int64_type, 587),
-    smtp_user(ctx,   "smtp_user",   str_type,   nullopt),
-    smtp_pass(ctx,   "smtp_pass",   str_type,   nullopt) 
+    smtp_url(ctx,  "smtp_url",  str_type,   str("smtp.gmail.com")),
+    smtp_port(ctx, "smtp_port", int64_type, 587),
+    smtp_user(ctx, "smtp_user", str_type,   nullopt),
+    smtp_pass(ctx, "smtp_pass", str_type,   nullopt),
+    smtp_poll(ctx, "smtp_poll", int64_type, nullopt)
   { }
 }

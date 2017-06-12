@@ -2,6 +2,7 @@
 #include "snackis/ctx.hpp"
 #include "snackis/db/error.hpp"
 #include "snackis/net/imap.hpp"
+#include "snackis/net/smtp.hpp"
 
 namespace snackis {
   static void fetch_loop(Ctx *ctx) {
@@ -9,13 +10,14 @@ namespace snackis {
       std::unique_lock<std::mutex> lock(ctx->fetch_mutex);
       ctx->fetch_cond.wait(lock);
     }
-    
+
     while (!ctx->is_closing) {
-      auto freq(get_val(ctx->settings.imap_freq));
+      auto poll(get_val(ctx->settings.imap_poll));
       std::unique_lock<std::mutex> lock(ctx->fetch_mutex);
       
-      if (freq) {
-	ctx->fetch_cond.wait_for(lock, std::chrono::seconds(*freq));
+      if (poll) {
+	ctx->fetch_cond.wait_for(lock, std::chrono::seconds(*poll));
+
 	if (!ctx->is_closing) {
 	  Imap imap(*ctx);
 	  fetch(imap);
@@ -26,9 +28,33 @@ namespace snackis {
     }
   }
 
+  static void send_loop(Ctx *ctx) {
+    {
+      std::unique_lock<std::mutex> lock(ctx->send_mutex);
+      ctx->send_cond.wait(lock);
+    }
+
+    while (!ctx->is_closing) {
+      auto poll(get_val(ctx->settings.smtp_poll));
+      std::unique_lock<std::mutex> lock(ctx->send_mutex);
+      
+      if (poll) {
+	ctx->send_cond.wait_for(lock, std::chrono::seconds(*poll));
+	
+	if (!ctx->is_closing && !ctx->db.outbox.recs.empty()) {
+	  Smtp smtp(*ctx);
+	  send(smtp);
+	}
+      } else {
+	ctx->send_cond.wait(lock);
+      }
+    }
+  }
+
   Ctx::Ctx(const Path &path):
     db::Ctx(path), db(*this), settings(*this), whoami(*this),
     fetcher(fetch_loop, this),
+    sender(send_loop, this),
     is_closing(false)
   { }
 
@@ -36,6 +62,8 @@ namespace snackis {
     is_closing = true;
     fetch_cond.notify_one();
     fetcher.join();
+    send_cond.notify_one();
+    sender.join();
   }
   
   void open(Ctx &ctx) {
@@ -65,6 +93,7 @@ namespace snackis {
     db::upsert(ctx.db.peers, ctx.whoami);
     db::commit(trans);
     ctx.fetch_cond.notify_one();
+    ctx.send_cond.notify_one();
   }
 
   void log(const Ctx &ctx, const str &msg) { db::log(ctx,msg); }

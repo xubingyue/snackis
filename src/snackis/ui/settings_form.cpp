@@ -25,12 +25,14 @@ namespace ui {
     
     opt<int64_t>
       port(to_int64(get_str(frm.imap_port))),
-      freq(to_int64(get_str(frm.imap_freq)));
+      poll(to_int64(get_str(frm.imap_poll)));
     if (port) { set_val(ctx.settings.imap_port, *port); }
-    if (freq) {
-      set_val(ctx.settings.imap_freq, *freq);
+
+    if (poll) {
+      set_val(ctx.settings.imap_poll, *poll);
       ctx.fetch_cond.notify_one();
     }
+
     return !url.empty() && !port && !user.empty() && !pass.empty();
   }
 
@@ -46,17 +48,27 @@ namespace ui {
   }
 
   static bool copy_smtp(SettingsForm &frm) {
+    Ctx &ctx(frm.ctx);
+
     const str
       url = get_str(frm.smtp_url),
       user = get_str(frm.smtp_user),
       pass = get_str(frm.smtp_pass);
 
-    set_val(frm.ctx.settings.smtp_url, url);
-    set_val(frm.ctx.settings.smtp_user, user);
-    set_val(frm.ctx.settings.smtp_pass, pass);
+    set_val(ctx.settings.smtp_url, url);
+    set_val(ctx.settings.smtp_user, user);
+    set_val(ctx.settings.smtp_pass, pass);
 
-    opt<int64_t> port = to_int64(get_str(frm.smtp_port));
-    if (port) { set_val(frm.ctx.settings.smtp_port, *port); }
+    opt<int64_t>
+      port = to_int64(get_str(frm.smtp_port)),
+      poll = to_int64(get_str(frm.smtp_poll));
+
+    if (port) { set_val(ctx.settings.smtp_port, *port); }
+    
+    if (poll) {
+      set_val(ctx.settings.smtp_poll, *poll);
+      ctx.send_cond.notify_one();
+    }
 
     return !url.empty() && !port && !user.empty() && !pass.empty();
   }
@@ -85,12 +97,13 @@ namespace ui {
     imap_port(*this, Dim(1, 10), "Imap Port"),
     imap_user(*this, Dim(1, 50), "Imap User"),
     imap_pass(*this, Dim(1, 50), "Imap Password"),
-    imap_freq(*this, Dim(1, 5), "Imap Poll Frequency (s)"),
+    imap_poll(*this, Dim(1, 5), "Imap Poll (s)"),
 
     smtp_url(*this, Dim(1, 50), "Smtp Url"),
     smtp_port(*this, Dim(1, 10), "Smtp Port"),
     smtp_user(*this, Dim(1, 50), "Smtp User"),
-    smtp_pass(*this, Dim(1, 50), "Smtp Password") {
+    smtp_pass(*this, Dim(1, 50), "Smtp Password"),
+    smtp_poll(*this, Dim(1, 5), "Smtp Poll (s)") {
     label = "Settings";
     status = "Press Ctrl-s to save settings, or Ctrl-q to cancel";
     margin_top = 1;
@@ -104,8 +117,8 @@ namespace ui {
     imap_user.on_action = imap_action;
     imap_pass.on_action = imap_action;
     imap_pass.info = "Press Ctrl-Space to try connecting";
-    imap_freq.margin_top = 1;
-    imap_freq.on_action = imap_action;
+    imap_poll.margin_top = 1;
+    imap_poll.on_action = imap_action;
 
     smtp_url.margin_top = 2;
     smtp_pass.echo = false;
@@ -115,6 +128,8 @@ namespace ui {
     smtp_user.on_action = smtp_action;
     smtp_pass.on_action = smtp_action;    
     smtp_pass.info = "Press Ctrl-Space to try connecting";
+    smtp_poll.margin_top = 1;
+    smtp_poll.on_action = imap_action;
   }
 
   bool run(SettingsForm &frm) {
@@ -134,8 +149,8 @@ namespace ui {
     if (imap_user) { set_str(frm.imap_user, *imap_user); }
     auto imap_pass(get_val(ctx.settings.imap_pass));
     if (imap_pass) { set_str(frm.imap_pass, *imap_pass); }
-    auto imap_freq(get_val(ctx.settings.imap_freq));
-    if (imap_freq) { set_str(frm.imap_freq, to_str(*imap_freq)); }
+    auto imap_poll(get_val(ctx.settings.imap_poll));
+    if (imap_poll) { set_str(frm.imap_poll, to_str(*imap_poll)); }
 
     set_str(frm.smtp_url, *get_val(ctx.settings.smtp_url));
     set_str(frm.smtp_port, to_str(*get_val(ctx.settings.smtp_port)));
@@ -143,6 +158,8 @@ namespace ui {
     if (smtp_user) { set_str(frm.smtp_user, *smtp_user); }
     auto smtp_pass(get_val(ctx.settings.smtp_pass));
     if (smtp_pass) { set_str(frm.smtp_pass, *smtp_pass); }
+    auto smtp_poll(get_val(ctx.settings.smtp_poll));
+    if (smtp_poll) { set_str(frm.smtp_poll, to_str(*smtp_poll)); }
     
     while (true) {
       chtype ch = get_key(frm.window);
