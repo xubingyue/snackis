@@ -1,12 +1,13 @@
-* add finer grained locking
-** add mutex to each table
-*** lock shared/unique on access
-** lock ctx->trans_mutex while updating trans stack
-** add ctx->log_mutex
-*** lock while logging
+* add scroll-support to Window
+** forward pg-up/down from reader to console scroll
+** scroll console from reader
+* add feed-form
+** optional thread
+** optional peer
+** optional time from-to
+** optional text search
+** add derivated window to hold results
 * add backup command
 ** backup folder setting, default /backup
 ** run tar -z proc
 ** store as db_timestamp.tar.gz
-* add scroll-support to Window
-** forward pg-up/down from reader to console scroll
