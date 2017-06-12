@@ -7,16 +7,28 @@ Snackis is aiming for something that might be described as a post-modern enigma-
 ![enigma](images/enigma.jpg?raw=true)
 
 ### Dependencies
-Snackis requires a ```C++1z```-capable compiler and standard library to build, and defaults to using ```clang``` with ```libc++```; it further depends on ```libcurl```, ```libpthread```, ```libsodium``` and ```libuuid``` for core functionality, as well as ```NCurses``` for the UI.
+Snackis requires a ```C++1z```-capable compiler and standard library to build, and defaults to using [clang](http://releases.llvm.org/download.html#4.0.0) with ```libc++```; it further depends on ```libcurl```, ```libpthread```, ```libsodium``` and ```libuuid``` for core functionality, as well as ```NCurses``` for the UI.
 
 ```
-sudo apt-get install libc++-dev libcurl4-openssl-dev libsodium-dev libuuid1 libncurses-dev
+tar -xzf clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
+cd clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04
+sudo cp -R * /usr/local/
+
+sudo apt-get install libcurl4-openssl-dev libsodium-dev libuuid1 libncurses-dev
+```
+
+```
+git clone https://github.com/andreas-gone-wild/snackis.git
+mkdir snackis/build
+cd snackis/build
+cmake ..
+make
 ```
 
 ### Getting started
-If you're running ```Linux/64```, grab the ```snackis```-executable from [here](https://github.com/andreas-gone-wild/snackis/tree/master/dist) and put it in its own directory. Snackis is designed to run completely self-contained and will create everything it needs in the directory where it's started.
+If you're running ```Linux/64```, grab the ```snackis```-executable from [here](https://github.com/andreas-gone-wild/snackis/tree/master/dist), otherwise you'll have to build it yourself. Put the executable in its own directory. Snackis is designed to run completely self-contained and will create everything it needs in the directory where it's started.
 
-#### Navigation
+#### Navigating and Editing
 Pressing ```Return``` moves focus to next field. Fields with names ending in ```=``` provide a fixed set of alternatives, use ```Tab``` to cycle or type in field to search. ```Home```, ```End```, ```Backspace``` and arrow keys work as expected. Pressing ```Delete``` deletes from current position until end of field.
 
 #### Master Password
