@@ -1,9 +1,3 @@
-* add feed-form
-** optional thread
-** optional peer
-** optional time from-to
-** optional text search
-** add derived window to hold results
 * add backup command
 ** backup folder setting, default /backup
 ** run tar -z proc
