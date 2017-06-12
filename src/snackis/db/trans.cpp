@@ -5,13 +5,13 @@ namespace snackis {
 namespace db {
   Trans::Trans(Ctx &ctx): ctx(ctx), super(ctx.trans) {
     ctx.trans = this;
-    mutex.lock();
+    ctx.trans_mutex.lock();
   }
 
   Trans::~Trans() {
     if (!changes.empty()) { rollback(*this); }
     ctx.trans = super;
-    mutex.unlock();
+    ctx.trans_mutex.unlock();
   }
   
   void log_change(Trans &trans, const Change *change) {

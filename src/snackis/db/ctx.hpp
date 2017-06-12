@@ -1,6 +1,7 @@
 #ifndef SNACKIS_DB_CTX_HPP
 #define SNACKIS_DB_CTX_HPP
 
+#include <mutex>
 #include <set>
 
 #include "snackis/core/func.hpp"
@@ -23,6 +24,8 @@ namespace db {
     std::set<BasicTable *> tables;
     Trans *trans;
     std::set<std::ostream *> dirty_files;
+    std::mutex trans_mutex;
+
     
     Ctx(const Path &path);
     virtual ~Ctx();

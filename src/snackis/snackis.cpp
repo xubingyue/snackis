@@ -6,7 +6,7 @@
 #include "snackis/crypt/error.hpp"
 
 namespace snackis {
-  const int VERSION[3] = {0, 5, 5};
+  const int VERSION[3] = {0, 5, 6};
   const int64_t DB_REV = 1;
   const int64_t PROTO_REV = 1;
   
