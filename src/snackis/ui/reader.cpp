@@ -2,6 +2,7 @@
 #include "snackis/core/fmt.hpp"
 #include "snackis/net/imap.hpp"
 #include "snackis/net/smtp.hpp"
+#include "snackis/ui/console.hpp"
 #include "snackis/ui/decrypt_form.hpp"
 #include "snackis/ui/encrypt_form.hpp"
 #include "snackis/ui/inbox_form.hpp"
@@ -13,6 +14,12 @@
 namespace snackis {
 namespace ui {
   static void init_cmds(Reader &rdr) {
+    insert(rdr.field, "clear", Reader::Cmd([&rdr]() {
+	  clear(rdr.console);
+	  refresh(rdr.console);
+	  log(rdr.ctx, "Cleared console");
+	}));
+    
     insert(rdr.field, "settings", Reader::Cmd([&rdr]() {
 	  SettingsForm frm(rdr.view, rdr.form.footer);
 	  open(frm);
@@ -73,12 +80,13 @@ namespace ui {
     insert(rdr.field, "quit", Reader::Cmd([&rdr]() { rdr.quitting = true; }));
   }
 
-  Reader::Reader(Ctx &ctx, View &view, Footer &ftr):
+  Reader::Reader(Ctx &ctx, Console &console, View &view, Footer &ftr):
     Window(ctx, ui::Dim(1, ui::dim().w/2), ui::Pos(ui::dim().h-1, 0)),
     form(*this, ftr),
     field(form, ui::Dim(1, dim.w), "!"),
     last_cmd(nullopt),
     quitting(false),
+    console(console),
     view(view) {
     form.status = "Type 'quit' and press Return to exit";
     field.allow_clear = true;
@@ -92,8 +100,13 @@ namespace ui {
 
     while (!done) {
       chtype ch = get_key(rdr);
-      if (ch == KEY_RETURN) { done = true; }
-      drive(rdr.form, ch);
+      switch (ch) {
+      case KEY_RETURN:
+	done = true;
+	break;
+      default:
+	drive(rdr.form, ch);
+      }
     }
    
     clear_field(rdr.form);

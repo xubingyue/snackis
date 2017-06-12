@@ -12,6 +12,7 @@
 
 namespace snackis {
 namespace ui {
+  struct Console;
   struct Footer;
   struct View;
   
@@ -22,9 +23,10 @@ namespace ui {
     EnumField<Cmd> field;
     opt<Cmd> last_cmd;
     bool quitting;
+    Console &console;
     View &view;
     
-    Reader(Ctx &ctx, View &view, Footer &footer);
+    Reader(Ctx &ctx, Console &console, View &view, Footer &footer);
   };
 
   void run(Reader &rdr);

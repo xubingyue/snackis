@@ -16,7 +16,7 @@ namespace snackis {
 namespace snackis {
 namespace ui {
   using namespace snackis;
-  
+
   struct Window {
     Ctx &ctx;
     Dim dim;

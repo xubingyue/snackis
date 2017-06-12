@@ -31,7 +31,7 @@ static void run(Ctx &ctx) {
     Peer &me(whoami(ctx));
     if (!me.name.empty()) { log(ctx, fmt("Welcome back, %0", me.name)); }
     
-    ui::Reader rdr(ctx, view, ftr);
+    ui::Reader rdr(ctx, cons, view, ftr);
     ui::run(rdr);
   }
 }
