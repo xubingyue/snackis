@@ -19,15 +19,8 @@ namespace db {
   }
 
   void commit(Trans &trans) {
-    if (trans.super) {
-      std::copy(trans.changes.begin(),
-		trans.changes.end(),
-		std::back_inserter(trans.super->changes));
-    } else {
-      for (const Change *c: trans.changes) { c->commit(); }
-      flush(trans.ctx);
-    }
-
+    for (const Change *c: trans.changes) { c->commit(); }
+    flush(trans.ctx);
     trans.changes.clear();
   }
   
