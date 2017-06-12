@@ -3,8 +3,10 @@
 ** add vector<lock>
 ** add recursive_mutex to each table
 ** lock in trans on access
-** add ctx->mutex
-** lock while logging & updating trans stack
+** add ctx->trans_mutex
+** lock while updating trans stack
+** add ctx->log_mutex
+** lock while logging
 * add backup command
 ** backup folder setting, default /backup
 ** run tar -z proc
