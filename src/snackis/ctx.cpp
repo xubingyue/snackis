@@ -1,11 +1,39 @@
+#include <chrono>
 #include "snackis/ctx.hpp"
 #include "snackis/db/error.hpp"
+#include "snackis/net/imap.hpp"
 
 namespace snackis {
+  static void fetch_loop(Ctx *ctx) {
+    while (!ctx->is_closing) {
+      auto freq(get_val(ctx->settings.imap_freq));
+      std::unique_lock<std::mutex> lock(ctx->fetch_mutex);
+      
+      if (freq) {
+	ctx->fetch_cond.wait_for(lock, std::chrono::seconds(*freq));
+	if (!ctx->is_closing) {
+	  Imap imap(*ctx);
+	  fetch(imap);
+	}
+      } else {
+	ctx->fetch_cond.wait(lock);
+      }
+    }
+  }
+
   Ctx::Ctx(const Path &path):
-    db::Ctx(path), db(*this), settings(*this), whoami(*this) 
+    db::Ctx(path), db(*this), settings(*this), whoami(*this),
+    is_closing(false)
   { }
 
+  Ctx::~Ctx() {
+    if (fetcher) {
+      is_closing = true;
+      fetch_cond.notify_one();
+      fetcher->join();
+    }
+  }
+  
   void open(Ctx &ctx) {
     open(dynamic_cast<db::Ctx &>(ctx));
     create_path(*get_val(ctx.settings.load_folder));
@@ -35,6 +63,8 @@ namespace snackis {
     
     db::upsert(ctx.db.peers, ctx.whoami);
     db::commit(trans);
+
+    ctx.fetcher.emplace(fetch_loop, &ctx);
   }
 
   void log(const Ctx &ctx, const str &msg) { db::log(ctx,msg); }

@@ -52,9 +52,14 @@ namespace snackis {
   bool decode(Msg &msg, const str &in) {
     auto i(in.find("\r\n"));
     if (i == str::npos) { return false; }
-    int64_t proto_rev = to_int64(in.substr(0, i));
+    auto proto_rev = to_int64(in.substr(0, i));
+
+    if (!proto_rev) {
+      log(msg.ctx, "Failed decoding protocol revision");
+      return false;
+    }
     
-    if (proto_rev != PROTO_REV) {
+    if (*proto_rev != PROTO_REV) {
       log(msg.ctx, "Failed decoding message due to protocol revision mismatch");
       return false;
     }

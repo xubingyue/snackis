@@ -13,7 +13,8 @@ namespace snackis {
     Setting<str> imap_url;
     Setting<int64_t> imap_port;
     Setting<str> imap_user, imap_pass;
-
+    Setting<int64_t> imap_freq;
+    
     Setting<str> smtp_url;
     Setting<int64_t> smtp_port;
     Setting<str> smtp_user, smtp_pass;

@@ -3,6 +3,7 @@
 
 #include <string>
 #include "snackis/core/data.hpp"
+#include "snackis/core/opt.hpp"
 
 namespace snackis {
   using str = std::string;
@@ -10,7 +11,7 @@ namespace snackis {
 
   str trim(const str& in);
   str fill(const str &in, char ch, size_t len);
-  int64_t to_int64(const str &in);
+  opt<int64_t> to_int64(const str &in);
 
   template <typename T>
   str to_str(const T &in) {

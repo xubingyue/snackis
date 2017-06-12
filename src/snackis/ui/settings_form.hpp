@@ -9,7 +9,7 @@ namespace ui {
   struct SettingsForm: public ViewForm {
     TextField name, email,
       load_folder, save_folder,
-      imap_url, imap_port, imap_user, imap_pass,
+      imap_url, imap_port, imap_user, imap_pass, imap_freq,
       smtp_url, smtp_port, smtp_user, smtp_pass;
     
     SettingsForm(View &view, Footer &ftr);

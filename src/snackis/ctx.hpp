@@ -1,6 +1,9 @@
 #ifndef SNACKIS_CTX_HPP
 #define SNACKIS_CTX_HPP
 
+#include <condition_variable>
+#include <mutex>
+#include <thread>
 #include "snackis/db.hpp"
 #include "snackis/db/ctx.hpp"
 #include "snackis/settings.hpp"
@@ -12,8 +15,12 @@ namespace snackis {
     Db db;
     Settings settings;
     Peer whoami;
-    
+    bool is_closing;
+    opt<std::thread> fetcher;
+    std::condition_variable fetch_cond;
+    std::mutex fetch_mutex;
     Ctx(const Path &path);
+    virtual ~Ctx();
   };
 
   void open(Ctx &ctx);
