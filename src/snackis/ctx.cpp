@@ -5,6 +5,11 @@
 
 namespace snackis {
   static void fetch_loop(Ctx *ctx) {
+    {
+      std::unique_lock<std::mutex> lock(ctx->fetch_mutex);
+      ctx->fetch_cond.wait(lock);
+    }
+    
     while (!ctx->is_closing) {
       auto freq(get_val(ctx->settings.imap_freq));
       std::unique_lock<std::mutex> lock(ctx->fetch_mutex);
@@ -23,26 +28,22 @@ namespace snackis {
 
   Ctx::Ctx(const Path &path):
     db::Ctx(path), db(*this), settings(*this), whoami(*this),
+    fetcher(fetch_loop, this),
     is_closing(false)
   { }
 
   Ctx::~Ctx() {
-    if (fetcher) {
-      is_closing = true;
-      fetch_cond.notify_one();
-      fetcher->join();
-    }
+    is_closing = true;
+    fetch_cond.notify_one();
+    fetcher.join();
   }
   
   void open(Ctx &ctx) {
     open(dynamic_cast<db::Ctx &>(ctx));
     create_path(*get_val(ctx.settings.load_folder));
     create_path(*get_val(ctx.settings.save_folder));
-
     slurp(ctx);
-
     db::Trans trans(ctx);
-
     opt<UId> me_id = get_val(ctx.settings.whoami);
     
     if (me_id) {
@@ -63,8 +64,7 @@ namespace snackis {
     
     db::upsert(ctx.db.peers, ctx.whoami);
     db::commit(trans);
-
-    ctx.fetcher.emplace(fetch_loop, &ctx);
+    ctx.fetch_cond.notify_one();
   }
 
   void log(const Ctx &ctx, const str &msg) { db::log(ctx,msg); }

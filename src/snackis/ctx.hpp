@@ -15,10 +15,10 @@ namespace snackis {
     Db db;
     Settings settings;
     Peer whoami;
-    bool is_closing;
-    opt<std::thread> fetcher;
+    std::thread fetcher;
     std::condition_variable fetch_cond;
     std::mutex fetch_mutex;
+    bool is_closing;
     Ctx(const Path &path);
     virtual ~Ctx();
   };
