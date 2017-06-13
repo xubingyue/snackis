@@ -13,10 +13,8 @@ namespace snackis {
 namespace gui {
   extern GtkWidget *window, *panels, *left_panel;
   
-  extern opt<Login> login;
   extern opt<Console> console;
   extern opt<Reader> reader;
-  extern opt<Setup> setup;
   
   void quit();
 }}

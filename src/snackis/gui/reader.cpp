@@ -16,9 +16,8 @@ namespace gui {
     
     if (in == "quit") { quit(); }
     else if (in == "setup") {
-      if (!setup) { setup.emplace(rdr->ctx); }
+      Setup *setup = new Setup(rdr->ctx);
       setup->push_view();
-      gtk_widget_show_all(setup->ptr());
     } else {
       log(rdr->ctx, fmt("Unknown command: '%0'", in));
       return;

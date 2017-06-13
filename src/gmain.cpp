@@ -41,8 +41,8 @@ static void activate(GtkApplication *app, gpointer user_data) {
 
   gtk_box_pack_start(GTK_BOX(gui::left_panel), gui::console->ptr(), true, true, 0);
 
-  gui::login.emplace(*ctx);
-  gui::login->push_view();
+  gui::Login *login = new gui::Login(*ctx);
+  login->push_view();
   gtk_widget_show_all(gui::window);
 }
 

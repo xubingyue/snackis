@@ -4,10 +4,19 @@
 namespace snackis {
 namespace gui {
   static void on_cancel(GtkWidget *_, Setup *setup) {
+    log(setup->ctx, "Cancelled setup");
     setup->pop_view();
   }
 
   static void on_save(GtkWidget *_, Setup *setup) {
+    db::Trans trans(setup->ctx);
+    Peer &me(whoami(setup->ctx));
+    me.name = gtk_entry_get_text(GTK_ENTRY(setup->name));
+    me.email = gtk_entry_get_text(GTK_ENTRY(setup->email));
+    update(setup->ctx.db.peers, me);
+    db::commit(trans);
+    log(setup->ctx, "Saved setup");
+    setup->pop_view();
   }
 
   Setup::Setup(Ctx &ctx):
@@ -19,12 +28,15 @@ namespace gui {
     GtkWidget *frm = gtk_grid_new();
     gtk_box_pack_start(GTK_BOX(panel), frm, true, true, 0);
     
+    Peer &me(whoami(ctx));
+
     lbl = gtk_label_new("Name");
     gtk_widget_set_margin_top(lbl, 5);
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_grid_attach(GTK_GRID(frm), lbl, 0, 0, 1, 1);
     gtk_widget_set_margin_top(name, 5);
     gtk_widget_set_hexpand(name, true);
+    gtk_entry_set_text(GTK_ENTRY(name), me.name.c_str());
     gtk_grid_attach(GTK_GRID(frm), name, 0, 1, 1, 1);
     
     lbl = gtk_label_new("Email");
@@ -33,6 +45,7 @@ namespace gui {
     gtk_grid_attach(GTK_GRID(frm), lbl, 0, 2, 1, 1);
     gtk_widget_set_margin_top(email, 5);
     gtk_widget_set_hexpand(email, true);
+    gtk_entry_set_text(GTK_ENTRY(email), me.email.c_str());
     gtk_grid_attach(GTK_GRID(frm), email, 0, 3, 1, 1);
     
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
