@@ -1,4 +1,6 @@
-#include <gtk/gtk.h>
+#include "snackis/gui/reader.hpp"
+
+using namespace snackis;
 
 static void load_style() {
   GdkDisplay *display(gdk_display_get_default());
@@ -34,10 +36,9 @@ static void activate(GtkApplication *app, gpointer user_data) {
   
   gtk_container_add(GTK_CONTAINER(console), console_view);
   gtk_box_pack_start(GTK_BOX(left), console, true, true, 0);
-  
-  GtkWidget *reader(gtk_entry_new());
-  gtk_style_context_add_class(gtk_widget_get_style_context(reader),"reader");
-  gtk_box_pack_start(GTK_BOX(left), reader, false, false, 0);
+
+  gui::Reader reader;
+  gtk_box_pack_start(GTK_BOX(left), widget(reader), false, false, 0);
 
   gtk_paned_add1(GTK_PANED(panels), left);
   gtk_widget_show_all(wnd);

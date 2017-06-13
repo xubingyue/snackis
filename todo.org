@@ -1,9 +1,9 @@
-* extract console
+* add quit cmd to reader
+* extract console like reader
 ** add log
 *** execute in gui thread
 ** start context in gmain
-* extract reader
-** add quit cmd
+** rename gmain.cpp to gui.cpp & main.cpp to ui.cpp
 * ---
 * add backup command
 ** backup folder setting, default /backup
