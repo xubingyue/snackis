@@ -4,6 +4,15 @@
 ** add view struct
 *** push views in constructor
 *** pop views in destructor
+* add invite cmd
+** split into cmd/args on space
+** email is arg 1
+* add gui::Inbox
+** show msgs in list view
+** column for from name / email
+** Invite
+** New post in ''.
+** Press Space to skip or Return to accept message
 * rename gmain.cpp to gui.cpp & main.cpp to ui.cpp
 * ---
 * add backup command
