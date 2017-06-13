@@ -11,8 +11,10 @@
 ** show msgs in list view
 ** column for from name / email
 ** Invite
+*** Accept opens peer view
 ** New post in ''.
-** Press Space to skip or Return to accept message
+** Press Space to accept or Backspace to reject message
+*** Accept opens post view for thread
 * rename gmain.cpp to gui.cpp & main.cpp to ui.cpp
 * ---
 * add backup command
