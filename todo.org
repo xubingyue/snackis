@@ -1,5 +1,3 @@
-* add status bar to main window
-** make public in gui.hpp
 * start context in gmain
 * add login form to right side
 ** add view.hpp

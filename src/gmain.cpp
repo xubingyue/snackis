@@ -23,22 +23,28 @@ static void activate(GtkApplication *app, gpointer user_data) {
   gtk_window_set_title(GTK_WINDOW(gui::window), "Snackis");
   gtk_window_maximize(GTK_WINDOW(gui::window));
 
+  GtkWidget *main = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  gtk_container_add(GTK_CONTAINER(gui::window), main);
+  
   gui::panels = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
   gtk_box_set_homogeneous(GTK_BOX(gui::panels), true);
-  gtk_container_add(GTK_CONTAINER(gui::window), gui::panels);
+  gtk_box_pack_start(GTK_BOX(main), gui::panels, true, true, 0);
 
   GtkWidget *left(gtk_box_new(GTK_ORIENTATION_VERTICAL, 10));
-
   gui::Console console;
   log(console, "Hello World!");
   refresh(console);
-  
   gtk_box_pack_start(GTK_BOX(left), widget(console), true, true, 0);
 
   gui::Reader reader;
   gtk_box_pack_start(GTK_BOX(left), widget(reader), false, false, 0);
 
   gtk_container_add(GTK_CONTAINER(gui::panels), left);
+  gui::status = gtk_statusbar_new();
+  gtk_container_add(GTK_CONTAINER(main), gui::status);
+
+  gui::push_status("testing testing...");
+  
   gtk_widget_show_all(gui::window);
 }
 
