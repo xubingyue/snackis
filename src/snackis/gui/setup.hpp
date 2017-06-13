@@ -9,7 +9,7 @@
 namespace snackis {
 namespace gui {
   struct Setup: public View {
-    GtkWidget *name, *email, *cancel, *save;
+    GtkWidget *name, *email, *load_folder, *save_folder, *cancel, *save;
     
     Setup(Ctx &ctx);
     void focus() override;

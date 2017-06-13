@@ -1,5 +1,6 @@
 * finish gui::Setup/setup command
-** copy ui::SettingsForm
+** add imap settings
+** add smtp settings
 * add invite cmd
 ** split into cmd/args on space
 ** email is arg 1
