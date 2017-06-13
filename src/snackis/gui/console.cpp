@@ -1,4 +1,6 @@
 #include <cassert>
+#include "snackis/core/fmt.hpp"
+#include "snackis/core/time.hpp"
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/console.hpp"
 #include "snackis/gui/widget.hpp"

@@ -2,10 +2,14 @@
 
 namespace snackis {
 namespace gui {
-  GtkWidget *window, *panels, *status;
-  
+  GtkWidget *window, *panels, *left_panel, *status;
+
+  opt<Login> login;
+  opt<Console> console;
+  opt<Reader> reader;
+
   void quit() {
-    gtk_widget_destroy(GTK_WIDGET(window));
+    gtk_widget_destroy(window);
   }
 
   void push_status(const str &msg) {

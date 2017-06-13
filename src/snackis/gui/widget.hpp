@@ -8,6 +8,7 @@ namespace snackis {
 namespace gui {
   struct Widget {
     virtual GtkWidget *ptr() = 0;
+    virtual void focus();
   };
 
   void add_style(GtkWidget *wgt, const str &style);

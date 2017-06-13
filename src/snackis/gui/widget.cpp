@@ -11,6 +11,10 @@ namespace gui {
   }
   
   void focus(Widget &wgt) {
-    gtk_widget_grab_focus(ptr(wgt));
+    wgt.focus();
+  }
+
+  void Widget::focus() {
+    gtk_widget_grab_focus(ptr());
   }
 }}

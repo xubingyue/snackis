@@ -31,31 +31,25 @@ static void activate(GtkApplication *app, gpointer user_data) {
   gtk_box_set_homogeneous(GTK_BOX(gui::panels), true);
   gtk_box_pack_start(GTK_BOX(main), gui::panels, true, true, 0);
 
-  Ctx ctx("db/");
+  Ctx *ctx = new Ctx("db/");
   
-  GtkWidget *left(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
-  gui::Console console;
-  ctx.log = [&console](const str &msg) { gui::log(console, msg); };
-  log(ctx, "Welcome to Snackis");
+  gui::left_panel = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+  gtk_container_add(GTK_CONTAINER(gui::panels), gui::left_panel);
 
-  refresh(console);
-  gtk_box_pack_start(GTK_BOX(left), ptr(console), true, true, 0);
+  gui::console.emplace();
+  ctx->log = [](const str &msg) { gui::log(*gui::console, msg); };
+  log(*ctx, "Welcome to Snackis");
 
-  open(ctx);
-  Peer &me(whoami(ctx));
-  if (!me.name.empty()) { log(ctx, fmt("Welcome back, %0", me.name)); }
+  refresh(*gui::console);
+  gtk_box_pack_start(GTK_BOX(gui::left_panel), ptr(*gui::console), true, true, 0);
 
-  gui::Reader reader;
-  gtk_box_pack_start(GTK_BOX(left), ptr(reader), false, false, 0);
-    
-  gtk_container_add(GTK_CONTAINER(gui::panels), left);
   gui::status = gtk_statusbar_new();
   gtk_container_add(GTK_CONTAINER(main), gui::status);
 
   gui::push_status("testing testing...");
-  
+  gui::login.emplace(*ctx);
+  focus(*gui::login);
   gtk_widget_show_all(gui::window);
-  focus(reader);
 }
 
 int main(int argc, char **argv) {

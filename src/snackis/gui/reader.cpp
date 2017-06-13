@@ -6,7 +6,6 @@ namespace snackis {
 namespace gui {
   static void on_activate(GtkWidget *entry) {
     const str in(gtk_entry_get_text(GTK_ENTRY(entry)));
-
     if (in == "quit") { quit(); }
   }
   

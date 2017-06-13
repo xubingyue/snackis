@@ -1,9 +1,6 @@
-* add login form to right side
-** add view.hpp
-** keep stack of views (View *)
-** add view struct
-*** push views in constructor
-*** pop views in destructor
+* finish gui::Login
+** sett password char
+** add repeat entry like ui
 * add invite cmd
 ** split into cmd/args on space
 ** email is arg 1
@@ -13,7 +10,7 @@
 ** Invite
 *** Accept opens peer view
 ** New post in ''.
-** Press Space to accept or Backspace to reject message
+** Press Return to accept or Space to dismiss message
 *** Accept opens post view for thread
 * rename gmain.cpp to gui.cpp & main.cpp to ui.cpp
 * ---

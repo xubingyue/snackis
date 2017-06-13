@@ -5,10 +5,7 @@
 #include <mutex>
 
 #include <gtk/gtk.h>
-#include "snackis/core/fmt.hpp"
-#include "snackis/core/opt.hpp"
 #include "snackis/core/str.hpp"
-#include "snackis/core/time.hpp"
 #include "snackis/gui/widget.hpp"
 
 namespace snackis {

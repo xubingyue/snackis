@@ -1,3 +1,7 @@
+.view_label {
+    font-size: 125%;
+}
+
 .console {
     font-family: "Courier New", Courier, monospace;
     color: #cccccc;
