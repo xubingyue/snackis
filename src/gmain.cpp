@@ -1,4 +1,5 @@
 #include "snackis/ctx.hpp"
+#include "snackis/snackis.hpp"
 #include "snackis/gui/console.hpp"
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/reader.hpp"
@@ -21,7 +22,8 @@ static void activate(GtkApplication *app, gpointer user_data) {
   load_style();
   
   gui::window = gtk_application_window_new(app);
-  gtk_window_set_title(GTK_WINDOW(gui::window), "Snackis");
+  gtk_window_set_title(GTK_WINDOW(gui::window),
+		       fmt("Snackis v%0", version_str()).c_str());
   gtk_window_maximize(GTK_WINDOW(gui::window));
 
   GtkWidget *main = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);

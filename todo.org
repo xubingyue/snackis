@@ -1,5 +1,10 @@
 * finish gui::Setup/setup command
 ** add imap settings
+*** implement as grid
+*** url and port on same line
+**** use spin button for port
+*** user, pass and test button on same line
+*** poll on separate line
 ** add smtp settings
 * add invite cmd
 ** split into cmd/args on space
@@ -14,6 +19,7 @@
 *** Accept opens post view for thread
 * implement reader completion
 ** copy ui::EnumField
+* add file dialog buttons to setup/load/save_folder
 * rename gmain.cpp to gui.cpp & main.cpp to ui.cpp
 * ---
 * add backup command
