@@ -38,7 +38,6 @@ static void activate(GtkApplication *app, gpointer user_data) {
 
   gui::console.emplace();
   ctx->log = [](const str &msg) { gui::log(*gui::console, msg); };
-  log(*ctx, "Welcome to Snackis");
 
   refresh(*gui::console);
   gtk_box_pack_start(GTK_BOX(gui::left_panel), ptr(*gui::console), true, true, 0);
@@ -50,6 +49,7 @@ static void activate(GtkApplication *app, gpointer user_data) {
   gui::login.emplace(*ctx);
   gui::login->push_view();
   gtk_widget_show_all(gui::window);
+  refresh(*gui::console);
 }
 
 int main(int argc, char **argv) {

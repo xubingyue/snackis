@@ -7,12 +7,12 @@ namespace snackis {
 namespace gui {
   std::stack<View *> View::stack;
 
-  View::View(Ctx &ctx): 
+  View::View(Ctx &ctx, const str &lbl): 
     ctx(ctx), panel(gtk_box_new(GTK_ORIENTATION_VERTICAL, 0)) { 
-    GtkWidget *lbl = gtk_label_new("Login");
-    add_style(lbl, "view_label");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_END);
-    gtk_container_add(GTK_CONTAINER(panel), lbl);
+    GtkWidget *l = gtk_label_new(lbl.c_str());
+    add_style(l, "view_label");
+    gtk_widget_set_halign(l, GTK_ALIGN_END);
+    gtk_container_add(GTK_CONTAINER(panel), l);
   }
 
   GtkWidget *View::ptr() {

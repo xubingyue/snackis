@@ -1,8 +1,3 @@
-* finish gui::Login
-** add login button
-*** center horizontally
-** add add validation like ui
-** disable repeat if exists
 * add invite cmd
 ** split into cmd/args on space
 ** email is arg 1
