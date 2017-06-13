@@ -7,17 +7,18 @@
 #include "snackis/gui/console.hpp"
 #include "snackis/gui/login.hpp"
 #include "snackis/gui/reader.hpp"
+#include "snackis/gui/setup.hpp"
 
 namespace snackis {
 namespace gui {
-  extern GtkWidget *window, *panels, *left_panel, *status;
+  extern GtkWidget *window, *panels, *left_panel;
   
   extern opt<Login> login;
   extern opt<Console> console;
   extern opt<Reader> reader;
+  extern opt<Setup> setup;
   
   void quit();
-  void push_status(const str &msg);
 }}
 
 #endif

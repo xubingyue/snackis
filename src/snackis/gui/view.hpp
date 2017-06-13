@@ -13,6 +13,7 @@ namespace gui {
     GtkWidget *panel;
     
     View(Ctx &ctx, const str &lbl);
+    virtual ~View();
     void push_view();
     void pop_view();
     GtkWidget *ptr() override;

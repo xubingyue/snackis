@@ -40,12 +40,8 @@ static void activate(GtkApplication *app, gpointer user_data) {
   ctx->log = [](const str &msg) { gui::log(*gui::console, msg); };
 
   refresh(*gui::console);
-  gtk_box_pack_start(GTK_BOX(gui::left_panel), ptr(*gui::console), true, true, 0);
+  gtk_box_pack_start(GTK_BOX(gui::left_panel), gui::console->ptr(), true, true, 0);
 
-  gui::status = gtk_statusbar_new();
-  gtk_container_add(GTK_CONTAINER(main), gui::status);
-
-  gui::push_status("testing testing...");
   gui::login.emplace(*ctx);
   gui::login->push_view();
   gtk_widget_show_all(gui::window);

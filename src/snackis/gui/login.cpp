@@ -10,7 +10,7 @@ namespace gui {
 
     if (login->repeat) {  
       if (pass != gtk_entry_get_text(GTK_ENTRY(login->repeat))) {
-	log(login->ctx, "Specified passwords don't match, please try again");
+	log(login->ctx, "Password mismatch, please try again");
 	gtk_widget_grab_focus(login->pass);
 	return;
       }
@@ -18,10 +18,10 @@ namespace gui {
       db::init_pass(login->ctx, pass);
     } if (!db::login(login->ctx, pass)) {
 	log(login->ctx, "Wrong password, please try again");
+	gtk_widget_grab_focus(login->pass);
 	return;
     }
 
-    login->pop_view();
     Ctx &ctx(login->ctx);
     
     open(ctx);
@@ -29,8 +29,8 @@ namespace gui {
     if (!me.name.empty()) { log(ctx, fmt("Welcome back, %0", me.name)); }
     
     gui::reader.emplace(ctx);
-    gtk_box_pack_start(GTK_BOX(left_panel), ptr(*reader), false, false, 0);
-    focus(*gui::reader);
+    gtk_box_pack_start(GTK_BOX(left_panel), reader->ptr(), false, false, 0);
+    login->pop_view();
     gtk_widget_show_all(gui::window);
   }
   

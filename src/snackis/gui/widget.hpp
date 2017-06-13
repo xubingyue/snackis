@@ -12,8 +12,6 @@ namespace gui {
   };
 
   void add_style(GtkWidget *wgt, const str &style);
-  GtkWidget *ptr(Widget &wgt);
-  void focus(Widget &wgt);
 }}
 
 
