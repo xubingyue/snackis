@@ -1,3 +1,4 @@
+* change panels from paned to horizontal box
 * start context in gmain
 * add login form to right side
 ** add status bar to main window

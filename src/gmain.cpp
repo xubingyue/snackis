@@ -30,6 +30,8 @@ static void activate(GtkApplication *app, gpointer user_data) {
 
   gui::Console console;
   log(console, "Hello World!");
+  refresh(console);
+  
   gtk_box_pack_start(GTK_BOX(left), widget(console), true, true, 0);
 
   gui::Reader reader;

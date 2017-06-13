@@ -20,4 +20,19 @@ namespace gui {
   GtkWidget *widget(Console &cns) {
     return cns.scroll_view;
   }
+
+  void refresh(Console &cns) {
+    Console::LogLock lock(cns.log_mutex);
+
+    for (const auto &msg: cns.out) {
+      auto buf(gtk_text_view_get_buffer(GTK_TEXT_VIEW(cns.text_view)));
+      GtkTextIter end;
+      gtk_text_buffer_get_end_iter(buf, &end);
+      gtk_text_buffer_place_cursor(buf, &end);
+      gtk_text_buffer_insert_at_cursor(buf, msg.c_str(), msg.size());
+    }
+
+    cns.out.clear();
+  }
+  
 }}
