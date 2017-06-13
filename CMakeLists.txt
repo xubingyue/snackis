@@ -28,6 +28,15 @@ add_executable(snackis ${core_src} ${crypt_src} ${db_src} ${net_src} ${snackis_s
 target_include_directories(snackis PUBLIC src/)
 target_link_libraries(snackis c++experimental curl pthread sodium uuid curses form)
 
+file(GLOB_RECURSE gui_src src/snackis/gui/*.cpp)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
+
+add_executable(gsnackis ${core_src} ${crypt_src} ${db_src} ${net_src} ${snackis_src} ${gui_src} src/gmain.cpp)
+target_compile_options(gsnackis PUBLIC ${GTK3_CFLAGS_OTHER})
+target_include_directories(gsnackis PUBLIC src/ ${GTK3_INCLUDE_DIRS})
+target_link_libraries(gsnackis c++experimental curl pthread sodium uuid ${GTK3_LIBRARIES})
+
 file(GLOB core_inc src/snackis/core/*.hpp)
 install(FILES ${core_inc} DESTINATION include/snackis/core)
 

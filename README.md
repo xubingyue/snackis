@@ -14,7 +14,7 @@ tar -xzf clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
 cd clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04
 sudo cp -R * /usr/local/
 
-sudo apt-get install libcurl4-openssl-dev libsodium-dev libuuid1 libncurses-dev
+sudo apt-get install libcurl4-openssl-dev libsodium-dev libuuid1 libncurses-dev libgtk-3-dev
 ```
 
 ```
