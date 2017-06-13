@@ -9,28 +9,20 @@
 #include "snackis/core/opt.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/core/time.hpp"
+#include "snackis/gui/widget.hpp"
 
 namespace snackis {
 namespace gui {
-  struct Console {
+  struct Console: public Widget {
     using LogLock = std::unique_lock<std::mutex>;
     GtkWidget *text_view, *scroll_view;
     std::mutex log_mutex;
     std::vector<str> out;
     Console();
+    GtkWidget *ptr() override;
   };
 
-  GtkWidget *widget(Console &console);
-
-  template <typename...Args>
-  void log(Console &cns, const str &spec, Args...args) {
-    const str msg(fmt("%0 %1\n", 
-		      fmt(now(), "%a %H:%M:%S"), 
-		      fmt(spec, std::forward<Args>(args)...)));
-    Console::LogLock lock(cns.log_mutex);
-    cns.out.push_back(msg);
-  }
-
+  void log(Console &cns, const str msg);
   void refresh(Console &cns);
 }}
 

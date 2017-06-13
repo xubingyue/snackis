@@ -2,15 +2,16 @@
 #define SNACKIS_GUI_READER_HPP
 
 #include <gtk/gtk.h>
+#include "snackis/gui/widget.hpp"
 
 namespace snackis {
 namespace gui {
-  struct Reader {
+  struct Reader: public Widget {
     GtkWidget *entry;
     Reader();
+    GtkWidget *ptr();
   };
 
-  GtkWidget *widget(Reader &reader);
 }}
 
 #endif

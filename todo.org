@@ -1,4 +1,3 @@
-* start context in gmain
 * add login form to right side
 ** add view.hpp
 ** keep stack of views (View *)

@@ -6,7 +6,14 @@
 
 namespace snackis {
 namespace gui {
+  struct Widget {
+    virtual GtkWidget *ptr() = 0;
+  };
+
   void add_style(GtkWidget *wgt, const str &style);
+  GtkWidget *ptr(Widget &wgt);
+  void focus(Widget &wgt);
 }}
+
 
 #endif

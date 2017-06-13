@@ -14,8 +14,8 @@ namespace gui {
     add_style(entry, "reader");
     g_signal_connect(entry, "activate", G_CALLBACK(on_activate), NULL);
   }
-
-  GtkWidget *widget(Reader &reader) {
-    return reader.entry;
+  
+  GtkWidget *Reader::ptr() {
+    return entry;
   }
 }}
