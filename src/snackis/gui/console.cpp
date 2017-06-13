@@ -7,13 +7,7 @@
 
 namespace snackis {
 namespace gui {
-  void log(Console &cns, const str msg) {
-    const str m(fmt("%0 %1\n", fmt(now(), "%a %H:%M:%S"), msg));
-    Console::LogLock lock(cns.log_mutex);
-    cns.out.push_back(m);
-  }
-
-  void refresh(Console &cns) {
+  static void refresh(Console &cns) {
     Console::LogLock lock(cns.log_mutex);
 
     for (const auto &msg: cns.out) {
@@ -25,6 +19,18 @@ namespace gui {
     }
 
     cns.out.clear();
+  }
+
+  static gboolean on_idle(gpointer cns) {
+    refresh(*static_cast<Console *>(cns));
+    return false;
+  }
+  
+  void log(Console &cns, const str msg) {
+    const str m(fmt("%0 %1\n", fmt(now(), "%a %H:%M:%S"), msg));
+    Console::LogLock lock(cns.log_mutex);
+    cns.out.push_back(m);
+    g_idle_add(on_idle, &cns);
   }
 
   Console::Console():

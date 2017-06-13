@@ -1,6 +1,5 @@
 * finish gui::Setup/setup command
 ** copy ui::SettingsForm
-** add mnemonics to buttons
 * add invite cmd
 ** split into cmd/args on space
 ** email is arg 1

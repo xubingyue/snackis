@@ -21,7 +21,6 @@ namespace gui {
       gtk_widget_show_all(setup->ptr());
     } else {
       log(rdr->ctx, fmt("Unknown command: '%0'", in));
-      refresh(*console);
       return;
     }
     
