@@ -1,7 +1,9 @@
-* add console to gui
-** split wnd with GtkPaned
-** add GtkTextView
-** execute log in gui thread
+* enlarge reader font
+* extract console
+** add log
+*** execute in gui thread
+* extract reader
+** add quit cmd
 * ---
 * add backup command
 ** backup folder setting, default /backup
