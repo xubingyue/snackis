@@ -7,8 +7,11 @@
 namespace snackis {
 namespace gui {
   struct Reader: public Widget {
+    Ctx &ctx;
     GtkWidget *entry;
-    Reader();
+    opt<str> last_cmd;
+    
+    Reader(Ctx &ctx);
     GtkWidget *ptr();
   };
 

@@ -11,6 +11,8 @@
 ** New post in ''.
 ** Press Return to accept or Space to dismiss message
 *** Accept opens post view for thread
+* implement reader completion
+** copy ui::EnumField
 * rename gmain.cpp to gui.cpp & main.cpp to ui.cpp
 * ---
 * add backup command
