@@ -32,7 +32,6 @@ namespace db {
   };
 
   Path get_path(const Ctx &ctx, const str &fname);
-  void log(const Ctx &ctx, const str &msg);
   void init_db_ver(Ctx &ctx);
   bool pass_exists(const Ctx &ctx);
   void init_pass(Ctx &ctx, const str &pass);
@@ -41,6 +40,11 @@ namespace db {
   void dirty_file(Ctx &ctx, std::ostream &file);
   void flush(Ctx &ctx);
   void slurp(Ctx &ctx);
+
+  template <typename...Args>
+  void log(const Ctx &ctx, const str &spec, Args...args) {
+    if (ctx.log) { (*ctx.log)(fmt(spec, std::forward<Args>(args)...)); }
+  }
 }}
 
 #endif

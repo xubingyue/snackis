@@ -139,13 +139,13 @@ namespace snackis {
       }
 
       if (load(imap.ctx.db.msgs, *msg)) {
-	log(imap.ctx, fmt("Skipped duplicate message %0", msg->id));
+	log(imap.ctx, "Skipped duplicate message %0", msg->id);
 	continue;
       }
       
       insert(imap.ctx.db.inbox, *msg);
       delete_uid(imap, uid);
-      log(imap.ctx, fmt("Fetched message from %0", msg->from));
+      log(imap.ctx, "Fetched message from %0", msg->from);
     }
 
     if (tokens.size() > 2) {

@@ -15,10 +15,6 @@ namespace db {
     return ctx.path / fname; 
   }
 
-  void log(const Ctx &ctx, const str &msg) {
-    if (ctx.log) { (*ctx.log)(msg); }
-  }
-
   void init_db_rev(Ctx &ctx) {
     const Path p(get_path(ctx, "rev"));
     
@@ -34,7 +30,7 @@ namespace db {
 		      DB_REV));
       }
     } else {
-      log(ctx, fmt("New database initialized with revision #%0", DB_REV));
+      log(ctx, "New database initialized with revision #%0", DB_REV);
     }
     
     std::ofstream out;
