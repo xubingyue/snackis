@@ -1,7 +1,6 @@
-* extract console like reader
-** add log
-*** execute in gui thread
-** start context in gmain
+* start context in gmain
+* add login form to right side
+** add status bar to main window
 ** rename gmain.cpp to gui.cpp & main.cpp to ui.cpp
 * ---
 * add backup command
