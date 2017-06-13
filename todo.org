@@ -1,8 +1,13 @@
-* change panels from paned to horizontal box
+* add status bar to main window
+** make public in gui.hpp
 * start context in gmain
 * add login form to right side
-** add status bar to main window
-** rename gmain.cpp to gui.cpp & main.cpp to ui.cpp
+** add view.hpp
+** keep stack of views (View *)
+** add view struct
+*** push views in constructor
+*** pop views in destructor
+* rename gmain.cpp to gui.cpp & main.cpp to ui.cpp
 * ---
 * add backup command
 ** backup folder setting, default /backup

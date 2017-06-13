@@ -2,7 +2,7 @@
 
 namespace snackis {
 namespace gui {
-  GtkWidget *window;
+  GtkWidget *window, *panels;
   
   void quit() {
     gtk_widget_destroy(GTK_WIDGET(window));

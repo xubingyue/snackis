@@ -5,8 +5,8 @@
 
 namespace snackis {
 namespace gui {
-  extern GtkWidget *window;
-  
+  extern GtkWidget *window, *panels;
+    
   void quit();
 }}
 
