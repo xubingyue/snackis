@@ -1,3 +1,4 @@
+#include "snackis/gui/gui.hpp"
 #include "snackis/gui/reader.hpp"
 
 using namespace snackis;
@@ -17,12 +18,12 @@ static void load_style() {
 static void activate(GtkApplication *app, gpointer user_data) {
   load_style();
   
-  GtkWidget *wnd(gtk_application_window_new(app));
-  gtk_window_set_title(GTK_WINDOW(wnd), "Snackis");
-  gtk_window_maximize(GTK_WINDOW(wnd));
+  gui::window = gtk_application_window_new(app);
+  gtk_window_set_title(GTK_WINDOW(gui::window), "Snackis");
+  gtk_window_maximize(GTK_WINDOW(gui::window));
 
   GtkWidget *panels(gtk_paned_new(GTK_ORIENTATION_HORIZONTAL));
-  gtk_container_add(GTK_CONTAINER(wnd), panels);
+  gtk_container_add(GTK_CONTAINER(gui::window), panels);
 
   GtkWidget *left(gtk_box_new(GTK_ORIENTATION_VERTICAL, 10));
 
@@ -41,7 +42,7 @@ static void activate(GtkApplication *app, gpointer user_data) {
   gtk_box_pack_start(GTK_BOX(left), widget(reader), false, false, 0);
 
   gtk_paned_add1(GTK_PANED(panels), left);
-  gtk_widget_show_all(wnd);
+  gtk_widget_show_all(gui::window);
 }
 
 int main(int argc, char **argv) {

@@ -1,4 +1,3 @@
-* add quit cmd to reader
 * extract console like reader
 ** add log
 *** execute in gui thread
