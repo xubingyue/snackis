@@ -20,15 +20,33 @@ namespace gui {
   }
   
   Login::Login(Ctx &ctx):
-    View(ctx, gtk_box_new(GTK_ORIENTATION_VERTICAL, 0)),
+    View(ctx),
     pass(gtk_entry_new()) {
-    GtkWidget *lbl = gtk_label_new("Login");
-    add_style(lbl, "view_label");
+    GtkWidget *lbl;
+
+    GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_box_pack_start(GTK_BOX(panel), frm, true, true, 10);
+    gtk_widget_set_halign(frm, GTK_ALIGN_CENTER);
+    gtk_widget_set_valign(frm, GTK_ALIGN_CENTER);
+    
+    lbl = gtk_label_new("Password: ");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(panel), lbl);
+    gtk_box_pack_start(GTK_BOX(frm), lbl, false, false, 0);
+
+    gtk_widget_set_hexpand(pass, true);
+    gtk_entry_set_visibility(GTK_ENTRY(pass), false);
     g_signal_connect(pass, "activate", G_CALLBACK(on_login), this);
-    gtk_container_add(GTK_CONTAINER(panel), pass);
-    push_view();
+    gtk_box_pack_start(GTK_BOX(frm), pass, false, false, 0);
+
+    lbl = gtk_label_new("Repeat: ");
+    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
+    gtk_box_pack_start(GTK_BOX(frm), lbl, false, false, 0);
+
+    repeat = gtk_entry_new();
+    gtk_widget_set_hexpand(repeat, true);
+    gtk_entry_set_visibility(GTK_ENTRY(repeat), false);
+    g_signal_connect(repeat, "activate", G_CALLBACK(on_login), this);
+    gtk_box_pack_start(GTK_BOX(frm), repeat, false, false, 0);
   }
 
   void Login::focus() {

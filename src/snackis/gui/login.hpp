@@ -9,7 +9,7 @@
 namespace snackis {
 namespace gui {
   struct Login: public View {
-    GtkWidget *pass;
+    GtkWidget *pass, *repeat;
     
     Login(Ctx &ctx);
     void focus() override;

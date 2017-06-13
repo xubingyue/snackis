@@ -12,7 +12,7 @@ namespace gui {
     Ctx &ctx;
     GtkWidget *panel;
     
-    View(Ctx &ctx, GtkWidget *pan);
+    View(Ctx &ctx);
     void push_view();
     void pop_view();
     GtkWidget *ptr() override;

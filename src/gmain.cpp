@@ -48,7 +48,7 @@ static void activate(GtkApplication *app, gpointer user_data) {
 
   gui::push_status("testing testing...");
   gui::login.emplace(*ctx);
-  focus(*gui::login);
+  gui::login->push_view();
   gtk_widget_show_all(gui::window);
 }
 
