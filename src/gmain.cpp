@@ -24,8 +24,15 @@ static void activate(GtkApplication *app, gpointer user_data) {
 
   GtkWidget *left(gtk_box_new(GTK_ORIENTATION_VERTICAL, 10));
 
-  GtkWidget *console(gtk_text_view_new());
-  gtk_text_view_set_editable(GTK_TEXT_VIEW(console), false);
+  GtkWidget *console_view(gtk_text_view_new());
+  gtk_text_view_set_editable(GTK_TEXT_VIEW(console_view), false);
+  GtkWidget* console = gtk_scrolled_window_new(NULL, NULL);
+  gtk_scrolled_window_set_overlay_scrolling(GTK_SCROLLED_WINDOW(console), false);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(console),
+				 GTK_POLICY_NEVER,
+				 GTK_POLICY_ALWAYS);
+  
+  gtk_container_add(GTK_CONTAINER(console), console_view);
   gtk_box_pack_start(GTK_BOX(left), console, true, true, 0);
   
   GtkWidget *reader(gtk_entry_new());
