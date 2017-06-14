@@ -48,6 +48,22 @@ namespace gui {
       });
   }
 
+  static void init_completion(Reader &rdr) {
+    auto comp(gtk_entry_completion_new());
+    gtk_entry_completion_set_text_column(comp, 0);
+    gtk_entry_set_completion(GTK_ENTRY(rdr.entry), comp);
+    auto mod(gtk_list_store_new(1, G_TYPE_STRING));
+    
+    for(auto &cmd: rdr.cmds) {
+      GtkTreeIter iter;
+      gtk_list_store_append(mod, &iter);
+      gtk_list_store_set(mod, &iter, 0, cmd.first.c_str(), -1);
+    }
+
+    gtk_entry_completion_set_model(comp, GTK_TREE_MODEL(mod));
+    
+  }
+  
   static bool exec_cmd(Reader &rdr, const str &in) {
     Ctx &ctx(rdr.ctx);
     str in_str(in);
@@ -85,6 +101,7 @@ namespace gui {
 
   Reader::Reader(Ctx &ctx): ctx(ctx), entry(gtk_entry_new()) {
     init_cmds(*this);
+    init_completion(*this);
     add_style(entry, "reader");
     gtk_widget_set_margin_start(entry, 5);
     gtk_widget_set_margin_end(entry, 5);

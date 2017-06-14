@@ -1,5 +1,3 @@
-* implement reader completion
-** add entry completion
 * add clear command
 ** add clear(console)
 * add gui::Inbox
@@ -23,3 +21,7 @@
 ** backup folder setting, default /backup
 ** run tar -z proc
 ** store as db_timestamp.tar.gz
+* add table locking
+** shared_mutex
+** add RLock/WLock types
+** lock in operations
