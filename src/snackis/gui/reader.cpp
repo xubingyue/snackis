@@ -11,6 +11,16 @@ namespace gui {
   static void init_cmds(Reader &rdr) {
     Ctx &ctx(rdr.ctx);
 
+    rdr.cmds.emplace("clear", [&ctx](auto id, auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: clear");
+	  return false;
+	}
+	
+	clear(*console);
+	return true;
+      });
+
     rdr.cmds.emplace("inbox", [&ctx](auto id, auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: inbox");

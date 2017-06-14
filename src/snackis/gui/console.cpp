@@ -33,6 +33,15 @@ namespace gui {
     g_idle_add(on_idle, &cns);
   }
 
+  void clear(Console &cns) {
+    auto buf(gtk_text_view_get_buffer(GTK_TEXT_VIEW(cns.text_view)));
+    GtkTextIter start, end;
+    gtk_text_buffer_get_start_iter(buf, &start);
+    gtk_text_buffer_get_end_iter(buf, &end);
+    gtk_text_buffer_delete(buf, &start, &end);
+    log(cns, "Cleared console");
+  }
+
   Console::Console():
     text_view(gtk_text_view_new()), scroll_view(gtk_scrolled_window_new(NULL, NULL)) {
     add_style(text_view, "console");

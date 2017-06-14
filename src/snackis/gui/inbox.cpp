@@ -20,23 +20,14 @@ namespace gui {
   }
 
   static void sel_changed(Inbox &ibx) {
-    Ctx &ctx(ibx.ctx);
     GtkTreeSelection *tree_sel =
       gtk_tree_view_get_selection(GTK_TREE_VIEW(ibx.list));
     GtkTreeModel *mod;
     GtkTreeIter iter;
 
     bool sel = gtk_tree_selection_get_selected(tree_sel, &mod, &iter);
-    str msgt;
-    
-    if (sel) {
-      db::Rec<Msg> *msg_rec;
-      gtk_tree_model_get(mod, &iter, COL_MSG, &msg_rec, -1);
-      msgt = *db::get(*msg_rec, ctx.db.msg_type);
-    }
-    
     gtk_widget_set_sensitive(ibx.accept, sel);
-    gtk_widget_set_sensitive(ibx.reject, sel && msgt == Msg::INVITE);
+    gtk_widget_set_sensitive(ibx.reject, sel);
   }
   
   static void on_accept(gpointer *_, Inbox *ibx) {
@@ -86,6 +77,8 @@ namespace gui {
     if (msg.type == Msg::INVITE) {
 	reject_invite(msg);
 	log(ctx, fmt("Reject of %0 saved to outbox", msg.from));
+    } else if (msg.type == Msg::ACCEPT || msg.type == Msg::REJECT) {
+      // Nothing to do here
     } else {
 	log(ctx, fmt("Invalid message type: %0", msg.type));
     }

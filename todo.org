@@ -4,9 +4,6 @@
 *** copy from setup
 ** target file
 ** encode
-* add clear command
-** add clear(console)
-*** log msg
 * add gui::PostView
 ** combo for selecting thread
 ** entry for subject

@@ -20,6 +20,7 @@ namespace gui {
   };
 
   void log(Console &cns, const str msg);
+  void clear(Console &cns);
 }}
 
 #endif
