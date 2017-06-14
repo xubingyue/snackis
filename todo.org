@@ -1,5 +1,12 @@
+* port encrypt form to gui::Encrypt
+** peer combobox
+** source file
+*** copy from setup
+** target file
+** encode
 * add clear command
 ** add clear(console)
+*** log msg
 * add gui::PostView
 ** combo for selecting thread
 ** entry for subject
@@ -8,7 +15,6 @@
 *** pre-select all in thread history
 ** read-only text-view for history
 * add support for posts in inbox
-* port encrypt form to gui::Encrypt
 * copy gui::Encrypt to Decrypt
 * rename gmain.cpp to gui.cpp
 * remove ui/main.cpp

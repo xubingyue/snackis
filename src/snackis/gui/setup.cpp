@@ -160,7 +160,7 @@ namespace gui {
     }
   }
 
-  static GtkWidget *create_load_folder(Setup &setup) {
+  static GtkWidget *init_load_folder(Setup &setup) {
     Ctx &ctx(setup.ctx);
     GtkWidget *frm = gtk_grid_new();
     gtk_widget_set_margin_top(frm, 5);
@@ -182,7 +182,7 @@ namespace gui {
     return frm;
   }
 
-  static GtkWidget *create_save_folder(Setup &setup) {
+  static GtkWidget *init_save_folder(Setup &setup) {
     Ctx &ctx(setup.ctx);
     GtkWidget *frm = gtk_grid_new();
     gtk_widget_set_margin_top(frm, 5);
@@ -204,7 +204,7 @@ namespace gui {
     return frm;
   }
 
-  static GtkWidget *create_imap(Setup &setup) {
+  static GtkWidget *init_imap(Setup &setup) {
     Ctx &ctx(setup.ctx);
     
     GtkWidget *frm = gtk_grid_new();
@@ -262,7 +262,7 @@ namespace gui {
     return frm;
   }
 
-  static GtkWidget *create_smtp(Setup &setup) {
+  static GtkWidget *init_smtp(Setup &setup) {
     Ctx &ctx(setup.ctx);
     
     GtkWidget *frm = gtk_grid_new();
@@ -357,11 +357,11 @@ namespace gui {
     gtk_entry_set_text(GTK_ENTRY(email), me.email.c_str());
     gtk_container_add(GTK_CONTAINER(frm), email);
 
-    gtk_container_add(GTK_CONTAINER(frm), create_load_folder(*this));
-    gtk_container_add(GTK_CONTAINER(frm), create_save_folder(*this));
+    gtk_container_add(GTK_CONTAINER(frm), init_load_folder(*this));
+    gtk_container_add(GTK_CONTAINER(frm), init_save_folder(*this));
 
-    gtk_container_add(GTK_CONTAINER(frm), create_imap(*this));
-    gtk_container_add(GTK_CONTAINER(frm), create_smtp(*this));
+    gtk_container_add(GTK_CONTAINER(frm), init_imap(*this));
+    gtk_container_add(GTK_CONTAINER(frm), init_smtp(*this));
     
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_widget_set_halign(btns, GTK_ALIGN_END);
