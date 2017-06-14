@@ -1,8 +1,7 @@
+* implement reader completion
+** add entry completion
 * add clear command
 ** add clear(console)
-* implement reader completion
-** put cmds in map like ui
-** use entry completion
 * add peer cmd / form
 ** label 'Peer X'
 ** name & email

@@ -7,6 +7,47 @@
 
 namespace snackis {
 namespace gui {
+  static void init_cmds(Reader &rdr) {
+    Ctx &ctx(rdr.ctx);
+    
+    rdr.cmds.emplace("invite", [&ctx](auto id, auto args) {
+	if (args.size() != 1) {
+	  log(ctx, "Invalid number of arguments, syntax: invite foo@bar.com");
+	  return false;
+	}
+	
+	db::Trans trans(ctx);
+	Invite inv(ctx, args[0]);
+	load(ctx.db.invites, inv);
+	post_msg(inv);	
+	log(ctx, fmt("New invite saved to outbox: %0", inv.to));
+	db::commit(trans);
+	return true;
+      });
+    
+
+    rdr.cmds.emplace("quit", [&ctx](auto id, auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: quit");
+	  return false;
+	}
+	
+	quit();
+	return true;
+      });
+
+    rdr.cmds.emplace("setup", [&ctx](auto id, auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: setup");
+	  return false;
+	}
+	
+	Setup *setup = new Setup(ctx);
+	setup->push_view();
+	return true;
+      });
+  }
+
   static bool exec_cmd(Reader &rdr, const str &in) {
     Ctx &ctx(rdr.ctx);
     str in_str(in);
@@ -17,42 +58,17 @@ namespace gui {
     }
 
     InStream in_words(in_str);
-    str cmd;
-    in_words >> cmd;
+    str id;
+    in_words >> id;
     std::vector<str> args;
     str arg;
     while (in_words >> arg) { args.push_back(arg); }
-    
-    if (cmd == "invite") {
-      if (args.size() != 1) {
-	log(ctx, "Invalid number of arguments, syntax: invite foo@bar.com");
-	return false;
-      }
+    auto found(rdr.cmds.find(id));
 
-      db::Trans trans(ctx);
-      Invite inv(ctx, args[0]);
-      load(ctx.db.invites, inv);
-      post_msg(inv);	
-      log(ctx, fmt("New invite saved to outbox: %0", inv.to));
-      db::commit(trans);
-    } else if (cmd == "quit") {
-      if (!args.empty()) {
-	log(ctx, "Invalid number of arguments, syntax: quit");
-	return false;
-      }
-      
-      quit();
-    }
-    else if (cmd == "setup") {
-      if (!args.empty()) {
-	log(ctx, "Invalid number of arguments, syntax: setup");
-	return false;
-      }
-
-      Setup *setup = new Setup(ctx);
-      setup->push_view();
-    } else {
+    if (found == rdr.cmds.end()){
       log(ctx, fmt("Unknown command: '%0'", in_str));
+      return false;
+    } else if (!found->second(id, args)) {
       return false;
     }
     
@@ -66,8 +82,9 @@ namespace gui {
       gtk_entry_set_text(GTK_ENTRY(rdr->entry), "");
     }
   }
-  
+
   Reader::Reader(Ctx &ctx): ctx(ctx), entry(gtk_entry_new()) {
+    init_cmds(*this);
     add_style(entry, "reader");
     gtk_widget_set_margin_start(entry, 5);
     gtk_widget_set_margin_end(entry, 5);
