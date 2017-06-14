@@ -12,11 +12,11 @@ namespace snackis {
     }
 
     while (!ctx->is_closing) {
-      auto poll(get_val(ctx->settings.imap_poll));
+      auto poll(*get_val(ctx->settings.imap_poll));
       std::unique_lock<std::mutex> lock(ctx->fetch_mutex);
       
       if (poll) {
-	ctx->fetch_cond.wait_for(lock, std::chrono::seconds(*poll));
+	ctx->fetch_cond.wait_for(lock, std::chrono::seconds(poll));
 
 	if (!ctx->is_closing) {
 	  Imap imap(*ctx);
@@ -35,11 +35,11 @@ namespace snackis {
     }
 
     while (!ctx->is_closing) {
-      auto poll(get_val(ctx->settings.smtp_poll));
+      auto poll(*get_val(ctx->settings.smtp_poll));
       std::unique_lock<std::mutex> lock(ctx->send_mutex);
       
       if (poll) {
-	ctx->send_cond.wait_for(lock, std::chrono::seconds(*poll));
+	ctx->send_cond.wait_for(lock, std::chrono::seconds(poll));
 	
 	if (!ctx->is_closing && !ctx->db.outbox.recs.empty()) {
 	  Smtp smtp(*ctx);

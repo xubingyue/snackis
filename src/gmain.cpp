@@ -29,13 +29,13 @@ static void activate(GtkApplication *app, gpointer user_data) {
   GtkWidget *main = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_container_add(GTK_CONTAINER(gui::window), main);
   
-  gui::panels = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+  gui::panels = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_set_homogeneous(GTK_BOX(gui::panels), true);
   gtk_box_pack_start(GTK_BOX(main), gui::panels, true, true, 0);
 
   Ctx *ctx = new Ctx("db/");
   
-  gui::left_panel = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+  gui::left_panel = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_container_add(GTK_CONTAINER(gui::panels), gui::left_panel);
 
   gui::console.emplace();

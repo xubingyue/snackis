@@ -1,11 +1,5 @@
-* finish gui::Setup/setup command
-** add imap settings
-*** implement as grid
-*** url and port on same line
-**** use spin button for port
-*** user, pass and test button on same line
-*** poll on separate line
-** add smtp settings
+* add clear command
+** add clear(console)
 * add invite cmd
 ** split into cmd/args on space
 ** email is arg 1

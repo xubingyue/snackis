@@ -5,7 +5,7 @@
 
 namespace snackis {
 namespace gui {
-  static void on_login(GtkWidget *_, Login *login) {
+  static void on_login(gpointer *_, Login *login) {
     const str pass(gtk_entry_get_text(GTK_ENTRY(login->pass)));
 
     if (login->repeat) {  
@@ -29,13 +29,13 @@ namespace gui {
     if (!me.name.empty()) { log(ctx, fmt("Welcome back, %0", me.name)); }
     
     gui::reader.emplace(ctx);
-    gtk_box_pack_start(GTK_BOX(left_panel), reader->ptr(), false, false, 0);
+    gtk_box_pack_start(GTK_BOX(left_panel), reader->ptr(), false, false, 5);
     login->pop_view();
     gtk_widget_show_all(gui::window);
   }
   
   Login::Login(Ctx &ctx):
-    View(ctx, "Welcome"),
+    View(ctx, "Login"),
     pass(gtk_entry_new()),
     repeat(nullptr) {
     GtkWidget *lbl;

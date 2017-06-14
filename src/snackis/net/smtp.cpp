@@ -47,7 +47,7 @@ namespace snackis {
     curl_easy_setopt(client, CURLOPT_WRITEFUNCTION, on_read);
     //curl_easy_setopt(client, CURLOPT_VERBOSE, 1L);
     
-    log(ctx, "Connecting to Smtp");
+    log(ctx, "Connecting to Smtp...");
 
     try {
       noop(*this);

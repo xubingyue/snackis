@@ -34,7 +34,7 @@ namespace snackis {
     curl_easy_setopt(client, CURLOPT_WRITEFUNCTION, on_read);
     //curl_easy_setopt(client, CURLOPT_VERBOSE, 1L);
     
-    log(ctx, "Connecting to Imap");
+    log(ctx, "Connecting to Imap...");
 
     try {
       noop(*this);

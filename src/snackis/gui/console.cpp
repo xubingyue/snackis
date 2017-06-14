@@ -18,6 +18,12 @@ namespace gui {
       gtk_text_buffer_insert_at_cursor(buf, msg.c_str(), msg.size());
     }
 
+    GtkAdjustment *pos =
+      gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(cns.scroll_view));
+    gtk_adjustment_set_value(pos,
+			     gtk_adjustment_get_upper(pos)-
+			     gtk_adjustment_get_page_size(pos));
+    gtk_scrolled_window_set_vadjustment(GTK_SCROLLED_WINDOW(cns.scroll_view), pos);
     cns.out.clear();
   }
 
@@ -37,6 +43,7 @@ namespace gui {
     text_view(gtk_text_view_new()), scroll_view(gtk_scrolled_window_new(NULL, NULL)) {
     add_style(text_view, "console");
     gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), false);
+    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
     gtk_scrolled_window_set_overlay_scrolling(GTK_SCROLLED_WINDOW(scroll_view),
 					      false);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll_view),
