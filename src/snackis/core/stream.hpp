@@ -5,6 +5,8 @@
 
 namespace snackis {
   using Stream = std::stringstream;
+  using InStream = std::istringstream;
+  using OutStream = std::ostringstream;
 }
 
 #endif

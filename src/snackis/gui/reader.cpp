@@ -16,7 +16,7 @@ namespace gui {
       in_str = *rdr.last_cmd;
     }
 
-    Stream in_words(in_str);
+    InStream in_words(in_str);
     str cmd;
     in_words >> cmd;
     std::vector<str> args;
