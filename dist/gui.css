@@ -2,6 +2,11 @@ GtkLabel {
     color: #bb4411;
 }
 
+GtkTreeView column-header .button {
+    background: #333333;
+    border: none;
+}
+
 .window {
     color: #cccccc;
     background: #333333;    
@@ -20,7 +25,12 @@ GtkLabel {
 
 .view {
     color: #cccccc;
-    background: #333333;    
+    background: #333333;
+}
+
+.view:selected {
+    color: #333333;
+    background: #ffffcc;
 }
 
 .view_label {

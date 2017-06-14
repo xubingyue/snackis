@@ -19,14 +19,12 @@ namespace snackis {
 
     return Peer(ctx.db.peers, rec);
   }
-  
-  Peer get_peer_email(Ctx &ctx, const str &email) {
+
+  opt<Peer> find_peer_email(Ctx &ctx, const str &email) {
     db::Rec<Peer> rec;
     db::set(rec, ctx.db.peer_email, email);
     
-    if (!load(ctx.db.peer_emails, rec)) {
-      ERROR(Db, fmt("Peer email not found: %0", email));
-    }
+    if (!load(ctx.db.peer_emails, rec)) { return nullopt; }
 
     Peer peer(ctx.db.peers, rec);
 
@@ -35,6 +33,16 @@ namespace snackis {
     }
 
     return peer;
+  }
+
+  Peer get_peer_email(Ctx &ctx, const str &email) {
+    auto found(find_peer_email(ctx, email));
+    
+    if (!found) {
+      ERROR(Db, fmt("Peer email not found: %0", email));
+    }
+
+    return *found;
   }
 
   void encrypt(const Peer &peer, const Path &in, const Path &out, bool encode) {

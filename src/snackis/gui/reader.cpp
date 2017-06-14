@@ -2,6 +2,7 @@
 #include "snackis/invite.hpp"
 #include "snackis/core/fmt.hpp"
 #include "snackis/gui/gui.hpp"
+#include "snackis/gui/inbox.hpp"
 #include "snackis/gui/reader.hpp"
 #include "snackis/gui/widget.hpp"
 
@@ -9,7 +10,18 @@ namespace snackis {
 namespace gui {
   static void init_cmds(Reader &rdr) {
     Ctx &ctx(rdr.ctx);
-    
+
+    rdr.cmds.emplace("inbox", [&ctx](auto id, auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: inbox");
+	  return false;
+	}
+	
+	Inbox *view = new Inbox(ctx);
+	view->push_view();
+	return true;
+      });
+
     rdr.cmds.emplace("invite", [&ctx](auto id, auto args) {
 	if (args.size() != 1) {
 	  log(ctx, "Invalid number of arguments, syntax: invite foo@bar.com");
@@ -42,8 +54,8 @@ namespace gui {
 	  return false;
 	}
 	
-	Setup *setup = new Setup(ctx);
-	setup->push_view();
+	Setup *view = new Setup(ctx);
+	view->push_view();
 	return true;
       });
   }
@@ -91,7 +103,6 @@ namespace gui {
     rdr.last_cmd = in_str;
     return true;
   }
-
 
   static void on_activate(GtkWidget *_, Reader *rdr) {
     if (exec_cmd(*rdr, gtk_entry_get_text(GTK_ENTRY(rdr->entry)))) {

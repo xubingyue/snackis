@@ -1,8 +1,11 @@
+* add gui::Inbox
+** fill in info for invite
+** add keypress_listener for tree_view
+*** accept on return and dismiss on space
+*** remove from list when handled
+*** figure out how to connect message to model
 * add clear command
 ** add clear(console)
-* add gui::Inbox
-** show msgs in list view
-** column for from name / email
 * add peer form
 ** label 'Peer X'
 ** name & email
@@ -25,3 +28,4 @@
 ** shared_mutex
 ** add RLock/WLock types
 ** lock in operations
+** lock externally around loops
