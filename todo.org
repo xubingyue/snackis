@@ -2,18 +2,14 @@
 ** add entry completion
 * add clear command
 ** add clear(console)
-* add peer cmd / form
-** label 'Peer X'
-** name & email
-** 'Save Changes' / 'Cancel Changes' buttons
 * add gui::Inbox
 ** show msgs in list view
 ** column for from name / email
-** Invite
-*** Accept opens peer view
-** New post in ''.
-** Press Return to accept or Space to dismiss message
-*** Accept opens post view for thread
+* add peer form
+** label 'Peer X'
+** name & email
+** 'Save Changes' / 'Cancel Changes' buttons
+** open peer form on inbox accept
 * add gui::Post
 ** combo for selecting thread
 ** entry for subject
