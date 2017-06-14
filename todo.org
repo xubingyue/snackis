@@ -3,9 +3,10 @@
 * implement reader completion
 ** put cmds in map like ui
 ** use entry completion
-* add invite cmd/form
-** email & optional name
-** add invite.peer_name to store name until accept
+* add peer cmd / form
+** label 'Peer X'
+** name & email
+** 'Save Changes' / 'Cancel Changes' buttons
 * add gui::Inbox
 ** show msgs in list view
 ** column for from name / email
