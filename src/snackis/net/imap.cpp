@@ -137,27 +137,30 @@ namespace snackis {
 
       if (!msg) {
 	log(ctx, "Failed decoding message");
+	delete_uid(imap, uid);
 	continue;
       }
 
       if (load(ctx.db.msgs, *msg)) {
 	log(ctx, "Skipped duplicate message %0", msg->id);
+	delete_uid(imap, uid);
 	continue;
       }
-      
+
       if (msg->type == Msg::ACCEPT || msg->type == Msg::REJECT) {
 	db::Rec<Invite> inv;
 	set(inv, ctx.db.invite_to, msg->from);
 	
 	if (!load(ctx.db.invites, inv)) {
 	  log(ctx, fmt("Missing invite: %0", msg->from));
+	  delete_uid(imap, uid);	  
 	  continue;
 	}
       }
-
+      
       insert(ctx.db.inbox, *msg);
-      delete_uid(imap, uid);
       log(ctx, "Fetched message from %0", msg->from);
+      delete_uid(imap, uid);
     }
 
     if (tokens.size() > 2) {
