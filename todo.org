@@ -1,8 +1,5 @@
-* reverse console to insert first
-** skip scroll
 * add clear command
 ** add clear(console)
-* ---
 * add invite cmd/form
 ** email & optional name
 ** add invite.peer_name to store name until accept
