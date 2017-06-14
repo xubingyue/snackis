@@ -9,8 +9,8 @@
 namespace snackis {
 namespace gui {
   struct Inbox: public View {
-    GtkWidget *list, *close;
-    
+    GtkWidget *list, *accept, *reject, *close;
+    db::Rec<Msg> *sel;
     Inbox(Ctx &ctx);
     void focus() override;
   };

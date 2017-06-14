@@ -1,9 +1,8 @@
-* add gui::Inbox
-** fill in info for invite
-** add keypress_listener for tree_view
-*** accept on return and dismiss on space
-*** remove from list when handled
-*** figure out how to connect message to model
+* finish gui::Inbox
+** implement accept for invite
+*** delete tree iter
+** implement reject for invite
+*** delete tree iter
 * add clear command
 ** add clear(console)
 * add peer form
