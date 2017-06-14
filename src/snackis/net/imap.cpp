@@ -105,7 +105,7 @@ namespace snackis {
   }
   
   void fetch(struct Imap &imap) {
-    TRACE("Imap fetch");
+    TRACE("Fetching email");
     Ctx &ctx(imap.ctx);
     
     log(ctx, "Fetching email...");

@@ -100,7 +100,7 @@ namespace db {
 
   template <typename RecT>
   bool insert(Table<RecT> &tbl, const Rec<RecT> &rec) {
-    TRACE(fmt("Table insert: %0", tbl.name));
+    TRACE(fmt("Inserting into table: %0", tbl.name));
     auto found(tbl.recs.find(rec));
     if (found != tbl.recs.end()) { return false; }
 
@@ -127,7 +127,7 @@ namespace db {
 
   template <typename RecT>
   bool update(Table<RecT> &tbl, const Rec<RecT> &rec) {
-    TRACE(fmt("Table update: %0", tbl.name));
+    TRACE(fmt("Updating table: %0", tbl.name));
     auto found(tbl.recs.find(rec));
     if (found == tbl.recs.end()) { return false; }
     
@@ -164,7 +164,7 @@ namespace db {
 
   template <typename RecT>
   bool erase(Table<RecT> &tbl, const Rec<RecT> &rec) {
-    TRACE(fmt("Table erase: %0", tbl.name));
+    TRACE(fmt("Erasing from table: %0", tbl.name));
     auto found(tbl.recs.find(rec));
     if (found == tbl.recs.end()) { return false; }
     for (auto idx: tbl.indexes) { erase(*idx, *found); }

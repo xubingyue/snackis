@@ -118,7 +118,7 @@ namespace snackis {
   }
   
   void send(struct Smtp &smtp) {
-    TRACE("Smtp send");
+    TRACE("Sending email");
     db::Table<Msg> &tbl(smtp.ctx.db.outbox);
     log(smtp.ctx, "Sending %0 emails...", tbl.recs.size());
     
