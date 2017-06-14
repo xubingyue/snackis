@@ -1,4 +1,4 @@
-* add peer form
+* add gui::PeerView
 ** label 'Peer X'
 ** name & email
 ** 'Save Changes' / 'Cancel Changes' buttons
@@ -9,7 +9,7 @@
 *** open peer form
 * add clear command
 ** add clear(console)
-* add gui::Post
+* add gui::PostView
 ** combo for selecting thread
 ** entry for subject
 *** update thread on change
