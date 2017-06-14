@@ -1,5 +1,8 @@
 * add clear command
 ** add clear(console)
+* implement reader completion
+** put cmds in map like ui
+** use entry completion
 * add invite cmd/form
 ** email & optional name
 ** add invite.peer_name to store name until accept
@@ -11,8 +14,6 @@
 ** New post in ''.
 ** Press Return to accept or Space to dismiss message
 *** Accept opens post view for thread
-* implement reader completion
-** copy ui::EnumField
 * add file dialog buttons to setup/load/save_folder
 * rename gmain.cpp to gui.cpp & main.cpp to ui.cpp
 * ---
