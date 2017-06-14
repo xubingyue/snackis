@@ -8,7 +8,11 @@
 *** pre-select all in thread history
 ** read-only text-view for history
 * add support for posts in inbox
-* rename gmain.cpp to gui.cpp & main.cpp to ui.cpp
+* port encrypt form to gui::Encrypt
+* copy gui::Encrypt to Decrypt
+* rename gmain.cpp to gui.cpp
+* remove ui/main.cpp
+* update readme
 * ---
 * add backup command
 ** backup folder setting, default /backup
