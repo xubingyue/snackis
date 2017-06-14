@@ -5,6 +5,8 @@ GtkLabel {
 GtkTreeView column-header .button {
     background: #333333;
     border: none;
+    border-color: #cccccc;
+    border-bottom: 1px solid;
 }
 
 .window {
