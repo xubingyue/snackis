@@ -12,18 +12,12 @@ namespace gui {
 
     for (const auto &msg: cns.out) {
       auto buf(gtk_text_view_get_buffer(GTK_TEXT_VIEW(cns.text_view)));
-      GtkTextIter end;
-      gtk_text_buffer_get_end_iter(buf, &end);
-      gtk_text_buffer_place_cursor(buf, &end);
+      GtkTextIter start;
+      gtk_text_buffer_get_start_iter(buf, &start);
+      gtk_text_buffer_place_cursor(buf, &start);
       gtk_text_buffer_insert_at_cursor(buf, msg.c_str(), msg.size());
     }
 
-    GtkAdjustment *pos =
-      gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(cns.scroll_view));
-    gtk_adjustment_set_value(pos,
-			     gtk_adjustment_get_upper(pos)-
-			     gtk_adjustment_get_page_size(pos));
-    gtk_scrolled_window_set_vadjustment(GTK_SCROLLED_WINDOW(cns.scroll_view), pos);
     cns.out.clear();
   }
 
