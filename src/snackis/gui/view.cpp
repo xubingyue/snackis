@@ -9,6 +9,7 @@ namespace gui {
 
   View::View(Ctx &ctx, const str &lbl): 
     ctx(ctx), panel(gtk_box_new(GTK_ORIENTATION_VERTICAL, 0)) { 
+    add_style(panel, "view");
     gtk_widget_set_margin_start(panel, 5);
     gtk_widget_set_margin_end(panel, 5);
     gtk_widget_set_margin_top(panel, 5);

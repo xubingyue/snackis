@@ -15,7 +15,13 @@
 ** New post in ''.
 ** Press Return to accept or Space to dismiss message
 *** Accept opens post view for thread
-* add file dialog buttons to setup/load/save_folder
+* add gui::Post
+** combo for selecting thread
+** entry for subject
+*** update thread on change
+** multi select for peers
+*** pre-select all in thread history
+** read-only text-view for history
 * rename gmain.cpp to gui.cpp & main.cpp to ui.cpp
 * ---
 * add backup command

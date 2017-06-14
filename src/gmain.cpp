@@ -22,6 +22,7 @@ static void activate(GtkApplication *app, gpointer user_data) {
   load_style();
   
   gui::window = gtk_application_window_new(app);
+  gui::add_style(gui::window, "window");
   gtk_window_set_title(GTK_WINDOW(gui::window),
 		       fmt("Snackis v%0", version_str()).c_str());
   gtk_window_maximize(GTK_WINDOW(gui::window));

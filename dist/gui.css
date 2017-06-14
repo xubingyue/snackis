@@ -1,5 +1,6 @@
-.view_label {
-    font-size: 150%;
+.window {
+    color: #cccccc;
+    background: #333333;    
 }
 
 .console {
@@ -11,4 +12,13 @@
 .reader {
     font-size: 125%;
     font-family: "Courier New", Courier, monospace;
+}
+
+.view {
+    color: #cccccc;
+    background: #333333;    
+}
+
+.view_label {
+    font-size: 150%;
 }
