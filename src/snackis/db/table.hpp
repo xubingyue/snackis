@@ -1,7 +1,6 @@
 #ifndef SNACKIS_DB_TABLE_HPP
 #define SNACKIS_DB_TABLE_HPP
 
-#include <cassert>
 #include <cstdint>
 #include <set>
 
@@ -101,6 +100,7 @@ namespace db {
 
   template <typename RecT>
   bool insert(Table<RecT> &tbl, const Rec<RecT> &rec) {
+    TRACE(fmt("Table insert: %0", tbl.name));
     auto found(tbl.recs.find(rec));
     if (found != tbl.recs.end()) { return false; }
 
@@ -113,8 +113,7 @@ namespace db {
       }
     }
     
-    assert(tbl.ctx.trans);
-    log_change(*tbl.ctx.trans, new Insert<RecT>(tbl, rec));
+    log_change(get_trans(tbl.ctx), new Insert<RecT>(tbl, rec));
     tbl.recs.insert(rec);
     return true;
   }
@@ -128,6 +127,7 @@ namespace db {
 
   template <typename RecT>
   bool update(Table<RecT> &tbl, const Rec<RecT> &rec) {
+    TRACE(fmt("Table update: %0", tbl.name));
     auto found(tbl.recs.find(rec));
     if (found == tbl.recs.end()) { return false; }
     
@@ -142,8 +142,7 @@ namespace db {
       }
     }
     
-    assert(tbl.ctx.trans);
-    log_change(*tbl.ctx.trans, new Update<RecT>(tbl, rec, *found));
+    log_change(get_trans(tbl.ctx), new Update<RecT>(tbl, rec, *found));
     tbl.recs.erase(found);
     tbl.recs.insert(rec);
     return true;
@@ -165,11 +164,11 @@ namespace db {
 
   template <typename RecT>
   bool erase(Table<RecT> &tbl, const Rec<RecT> &rec) {
+    TRACE(fmt("Table erase: %0", tbl.name));
     auto found(tbl.recs.find(rec));
     if (found == tbl.recs.end()) { return false; }
     for (auto idx: tbl.indexes) { erase(*idx, *found); }
-    assert(tbl.ctx.trans);
-    log_change(*tbl.ctx.trans, new Erase<RecT>(tbl, *found));
+    log_change(get_trans(tbl.ctx), new Erase<RecT>(tbl, *found));
     tbl.recs.erase(found);
     return true;
   }

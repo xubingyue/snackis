@@ -15,6 +15,14 @@ namespace db {
     return ctx.path / fname; 
   }
 
+  Trans &get_trans(Ctx &ctx) {
+    if (!ctx.trans) {
+      ERROR(Db, "Not in transaction");
+    }
+
+    return *ctx.trans;
+  }
+
   void init_db_rev(Ctx &ctx) {
     const Path p(get_path(ctx, "rev"));
     

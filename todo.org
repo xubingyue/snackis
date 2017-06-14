@@ -1,4 +1,3 @@
-* debug missing trans when accepting new invite
 * add clear command
 ** add clear(console)
 * add gui::PostView

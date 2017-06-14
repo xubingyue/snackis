@@ -40,6 +40,7 @@ namespace gui {
   }
   
   static void on_accept(gpointer *_, Inbox *ibx) {
+    TRACE("Inbox accept");
     Ctx &ctx(ibx->ctx);
     db::Trans trans(ctx);
     GtkTreeModel *mod;
@@ -71,6 +72,7 @@ namespace gui {
   }
 
   static void on_reject(gpointer *_, Inbox *ibx) {
+    TRACE("Inbox reject");
     Ctx &ctx(ibx->ctx);
     db::Trans trans(ctx);
     GtkTreeModel *mod;

@@ -1,3 +1,4 @@
+#include <cassert>
 #include <iostream>
 #include <iterator>
 #include "snackis/ctx.hpp"
@@ -117,6 +118,7 @@ namespace snackis {
   }
   
   void send(struct Smtp &smtp) {
+    TRACE("Smtp send");
     db::Table<Msg> &tbl(smtp.ctx.db.outbox);
     log(smtp.ctx, "Sending %0 emails...", tbl.recs.size());
     
@@ -124,7 +126,7 @@ namespace snackis {
       auto i = tbl.recs.begin();
       Msg msg(tbl, *i);
       send(smtp, msg);
-      assert(erase(tbl, *i));
+      erase(tbl, *i);
     }
     
     db::commit(smtp.trans);

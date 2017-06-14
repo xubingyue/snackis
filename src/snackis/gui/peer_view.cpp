@@ -9,6 +9,7 @@ namespace gui {
   }
 
   static void on_save(gpointer *_, PeerView *pev) {
+    TRACE("PeerView save");
     Ctx &ctx(pev->ctx);
     db::Trans trans(ctx);
     pev->peer.name = gtk_entry_get_text(GTK_ENTRY(pev->name));
