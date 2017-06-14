@@ -19,7 +19,7 @@ namespace snackis {
     insert(inv.ctx.db.outbox, msg);
   }
 
-  void accept_invite(const Msg &in) {
+  Peer accept_invite(const Msg &in) {
     Ctx &ctx(in.ctx);
 
     db::Rec<Peer> peer_rec;
@@ -36,6 +36,7 @@ namespace snackis {
 
     Msg out(ctx, Msg::ACCEPT, in.from);
     insert(ctx.db.outbox, out);
+    return peer;
   }
 
   void reject_invite(const Msg &in) {

@@ -30,7 +30,13 @@ namespace gui {
   }
 
   void View::push_view() {
-    stack.push(this);
+    if (!stack.empty()) {
+      View *v(stack.top());
+      g_object_ref(v->panel);
+      gtk_container_remove(GTK_CONTAINER(gui::panels), v->panel);
+    }
+
+    stack.push(this);    
     gtk_container_add(GTK_CONTAINER(gui::panels), panel);  
     if (reader) { gtk_widget_hide(reader->ptr()); }
     gtk_widget_show_all(ptr());

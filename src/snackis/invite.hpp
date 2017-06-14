@@ -8,6 +8,7 @@
 
 namespace snackis {
   struct Msg;
+  struct Peer;
   
   struct Invite: public Rec {
     str to;
@@ -18,7 +19,7 @@ namespace snackis {
   };
 
   void post_msg(Invite &inv);
-  void accept_invite(const Msg &in);
+  Peer accept_invite(const Msg &in);
   void reject_invite(const Msg &in);
 }
 

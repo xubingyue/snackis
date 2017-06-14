@@ -105,7 +105,9 @@ namespace snackis {
   }
   
   void fetch(struct Imap &imap) {
-    log(imap.ctx, "Fetching email...");
+    Ctx &ctx(imap.ctx);
+    
+    log(ctx, "Fetching email...");
     curl_easy_setopt(imap.client,
 		     CURLOPT_CUSTOMREQUEST,
 		     "UID SEARCH Subject \"__SNACKIS__\"");
@@ -134,18 +136,28 @@ namespace snackis {
       opt<Msg> msg = fetch_uid(imap, uid);
 
       if (!msg) {
-	log(imap.ctx, "Skipped message due to failed decoding");
+	log(ctx, "Failed decoding message");
 	continue;
       }
 
-      if (load(imap.ctx.db.msgs, *msg)) {
-	log(imap.ctx, "Skipped duplicate message %0", msg->id);
+      if (load(ctx.db.msgs, *msg)) {
+	log(ctx, "Skipped duplicate message %0", msg->id);
 	continue;
       }
       
-      insert(imap.ctx.db.inbox, *msg);
+      if (msg->type == Msg::ACCEPT || msg->type == Msg::REJECT) {
+	db::Rec<Invite> inv;
+	set(inv, ctx.db.invite_to, msg->from);
+	
+	if (!load(ctx.db.invites, inv)) {
+	  log(ctx, fmt("Missing invite: %0", msg->from));
+	  continue;
+	}
+      }
+
+      insert(ctx.db.inbox, *msg);
       delete_uid(imap, uid);
-      log(imap.ctx, "Fetched message from %0", msg->from);
+      log(ctx, "Fetched message from %0", msg->from);
     }
 
     if (tokens.size() > 2) {
@@ -153,6 +165,6 @@ namespace snackis {
     }
 
     db::commit(imap.trans);
-    log(imap.ctx, "Done fetching email");
+    log(ctx, "Done fetching email");
   }
 }

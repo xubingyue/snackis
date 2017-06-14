@@ -1,12 +1,4 @@
-* add gui::PeerView
-** label 'Peer X'
-** name & email
-** 'Save Changes' / 'Cancel Changes' buttons
-** copy setup
-** open on invite accept
-* finish gui::Inbox
-** implement invite accept
-*** open peer form
+* debug missing trans when accepting new invite
 * add clear command
 ** add clear(console)
 * add gui::PostView
@@ -16,6 +8,7 @@
 ** multi select for peers
 *** pre-select all in thread history
 ** read-only text-view for history
+* add support for posts in inbox
 * rename gmain.cpp to gui.cpp & main.cpp to ui.cpp
 * ---
 * add backup command

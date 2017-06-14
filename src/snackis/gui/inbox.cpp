@@ -2,6 +2,7 @@
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/inbox.hpp"
 #include "snackis/gui/reader.hpp"
+#include "snackis/gui/peer_view.hpp"
 
 namespace snackis {
 namespace gui {
@@ -17,6 +18,26 @@ namespace gui {
     if (!gtk_tree_selection_get_selected(tree_sel, mod, iter)) { return false; }
     return true;
   }
+
+  static void sel_changed(Inbox &ibx) {
+    Ctx &ctx(ibx.ctx);
+    GtkTreeSelection *tree_sel =
+      gtk_tree_view_get_selection(GTK_TREE_VIEW(ibx.list));
+    GtkTreeModel *mod;
+    GtkTreeIter iter;
+
+    bool sel = gtk_tree_selection_get_selected(tree_sel, &mod, &iter);
+    str msgt;
+    
+    if (sel) {
+      db::Rec<Msg> *msg_rec;
+      gtk_tree_model_get(mod, &iter, COL_MSG, &msg_rec, -1);
+      msgt = *db::get(*msg_rec, ctx.db.msg_type);
+    }
+    
+    gtk_widget_set_sensitive(ibx.accept, sel);
+    gtk_widget_set_sensitive(ibx.reject, sel && msgt == Msg::INVITE);
+  }
   
   static void on_accept(gpointer *_, Inbox *ibx) {
     Ctx &ctx(ibx->ctx);
@@ -30,15 +51,23 @@ namespace gui {
     Msg msg(ctx.db.inbox, *msg_rec);
 
     if (msg.type == Msg::INVITE) {
-    } else if (msg.type == Msg::ACCEPT) {
-    } else if (msg.type == Msg::REJECT) {
-    }else {
+      Peer peer(accept_invite(msg));
+      log(ctx, fmt("Accept of %0 saved to outbox", msg.from));
+      
+      PeerView *view = new PeerView(peer);
+      view->push_view();
+    } else if (msg.type == Msg::ACCEPT || msg.type == Msg::REJECT) {
+      db::Rec<Invite> inv;
+      set(inv, ctx.db.invite_to, msg.from);
+      erase(ctx.db.invites, inv);
+    } else {
 	log(ctx, fmt("Invalid message type: %0", msg.type));
     }
 
     db::erase(ctx.db.inbox, *msg_rec);
     db::commit(trans);
     gtk_list_store_remove(GTK_LIST_STORE(mod), &iter);    
+    sel_changed(*ibx);
   }
 
   static void on_reject(gpointer *_, Inbox *ibx) {
@@ -62,23 +91,11 @@ namespace gui {
     db::erase(ctx.db.inbox, *msg_rec);
     db::commit(trans);
     gtk_list_store_remove(GTK_LIST_STORE(mod), &iter);
+    sel_changed(*ibx);
   }
-
+  
   static void on_select(gpointer *_, Inbox *ibx) {
-    Ctx &ctx(ibx->ctx);
-    GtkTreeSelection *tree_sel =
-      gtk_tree_view_get_selection(GTK_TREE_VIEW(ibx->list));
-    GtkTreeModel *mod;
-    GtkTreeIter iter;
-
-    bool sel = gtk_tree_selection_get_selected(tree_sel, &mod, &iter);
-
-    db::Rec<Msg> *msg_rec;
-    gtk_tree_model_get(mod, &iter, COL_MSG, &msg_rec, -1);
-    const str msgt(*db::get(*msg_rec, ctx.db.msg_type));
-    
-    gtk_widget_set_sensitive(ibx->accept, sel);
-    gtk_widget_set_sensitive(ibx->reject, sel && msgt == Msg::INVITE);
+    sel_changed(*ibx);
   }
   
   static void init_list(Inbox &ibx) {
@@ -92,14 +109,14 @@ namespace gui {
     gtk_tree_view_append_column(GTK_TREE_VIEW(ibx.list), name_col);    
   
     rend = gtk_cell_renderer_text_new();
-    auto email_col(gtk_tree_view_column_new_with_attributes("Email",
+    auto email_col(gtk_tree_view_column_new_with_attributes("",
 							    rend,
 							    "text", COL_EMAIL,
 							    nullptr));
     gtk_tree_view_append_column(GTK_TREE_VIEW(ibx.list), email_col);
 
     rend = gtk_cell_renderer_text_new();
-    auto info_col(gtk_tree_view_column_new_with_attributes("Info",
+    auto info_col(gtk_tree_view_column_new_with_attributes("Message",
 							   rend,
 							   "text", COL_INFO,
 							   nullptr));
@@ -109,19 +126,21 @@ namespace gui {
 				G_TYPE_POINTER,
 				G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING));
     Ctx &ctx(ibx.ctx);
-
+    std::vector<UId> rem;
+    
     for(const auto &msg_rec: ctx.db.inbox.recs) {
       Msg msg(ctx.db.inbox, msg_rec);
+
       GtkTreeIter iter;
       gtk_list_store_append(mod, &iter);
-
+      
       opt<Peer> peer(find_peer_email(ctx, msg.from));
       gtk_list_store_set(mod, &iter,
 			 COL_MSG, &msg_rec,
 			 COL_NAME, peer ? peer->name.c_str() : msg.peer_name.c_str(),
 			 COL_EMAIL, msg.from.c_str(),
 			 -1);
-
+      
       if (msg.type == Msg::INVITE) {
 	gtk_list_store_set(mod, &iter, COL_INFO, "Invite", -1);
       } else if (msg.type == Msg::ACCEPT) {
@@ -135,9 +154,9 @@ namespace gui {
 
     gtk_tree_view_set_model(GTK_TREE_VIEW(ibx.list), GTK_TREE_MODEL(mod));
     g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(ibx.list)),
-						 "changed",
-						 G_CALLBACK(on_select),
-						 &ibx);
+		     "changed",
+		     G_CALLBACK(on_select),
+		     &ibx);
   }
   
   Inbox::Inbox(Ctx &ctx):
@@ -161,6 +180,7 @@ namespace gui {
     gtk_widget_set_halign(close, GTK_ALIGN_END);
     g_signal_connect(close, "clicked", G_CALLBACK(on_close), this);
     gtk_box_pack_start(GTK_BOX(panel), close, false, false, 5);
+    sel_changed(*this);
   }
 
   void Inbox::focus() {
