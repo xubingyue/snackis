@@ -11,24 +11,37 @@ namespace gui {
     ibx->pop_view();
   }
 
-  static opt<Msg> get_sel_msg(Inbox *ibx) {
+  static bool get_sel(Inbox *ibx, GtkTreeModel **mod, GtkTreeIter *iter) {
     GtkTreeSelection *tree_sel =
       gtk_tree_view_get_selection(GTK_TREE_VIEW(ibx->list));
-    GtkTreeModel *mod;
-    GtkTreeIter iter;
-    if (!gtk_tree_selection_get_selected(tree_sel, &mod, &iter)) { return nullopt; }
-
-    db::Rec<Msg> *msg_rec;
-    gtk_tree_model_get(mod, &iter, COL_MSG, &msg_rec, -1);
-    return Msg(ibx->ctx.db.inbox, *msg_rec);
+    if (!gtk_tree_selection_get_selected(tree_sel, mod, iter)) { return false; }
+    return true;
   }
   
   static void on_accept(gpointer *_, Inbox *ibx) {
-    auto msg(get_sel_msg(ibx));
   }
 
   static void on_reject(gpointer *_, Inbox *ibx) {
-    auto msg(get_sel_msg(ibx));
+    Ctx &ctx(ibx->ctx);
+    db::Trans trans(ctx);
+    GtkTreeModel *mod;
+    GtkTreeIter iter;
+    get_sel(ibx, &mod, &iter);
+
+    db::Rec<Msg> *msg_rec;
+    gtk_tree_model_get(mod, &iter, COL_MSG, &msg_rec, -1);
+    Msg msg(ctx.db.inbox, *msg_rec);
+
+    if (msg.type == Msg::INVITE) {
+	reject_invite(msg);
+	log(ctx, fmt("Reject of %0 saved to outbox", msg.from));
+    } else {
+	log(ctx, fmt("Invalid message type: %0", msg.type));
+    }
+
+    db::erase(ctx.db.inbox, *msg_rec);
+    db::commit(trans);
+    gtk_list_store_remove(GTK_LIST_STORE(mod), &iter);
   }
 
   static void on_select(gpointer *_, Inbox *ibx) {

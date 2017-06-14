@@ -1,15 +1,14 @@
-* finish gui::Inbox
-** implement accept for invite
-*** delete tree iter
-** implement reject for invite
-*** delete tree iter
-* add clear command
-** add clear(console)
 * add peer form
 ** label 'Peer X'
 ** name & email
 ** 'Save Changes' / 'Cancel Changes' buttons
-** open peer form on inbox accept
+** copy setup
+** open on invite accept
+* finish gui::Inbox
+** implement invite accept
+*** open peer form
+* add clear command
+** add clear(console)
 * add gui::Post
 ** combo for selecting thread
 ** entry for subject

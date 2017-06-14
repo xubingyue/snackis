@@ -1,3 +1,11 @@
+GtkButton:insensitive {
+    border: none;
+}
+
+GtkButton:insensitive GtkLabel {
+    color: #333333;
+}
+
 GtkLabel {
     color: #bb4411;
 }
