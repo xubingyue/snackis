@@ -3,8 +3,9 @@
 
 namespace snackis {
 namespace db {
-  Trans::Trans(Ctx &ctx): ctx(ctx), super(ctx.trans) {
+  Trans::Trans(Ctx &ctx): ctx(ctx) {
     ctx.trans_mutex.lock();
+    super = ctx.trans;
     ctx.trans = this;
   }
 
