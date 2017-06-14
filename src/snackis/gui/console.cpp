@@ -50,6 +50,7 @@ namespace gui {
 				   GTK_POLICY_NEVER,
 				   GTK_POLICY_ALWAYS);
     gtk_container_add(GTK_CONTAINER(scroll_view), text_view);
+    gtk_widget_set_can_focus(text_view, false);
   }
 
   GtkWidget *Console::ptr() {

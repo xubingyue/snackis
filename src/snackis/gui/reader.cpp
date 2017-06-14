@@ -29,6 +29,8 @@ namespace gui {
   
   Reader::Reader(Ctx &ctx): ctx(ctx), entry(gtk_entry_new()) {
     add_style(entry, "reader");
+    gtk_widget_set_margin_start(entry, 5);
+    gtk_widget_set_margin_end(entry, 5);
     g_signal_connect(entry, "activate", G_CALLBACK(on_activate), this);
   }
   

@@ -1,10 +1,47 @@
 #include "snackis/ctx.hpp"
+#include "snackis/gui/gui.hpp"
 #include "snackis/gui/setup.hpp"
 #include "snackis/net/imap.hpp"
 #include "snackis/net/smtp.hpp"
 
 namespace snackis {
 namespace gui {
+  static void on_load_folder(gpointer *_, Setup *setup) {
+    GtkWidget *dlg(gtk_file_chooser_dialog_new("Select Load Folder",
+					       GTK_WINDOW(window),
+					       GTK_FILE_CHOOSER_ACTION_CREATE_FOLDER,
+					       "_Cancel", GTK_RESPONSE_CANCEL,
+					       "_Select", GTK_RESPONSE_ACCEPT,
+					       nullptr));
+    gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg),
+				  gtk_entry_get_text(GTK_ENTRY(setup->load_folder)));
+
+    if (gtk_dialog_run(GTK_DIALOG(dlg)) == GTK_RESPONSE_ACCEPT) {
+      char *dir = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dlg));
+      gtk_entry_set_text(GTK_ENTRY(setup->load_folder), dir);
+      g_free(dir);
+      gtk_widget_destroy(dlg);
+    }
+  }
+
+  static void on_save_folder(gpointer *_, Setup *setup) {
+    GtkWidget *dlg(gtk_file_chooser_dialog_new("Select Save Folder",
+					       GTK_WINDOW(window),
+					       GTK_FILE_CHOOSER_ACTION_CREATE_FOLDER,
+					       "_Cancel", GTK_RESPONSE_CANCEL,
+					       "_Select", GTK_RESPONSE_ACCEPT,
+					       nullptr));
+    gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg),
+				  gtk_entry_get_text(GTK_ENTRY(setup->save_folder)));
+
+    if (gtk_dialog_run(GTK_DIALOG(dlg)) == GTK_RESPONSE_ACCEPT) {
+      char *dir = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dlg));
+      gtk_entry_set_text(GTK_ENTRY(setup->save_folder), dir);
+      g_free(dir);
+      gtk_widget_destroy(dlg);
+    }
+  }
+
   static void on_cancel(gpointer *_, Setup *setup) {
     log(setup->ctx, "Cancelled setup");
     setup->pop_view();
@@ -97,7 +134,7 @@ namespace gui {
     setup->pop_view();
   }
   
-  static void on_test_imap(gpointer *_, Setup *setup) {
+  static void on_imap(gpointer *_, Setup *setup) {
     Ctx &ctx(setup->ctx);
     db::Trans trans(setup->ctx);
     copy_imap(*setup);
@@ -110,7 +147,7 @@ namespace gui {
     }
   }
 
-  static void on_test_smtp(gpointer *_, Setup *setup) {
+  static void on_smtp(gpointer *_, Setup *setup) {
     Ctx &ctx(setup->ctx);
     db::Trans trans(setup->ctx);
     copy_smtp(*setup);
@@ -121,6 +158,50 @@ namespace gui {
     } catch (const SmtpError &e) {
       log(ctx, e.what());
     }
+  }
+
+  static GtkWidget *create_load_folder(Setup &setup) {
+    Ctx &ctx(setup.ctx);
+    GtkWidget *frm = gtk_grid_new();
+    gtk_widget_set_margin_top(frm, 5);
+    gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
+    gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
+    GtkWidget *lbl = gtk_label_new("Load Folder");
+    gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
+    gtk_grid_attach(GTK_GRID(frm), lbl, 0, 0, 1, 1);
+    gtk_widget_set_hexpand(setup.load_folder, true);
+    gtk_editable_set_editable(GTK_EDITABLE(setup.load_folder), false);
+    gtk_widget_set_can_focus(setup.load_folder, false);
+    gtk_entry_set_text(GTK_ENTRY(setup.load_folder),
+		       get_val(ctx.settings.load_folder)->c_str());
+    gtk_grid_attach(GTK_GRID(frm), setup.load_folder, 0, 1, 1, 1);
+
+    GtkWidget *btn = gtk_button_new_with_label("Select Folder");
+    g_signal_connect(btn, "clicked", G_CALLBACK(on_load_folder), &setup);
+    gtk_grid_attach(GTK_GRID(frm), btn, 1, 1, 1, 1);
+    return frm;
+  }
+
+  static GtkWidget *create_save_folder(Setup &setup) {
+    Ctx &ctx(setup.ctx);
+    GtkWidget *frm = gtk_grid_new();
+    gtk_widget_set_margin_top(frm, 5);
+    gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
+    gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
+    GtkWidget *lbl = gtk_label_new("Save Folder");
+    gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
+    gtk_grid_attach(GTK_GRID(frm), lbl, 0, 0, 1, 1);
+    gtk_widget_set_hexpand(setup.save_folder, true);
+    gtk_editable_set_editable(GTK_EDITABLE(setup.save_folder), false);
+    gtk_widget_set_can_focus(setup.save_folder, false);
+    gtk_entry_set_text(GTK_ENTRY(setup.save_folder),
+		       get_val(ctx.settings.save_folder)->c_str());
+    gtk_grid_attach(GTK_GRID(frm), setup.save_folder, 0, 1, 1, 1);
+
+    GtkWidget *btn = gtk_button_new_with_label("Select Folder");
+    g_signal_connect(btn, "clicked", G_CALLBACK(on_save_folder), &setup);
+    gtk_grid_attach(GTK_GRID(frm), btn, 1, 1, 1, 1);
+    return frm;
   }
 
   static GtkWidget *create_imap(Setup &setup) {
@@ -176,7 +257,7 @@ namespace gui {
 
     row += 2;
     GtkWidget *btn = gtk_button_new_with_label("Test Imap");
-    g_signal_connect(btn, "clicked", G_CALLBACK(on_test_imap), &setup);
+    g_signal_connect(btn, "clicked", G_CALLBACK(on_imap), &setup);
     gtk_grid_attach(GTK_GRID(frm), btn, 2, row, 1, 1);
     return frm;
   }
@@ -234,7 +315,7 @@ namespace gui {
 
     row += 2;
     GtkWidget *btn = gtk_button_new_with_label("Test Smtp");
-    g_signal_connect(btn, "clicked", G_CALLBACK(on_test_smtp), &setup);
+    g_signal_connect(btn, "clicked", G_CALLBACK(on_smtp), &setup);
     gtk_grid_attach(GTK_GRID(frm), btn, 2, row, 1, 1);
     return frm;
   }
@@ -276,22 +357,8 @@ namespace gui {
     gtk_entry_set_text(GTK_ENTRY(email), me.email.c_str());
     gtk_container_add(GTK_CONTAINER(frm), email);
 
-    lbl = gtk_label_new("Load Folder");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
-    gtk_widget_set_margin_top(lbl, 5);
-    gtk_container_add(GTK_CONTAINER(frm), lbl);
-    gtk_widget_set_hexpand(load_folder, true);
-    gtk_entry_set_text(GTK_ENTRY(load_folder),
-		       get_val(ctx.settings.load_folder)->c_str());
-    gtk_container_add(GTK_CONTAINER(frm), load_folder);
-
-    lbl = gtk_label_new("Save Folder");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
-    gtk_container_add(GTK_CONTAINER(frm), lbl);
-    gtk_widget_set_hexpand(save_folder, true);
-    gtk_entry_set_text(GTK_ENTRY(save_folder),
-		       get_val(ctx.settings.save_folder)->c_str());
-    gtk_container_add(GTK_CONTAINER(frm), save_folder);
+    gtk_container_add(GTK_CONTAINER(frm), create_load_folder(*this));
+    gtk_container_add(GTK_CONTAINER(frm), create_save_folder(*this));
 
     gtk_container_add(GTK_CONTAINER(frm), create_imap(*this));
     gtk_container_add(GTK_CONTAINER(frm), create_smtp(*this));
@@ -301,11 +368,11 @@ namespace gui {
     gtk_widget_set_valign(btns, GTK_ALIGN_END);
     gtk_container_add(GTK_CONTAINER(panel), btns);
         
-    cancel = gtk_button_new_with_mnemonic("_Cancel");
+    cancel = gtk_button_new_with_mnemonic("_Cancel Changes");
     g_signal_connect(cancel, "clicked", G_CALLBACK(on_cancel), this);
     gtk_container_add(GTK_CONTAINER(btns), cancel);
     
-    save = gtk_button_new_with_mnemonic("_Save");
+    save = gtk_button_new_with_mnemonic("_Save Changes");
     g_signal_connect(save, "clicked", G_CALLBACK(on_save), this);
     gtk_container_add(GTK_CONTAINER(btns), save);
   }

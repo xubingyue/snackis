@@ -1,8 +1,11 @@
+* reverse console to insert first
+** skip scroll
 * add clear command
 ** add clear(console)
-* add invite cmd
-** split into cmd/args on space
-** email is arg 1
+* ---
+* add invite cmd/form
+** email & optional name
+** add invite.peer_name to store name until accept
 * add gui::Inbox
 ** show msgs in list view
 ** column for from name / email
