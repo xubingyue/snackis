@@ -13,21 +13,18 @@ GtkButton:insensitive GtkLabel {
 GtkButton {
     border: 1px solid;
     border-color: silver;
-    border-radius: 0.5em;
     box-shadow: none;
 }
 
 GtkComboBox {
     border-color: silver;
     border: none;
-    border-radius: 0.5em;
     box-shadow: none;
 }
 
 GtkEntry {
     border: 1px solid;
     border-color: silver;
-    border-radius: 0.5em;
 }
 
 GtkLabel {
@@ -35,13 +32,12 @@ GtkLabel {
 }
 
 GtkTreeView column-header .button {
-    background: #bb4411;
+    background: #333333;
     border: none;
-    border-radius: 0em;
+    border-bottom: 1px solid;
 }
 
 GtkTreeView column-header .label {
-    color: #cccccc;
     font-weight: normal;
 }
 
