@@ -1,3 +1,5 @@
+* add send command
+* add fetch command
 * add gui::PostView
 ** combo for selecting thread
 ** entry for subject
