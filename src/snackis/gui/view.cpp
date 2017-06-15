@@ -38,7 +38,6 @@ namespace gui {
 
     stack.push(this);    
     gtk_container_add(GTK_CONTAINER(gui::panels), panel);  
-    if (reader) { gtk_widget_hide(reader->ptr()); }
     gtk_widget_show_all(ptr());
     focus();
   }
@@ -49,7 +48,6 @@ namespace gui {
     g_object_ref(panel);
     gtk_container_remove(GTK_CONTAINER(gui::panels), panel);
     if (stack.empty()) {
-      gtk_widget_show(reader->ptr());
       reader->focus();
     } else {
       auto next(stack.top());

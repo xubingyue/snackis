@@ -2,7 +2,7 @@
 
 namespace snackis {
 namespace gui {
-  GtkWidget *window, *panels, *left_panel;
+  GtkWidget *window, *panels, *main_panel, *left_panel;
 
   opt<Login> login;
   opt<Console> console;

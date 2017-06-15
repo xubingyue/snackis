@@ -27,9 +27,12 @@ namespace gui {
     open(ctx);
     Peer &me(whoami(ctx));
     if (!me.name.empty()) { log(ctx, fmt("Welcome back, %0", me.name)); }
+
+    if (!reader) {
+      reader.emplace(ctx);
+      gtk_box_pack_start(GTK_BOX(main_panel), reader->ptr(), false, false, 5);
+    }
     
-    gui::reader.emplace(ctx);
-    gtk_box_pack_start(GTK_BOX(left_panel), reader->ptr(), false, false, 5);
     login->pop_view();
     gtk_widget_show_all(gui::window);
   }
