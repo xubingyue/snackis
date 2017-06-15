@@ -9,6 +9,8 @@
 ### Status
 Snackis UI is currently being ported from NCurses to Gtk+ since it proved to cumbersome to implement the needed functionality. The new version is nearing feature parity, only the final pieces for posting are missing; and is provided as ```dist/gcurses```. Once the conversion is complete, the previous UI will be deprecated.
 
+![logo](images/gui.png?raw=true)
+
 ### Dependencies
 Snackis requires a ```C++1z```-capable compiler and standard library to build, and defaults to using [clang](http://releases.llvm.org/download.html#4.0.0) with ```libc++```; it further depends on ```libcurl```, ```libpthread```, ```libsodium``` and ```libuuid``` for core functionality, as well as ```NCurses``` and ```GTK+ 3```for the UI.
 

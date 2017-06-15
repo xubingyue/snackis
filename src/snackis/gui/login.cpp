@@ -48,6 +48,10 @@ namespace gui {
     gtk_widget_set_halign(frm, GTK_ALIGN_CENTER);
     gtk_widget_set_valign(frm, GTK_ALIGN_CENTER);
     
+    GtkWidget *logo = gtk_image_new_from_file("logo.png");
+    gtk_widget_set_halign(logo, GTK_ALIGN_CENTER);
+    gtk_container_add(GTK_CONTAINER(frm), logo);
+
     lbl = gtk_label_new("Password");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_box_pack_start(GTK_BOX(frm), lbl, false, false, 5);

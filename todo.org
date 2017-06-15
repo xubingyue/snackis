@@ -1,5 +1,3 @@
-* Add Esc-handler to focus current view in reader
-** test cycling back and forth
 * add send command
 * add fetch command
 * add lock command
