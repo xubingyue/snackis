@@ -8,7 +8,7 @@
 
 namespace snackis {
 namespace gui {
-  struct Reader: public Widget {
+  struct Reader: Widget {
     using Cmd = func<bool (const str &, const std::vector<str> &)>;
 
     Ctx &ctx;

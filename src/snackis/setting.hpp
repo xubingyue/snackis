@@ -8,7 +8,7 @@
 #include "snackis/core/type.hpp"
 
 namespace snackis {
-  struct BasicSetting: public Rec {
+  struct BasicSetting: Rec {
     str key, val;
 
     BasicSetting(Ctx &ctx, const str &key);
@@ -17,7 +17,7 @@ namespace snackis {
   };
 
   template <typename ValT>
-  struct Setting: public BasicSetting {
+  struct Setting: BasicSetting {
     const Type<ValT> &type;
     opt<ValT> init_val;
 

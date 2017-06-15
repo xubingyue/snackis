@@ -8,7 +8,7 @@
 
 namespace snackis {
 namespace gui {
-  struct Setup: public View {
+  struct Setup: View {
     GtkWidget *name, *email,
       *load_folder, *save_folder,
       *imap_url, *imap_port, *imap_user, *imap_pass, *imap_poll,

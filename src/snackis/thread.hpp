@@ -9,7 +9,7 @@
 namespace snackis {
   struct Post;
   
-  struct Thread: public Rec {   
+  struct Thread: Rec {   
     UId id;
     str subj;
     Time at;

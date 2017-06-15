@@ -6,7 +6,7 @@
 #include "snackis/core/uid.hpp"
 
 namespace snackis {
-  struct UIdType: public Type<UId> {
+  struct UIdType: Type<UId> {
     UIdType();
     UId from_val(const Val &in) const override;
     Val to_val(const UId &in) const override;

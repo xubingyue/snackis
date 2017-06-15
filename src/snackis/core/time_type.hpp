@@ -5,7 +5,7 @@
 #include "snackis/core/type.hpp"
 
 namespace snackis {
-  struct TimeType: public Type<Time> {
+  struct TimeType: Type<Time> {
     TimeType();
     Time from_val(const Val &in) const override;
     Val to_val(const Time &in) const override;

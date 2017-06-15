@@ -14,14 +14,14 @@ namespace snackis {
     virtual void write_val(const Val &val, std::ostream &out) const = 0;
   };
 
-  struct NullType: public BasicType {
+  struct NullType: BasicType {
     NullType();
     Val read_val(std::istream &in) const override;
     void write_val(const Val &val, std::ostream &out) const override;
   };
 
   template <typename ValT>
-  struct Type: public BasicType {
+  struct Type: BasicType {
     Type(const str &name);
     virtual ValT from_val(const Val &in) const = 0;
     virtual Val to_val(const ValT &in) const = 0;

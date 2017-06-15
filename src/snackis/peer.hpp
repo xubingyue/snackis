@@ -10,7 +10,7 @@
 #include "snackis/db/rec.hpp"
 
 namespace snackis {
-  struct Peer: public Rec {
+  struct Peer: Rec {
     UId id;
     str name, email;
     crypt::PubKey crypt_key;

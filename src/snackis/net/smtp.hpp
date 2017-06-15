@@ -9,7 +9,7 @@
 #include "snackis/db/trans.hpp"
 
 namespace snackis {
-  struct SmtpError: public Error {
+  struct SmtpError: Error {
     SmtpError(const str &msg);
   };
 

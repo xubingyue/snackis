@@ -24,7 +24,7 @@ namespace db {
   struct Table;
 
   template <typename RecT>
-  struct Table: public BasicTable, public Schema<RecT> {
+  struct Table: BasicTable, Schema<RecT> {
     using CmpRec = func<bool (const Rec<RecT> &, const Rec<RecT> &)>;
     using Cols = std::initializer_list<const BasicCol<RecT> *>;
     
@@ -40,7 +40,7 @@ namespace db {
   enum TableOp {TABLE_INSERT, TABLE_UPDATE, TABLE_ERASE};
 
   template <typename RecT>
-  struct TableChange: public Change {
+  struct TableChange: Change {
     TableOp op;
     Table<RecT> &table;
     const Rec<RecT> rec;
@@ -50,20 +50,20 @@ namespace db {
   };
 
   template <typename RecT>
-  struct Insert: public TableChange<RecT> {
+  struct Insert: TableChange<RecT> {
     Insert(Table<RecT> &table, const Rec<RecT> &rec);    
     void rollback() const override;
   };
 
   template <typename RecT>
-  struct Update: public TableChange<RecT> {
+  struct Update: TableChange<RecT> {
     const Rec<RecT> prev_rec;
     Update(Table<RecT> &table, const Rec<RecT> &rec, const Rec<RecT> &prev_rec);    
     void rollback() const override;
   };
 
   template <typename RecT>
-  struct Erase: public TableChange<RecT> {
+  struct Erase: TableChange<RecT> {
     Erase(Table<RecT> &table, const Rec<RecT> &rec);    
     void rollback() const override;
   };

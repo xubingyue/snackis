@@ -8,7 +8,7 @@
 #include "snackis/crypt/pub_key.hpp"
 
 namespace snackis {
-  struct Msg: public Rec {
+  struct Msg: Rec {
     static const str INVITE, ACCEPT, REJECT, POST;
     
     UId id;

@@ -7,7 +7,7 @@
 namespace snackis {
   struct Ctx;
 namespace gui {
-  struct View: public Widget {
+  struct View: Widget {
     static std::stack<View *> stack;
     Ctx &ctx;
     GtkWidget *panel;

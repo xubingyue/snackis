@@ -7,7 +7,7 @@
 
 namespace snackis {
 namespace crypt {
-  struct PubKeyType: public Type<PubKey> {
+  struct PubKeyType: Type<PubKey> {
     PubKeyType();
     PubKey from_val(const Val &in) const override;
     Val to_val(const PubKey &in) const override;

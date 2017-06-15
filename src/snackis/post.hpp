@@ -12,7 +12,7 @@ namespace snackis {
   struct Peer;
   struct Thread;
   
-  struct Post: public Rec {
+  struct Post: Rec {
     UId id, thread_id;
     Time at;
     UId by_id;

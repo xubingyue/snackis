@@ -8,7 +8,7 @@
 
 namespace snackis {
 namespace gui {
-  struct Encrypt: public View {
+  struct Encrypt: View {
     GtkListStore *peers;
     GtkWidget *peer, *source, *target, *encode, *cancel, *save;
     

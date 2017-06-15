@@ -132,6 +132,8 @@ namespace snackis {
       ERROR(Imap, fmt("Invalid fetch result:\n%0", out.str())); 
     }
 
+    int msg_cnt = 0;
+    
     for (auto tok = std::next(tokens.begin(), 2); tok != tokens.end(); tok++) {
       const str uid(*tok);
       opt<Msg> msg = fetch_uid(imap, uid);
@@ -160,8 +162,8 @@ namespace snackis {
       }
       
       insert(ctx.db.inbox, *msg);
-      log(ctx, "Fetched message from %0", msg->from);
       delete_uid(imap, uid);
+      msg_cnt++;
     }
 
     if (tokens.size() > 2) {
@@ -169,6 +171,6 @@ namespace snackis {
     }
 
     db::commit(imap.trans);
-    log(ctx, "Finished fetching email");
+    log(ctx, fmt("Finished fetching %0 messages", msg_cnt));
   }
 }

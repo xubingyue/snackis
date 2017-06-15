@@ -11,7 +11,7 @@
 #include "snackis/core/str.hpp"
 
 namespace snackis {
-  struct Ctx: public db::Ctx {
+  struct Ctx: db::Ctx {
     Db db;
     Settings settings;
     Peer whoami;

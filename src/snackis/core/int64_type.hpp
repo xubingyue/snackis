@@ -5,7 +5,7 @@
 #include "snackis/core/type.hpp"
 
 namespace snackis {
-  struct Int64Type: public Type<int64_t> {
+  struct Int64Type: Type<int64_t> {
     Int64Type();
     int64_t from_val(const Val &in) const override;
     Val to_val(const int64_t &in) const override;

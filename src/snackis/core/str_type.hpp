@@ -4,7 +4,7 @@
 #include "snackis/core/type.hpp"
 
 namespace snackis {
-  struct StrType: public Type<str> {
+  struct StrType: Type<str> {
     StrType();
     str from_val(const Val &in) const override;
     Val to_val(const str &in) const override;

@@ -7,7 +7,7 @@
 
 namespace snackis {
   template <typename ValT>
-  struct SetType: public Type<std::set<ValT>> {
+  struct SetType: Type<std::set<ValT>> {
     Type<ValT> &val_type;
     
     SetType(Type<ValT> &val_type);

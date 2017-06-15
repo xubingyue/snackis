@@ -13,11 +13,11 @@
   } while (false)						\
 
 namespace snackis {
-  struct Error: public std::runtime_error {
+  struct Error: std::runtime_error {
     Error(const str &msg);
   };
 
-  struct CoreError: public Error {
+  struct CoreError: Error {
     CoreError(const str &msg);
   };
 }

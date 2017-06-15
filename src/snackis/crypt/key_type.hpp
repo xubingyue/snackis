@@ -7,7 +7,7 @@
 
 namespace snackis {
 namespace crypt {
-  struct KeyType: public Type<Key> {
+  struct KeyType: Type<Key> {
     KeyType();
     Key from_val(const Val &in) const override;
     Val to_val(const Key &in) const override;

@@ -10,7 +10,7 @@ namespace snackis {
   struct Msg;
   struct Peer;
   
-  struct Invite: public Rec {
+  struct Invite: Rec {
     str to;
     Time posted_at;
     

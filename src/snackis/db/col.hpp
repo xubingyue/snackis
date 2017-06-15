@@ -11,7 +11,7 @@
 namespace snackis {
 namespace db {
   template <typename RecT, typename ValT>
-  struct Col: public BasicCol<RecT> {
+  struct Col: BasicCol<RecT> {
     Type<ValT> &type;
     ValT RecT::* field;
     

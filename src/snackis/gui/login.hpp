@@ -8,7 +8,7 @@
 
 namespace snackis {
 namespace gui {
-  struct Login: public View {
+  struct Login: View {
     GtkWidget *pass, *repeat, *btn;
     
     Login(Ctx &ctx);

@@ -9,7 +9,7 @@
 
 namespace snackis {
 namespace gui {
-  struct PeerView: public View {
+  struct PeerView: View {
     Peer peer;
     GtkWidget *name, *email, *cancel, *save;
     
