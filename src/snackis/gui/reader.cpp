@@ -1,6 +1,7 @@
 #include "snackis/ctx.hpp"
 #include "snackis/invite.hpp"
 #include "snackis/core/fmt.hpp"
+#include "snackis/gui/encrypt.hpp"
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/inbox.hpp"
 #include "snackis/gui/reader.hpp"
@@ -18,6 +19,17 @@ namespace gui {
 	}
 	
 	clear(*console);
+	return true;
+      });
+
+    rdr.cmds.emplace("encrypt", [&ctx](auto id, auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: encrypt");
+	  return false;
+	}
+	
+	Encrypt *view = new Encrypt(ctx);
+	view->push_view();
 	return true;
       });
 

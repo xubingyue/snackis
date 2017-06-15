@@ -1,9 +1,6 @@
-* port encrypt form to gui::Encrypt
-** peer combobox
-** source file
-*** copy from setup
-** target file
-** encode
+* finish gui::Encrypt
+** fill peer combobox
+** implement copy on_save from ui
 * add gui::PostView
 ** combo for selecting thread
 ** entry for subject
