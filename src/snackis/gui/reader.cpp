@@ -71,17 +71,6 @@ namespace gui {
 	return true;
       });
     
-
-    rdr.cmds.emplace("quit", [&ctx](auto id, auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: quit");
-	  return false;
-	}
-	
-	quit();
-	return true;
-      });
-
     rdr.cmds.emplace("setup", [&ctx](auto id, auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: setup");

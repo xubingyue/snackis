@@ -15,8 +15,6 @@ namespace gui {
   
   extern opt<Console> console;
   extern opt<Reader> reader;
-  
-  void quit();
 }}
 
 #endif
