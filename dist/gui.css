@@ -11,7 +11,27 @@ GtkToggleButton:focused GtkLabel {
 }
 
 GtkButton:insensitive GtkLabel {
-    color: Gray;
+    color: gray;
+}
+
+GtkButton {
+    border: 1px solid;
+    border-color: silver;
+    border-radius: 0.5em;
+    box-shadow: none;
+}
+
+GtkComboBox {
+    border-color: silver;
+    border: none;
+    border-radius: 0.5em;
+    box-shadow: none;
+}
+
+GtkEntry {
+    border: 1px solid;
+    border-color: silver;
+    border-radius: 0.5em;
 }
 
 GtkLabel {
@@ -19,10 +39,14 @@ GtkLabel {
 }
 
 GtkTreeView column-header .button {
-    background: #333333;
+    background: #bb4411;
     border: none;
-    border-color: #cccccc;
-    border-bottom: 1px solid;
+    border-radius: 0em;
+}
+
+GtkTreeView column-header .label {
+    color: #cccccc;
+    font-weight: normal;
 }
 
 .window {
