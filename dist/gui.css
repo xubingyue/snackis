@@ -29,12 +29,14 @@ GtkEntry {
 
 GtkLabel {
     color: #bb4411;
+    font-size: 105%;
 }
 
 GtkTreeView column-header .button {
     background: #333333;
     border: none;
     border-bottom: 1px solid;
+    padding: 0px;
 }
 
 GtkTreeView column-header .label {
