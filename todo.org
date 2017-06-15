@@ -11,6 +11,13 @@
 * rename gmain.cpp to gui.cpp
 * remove ui/main.cpp
 * update readme
+* add support for anonymous forwarding
+** add active_peers table
+*** indexed by time
+**** update on contact
+** forward through any peer but receiver
+*** search active_peers backwards
+** onion-encrypt
 * ---
 * add backup command
 ** backup folder setting, default /backup
