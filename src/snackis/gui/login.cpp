@@ -30,7 +30,7 @@ namespace gui {
 
     if (!reader) {
       reader.emplace(ctx);
-      gtk_box_pack_start(GTK_BOX(main_panel), reader->ptr(), false, false, 5);
+      gtk_box_pack_start(GTK_BOX(left_panel), reader->ptr(), false, false, 5);
     }
     
     login->pop_view();

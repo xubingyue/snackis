@@ -1,3 +1,5 @@
+* Add Esc-handler to focus current view in reader
+** test cycling back and forth
 * add send command
 * add fetch command
 * add lock command
@@ -31,3 +33,4 @@
 ** add RLock/WLock types
 ** lock in operations
 ** lock externally around loops
+** only lock trans_mutex when accessing stack

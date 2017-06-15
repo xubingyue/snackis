@@ -6,9 +6,14 @@
 
 using namespace snackis;
 
-gboolean on_key(gpointer ptr, GdkEventKey *ev, gpointer data) {
+static gboolean on_key(gpointer _, GdkEventKey *ev, gpointer __) {
   if (ev->keyval == GDK_KEY_Escape && gui::reader) {
-    gui::reader->focus();
+    if (gtk_widget_has_focus(gui::reader->ptr())) {
+      if (!gui::View::stack.empty()) { gui::View::stack.top()->focus(); }
+    } else {
+      gui::reader->focus();
+    }
+    
     return true;
   }
 

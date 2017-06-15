@@ -65,8 +65,11 @@ GtkTreeView column-header .label {
 }
 
 .view:selected {
-    color: #333333;
-    background: #eeeebb;
+    background: #773311;
+}
+
+.view:selected:focused {
+    background: #bb4411;
 }
 
 .view_label {
