@@ -13,8 +13,8 @@ namespace gui {
 					       "_Cancel", GTK_RESPONSE_CANCEL,
 					       "_Select", GTK_RESPONSE_ACCEPT,
 					       nullptr));
-    gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg),
-				  gtk_entry_get_text(GTK_ENTRY(setup->load_folder)));
+    const char *f(gtk_entry_get_text(GTK_ENTRY(setup->load_folder)));
+    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dlg), f);
 
     if (gtk_dialog_run(GTK_DIALOG(dlg)) == GTK_RESPONSE_ACCEPT) {
       char *dir = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dlg));
@@ -31,8 +31,8 @@ namespace gui {
 					       "_Cancel", GTK_RESPONSE_CANCEL,
 					       "_Select", GTK_RESPONSE_ACCEPT,
 					       nullptr));
-    gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg),
-				  gtk_entry_get_text(GTK_ENTRY(setup->save_folder)));
+    const char *f(gtk_entry_get_text(GTK_ENTRY(setup->save_folder)));
+    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dlg), f);
 
     if (gtk_dialog_run(GTK_DIALOG(dlg)) == GTK_RESPONSE_ACCEPT) {
       char *dir = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dlg));
@@ -170,8 +170,7 @@ namespace gui {
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
     gtk_grid_attach(GTK_GRID(frm), lbl, 0, 0, 1, 1);
     gtk_widget_set_hexpand(setup.load_folder, true);
-    gtk_editable_set_editable(GTK_EDITABLE(setup.load_folder), false);
-    gtk_widget_set_can_focus(setup.load_folder, false);
+    gtk_widget_set_sensitive(setup.load_folder, false);
     gtk_entry_set_text(GTK_ENTRY(setup.load_folder),
 		       get_val(ctx.settings.load_folder)->c_str());
     gtk_grid_attach(GTK_GRID(frm), setup.load_folder, 0, 1, 1, 1);
@@ -192,8 +191,7 @@ namespace gui {
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
     gtk_grid_attach(GTK_GRID(frm), lbl, 0, 0, 1, 1);
     gtk_widget_set_hexpand(setup.save_folder, true);
-    gtk_editable_set_editable(GTK_EDITABLE(setup.save_folder), false);
-    gtk_widget_set_can_focus(setup.save_folder, false);
+    gtk_widget_set_sensitive(setup.save_folder, false);
     gtk_entry_set_text(GTK_ENTRY(setup.save_folder),
 		       get_val(ctx.settings.save_folder)->c_str());
     gtk_grid_attach(GTK_GRID(frm), setup.save_folder, 0, 1, 1, 1);

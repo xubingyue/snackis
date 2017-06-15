@@ -105,8 +105,7 @@ namespace gui {
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
     gtk_grid_attach(GTK_GRID(frm), lbl, 0, 0, 1, 1);
     gtk_widget_set_hexpand(enc.source, true);
-    gtk_editable_set_editable(GTK_EDITABLE(enc.source), false);
-    gtk_widget_set_can_focus(enc.source, false);
+    gtk_widget_set_sensitive(enc.source, false);
     gtk_entry_set_text(GTK_ENTRY(enc.source),
 		       get_val(ctx.settings.load_folder)->c_str());
     gtk_grid_attach(GTK_GRID(frm), enc.source, 0, 1, 1, 1);
@@ -127,8 +126,7 @@ namespace gui {
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
     gtk_grid_attach(GTK_GRID(frm), lbl, 0, 0, 1, 1);
     gtk_widget_set_hexpand(enc.target, true);
-    gtk_editable_set_editable(GTK_EDITABLE(enc.target), false);
-    gtk_widget_set_can_focus(enc.target, false);
+    gtk_widget_set_sensitive(enc.target, false);
     gtk_entry_set_text(GTK_ENTRY(enc.target),
 		       get_val(ctx.settings.save_folder)->c_str());
     gtk_grid_attach(GTK_GRID(frm), enc.target, 0, 1, 1, 1);

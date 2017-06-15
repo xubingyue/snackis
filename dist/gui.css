@@ -1,9 +1,9 @@
-GtkButton:insensitive GtkLabel {
-    color: #333333;
-}
-
 *:focused {
     border-color: #bb4411;
+}
+
+GtkButton:insensitive GtkLabel {
+    color: Gray;
 }
 
 GtkLabel {
