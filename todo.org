@@ -1,5 +1,3 @@
-* copy gui::Encrypt to Decrypt
-** check ui::DecryptForm
 * add gui::PostView
 ** combo for selecting thread
 ** entry for subject
