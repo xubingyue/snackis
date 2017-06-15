@@ -7,14 +7,16 @@ namespace gui {
   enum PeerCol {COL_PEER_PTR=0, COL_PEER_NAME, COL_PEER_EMAIL};
     
   static void on_source(gpointer *_, Encrypt *enc) {
+    Ctx &ctx(enc->ctx);
     GtkWidget *dlg(gtk_file_chooser_dialog_new("Select Source File",
 					       GTK_WINDOW(window),
 					       GTK_FILE_CHOOSER_ACTION_OPEN,
 					       "_Cancel", GTK_RESPONSE_CANCEL,
 					       "_Select", GTK_RESPONSE_ACCEPT,
 					       nullptr));
+
     gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dlg),
-					gtk_entry_get_text(GTK_ENTRY(enc->source)));
+					get_val(ctx.settings.load_folder)->c_str());
 
     if (gtk_dialog_run(GTK_DIALOG(dlg)) == GTK_RESPONSE_ACCEPT) {
       char *dir = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dlg));
@@ -25,14 +27,16 @@ namespace gui {
   }
 
   static void on_target(gpointer *_, Encrypt *enc) {
+    Ctx &ctx(enc->ctx);
     GtkWidget *dlg(gtk_file_chooser_dialog_new("Select Target File",
 					       GTK_WINDOW(window),
 					       GTK_FILE_CHOOSER_ACTION_SAVE,
 					       "_Cancel", GTK_RESPONSE_CANCEL,
 					       "_Select", GTK_RESPONSE_ACCEPT,
 					       nullptr));
+
     gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dlg),
-					gtk_entry_get_text(GTK_ENTRY(enc->target)));
+					get_val(ctx.settings.save_folder)->c_str());
 
     if (gtk_dialog_run(GTK_DIALOG(dlg)) == GTK_RESPONSE_ACCEPT) {
       char *dir = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dlg));
@@ -96,7 +100,6 @@ namespace gui {
   }
   
   static GtkWidget *init_source(Encrypt &enc) {
-    Ctx &ctx(enc.ctx);
     GtkWidget *frm = gtk_grid_new();
     gtk_widget_set_margin_top(frm, 5);
     gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
@@ -106,8 +109,6 @@ namespace gui {
     gtk_grid_attach(GTK_GRID(frm), lbl, 0, 0, 1, 1);
     gtk_widget_set_hexpand(enc.source, true);
     gtk_widget_set_sensitive(enc.source, false);
-    gtk_entry_set_text(GTK_ENTRY(enc.source),
-		       get_val(ctx.settings.load_folder)->c_str());
     gtk_grid_attach(GTK_GRID(frm), enc.source, 0, 1, 1, 1);
 
     GtkWidget *btn = gtk_button_new_with_label("Select File");
@@ -117,7 +118,6 @@ namespace gui {
   }
 
   static GtkWidget *init_target(Encrypt &enc) {
-    Ctx &ctx(enc.ctx);
     GtkWidget *frm = gtk_grid_new();
     gtk_widget_set_margin_top(frm, 5);
     gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
@@ -127,8 +127,6 @@ namespace gui {
     gtk_grid_attach(GTK_GRID(frm), lbl, 0, 0, 1, 1);
     gtk_widget_set_hexpand(enc.target, true);
     gtk_widget_set_sensitive(enc.target, false);
-    gtk_entry_set_text(GTK_ENTRY(enc.target),
-		       get_val(ctx.settings.save_folder)->c_str());
     gtk_grid_attach(GTK_GRID(frm), enc.target, 0, 1, 1, 1);
 
     GtkWidget *btn = gtk_button_new_with_label("Select File");
