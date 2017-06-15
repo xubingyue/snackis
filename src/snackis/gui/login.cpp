@@ -24,15 +24,16 @@ namespace gui {
 
     Ctx &ctx(login->ctx);
     
-    open(ctx);
-    Peer &me(whoami(ctx));
-    if (!me.name.empty()) { log(ctx, fmt("Welcome back, %0", me.name)); }
-
-    if (!reader) {
+    if (reader) {
+      gtk_widget_hide(left_panel);
+    } else {
+      open(ctx);
       reader.emplace(ctx);
       gtk_box_pack_start(GTK_BOX(left_panel), reader->ptr(), false, false, 5);
     }
-    
+
+    Peer &me(whoami(ctx));
+    if (!me.name.empty()) { log(ctx, fmt("Welcome back, %0", me.name)); }
     login->pop_view();
     gtk_widget_show_all(gui::window);
   }

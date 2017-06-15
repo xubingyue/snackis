@@ -1,9 +1,5 @@
 * add send command
 * add fetch command
-* add lock command
-** hide console & reader
-** push login
-** update login to show console & reader
 * add gui::PostView
 ** combo for selecting thread
 ** entry for subject

@@ -70,6 +70,17 @@ namespace gui {
 	db::commit(trans);
 	return true;
       });
+
+    rdr.cmds.emplace("lock", [&ctx](auto id, auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: lock");
+	  return false;
+	}
+	gtk_widget_hide(left_panel);
+	Login *view = new Login(ctx);
+	view->push_view();
+	return true;
+      });
     
     rdr.cmds.emplace("setup", [&ctx](auto id, auto args) {
 	if (!args.empty()) {
