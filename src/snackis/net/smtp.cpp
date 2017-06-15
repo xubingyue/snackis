@@ -130,6 +130,6 @@ namespace snackis {
     }
     
     db::commit(smtp.trans);
-    log(smtp.ctx, "Done sending email");
+    log(smtp.ctx, "Finished sending email");
   }
 }

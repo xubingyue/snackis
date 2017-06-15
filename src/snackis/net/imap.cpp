@@ -169,6 +169,6 @@ namespace snackis {
     }
 
     db::commit(imap.trans);
-    log(ctx, "Done fetching email");
+    log(ctx, "Finished fetching email");
   }
 }
