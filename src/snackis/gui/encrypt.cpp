@@ -22,8 +22,9 @@ namespace gui {
       char *dir = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dlg));
       gtk_entry_set_text(GTK_ENTRY(enc->source), dir);
       g_free(dir);
-      gtk_widget_destroy(dlg);
     }
+
+    gtk_widget_destroy(dlg);
   }
 
   static void on_target(gpointer *_, Encrypt *enc) {
@@ -37,13 +38,16 @@ namespace gui {
 
     gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dlg),
 					get_val(ctx.settings.save_folder)->c_str());
-
+    Path src(Path(gtk_entry_get_text(GTK_ENTRY(enc->source))));
+    gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dlg), src.filename().c_str());
+    
     if (gtk_dialog_run(GTK_DIALOG(dlg)) == GTK_RESPONSE_ACCEPT) {
       char *dir = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dlg));
       gtk_entry_set_text(GTK_ENTRY(enc->target), dir);
       g_free(dir);
-      gtk_widget_destroy(dlg);
     }
+
+    gtk_widget_destroy(dlg);
   }
 
   static void on_cancel(gpointer *_, Encrypt *enc) {
@@ -104,7 +108,7 @@ namespace gui {
     gtk_widget_set_margin_top(frm, 5);
     gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
     gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
-    GtkWidget *lbl = gtk_label_new("Load Folder");
+    GtkWidget *lbl = gtk_label_new("Source");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
     gtk_grid_attach(GTK_GRID(frm), lbl, 0, 0, 1, 1);
     gtk_widget_set_hexpand(enc.source, true);
@@ -122,7 +126,7 @@ namespace gui {
     gtk_widget_set_margin_top(frm, 5);
     gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
     gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
-    GtkWidget *lbl = gtk_label_new("Save Folder");
+    GtkWidget *lbl = gtk_label_new("Target");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
     gtk_grid_attach(GTK_GRID(frm), lbl, 0, 0, 1, 1);
     gtk_widget_set_hexpand(enc.target, true);

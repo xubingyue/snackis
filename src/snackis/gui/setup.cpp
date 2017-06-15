@@ -14,14 +14,15 @@ namespace gui {
 					       "_Select", GTK_RESPONSE_ACCEPT,
 					       nullptr));
     const char *f(gtk_entry_get_text(GTK_ENTRY(setup->load_folder)));
-    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dlg), f);
+    gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg), f);
 
     if (gtk_dialog_run(GTK_DIALOG(dlg)) == GTK_RESPONSE_ACCEPT) {
       char *dir = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dlg));
       gtk_entry_set_text(GTK_ENTRY(setup->load_folder), dir);
       g_free(dir);
-      gtk_widget_destroy(dlg);
     }
+
+    gtk_widget_destroy(dlg);
   }
 
   static void on_save_folder(gpointer *_, Setup *setup) {
@@ -32,14 +33,15 @@ namespace gui {
 					       "_Select", GTK_RESPONSE_ACCEPT,
 					       nullptr));
     const char *f(gtk_entry_get_text(GTK_ENTRY(setup->save_folder)));
-    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dlg), f);
+    gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg), f);
 
     if (gtk_dialog_run(GTK_DIALOG(dlg)) == GTK_RESPONSE_ACCEPT) {
       char *dir = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dlg));
       gtk_entry_set_text(GTK_ENTRY(setup->save_folder), dir);
       g_free(dir);
-      gtk_widget_destroy(dlg);
     }
+
+    gtk_widget_destroy(dlg);
   }
 
   static void on_cancel(gpointer *_, Setup *setup) {
