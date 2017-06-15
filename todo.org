@@ -20,7 +20,7 @@
 ** store msg id & update time when receipt msg is received
 ** send receipt message when accepting post
 * add support for anonymous forwarding
-** forward through all peers but receiver and self
+** forward messages through all peers but receiver and self
 * ---
 * add backup command
 ** backup folder setting, default /backup
