@@ -6,10 +6,6 @@ GtkButton:focused GtkLabel {
     text-decoration: underline;
 }
 
-GtkToggleButton:focused GtkLabel {
-    text-decoration: underline;
-}
-
 GtkButton:insensitive GtkLabel {
     color: gray;
 }
