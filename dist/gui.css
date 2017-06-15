@@ -2,6 +2,10 @@ GtkButton:insensitive GtkLabel {
     color: #333333;
 }
 
+*:focused {
+    border-color: #bb4411;
+}
+
 GtkLabel {
     color: #bb4411;
 }
@@ -36,7 +40,7 @@ GtkTreeView column-header .button {
 
 .view:selected {
     color: #333333;
-    background: #ffffcc;
+    background: #eeeebb;
 }
 
 .view_label {
