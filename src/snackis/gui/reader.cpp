@@ -45,6 +45,16 @@ namespace gui {
 	return true;
       });
 
+    rdr.cmds.emplace("fetch", [&ctx](auto id, auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: fetch");
+	  return false;
+	}
+
+	ctx.fetch_cond.notify_one();
+	return true;
+      });
+
     rdr.cmds.emplace("inbox", [&ctx](auto id, auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: inbox");
@@ -82,6 +92,16 @@ namespace gui {
 	return true;
       });
     
+    rdr.cmds.emplace("send", [&ctx](auto id, auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: send");
+	  return false;
+	}
+
+	ctx.send_cond.notify_one();
+	return true;
+      });
+
     rdr.cmds.emplace("setup", [&ctx](auto id, auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: setup");
@@ -110,37 +130,56 @@ namespace gui {
     
   }
   
-  static bool exec_cmd(Reader &rdr, const str &in) {
-    Ctx &ctx(rdr.ctx);
+  static opt<Reader::Cmd> find_cmd(Reader &rdr, const str &in) {
     str in_str(in);
     
     if (in_str == "") {
-      if (!rdr.last_cmd) { return false; }
+      if (!rdr.last_cmd) { return nullopt; }
       in_str = *rdr.last_cmd;
     }
 
     InStream in_words(in_str);
     str id;
     in_words >> id;
-    std::vector<str> args;
-    str arg;
-    while (in_words >> arg) { args.push_back(arg); }
     auto found(rdr.cmds.find(id));
+    if (found == rdr.cmds.end()) { return nullopt; }
+    return found->second; 
+  }
 
-    if (found == rdr.cmds.end()){
-      log(ctx, fmt("Unknown command: '%0'", in_str));
-      return false;
-    } else if (!found->second(id, args)) {
+  static bool exec_cmd(Reader &rdr, const str &in) {
+    Ctx &ctx(rdr.ctx);
+
+    try {
+      InStream in_words(in);
+      str id;
+      in_words >> id;
+      auto cmd(find_cmd(rdr, id));
+      
+      if (!cmd){
+	log(ctx, fmt("Unknown command: '%0'", in));
+	return false;
+      }
+	  
+      std::vector<str> args;
+      str arg;
+      while (in_words >> arg) { args.push_back(arg); }
+      if (!(*cmd)(id, args)) { return false; }
+      rdr.last_cmd = in;
+    } catch (const std::exception &e) {
+      log(ctx, fmt("Error while executing command '%0':\n%1", in, e.what()));
       return false;
     }
     
-    rdr.last_cmd = in_str;
     return true;
   }
 
   static void on_activate(GtkWidget *_, Reader *rdr) {
-    if (exec_cmd(*rdr, gtk_entry_get_text(GTK_ENTRY(rdr->entry)))) {
+    const str in(gtk_entry_get_text(GTK_ENTRY(rdr->entry)));
+    auto cmd(find_cmd(*rdr, in));
+    
+    if (cmd) {
       gtk_entry_set_text(GTK_ENTRY(rdr->entry), "");
+      exec_cmd(*rdr, in);
     }
   }
 

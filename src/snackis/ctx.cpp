@@ -17,13 +17,13 @@ namespace snackis {
       
       if (poll) {
 	ctx->fetch_cond.wait_for(lock, std::chrono::seconds(poll));
-
-	if (!ctx->is_closing) {
-	  Imap imap(*ctx);
-	  fetch(imap);
-	}
       } else {
 	ctx->fetch_cond.wait(lock);
+      }
+
+      if (!ctx->is_closing) {
+	Imap imap(*ctx);
+	fetch(imap);
       }
     }
   }
@@ -39,14 +39,14 @@ namespace snackis {
       std::unique_lock<std::mutex> lock(ctx->send_mutex);
       
       if (poll) {
-	ctx->send_cond.wait_for(lock, std::chrono::seconds(poll));
-	
-	if (!ctx->is_closing && !ctx->db.outbox.recs.empty()) {
-	  Smtp smtp(*ctx);
-	  send(smtp);
-	}
+	ctx->send_cond.wait_for(lock, std::chrono::seconds(poll));	
       } else {
 	ctx->send_cond.wait(lock);
+      }
+
+      if (!ctx->is_closing && !ctx->db.outbox.recs.empty()) {
+	Smtp smtp(*ctx);
+	send(smtp);
       }
     }
   }

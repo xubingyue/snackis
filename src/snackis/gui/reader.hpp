@@ -19,7 +19,6 @@ namespace gui {
     Reader(Ctx &ctx);
     GtkWidget *ptr();
   };
-
 }}
 
 #endif

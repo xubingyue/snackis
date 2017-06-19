@@ -1,17 +1,20 @@
-* add send command
-* add fetch command
+* deal with errors in poll-loops
 * add gui::PostView
 ** combo for selecting thread
 ** entry for subject
 *** update thread on change
-** multi select for peers
-*** pre-select all in thread history
+** add thread peers
+*** fill from post peers on first post
+*** use to init post peers in following
 ** read-only text-view for history
 * add support for posts in inbox
 * rename gmain.cpp to gui.cpp
 * remove ui/main.cpp
 * update readme
 * ---
+* add automagic inbox update
+** register for inserts on inbox table
+** insert first in model in ui thread
 * add receipts
 ** receipts table with receipt_id & receipt_at
 ** store msg id & update time when receipt msg is received
