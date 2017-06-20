@@ -1,5 +1,11 @@
 * move rejects out of inbox
 ** print to console on fetch instead
+* move push_view/pop_view out of View
+* simplify rec loading
+** move to parameterized constructor in snackis::Rec
+** remove table param
+** copy all fields in rec to dynamic_cast<RecT *>(this)
+** forward from subclasses
 * finish gui::FeedView
 **  add peer input-panel with add/remove buttons
 ** add post-list tree-view
@@ -14,8 +20,7 @@
 * add support for feeds in inbox
 * add gui::FeedsForm
 ** tree-view with all active feeds
-** add Feed.active
-*** add to form
+** add Feed.active + form
 ** edit on return/dblclk
 *** push feed view
 ** add feeds command
