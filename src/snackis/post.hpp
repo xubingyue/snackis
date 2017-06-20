@@ -16,13 +16,13 @@ namespace snackis {
     UId by_id;
     str body;
 
-    Post(Feed &feed);
+    Post(Feed &feed, Peer &by);
     Post(const Msg &msg);
     Post(Ctx &ctx, const db::Rec<Post> &rec);   
   };
 
   opt<Post> find_post_id(Ctx &ctx, UId id);
-  void post_msgs(const Post &post);
+  void create_msgs(const Post &post);
 }
 
 #endif

@@ -1,10 +1,6 @@
-* finish gui::FeedView
-** copy values to feed and upsert in on_save
-** send feed-msg on add peer
-*** send post-msgs for all self-posts
-** send post-msgs on post
 * switch save/cancel buttons in all views
-* add support for feeds in inbox
+* add support for posts in new feeds to inbox
+* add support for posts in existing feeds to imap
 * deal with errors in poll-loops
 ** print to console and continue
 * add gui::FeedsForm

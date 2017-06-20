@@ -19,7 +19,8 @@ namespace snackis {
     return feed;
   }
 
-  Post::Post(Feed &feed): Rec(feed.ctx), feed_id(feed.id)
+  Post::Post(Feed &feed, Peer &by):
+    Rec(feed.ctx), feed_id(feed.id), at(now()), by_id(by.id)
   { }
 
   Post::Post(const Msg &msg):
@@ -42,7 +43,7 @@ namespace snackis {
     return Post(ctx, rec);
   }
 
-  void post_msgs(const Post &post) {
+  void create_msgs(const Post &post) {
     Ctx &ctx(post.ctx);
     Feed feed(get_feed_id(ctx, post.feed_id));
     

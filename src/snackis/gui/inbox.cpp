@@ -142,7 +142,9 @@ namespace gui {
       } else if (msg.type == Msg::REJECT) {
 	gtk_list_store_set(mod, &iter, COL_INFO, "Invite rejected", -1);
       } else {
-	log(ctx, fmt("Invalid message type: %0", msg.type));
+	gtk_list_store_set(mod, &iter, COL_INFO,
+			   fmt("Invalid message type: %0", msg.type).c_str(),
+			   -1);
       }
     }
 

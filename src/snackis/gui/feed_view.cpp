@@ -15,7 +15,25 @@ namespace gui {
   static void on_save(gpointer *_, FeedView *v) {
     Ctx &ctx(v->ctx);
     db::Trans trans(ctx);
+    v->feed.name = gtk_entry_get_text(GTK_ENTRY(v->name));
+    db::upsert(ctx.db.feeds, v->feed);
+
+    auto post_buf(gtk_text_view_get_buffer(GTK_TEXT_VIEW(v->new_post_text)));
+    GtkTextIter start, end;
+    gtk_text_buffer_get_start_iter(post_buf, &start);
+    gtk_text_buffer_get_end_iter(post_buf, &end);
+    const str post_str(gtk_text_buffer_get_text(post_buf, &start, &end, true));
+
+    if (!post_str.empty()) {
+      Post post(v->feed, whoami(ctx));
+      post.body = post_str;
+      db::insert(ctx.db.posts, post);
+      create_msgs(post);
+      log(v->ctx, "Saved new post to outbox");
+    }
+    
     db::commit(trans);
+    log(v->ctx, "Saved feed changes");
     pop_view(*v);
   }
 

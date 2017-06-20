@@ -77,7 +77,7 @@ namespace gui {
 	Invite inv(ctx, args[0]);
 	load(ctx.db.invites, inv);
 	post_msg(inv);	
-	log(ctx, fmt("New invite saved to outbox: %0", inv.to));
+	log(ctx, fmt("Saved new invite to outbox: %0", inv.to));
 	db::commit(trans);
 	return true;
       });
