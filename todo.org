@@ -1,3 +1,4 @@
+* extract std::pair<str, std::vector<str>> parse_cmd(in) from reader
 * move rejects out of inbox
 ** print to console on fetch instead
 * move push_view/pop_view out of View
@@ -69,3 +70,5 @@
 ** lock in operations
 ** lock externally around loops
 ** only lock trans_mutex when accessing stack
+* add support for events
+** label, start, end & peer_ids
