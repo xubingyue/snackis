@@ -54,15 +54,19 @@ static void activate(GtkApplication *app, gpointer user_data) {
   gtk_box_pack_start(GTK_BOX(gui::main_panel), gui::panels, true, true, 0);
 
   Ctx *ctx = new Ctx("db/");
+
   gui::left_panel = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_container_add(GTK_CONTAINER(gui::panels), gui::left_panel);
-  gui::console.emplace();
+  gui::console.emplace();  
   ctx->log = [](const str &msg) { gui::log(*gui::console, msg); };
   gtk_box_pack_start(GTK_BOX(gui::left_panel), gui::console->ptr(), true, true, 0);
-
+  
   gui::Login *login = new gui::Login(*ctx);
   login->push_view();
-  gtk_widget_show_all(gui::window);
+  gtk_widget_show(gui::window);
+  gtk_widget_show(gui::main_panel);
+  gtk_widget_show(gui::panels);
+  gtk_widget_show_all(login->ptr());
 }
 
 int main(int argc, char **argv) {

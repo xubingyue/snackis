@@ -1,4 +1,3 @@
-* move console init from gmain to login
 * deal with errors in poll-loops
 * add gui::FeedView
 ** auto completed name field
