@@ -1,13 +1,17 @@
+* rename thread to feed
+** subject - name
+* move post peers to feed
+* add drop button to inbox
+** use instead of reject for dropping
 * deal with errors in poll-loops
-* add gui::PostView
-** combo for selecting thread
-** entry for subject
-*** update thread on change
-** add thread peers
-*** fill from post peers on first post
-*** use to init post peers in following
+* add gui::FeedView
+** auto completed name field
+*** copy reader
+*** load on complete
+** peer list with add/remove buttons 
+** text-view for posting
 ** read-only text-view for history
-* add support for posts in inbox
+* add support for joining feeds in inbox
 * rename gmain.cpp to gui.cpp
 * remove ui/main.cpp
 * update readme
