@@ -2,10 +2,9 @@
 ** print to console on fetch instead
 * finish gui::FeedView
 **  add peer input-panel with add/remove buttons
-** add post field
-*** text-view
-** add history field
-*** read-only text-view
+** add post-list tree-view
+*** caption Previous Posts
+** add new post field text-view
 ** insert/update peer
 *** enable/disable depending on selected peer status
 ** send feed-msg on add peer
@@ -17,13 +16,25 @@
 ** tree-view with all active feeds
 ** add Feed.active
 *** add to form
-** edit on enter/dblclk
+** edit on return/dblclk
 *** push feed view
 ** add feeds command
+* add post command
+** add gui::PostView
+*** combo for thread
+*** text-view for body
+*** read-only text-view for history
+*** add edit on return/dblclk to feed posts table
 * remove ui/main.cpp
 * rename gmain.cpp to main.cpp
 * update readme
 * ---
+* add help command
+** add Cmd struct
+*** rename Cmd to Fn
+*** add info field
+**** display on syntax error
+** list all cmds with info
 * add automagic inbox update
 ** register for inserts on inbox table
 ** insert first in model in ui thread
@@ -31,12 +42,17 @@
 ** receipts table with receipt_id & receipt_at
 ** store msg id & update time when receipt msg is received
 ** send receipt message when accepting post
-* add feed ngram search
-** add db.feed_texts/FeedText
-*** text, count, feed_id and post_id (all keys)
+* add system-wide ngram search
+** gui.Search
+*** text field & results tre
+*** forward opt cmd arg to text field
+** add db.texts/Text
+*** keys: body, peer_id, feed_id and post_id
+*** fields: count
 *** index peers, thread names & post bodies
-** add Search field to feeds
-* add support for anonymous forwarding
+*** create for each ngram on insert/update
+*** dec / delete for each ngram on delete
+* add anonymous forwarding
 ** forward messages through all peers but receiver and self
 * add backup command
 ** backup folder setting, default /backup
