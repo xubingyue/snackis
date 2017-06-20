@@ -13,8 +13,6 @@ namespace snackis {
     if (!exists) {
       feed.name = msg.feed_name;
       Peer peer(get_peer_email(ctx, msg.from));
-      feed.at = now();
-      feed.by_id = peer.id;
       insert(ctx.db.feeds, feed);
     }
 
@@ -49,7 +47,7 @@ namespace snackis {
     Ctx &ctx(post.ctx);
     Feed feed(get_feed_id(ctx, post.feed_id));
     
-    for (auto &pid: post.peer_ids) {
+    for (auto &pid: feed.peer_ids) {
       Peer peer(get_peer_id(ctx, pid));
       Msg msg(ctx, Msg::POST, peer.email);
       msg.feed_id = feed.id;

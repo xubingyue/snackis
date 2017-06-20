@@ -1,8 +1,6 @@
 #ifndef SNACKIS_POST_HPP
 #define SNACKIS_POST_HPP
 
-#include <set>
-
 #include "snackis/rec.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/core/time.hpp"
@@ -17,7 +15,6 @@ namespace snackis {
     Time at;
     UId by_id;
     str body;
-    std::set<UId> peer_ids;
 
     Post(Feed &feed);
     Post(const Msg &msg);

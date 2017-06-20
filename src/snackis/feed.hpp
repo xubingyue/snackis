@@ -1,9 +1,10 @@
 #ifndef SNACKIS_FEED_HPP
 #define SNACKIS_FEED_HPP
 
+#include <set>
+
 #include "snackis/peer.hpp"
 #include "snackis/core/str.hpp"
-#include "snackis/core/time.hpp"
 #include "snackis/core/uid.hpp"
 
 namespace snackis {
@@ -12,8 +13,7 @@ namespace snackis {
   struct Feed: Rec {   
     UId id;
     str name;
-    Time at;
-    UId by_id;
+    std::set<UId> peer_ids;
     
     Feed(Ctx &ctx);
     Feed(const db::Table<Feed> &tbl, const db::Rec<Feed> &rec);   

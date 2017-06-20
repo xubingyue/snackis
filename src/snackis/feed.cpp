@@ -2,7 +2,7 @@
 #include "snackis/feed.hpp"
 
 namespace snackis {
-  Feed::Feed(Ctx &ctx): Rec(ctx), at(now()) { }
+  Feed::Feed(Ctx &ctx): Rec(ctx) { }
 
   Feed::Feed(const db::Table<Feed> &tbl, const db::Rec<Feed> &rec):
     Rec(dynamic_cast<Ctx &>(tbl.ctx)), id(false) {

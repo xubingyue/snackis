@@ -22,12 +22,6 @@ add_executable(tests EXCLUDE_FROM_ALL ${core_src} ${crypt_src} ${db_src} ${net_s
 target_include_directories(tests PUBLIC src/)
 target_link_libraries(tests c++experimental curl pthread sodium uuid)
 
-file(GLOB_RECURSE ui_src src/snackis/ui/*.cpp)
-
-add_executable(snackis ${core_src} ${crypt_src} ${db_src} ${net_src} ${snackis_src} ${ui_src} src/main.cpp)
-target_include_directories(snackis PUBLIC src/)
-target_link_libraries(snackis c++experimental curl pthread sodium uuid curses form)
-
 file(GLOB_RECURSE gui_src src/snackis/gui/*.cpp)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK3 REQUIRED gtk+-3.0)

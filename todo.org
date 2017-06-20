@@ -1,5 +1,3 @@
-* rename thread to feed
-** subject - name
 * move post peers to feed
 * add drop button to inbox
 ** use instead of reject for dropping

@@ -31,24 +31,21 @@ namespace snackis {
 
     peer_emails(ctx, "peer_emails", {&peer_email}, {&peer_id}),
 
-    feed_id(   "id",         uid_type,  &Feed::id),
-    feed_name( "name",       str_type,  &Feed::name),
-    feed_at(   "at",         time_type, &Feed::at),
-    feed_by_id("by_id",      uid_type,  &Feed::by_id),
+    feed_id(      "id",       uid_type,     &Feed::id),
+    feed_name(    "name",     str_type,     &Feed::name),
+    feed_peer_ids("peer_ids", uid_set_type, &Feed::peer_ids),
     
     feeds(ctx, "feeds", {&feed_id},
-	  {&feed_name, &feed_at, &feed_by_id}),
+	  {&feed_name, &feed_peer_ids}),
 
-    post_id(       "id",        uid_type,     &Post::id),
-    post_feed_id("feed_id", uid_type,     &Post::feed_id),
-    post_at(       "at",        time_type,    &Post::at),
-    post_by_id(    "by_id",     uid_type,     &Post::by_id),
-    post_body(     "body",      str_type,     &Post::body),
-    post_peer_ids( "peer_ids",  uid_set_type, &Post::peer_ids),
+    post_id(     "id",      uid_type,  &Post::id),
+    post_feed_id("feed_id", uid_type,  &Post::feed_id),
+    post_at(     "at",      time_type, &Post::at),
+    post_by_id(  "by_id",   uid_type,  &Post::by_id),
+    post_body(   "body",    str_type,  &Post::body),
 
     posts(ctx, "posts", {&post_id},
-	  {&post_id, &post_feed_id, &post_at, &post_by_id, &post_body,
-	      &post_peer_ids}),
+	  {&post_id, &post_feed_id, &post_at, &post_by_id, &post_body}),
 
     feed_posts(ctx, "feed_posts", {&post_feed_id, &post_at, &post_id}, {}),
     
