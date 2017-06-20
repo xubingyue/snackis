@@ -20,7 +20,9 @@ namespace snackis {
 
   void post_msg(Invite &inv);
   Peer accept_invite(const Msg &in);
+  Peer invite_accepted(const Msg &in);
   void reject_invite(const Msg &in);
+  void invite_rejected(const Msg &in);
 }
 
 #endif

@@ -24,10 +24,9 @@ namespace snackis {
     peer_name(      "name",       str_type,            &Peer::name),
     peer_email(     "email",      str_type,            &Peer::email),
     peer_crypt_key( "crypt_key",  crypt::pub_key_type, &Peer::crypt_key),
-    peer_created_at("created_at", time_type,           &Peer::created_at),
 
     peers(ctx, "peers", {&peer_id},
-	  {&peer_name, &peer_email, &peer_crypt_key, &peer_created_at}),
+	  {&peer_name, &peer_email, &peer_crypt_key}),
 
     peer_emails(ctx, "peer_emails", {&peer_email}, {&peer_id}),
 

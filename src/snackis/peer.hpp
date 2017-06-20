@@ -14,7 +14,6 @@ namespace snackis {
     UId id;
     str name, email;
     crypt::PubKey crypt_key;
-    Time created_at;
     
     Peer(Ctx &ctx);
     Peer(const db::Table<Peer> &tbl, const db::Rec<Peer> &rec);

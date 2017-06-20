@@ -1,6 +1,4 @@
-* move post peers to feed
-* add drop button to inbox
-** use instead of reject for dropping
+* move console init from gmain to login
 * deal with errors in poll-loops
 * add gui::FeedView
 ** auto completed name field

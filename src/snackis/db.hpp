@@ -27,7 +27,6 @@ namespace snackis {
     db::Col<Peer, str>           peer_name;
     db::Col<Peer, str>           peer_email;
     db::Col<Peer, crypt::PubKey> peer_crypt_key;
-    db::Col<Peer, Time>          peer_created_at;
     db::Table<Peer> peers, peer_emails;
 
     db::Col<Feed, UId>           feed_id;

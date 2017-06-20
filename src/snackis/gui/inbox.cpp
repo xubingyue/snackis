@@ -45,13 +45,14 @@ namespace gui {
     if (msg.type == Msg::INVITE) {
       Peer peer(accept_invite(msg));
       log(ctx, fmt("Accept of %0 saved to outbox", msg.from));
-      
       PeerView *view = new PeerView(peer);
       view->push_view();
-    } else if (msg.type == Msg::ACCEPT || msg.type == Msg::REJECT) {
-      db::Rec<Invite> inv;
-      set(inv, ctx.db.invite_to, msg.from);
-      erase(ctx.db.invites, inv);
+    } else if (msg.type == Msg::ACCEPT) {
+      Peer peer(invite_accepted(msg));
+      PeerView *view = new PeerView(peer);
+      view->push_view();
+    } else if (msg.type == Msg::REJECT) {
+      invite_rejected(msg);
     } else {
 	log(ctx, fmt("Invalid message type: %0", msg.type));
     }
