@@ -31,6 +31,11 @@
 ** receipts table with receipt_id & receipt_at
 ** store msg id & update time when receipt msg is received
 ** send receipt message when accepting post
+* add feed ngram search
+** add db.feed_texts/FeedText
+*** text, count, feed_id and post_id (all keys)
+*** index peers, thread names & post bodies
+** add Search field to feeds
 * add support for anonymous forwarding
 ** forward messages through all peers but receiver and self
 * add backup command
