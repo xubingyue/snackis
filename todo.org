@@ -1,6 +1,3 @@
-* finish simplifying rec loading
-* use ref args in fmt 
-* ---
 * finish gui::FeedView
 **  add peer input-panel with add/remove buttons
 ** add post-list tree-view
@@ -13,6 +10,7 @@
 ** send post-msgs on post
 * switch save/cancel buttons in all views
 * deal with errors in poll-loops
+** print to console and continue
 * add support for feeds in inbox
 * add gui::FeedsForm
 ** tree-view with all active feeds

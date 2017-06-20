@@ -15,8 +15,8 @@ namespace snackis {
   str fmt_arg(const str &arg);
 
   template <typename...Args>
-  str fmt(const str &in, Args..._args) {
-    auto args(std::make_tuple(std::forward<Args>(_args)...));
+  str fmt(const str &in, const Args &..._args) {
+    auto args(std::make_tuple(std::forward<const Args &>(_args)...));
     str out(in);
     size_t i = 0;
 

@@ -43,8 +43,8 @@ namespace db {
   void slurp(Ctx &ctx);
 
   template <typename...Args>
-  void log(const Ctx &ctx, const str &spec, Args...args) {
-    if (ctx.log) { (*ctx.log)(fmt(spec, std::forward<Args>(args)...)); }
+  void log(const Ctx &ctx, const str &spec, const Args &...args) {
+    if (ctx.log) { (*ctx.log)(fmt(spec, std::forward<const Args &>(args)...)); }
   }
 }}
 
