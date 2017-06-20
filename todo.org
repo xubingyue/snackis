@@ -1,4 +1,3 @@
-* move push_view/pop_view out of View
 * simplify rec loading
 ** move to parameterized constructor in snackis::Rec
 ** remove table param

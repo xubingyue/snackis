@@ -29,32 +29,33 @@ namespace gui {
       return panel;
   }
 
-  void View::push_view() {
-    if (!stack.empty()) {
-      View *v(stack.top());
-      g_object_ref(v->panel);
-      gtk_container_remove(GTK_CONTAINER(gui::panels), v->panel);
+  void push_view(View &v) {
+    if (!View::stack.empty()) {
+      const View *prev(View::stack.top());
+      g_object_ref(prev->panel);
+      gtk_container_remove(GTK_CONTAINER(gui::panels), prev->panel);
     }
 
-    stack.push(this);    
-    gtk_container_add(GTK_CONTAINER(gui::panels), panel);  
-    gtk_widget_show_all(ptr());
-    focus();
+    View::stack.push(&v);    
+    gtk_container_add(GTK_CONTAINER(gui::panels), v.panel);  
+    gtk_widget_show_all(v.ptr());
+    v.focus();
   }
 
-  void View::pop_view() {
-    assert(stack.top() == this);
-    stack.pop();
-    g_object_ref(panel);
-    gtk_container_remove(GTK_CONTAINER(gui::panels), panel);
-    if (stack.empty()) {
+  void pop_view(View &v) {
+    assert(View::stack.top() == &v);
+    View::stack.pop();
+    g_object_ref(v.panel);
+    gtk_container_remove(GTK_CONTAINER(gui::panels), v.panel);
+    
+    if (View::stack.empty()) {
       reader->focus();
     } else {
-      auto next(stack.top());
+      auto next(View::stack.top());
       gtk_container_add(GTK_CONTAINER(gui::panels), next->panel);
       next->focus();
     }
 
-    delete this;
+    delete &v;
   }
 }}

@@ -6,48 +6,48 @@ namespace snackis {
 namespace gui {
   enum PeerCol {COL_PEER_PTR=0, COL_PEER_NAME};
   
-  static void on_cancel(gpointer *_, FeedView *frm) {
-    log(frm->ctx, "Cancelled feed changes");
-    frm->pop_view();
+  static void on_cancel(gpointer *_, FeedView *v) {
+    log(v->ctx, "Cancelled feed changes");
+    pop_view(*v);
   }
 
-  static void on_save(gpointer *_, FeedView *frm) {
-    Ctx &ctx(frm->ctx);
+  static void on_save(gpointer *_, FeedView *v) {
+    Ctx &ctx(v->ctx);
     db::Trans trans(ctx);
     db::commit(trans);
-    frm->pop_view();
+    pop_view(*v);
   }
 
-  void init_peers(FeedView &frm) {
-    Ctx &ctx(frm.ctx);
+  void init_peers(FeedView &v) {
+    Ctx &ctx(v.ctx);
 
-    gtk_widget_set_hexpand(frm.peer_list, true);
+    gtk_widget_set_hexpand(v.peer_list, true);
     auto rend(gtk_cell_renderer_text_new());
     auto name_col(gtk_tree_view_column_new_with_attributes("Peers",
 							   rend,
 							   "text", COL_PEER_NAME,
 							   nullptr));
-    gtk_tree_view_append_column(GTK_TREE_VIEW(frm.peer_list), name_col);    
+    gtk_tree_view_append_column(GTK_TREE_VIEW(v.peer_list), name_col);    
     
     for(const auto &peer_rec: ctx.db.peers.recs) {
       Peer peer(ctx.db.peers, peer_rec);
       
       GtkTreeIter iter;
-      gtk_list_store_append(frm.peers, &iter);
-      gtk_list_store_set(frm.peers, &iter,
+      gtk_list_store_append(v.peers, &iter);
+      gtk_list_store_set(v.peers, &iter,
 			 COL_PEER_PTR, &peer_rec,
 			 COL_PEER_NAME, peer.name.c_str(),
 			 -1);
     }
     
     rend = gtk_cell_renderer_text_new();
-    gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(frm.peer), rend, true);
-    gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(frm.peer),
+    gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(v.peer), rend, true);
+    gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(v.peer),
 				   rend,
                                    "text", COL_PEER_NAME,
 				   nullptr);
-    gtk_widget_set_hexpand(frm.peer, true);
-    gtk_combo_box_set_active(GTK_COMBO_BOX(frm.peer), 0);
+    gtk_widget_set_hexpand(v.peer, true);
+    gtk_combo_box_set_active(GTK_COMBO_BOX(v.peer), 0);
   }
   
   FeedView::FeedView(Ctx &ctx):
@@ -61,18 +61,18 @@ namespace gui {
     save(gtk_button_new_with_mnemonic("_Save Changes")) {
     GtkWidget *lbl;
 
-    GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
-    gtk_box_pack_start(GTK_BOX(panel), frm, true, true, 0);
+    GtkWidget *v = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+    gtk_box_pack_start(GTK_BOX(panel), v, true, true, 0);
     
     lbl = gtk_label_new("Name");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    gtk_container_add(GTK_CONTAINER(v), lbl);
     gtk_widget_set_hexpand(name, true);
-    gtk_container_add(GTK_CONTAINER(frm), name);
+    gtk_container_add(GTK_CONTAINER(v), name);
 
     init_peers(*this);
-    gtk_container_add(GTK_CONTAINER(frm), peer_list);    
-    gtk_container_add(GTK_CONTAINER(frm), peer);
+    gtk_container_add(GTK_CONTAINER(v), peer_list);    
+    gtk_container_add(GTK_CONTAINER(v), peer);
     
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_widget_set_halign(btns, GTK_ALIGN_END);

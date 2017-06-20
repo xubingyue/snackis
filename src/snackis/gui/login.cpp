@@ -5,24 +5,24 @@
 
 namespace snackis {
 namespace gui {
-  static void on_login(gpointer *_, Login *login) {
-    const str pass(gtk_entry_get_text(GTK_ENTRY(login->pass)));
+  static void on_login(gpointer *_, Login *v) {
+    const str pass(gtk_entry_get_text(GTK_ENTRY(v->pass)));
 
-    if (login->repeat) {  
-      if (pass != gtk_entry_get_text(GTK_ENTRY(login->repeat))) {
-	log(login->ctx, "Password mismatch, please try again");
-	gtk_widget_grab_focus(login->pass);
+    if (v->repeat) {  
+      if (pass != gtk_entry_get_text(GTK_ENTRY(v->repeat))) {
+	log(v->ctx, "Password mismatch, please try again");
+	gtk_widget_grab_focus(v->pass);
 	return;
       }
       
-      db::init_pass(login->ctx, pass);
-    } if (!db::login(login->ctx, pass)) {
-	log(login->ctx, "Wrong password, please try again");
-	gtk_widget_grab_focus(login->pass);
+      db::init_pass(v->ctx, pass);
+    } if (!db::login(v->ctx, pass)) {
+	log(v->ctx, "Wrong password, please try again");
+	gtk_widget_grab_focus(v->pass);
 	return;
     }
 
-    Ctx &ctx(login->ctx);
+    Ctx &ctx(v->ctx);
     
     if (reader) {
       gtk_widget_hide(left_panel);
@@ -34,7 +34,7 @@ namespace gui {
 
     Peer &me(whoami(ctx));
     if (!me.name.empty()) { log(ctx, fmt("Welcome back, %0", me.name)); }
-    login->pop_view();
+    pop_view(*v);
     gtk_widget_show_all(gui::window);
   }
   

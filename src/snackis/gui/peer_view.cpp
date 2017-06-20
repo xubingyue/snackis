@@ -3,21 +3,21 @@
 
 namespace snackis {
 namespace gui {
-  static void on_cancel(gpointer *_, PeerView *pev) {
-    log(pev->ctx, "Cancelled peer changes");
-    pev->pop_view();
+  static void on_cancel(gpointer *_, PeerView *v) {
+    log(v->ctx, "Cancelled peer changes");
+    pop_view(*v);
   }
 
-  static void on_save(gpointer *_, PeerView *pev) {
+  static void on_save(gpointer *_, PeerView *v) {
     TRACE("Saving peer view");
-    Ctx &ctx(pev->ctx);
+    Ctx &ctx(v->ctx);
     db::Trans trans(ctx);
-    pev->peer.name = gtk_entry_get_text(GTK_ENTRY(pev->name));
-    pev->peer.email = gtk_entry_get_text(GTK_ENTRY(pev->email));    
-    update(ctx.db.peers, pev->peer);
+    v->peer.name = gtk_entry_get_text(GTK_ENTRY(v->name));
+    v->peer.email = gtk_entry_get_text(GTK_ENTRY(v->email));    
+    update(ctx.db.peers, v->peer);
     db::commit(trans);
     log(ctx, "Saved peer changes");
-    pev->pop_view();
+    pop_view(*v);
   }
   
   PeerView::PeerView(const Peer &peer):

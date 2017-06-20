@@ -30,8 +30,8 @@ namespace gui {
 	  return false;
 	}
 	
-	Decrypt *view = new Decrypt(ctx);
-	view->push_view();
+	Decrypt *v = new Decrypt(ctx);
+	push_view(*v);
 	return true;
       });
 
@@ -41,8 +41,8 @@ namespace gui {
 	  return false;
 	}
 	
-	Encrypt *view = new Encrypt(ctx);
-	view->push_view();
+	Encrypt *v = new Encrypt(ctx);
+	push_view(*v);
 	return true;
       });
     
@@ -62,8 +62,8 @@ namespace gui {
 	  return false;
 	}
 	
-	Inbox *view = new Inbox(ctx);
-	view->push_view();
+	Inbox *v = new Inbox(ctx);
+	push_view(*v);
 	return true;
       });
 
@@ -88,8 +88,8 @@ namespace gui {
 	  return false;
 	}
 	gtk_widget_hide(left_panel);
-	Login *view = new Login(ctx);
-	view->push_view();
+	Login *v = new Login(ctx);
+	push_view(*v);
 	return true;
       });
     
@@ -99,8 +99,8 @@ namespace gui {
 	  return false;
 	}
 	
-	FeedView *view = new FeedView(ctx);
-	view->push_view();
+	FeedView *v = new FeedView(ctx);
+	push_view(*v);
 	return true;
       });
 
@@ -120,8 +120,8 @@ namespace gui {
 	  return false;
 	}
 	
-	Setup *view = new Setup(ctx);
-	view->push_view();
+	Setup *v = new Setup(ctx);
+	push_view(*v);
 	return true;
       });
   }
