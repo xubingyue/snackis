@@ -13,7 +13,7 @@ namespace gui {
   struct FeedView: View {
     Feed feed;
     GtkListStore *peers, *feed_peers;
-    GtkWidget *name, *peer_list, *peer_input, *peer, *add_peer, *remove_peer,
+    GtkWidget *name, *peer_list, *remove_peers, *peer_input, *peer, *add_peer,
       *cancel, *save;
     
     FeedView(Ctx &ctx);

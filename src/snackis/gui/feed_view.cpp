@@ -18,6 +18,12 @@ namespace gui {
     pop_view(*v);
   }
 
+  static void on_peer_list_sel(gpointer *_, FeedView *v) {
+    auto sel(gtk_tree_view_get_selection(GTK_TREE_VIEW(v->peer_list)));
+    auto cnt(gtk_tree_selection_count_selected_rows(sel));
+    gtk_widget_set_sensitive(v->remove_peers, cnt > 0);
+  }
+  
   static db::Rec<Peer> &get_sel_peer(FeedView &v) {
     GtkTreeIter iter;
     gtk_combo_box_get_active_iter(GTK_COMBO_BOX(v.peer), &iter);
@@ -32,44 +38,53 @@ namespace gui {
     auto id(*db::get(rec, ctx.db.peer_id));
     bool exists = v->feed.peer_ids.find(id) != v->feed.peer_ids.end();
     gtk_widget_set_sensitive(v->add_peer, !exists);
-    gtk_widget_set_sensitive(v->remove_peer, exists);
+    gtk_widget_set_sensitive(v->remove_peers, exists);
   }
   
   static void on_add_peer(gpointer *_, FeedView *v) {
     Ctx &ctx(v->ctx);
     db::Rec<Peer> &rec(get_sel_peer(*v));
+
     GtkTreeIter iter;    
     gtk_list_store_append(v->feed_peers, &iter);
     gtk_list_store_set(v->feed_peers, &iter,
 		       COL_PEER_PTR, &rec,
 		       COL_PEER_NAME, db::get(rec, ctx.db.peer_name)->c_str(),
 		       -1);
+    auto sel(gtk_tree_view_get_selection(GTK_TREE_VIEW(v->peer_list)));
+    gtk_tree_selection_select_iter(sel, &iter);
+  
     v->feed.peer_ids.insert(*db::get(rec, ctx.db.peer_id));
     gtk_widget_set_sensitive(v->add_peer, false);
-    gtk_widget_set_sensitive(v->remove_peer, true);    
+    gtk_widget_set_sensitive(v->remove_peers, true);    
   }
 
-  static void on_remove_peer(gpointer *_, FeedView *v) {
+  static void on_remove_peers(gpointer *_, FeedView *v) {
     Ctx &ctx(v->ctx);
     db::Rec<Peer> &rec(get_sel_peer(*v));    
     GtkTreeIter iter;    
     gtk_tree_model_get_iter_first(GTK_TREE_MODEL(v->feed_peers), &iter);
+    auto sel(gtk_tree_view_get_selection(GTK_TREE_VIEW(v->peer_list)));
     
-    do {
+    while (true) {
       db::Rec<Peer> *iter_rec;
       gtk_tree_model_get(GTK_TREE_MODEL(v->feed_peers),
 			 &iter,
 			 COL_PEER_PTR, &iter_rec,
 			 -1);
-      if (iter_rec == &rec) {
+      if (gtk_tree_selection_iter_is_selected(sel, &iter)) {
 	gtk_list_store_remove(v->feed_peers, &iter);
+	if (!gtk_list_store_iter_is_valid(v->feed_peers, &iter)) {
+	  break;
+	}
+      } else if (!gtk_tree_model_iter_next(GTK_TREE_MODEL(v->feed_peers), &iter)) {
 	break;
       }
-    } while (gtk_tree_model_iter_next(GTK_TREE_MODEL(v->feed_peers), &iter));
+    }
     
     v->feed.peer_ids.erase(*db::get(rec, ctx.db.peer_id));
     gtk_widget_set_sensitive(v->add_peer, true);
-    gtk_widget_set_sensitive(v->remove_peer, false);    
+    gtk_widget_set_sensitive(v->remove_peers, false);    
   }
   
   void init_peers(FeedView &v) {
@@ -81,6 +96,9 @@ namespace gui {
 							   rend,
 							   "text", COL_PEER_NAME,
 							   nullptr));
+    auto sel(gtk_tree_view_get_selection(GTK_TREE_VIEW(v.peer_list)));
+    gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
+    g_signal_connect(sel, "changed", G_CALLBACK(on_peer_list_sel), &v);
     gtk_tree_view_append_column(GTK_TREE_VIEW(v.peer_list), name_col);    
     
     for(const auto &peer_rec: ctx.db.peers.recs) {
@@ -93,6 +111,8 @@ namespace gui {
 			 COL_PEER_NAME, peer.name.c_str(),
 			 -1);
     }
+
+    g_signal_connect(v.remove_peers, "clicked", G_CALLBACK(on_remove_peers), &v);
 
     rend = gtk_cell_renderer_text_new();
     gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(v.peer), rend, true);
@@ -108,8 +128,6 @@ namespace gui {
     g_signal_connect(v.add_peer, "clicked", G_CALLBACK(on_add_peer), &v);
     gtk_container_add(GTK_CONTAINER(v.peer_input), v.add_peer);
     
-    g_signal_connect(v.remove_peer, "clicked", G_CALLBACK(on_remove_peer), &v);
-    gtk_container_add(GTK_CONTAINER(v.peer_input), v.remove_peer);
   }
   
   FeedView::FeedView(Ctx &ctx):
@@ -119,10 +137,10 @@ namespace gui {
     feed_peers(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
     name(gtk_entry_new()),
     peer_list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(feed_peers))),
+    remove_peers(gtk_button_new_with_mnemonic("Remove")),
     peer_input(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5)),
     peer(gtk_combo_box_new_with_model(GTK_TREE_MODEL(peers))),
     add_peer(gtk_button_new_with_mnemonic("Add")),
-    remove_peer(gtk_button_new_with_mnemonic("Remove")),
     cancel(gtk_button_new_with_mnemonic("_Cancel Changes")),
     save(gtk_button_new_with_mnemonic("_Save Changes")) {
     GtkWidget *lbl;
@@ -137,7 +155,10 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(v), name);
 
     init_peers(*this);
-    gtk_container_add(GTK_CONTAINER(v), peer_list);    
+    gtk_container_add(GTK_CONTAINER(v), peer_list);
+    GtkWidget *peer_btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    gtk_container_add(GTK_CONTAINER(v), peer_btns);
+    gtk_container_add(GTK_CONTAINER(peer_btns), remove_peers);
     gtk_container_add(GTK_CONTAINER(v), peer_input);
     
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);

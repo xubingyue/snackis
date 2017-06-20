@@ -1,5 +1,4 @@
 * finish gui::FeedView
-** switch to using multi-select in peer_list for remove
 ** add history tree-view
 *** caption History
 ** add new post field text-view
