@@ -1,11 +1,25 @@
+* move rejects out of inbox
+** print to console on fetch instead
 * finish gui::FeedView
+**  add peer input-panel with add/remove buttons
+** add post field
+*** text-view
+** add history field
+*** read-only text-view
 ** insert/update peer
-**  add/remove buttons
 *** enable/disable depending on selected peer status
 ** send feed-msg on add peer
+*** send post-msgs for all self-posts
+** send post-msgs on post
 * deal with errors in poll-loops
-* add support for posting to feed
 * add support for feeds in inbox
+* add gui::FeedsForm
+** tree-view with all active feeds
+** add Feed.active
+*** add to form
+** edit on enter/dblclk
+*** push feed view
+** add feeds command
 * remove ui/main.cpp
 * rename gmain.cpp to main.cpp
 * update readme
