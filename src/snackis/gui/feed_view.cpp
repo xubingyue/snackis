@@ -5,6 +5,7 @@
 namespace snackis {
 namespace gui {
   enum PeerCol {COL_PEER_PTR=0, COL_PEER_NAME};
+  enum PostCol {COL_POST_PTR=0, COL_POST_AT, COL_POST_BY, COL_POST_BODY};
   
   static void on_cancel(gpointer *_, FeedView *v) {
     log(v->ctx, "Cancelled feed changes");
@@ -96,10 +97,10 @@ namespace gui {
 							   rend,
 							   "text", COL_PEER_NAME,
 							   nullptr));
+    gtk_tree_view_append_column(GTK_TREE_VIEW(v.peer_list), name_col);    
     auto sel(gtk_tree_view_get_selection(GTK_TREE_VIEW(v.peer_list)));
     gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
     g_signal_connect(sel, "changed", G_CALLBACK(on_peer_list_sel), &v);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.peer_list), name_col);    
     
     for(const auto &peer_rec: ctx.db.peers.recs) {
       Peer peer(ctx, peer_rec);
@@ -126,21 +127,69 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(v.peer_input), v.peer);
 
     g_signal_connect(v.add_peer, "clicked", G_CALLBACK(on_add_peer), &v);
-    gtk_container_add(GTK_CONTAINER(v.peer_input), v.add_peer);
-    
+    gtk_container_add(GTK_CONTAINER(v.peer_input), v.add_peer);    
   }
+
+  void init_posts(FeedView &v) {
+    Ctx &ctx(v.ctx);
+
+    gtk_widget_set_hexpand(v.post_list, true);
+    gtk_widget_set_vexpand(v.post_list, true);
+    auto rend(gtk_cell_renderer_text_new());
+    auto at_col(gtk_tree_view_column_new_with_attributes("Posts",
+							 rend,
+							 "text", COL_POST_AT,
+							 nullptr));
+    gtk_tree_view_append_column(GTK_TREE_VIEW(v.post_list), at_col);    
+
+    rend = gtk_cell_renderer_text_new();
+    auto by_col(gtk_tree_view_column_new_with_attributes("",
+							 rend,
+							 "text", COL_POST_BY,
+							 nullptr));
+    gtk_tree_view_append_column(GTK_TREE_VIEW(v.post_list), by_col);    
+
+    rend = gtk_cell_renderer_text_new();
+    auto body_col(gtk_tree_view_column_new_with_attributes("",
+							   rend,
+							   "text", COL_POST_BODY,
+							   nullptr));
+    gtk_tree_view_column_set_expand(GTK_TREE_VIEW_COLUMN(body_col), true);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(v.post_list), body_col);    
+
+    for (auto post_rec: last_posts(v.feed, 7)) {
+      Post post(ctx, *post_rec);
+      Peer peer(get_peer_id(ctx, post.by_id));
+      
+      GtkTreeIter iter;
+      gtk_list_store_append(v.posts, &iter);
+      gtk_list_store_set(v.posts, &iter,
+			 COL_POST_PTR, post_rec,
+			 COL_POST_AT, fmt(post.at, "%a %b %d, %H:%M:%S").c_str(),
+			 COL_POST_BY, peer.name.c_str(),
+			 COL_POST_BODY, post.body.c_str(),
+			 -1);
+    }
+  }
+  
   
   FeedView::FeedView(Ctx &ctx):
     View(ctx, "Feed"),
     feed(ctx),
     peers(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
     feed_peers(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
+    posts(gtk_list_store_new(4,
+			     G_TYPE_POINTER,
+			     G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING)),
     name(gtk_entry_new()),
     peer_list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(feed_peers))),
     remove_peers(gtk_button_new_with_mnemonic("Remove")),
     peer_input(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5)),
     peer(gtk_combo_box_new_with_model(GTK_TREE_MODEL(peers))),
     add_peer(gtk_button_new_with_mnemonic("Add")),
+    post_list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(posts))),
+    new_post_text(gtk_text_view_new()),
+    new_post(gtk_scrolled_window_new(NULL, NULL)),
     cancel(gtk_button_new_with_mnemonic("_Cancel Changes")),
     save(gtk_button_new_with_mnemonic("_Save Changes")) {
     GtkWidget *lbl;
@@ -155,15 +204,36 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(v), name);
 
     init_peers(*this);
+    gtk_widget_set_margin_top(peer_list, 5);
     gtk_container_add(GTK_CONTAINER(v), peer_list);
     GtkWidget *peer_btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_container_add(GTK_CONTAINER(v), peer_btns);
     gtk_container_add(GTK_CONTAINER(peer_btns), remove_peers);
+    gtk_widget_set_margin_top(peer_input, 5);
     gtk_container_add(GTK_CONTAINER(v), peer_input);
+    
+    init_posts(*this);
+    gtk_widget_set_margin_top(post_list, 5);
+    gtk_container_add(GTK_CONTAINER(v), post_list);
+
+    lbl = gtk_label_new("New Post");
+    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
+    gtk_container_add(GTK_CONTAINER(v), lbl);
+    gtk_widget_set_hexpand(new_post_text, true);
+    gtk_widget_set_vexpand(new_post_text, true);
+    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(new_post_text), GTK_WRAP_WORD);
+    gtk_scrolled_window_set_overlay_scrolling(GTK_SCROLLED_WINDOW(new_post),
+					      false);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(new_post),
+				   GTK_POLICY_NEVER,
+				   GTK_POLICY_ALWAYS);
+    gtk_container_add(GTK_CONTAINER(new_post), new_post_text);
+    gtk_container_add(GTK_CONTAINER(v), new_post);
     
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_widget_set_halign(btns, GTK_ALIGN_END);
     gtk_widget_set_valign(btns, GTK_ALIGN_END);
+    gtk_widget_set_margin_top(btns, 10);
     gtk_container_add(GTK_CONTAINER(panel), btns);
         
     g_signal_connect(cancel, "clicked", G_CALLBACK(on_cancel), this);

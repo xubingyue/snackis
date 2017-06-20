@@ -32,6 +32,11 @@ GtkLabel {
     font-size: 105%;
 }
 
+GtkTextView .view{
+    background: #ffffff;
+    color: #000000;
+}
+
 GtkTreeView column-header .button {
     background: #333333;
     border: none;
@@ -51,7 +56,11 @@ GtkTreeView column-header .label {
 .console {
     font-family: "Courier New", Courier, monospace;
     color: #cccccc;
+}
+
+.console .view {
     background: #333333;
+    color: #cccccc;
 }
 
 .reader {

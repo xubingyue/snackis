@@ -1,19 +1,14 @@
 * finish gui::FeedView
-** add history tree-view
-*** caption History
-** add new post field text-view
-** insert/update peer
-*** enable/disable depending on selected peer status
+** copy values to feed and upsert in on_save
 ** send feed-msg on add peer
 *** send post-msgs for all self-posts
 ** send post-msgs on post
 * switch save/cancel buttons in all views
+* add support for feeds in inbox
 * deal with errors in poll-loops
 ** print to console and continue
-* add support for feeds in inbox
 * add gui::FeedsForm
-** tree-view with all active feeds
-** add Feed.active + form
+** tree-view with all feeds
 ** edit on return/dblclk
 *** push feed view
 ** add feeds command

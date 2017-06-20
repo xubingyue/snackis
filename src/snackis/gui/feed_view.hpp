@@ -12,9 +12,9 @@ namespace snackis {
 namespace gui {
   struct FeedView: View {
     Feed feed;
-    GtkListStore *peers, *feed_peers;
+    GtkListStore *peers, *feed_peers, *posts;
     GtkWidget *name, *peer_list, *remove_peers, *peer_input, *peer, *add_peer,
-      *cancel, *save;
+      *post_list, *new_post_text, *new_post, *cancel, *save;
     
     FeedView(Ctx &ctx);
     void focus() override;

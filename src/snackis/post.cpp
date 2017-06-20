@@ -31,16 +31,15 @@ namespace snackis {
     body(msg.post_body) 
   { }
 
-  Post::Post(const db::Table<Post> &tbl, const db::Rec<Post> &rec):
-    Rec(dynamic_cast<Ctx &>(tbl.ctx)), id(false) {
-    copy(tbl, *this, rec);
+  Post::Post(Ctx &ctx, const db::Rec<Post> &rec): Rec(ctx), id(false) {
+    copy(*this, rec);
   }
 
   opt<Post> find_post_id(Ctx &ctx, UId id) {
     db::Rec<Post> rec;
     set(rec, ctx.db.post_id, id);
     if (!load(ctx.db.posts, rec)) { return nullopt; }
-    return Post(ctx.db.posts, rec);
+    return Post(ctx, rec);
   }
 
   void post_msgs(const Post &post) {

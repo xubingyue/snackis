@@ -25,28 +25,26 @@ namespace snackis {
     return *found;
   }
 
-  std::vector<Post> last_posts(const Feed &feed, size_t max) {
+  std::vector<const db::Rec<Post> *> last_posts(const Feed &feed, size_t max) {
     Ctx &ctx(feed.ctx);
-    db::Rec<Post> post_rec;
-    set(post_rec, ctx.db.post_feed_id, feed.id);
-    set(post_rec, ctx.db.post_at, Time::max());
-    std::vector<Post> posts;
-    if (ctx.db.feed_posts.recs.empty()) { return posts; }
-    auto found(ctx.db.feed_posts.recs.lower_bound(post_rec));
-    if (found == ctx.db.feed_posts.recs.begin()) { return posts; }
+    std::vector<const db::Rec<Post> *> out;
+    if (ctx.db.feed_posts.recs.empty()) { return out; }
+
+    db::Rec<Post> key;
+    set(key, ctx.db.post_feed_id, feed.id);
+    set(key, ctx.db.post_at, Time::max());
+    auto found(ctx.db.feed_posts.recs.lower_bound(key));
+    if (found == ctx.db.feed_posts.recs.begin()) { return out; }
     found--;
     
-    while (posts.size() < max) {
-      post_rec.clear();
-      copy(ctx.db.posts.key, post_rec, *found);
-      load(ctx.db.posts, post_rec);
-      Post post(ctx.db.posts, post_rec);
-      if (post.feed_id != feed.id) { break; }
-      posts.push_back(post);
+    while (out.size() < max) {
+      if (*db::get(*found, ctx.db.post_feed_id) != feed.id) { break; }
+      const db::Rec<Post> &rec(*found);
+      out.push_back(&rec);
       if (found == ctx.db.feed_posts.recs.begin()) { break; }
       found--;
     }
 
-    return posts;
+    return out;
   }
 }
