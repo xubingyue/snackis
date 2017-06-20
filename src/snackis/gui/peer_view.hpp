@@ -1,8 +1,8 @@
 #ifndef SNACKIS_GUI_PEER_VIEW_HPP
 #define SNACKIS_GUI_PEER_VIEW_HPP
 
-#include <vector>
 #include <mutex>
+#include <vector>
 
 #include "snackis/peer.hpp"
 #include "snackis/gui/view.hpp"
