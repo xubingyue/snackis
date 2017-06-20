@@ -14,7 +14,7 @@ namespace gui {
   static void init_cmds(Reader &rdr) {
     Ctx &ctx(rdr.ctx);
 
-    rdr.cmds.emplace("clear", [&ctx](auto id, auto args) {
+    rdr.cmds.emplace("clear", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: clear");
 	  return false;
@@ -24,7 +24,7 @@ namespace gui {
 	return true;
       });
 
-    rdr.cmds.emplace("decrypt", [&ctx](auto id, auto args) {
+    rdr.cmds.emplace("decrypt", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: decrypt");
 	  return false;
@@ -35,7 +35,7 @@ namespace gui {
 	return true;
       });
 
-    rdr.cmds.emplace("encrypt", [&ctx](auto id, auto args) {
+    rdr.cmds.emplace("encrypt", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: encrypt");
 	  return false;
@@ -46,7 +46,7 @@ namespace gui {
 	return true;
       });
     
-    rdr.cmds.emplace("fetch", [&ctx](auto id, auto args) {
+    rdr.cmds.emplace("fetch", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: fetch");
 	  return false;
@@ -56,7 +56,7 @@ namespace gui {
 	return true;
       });
 
-    rdr.cmds.emplace("inbox", [&ctx](auto id, auto args) {
+    rdr.cmds.emplace("inbox", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: inbox");
 	  return false;
@@ -67,7 +67,7 @@ namespace gui {
 	return true;
       });
 
-    rdr.cmds.emplace("invite", [&ctx](auto id, auto args) {
+    rdr.cmds.emplace("invite", [&ctx](auto args) {
 	if (args.size() != 1) {
 	  log(ctx, "Invalid number of arguments, syntax: invite foo@bar.com");
 	  return false;
@@ -82,7 +82,7 @@ namespace gui {
 	return true;
       });
 
-    rdr.cmds.emplace("lock", [&ctx](auto id, auto args) {
+    rdr.cmds.emplace("lock", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: lock");
 	  return false;
@@ -93,7 +93,7 @@ namespace gui {
 	return true;
       });
     
-    rdr.cmds.emplace("new-feed", [&ctx](auto id, auto args) {
+    rdr.cmds.emplace("new-feed", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: new-feed");
 	  return false;
@@ -104,7 +104,7 @@ namespace gui {
 	return true;
       });
 
-    rdr.cmds.emplace("send", [&ctx](auto id, auto args) {
+    rdr.cmds.emplace("send", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: send");
 	  return false;
@@ -114,7 +114,7 @@ namespace gui {
 	return true;
       });
 
-    rdr.cmds.emplace("setup", [&ctx](auto id, auto args) {
+    rdr.cmds.emplace("setup", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: setup");
 	  return false;
@@ -142,18 +142,27 @@ namespace gui {
     
   }
   
-  static opt<Reader::Cmd> find_cmd(Reader &rdr, const str &in) {
-    str in_str(in);
-    
-    if (in_str == "") {
-      if (!rdr.last_cmd) { return nullopt; }
-      in_str = *rdr.last_cmd;
-    }
-
-    InStream in_words(in_str);
+  static std::pair<str, std::vector<str>> parse_cmd(Reader &rdr, const str &in) {
+    InStream in_words(in);
     str id;
     in_words >> id;
-    auto found(rdr.cmds.find(id));
+    std::vector<str> args;
+    str arg;
+    while (in_words >> arg) { args.push_back(arg); }
+    return std::make_pair(id, args);
+  }
+  
+  static opt<Reader::Cmd> find_cmd(Reader &rdr, const str &in) {
+    str _in(in);
+    
+    if (_in == "") {
+      if (!rdr.last_cmd) { return nullopt; }
+      _in = *rdr.last_cmd;
+    }
+
+    auto parsed(parse_cmd(rdr, _in));
+
+    auto found(rdr.cmds.find(parsed.first));
     if (found == rdr.cmds.end()) { return nullopt; }
     return found->second; 
   }
@@ -162,20 +171,15 @@ namespace gui {
     Ctx &ctx(rdr.ctx);
 
     try {
-      InStream in_words(in);
-      str id;
-      in_words >> id;
-      auto cmd(find_cmd(rdr, id));
+      auto parsed(parse_cmd(rdr, in));
+      auto cmd(find_cmd(rdr, parsed.first));
       
       if (!cmd){
 	log(ctx, fmt("Unknown command: '%0'", in));
 	return false;
       }
-	  
-      std::vector<str> args;
-      str arg;
-      while (in_words >> arg) { args.push_back(arg); }
-      if (!(*cmd)(id, args)) { return false; }
+      
+      if (!(*cmd)(parsed.second)) { return false; }
       rdr.last_cmd = in;
     } catch (const std::exception &e) {
       log(ctx, fmt("Error while executing command '%0':\n%1", in, e.what()));
