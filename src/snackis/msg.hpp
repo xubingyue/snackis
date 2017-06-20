@@ -17,8 +17,8 @@ namespace snackis {
     str from, to;
     str peer_name;
     crypt::PubKey crypt_key;
-    UId thread_id;
-    str thread_subj;
+    UId feed_id;
+    str feed_name;
     UId post_id;
     Time post_at;
     str post_body;

@@ -3,31 +3,31 @@
 #include "snackis/post.hpp"
 
 namespace snackis {
-  static Thread get_thread(const Msg &msg) {
+  static Feed get_feed(const Msg &msg) {
     Ctx &ctx(msg.ctx);
-    db::Rec<Thread> thread_rec;
-    set(thread_rec, ctx.db.thread_id, msg.thread_id);
-    bool exists = load(ctx.db.threads, thread_rec) ? true : false;
-    Thread thread(ctx.db.threads, thread_rec);
+    db::Rec<Feed> feed_rec;
+    set(feed_rec, ctx.db.feed_id, msg.feed_id);
+    bool exists = load(ctx.db.feeds, feed_rec) ? true : false;
+    Feed feed(ctx.db.feeds, feed_rec);
     
     if (!exists) {
-      thread.subj = msg.thread_subj;
+      feed.name = msg.feed_name;
       Peer peer(get_peer_email(ctx, msg.from));
-      thread.at = now();
-      thread.by_id = peer.id;
-      insert(ctx.db.threads, thread);
+      feed.at = now();
+      feed.by_id = peer.id;
+      insert(ctx.db.feeds, feed);
     }
 
-    return thread;
+    return feed;
   }
 
-  Post::Post(Thread &thread): Rec(thread.ctx), thread_id(thread.id)
+  Post::Post(Feed &feed): Rec(feed.ctx), feed_id(feed.id)
   { }
 
   Post::Post(const Msg &msg):
     Rec(msg.ctx),
     id(msg.post_id),
-    thread_id(get_thread(msg).id), 
+    feed_id(get_feed(msg).id), 
     at(msg.post_at), 
     by_id(get_peer_email(ctx, msg.from).id),
     body(msg.post_body) 
@@ -47,13 +47,13 @@ namespace snackis {
 
   void post_msgs(const Post &post) {
     Ctx &ctx(post.ctx);
-    Thread thread(get_thread_id(ctx, post.thread_id));
+    Feed feed(get_feed_id(ctx, post.feed_id));
     
     for (auto &pid: post.peer_ids) {
       Peer peer(get_peer_id(ctx, pid));
       Msg msg(ctx, Msg::POST, peer.email);
-      msg.thread_id = thread.id;
-      msg.thread_subj = thread.subj;
+      msg.feed_id = feed.id;
+      msg.feed_name = feed.name;
       msg.post_id = post.id;
       msg.post_at = post.at;
       msg.post_body = post.body;

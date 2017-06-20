@@ -10,16 +10,16 @@
 
 namespace snackis {
   struct Peer;
-  struct Thread;
+  struct Feed;
   
   struct Post: Rec {
-    UId id, thread_id;
+    UId id, feed_id;
     Time at;
     UId by_id;
     str body;
     std::set<UId> peer_ids;
 
-    Post(Thread &thread);
+    Post(Feed &feed);
     Post(const Msg &msg);
     Post(const db::Table<Post> &tbl, const db::Rec<Post> &rec);   
   };

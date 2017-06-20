@@ -31,52 +31,52 @@ namespace snackis {
 
     peer_emails(ctx, "peer_emails", {&peer_email}, {&peer_id}),
 
-    thread_id(   "id",         uid_type,  &Thread::id),
-    thread_subj( "subj",       str_type,  &Thread::subj),
-    thread_at(   "at",         time_type, &Thread::at),
-    thread_by_id("by_id",      uid_type,  &Thread::by_id),
+    feed_id(   "id",         uid_type,  &Feed::id),
+    feed_name( "name",       str_type,  &Feed::name),
+    feed_at(   "at",         time_type, &Feed::at),
+    feed_by_id("by_id",      uid_type,  &Feed::by_id),
     
-    threads(ctx, "threads", {&thread_id},
-	    {&thread_subj, &thread_at, &thread_by_id}),
+    feeds(ctx, "feeds", {&feed_id},
+	  {&feed_name, &feed_at, &feed_by_id}),
 
     post_id(       "id",        uid_type,     &Post::id),
-    post_thread_id("thread_id", uid_type,     &Post::thread_id),
+    post_feed_id("feed_id", uid_type,     &Post::feed_id),
     post_at(       "at",        time_type,    &Post::at),
     post_by_id(    "by_id",     uid_type,     &Post::by_id),
     post_body(     "body",      str_type,     &Post::body),
     post_peer_ids( "peer_ids",  uid_set_type, &Post::peer_ids),
 
     posts(ctx, "posts", {&post_id},
-	  {&post_id, &post_thread_id, &post_at, &post_by_id, &post_body,
+	  {&post_id, &post_feed_id, &post_at, &post_by_id, &post_body,
 	      &post_peer_ids}),
 
-    thread_posts(ctx, "thread_posts", {&post_thread_id, &post_at, &post_id}, {}),
+    feed_posts(ctx, "feed_posts", {&post_feed_id, &post_at, &post_id}, {}),
     
-    msg_id(         "id",          uid_type,            &Msg::id),
-    msg_type(       "type",        str_type,            &Msg::type),
-    msg_from(       "from",        str_type,            &Msg::from),
-    msg_to(         "to",          str_type,            &Msg::to),
-    msg_fetched_at( "fetched_at",  time_type,           &Msg::fetched_at),
-    msg_peer_name(  "peer_name",   str_type,            &Msg::peer_name),
-    msg_crypt_key(  "crypt_key",   crypt::pub_key_type, &Msg::crypt_key),
-    msg_thread_id(  "thread_id",   uid_type,            &Msg::thread_id),
-    msg_thread_subj("thread_subj", str_type,            &Msg::thread_subj),
-    msg_post_id(    "post_id",     uid_type,            &Msg::post_id),
-    msg_post_at(    "post_at",     time_type,           &Msg::post_at),
-    msg_post_body(  "post_body",   str_type,            &Msg::post_body),
+    msg_id(        "id",         uid_type,            &Msg::id),
+    msg_type(      "type",       str_type,            &Msg::type),
+    msg_from(      "from",       str_type,            &Msg::from),
+    msg_to(        "to",         str_type,            &Msg::to),
+    msg_fetched_at("fetched_at", time_type,           &Msg::fetched_at),
+    msg_peer_name( "peer_name",  str_type,            &Msg::peer_name),
+    msg_crypt_key( "crypt_key",  crypt::pub_key_type, &Msg::crypt_key),
+    msg_feed_id(   "feed_id",    uid_type,            &Msg::feed_id),
+    msg_feed_name( "feed_name",  str_type,            &Msg::feed_name),
+    msg_post_id(   "post_id",    uid_type,            &Msg::post_id),
+    msg_post_at(   "post_at",    time_type,           &Msg::post_at),
+    msg_post_body( "post_body",  str_type,            &Msg::post_body),
     msgs(ctx, "msgs", {&msg_id}, {}),
     
     inbox(ctx, "inbox", {&msg_id},
 	  {&msg_type, &msg_fetched_at, &msg_peer_name, &msg_from, &msg_crypt_key,
-	      &msg_thread_id, &msg_thread_subj,
+	      &msg_feed_id, &msg_feed_name,
 	      &msg_post_id, &msg_post_at, &msg_post_body}),
     
     outbox(ctx, "outbox", {&msg_id},
 	   {&msg_type, &msg_to, &msg_peer_name, &msg_crypt_key,
-	       &msg_thread_id, &msg_thread_subj,
+	       &msg_feed_id, &msg_feed_name,
 	       &msg_post_id, &msg_post_at, &msg_post_body}) {
     inbox.indexes.insert(&msgs);
     peers.indexes.insert(&peer_emails);
-    posts.indexes.insert(&thread_posts);
+    posts.indexes.insert(&feed_posts);
   }
 }
