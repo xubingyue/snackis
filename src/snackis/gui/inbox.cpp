@@ -51,8 +51,6 @@ namespace gui {
       Peer peer(invite_accepted(msg));
       PeerView *view = new PeerView(peer);
       view->push_view();
-    } else if (msg.type == Msg::REJECT) {
-      invite_rejected(msg);
     } else {
 	log(ctx, fmt("Invalid message type: %0", msg.type));
     }
@@ -78,7 +76,7 @@ namespace gui {
     if (msg.type == Msg::INVITE) {
 	reject_invite(msg);
 	log(ctx, fmt("Reject of %0 saved to outbox", msg.from));
-    } else if (msg.type == Msg::ACCEPT || msg.type == Msg::REJECT) {
+    } else if (msg.type == Msg::ACCEPT) {
       // Nothing to do here
     } else {
 	log(ctx, fmt("Invalid message type: %0", msg.type));

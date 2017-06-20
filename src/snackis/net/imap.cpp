@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iterator>
 #include "snackis/ctx.hpp"
+#include "snackis/invite.hpp"
 #include "snackis/core/fmt.hpp"
 #include "snackis/core/stream.hpp"
 #include "snackis/net/imap.hpp"
@@ -161,7 +162,13 @@ namespace snackis {
 	}
       }
       
-      insert(ctx.db.inbox, *msg);
+      if (msg->type == Msg::REJECT) {
+	invite_rejected(*msg);
+	log(ctx, fmt("Invite to %0 was rejected", msg->from));
+      } else {
+	insert(ctx.db.inbox, *msg);
+      }
+      
       delete_uid(imap, uid);
       msg_cnt++;
     }
