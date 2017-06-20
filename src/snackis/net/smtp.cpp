@@ -116,18 +116,19 @@ namespace snackis {
   }
   
   void send(struct Smtp &smtp) {
+    Ctx &ctx(smtp.ctx);
     TRACE("Sending email");
-    db::Table<Msg> &tbl(smtp.ctx.db.outbox);
-    log(smtp.ctx, "Sending %0 messages...", tbl.recs.size());
+    db::Table<Msg> &tbl(ctx.db.outbox);
+    log(ctx, "Sending %0 messages...", tbl.recs.size());
     
     while (tbl.recs.size() > 0) {
       auto i = tbl.recs.begin();
-      Msg msg(tbl, *i);
+      Msg msg(ctx, *i);
       send(smtp, msg);
       erase(tbl, *i);
     }
     
     db::commit(smtp.trans);
-    log(smtp.ctx, "Finished sending email");
+    log(ctx, "Finished sending email");
   }
 }

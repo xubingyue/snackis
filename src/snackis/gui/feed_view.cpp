@@ -30,7 +30,7 @@ namespace gui {
     gtk_tree_view_append_column(GTK_TREE_VIEW(v.peer_list), name_col);    
     
     for(const auto &peer_rec: ctx.db.peers.recs) {
-      Peer peer(ctx.db.peers, peer_rec);
+      Peer peer(ctx, peer_rec);
       
       GtkTreeIter iter;
       gtk_list_store_append(v.peers, &iter);

@@ -19,9 +19,8 @@ namespace snackis {
     }
   }
 
-  Msg::Msg(const db::Table<Msg> &tbl, const db::Rec<Msg> &rec):
-    Rec(dynamic_cast<Ctx &>(tbl.ctx)), id(false) {
-    copy(tbl, *this, rec);
+  Msg::Msg(Ctx &ctx, const db::Rec<Msg> &src): Rec(ctx), id(false) {
+    copy(*this, src);
   }
 
   str encode(const Msg &msg) {

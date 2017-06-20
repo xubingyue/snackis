@@ -12,8 +12,7 @@ namespace snackis {
     str key, val;
 
     BasicSetting(Ctx &ctx, const str &key);
-    BasicSetting(const db::Table<BasicSetting> &tbl,
-		 const db::Rec<BasicSetting> &rec);
+    BasicSetting(Ctx &ctx, const db::Rec<BasicSetting> &rec);
   };
 
   template <typename ValT>

@@ -8,7 +8,7 @@ namespace snackis {
     db::Rec<Feed> feed_rec;
     set(feed_rec, ctx.db.feed_id, msg.feed_id);
     bool exists = load(ctx.db.feeds, feed_rec) ? true : false;
-    Feed feed(ctx.db.feeds, feed_rec);
+    Feed feed(ctx, feed_rec);
     
     if (!exists) {
       feed.name = msg.feed_name;

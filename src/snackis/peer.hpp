@@ -16,7 +16,7 @@ namespace snackis {
     crypt::PubKey crypt_key;
     
     Peer(Ctx &ctx);
-    Peer(const db::Table<Peer> &tbl, const db::Rec<Peer> &rec);
+    Peer(Ctx &ctx, const db::Rec<Peer> &src);
   };
 
   Peer get_peer_id(Ctx &ctx, const UId &id);

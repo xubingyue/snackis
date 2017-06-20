@@ -4,9 +4,8 @@
 namespace snackis {
   Peer::Peer(Ctx &ctx): Rec(ctx) { }
 
-  Peer::Peer(const db::Table<Peer> &tbl, const db::Rec<Peer> &rec):
-    Rec(dynamic_cast<Ctx &>(tbl.ctx)), id(false) {
-    copy(tbl, *this, rec);
+  Peer::Peer(Ctx &ctx, const db::Rec<Peer> &src): Rec(ctx), id(false) {
+    copy(*this, src);
   }
 
   Peer get_peer_id(Ctx &ctx, const UId &id) {
@@ -17,7 +16,7 @@ namespace snackis {
       ERROR(Db, fmt("Peer id not found: %0", id));
     }
 
-    return Peer(ctx.db.peers, rec);
+    return Peer(ctx, rec);
   }
 
   opt<Peer> find_peer_email(Ctx &ctx, const str &email) {
@@ -26,7 +25,7 @@ namespace snackis {
     
     if (!load(ctx.db.peer_emails, rec)) { return nullopt; }
 
-    Peer peer(ctx.db.peers, rec);
+    Peer peer(ctx, rec);
 
     if (!load(ctx.db.peers, peer)) {
       ERROR(Db, fmt("Peer not found: %0", peer.id));

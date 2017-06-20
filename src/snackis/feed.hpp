@@ -16,7 +16,7 @@ namespace snackis {
     std::set<UId> peer_ids;
     
     Feed(Ctx &ctx);
-    Feed(const db::Table<Feed> &tbl, const db::Rec<Feed> &rec);   
+    Feed(Ctx &ctx, const db::Rec<Feed> &rec);   
   };
 
   opt<Feed> find_feed_id(Ctx &ctx, UId id);

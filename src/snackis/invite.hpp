@@ -15,7 +15,7 @@ namespace snackis {
     Time posted_at;
     
     Invite(Ctx &ctx, const str &to);
-    Invite(const db::Table<Invite> &tbl, const db::Rec<Invite> &rec);
+    Invite(Ctx &ctx, const db::Rec<Invite> &src);
   };
 
   void post_msg(Invite &inv);

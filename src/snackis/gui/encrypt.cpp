@@ -69,7 +69,7 @@ namespace gui {
 		       &iter,
 		       COL_PEER_PTR, &peer_rec,
 		       -1);
-    Peer peer(ctx.db.peers, *peer_rec);
+    Peer peer(ctx, *peer_rec);
     
     encrypt(peer,
 	    in_path, out_path,
@@ -83,7 +83,7 @@ namespace gui {
     Ctx &ctx(v.ctx);
     
     for(const auto &peer_rec: ctx.db.peers.recs) {
-      Peer peer(ctx.db.peers, peer_rec);
+      Peer peer(ctx, peer_rec);
       
       GtkTreeIter iter;
       gtk_list_store_append(v.peers, &iter);

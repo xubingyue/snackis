@@ -40,7 +40,7 @@ namespace gui {
 
     db::Rec<Msg> *msg_rec;
     gtk_tree_model_get(mod, &iter, COL_MSG, &msg_rec, -1);
-    Msg msg(ctx.db.inbox, *msg_rec);
+    Msg msg(ctx, *msg_rec);
 
     if (msg.type == Msg::INVITE) {
       Peer peer(accept_invite(msg));
@@ -71,7 +71,7 @@ namespace gui {
 
     db::Rec<Msg> *msg_rec;
     gtk_tree_model_get(mod, &iter, COL_MSG, &msg_rec, -1);
-    Msg msg(ctx.db.inbox, *msg_rec);
+    Msg msg(ctx, *msg_rec);
 
     if (msg.type == Msg::INVITE) {
 	reject_invite(msg);
@@ -123,7 +123,7 @@ namespace gui {
     std::vector<UId> rem;
     
     for(const auto &msg_rec: ctx.db.inbox.recs) {
-      Msg msg(ctx.db.inbox, msg_rec);
+      Msg msg(ctx, msg_rec);
 
       GtkTreeIter iter;
       gtk_list_store_append(mod, &iter);

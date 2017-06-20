@@ -1,8 +1,5 @@
-* simplify rec loading
-** move to parameterized constructor in snackis::Rec
-** remove table param
-** copy all fields in rec to dynamic_cast<RecT *>(this)
-** forward from subclasses
+* finish simplifying rec loading
+* use ref args in fmt 
 * ---
 * finish gui::FeedView
 **  add peer input-panel with add/remove buttons
@@ -14,6 +11,7 @@
 ** send feed-msg on add peer
 *** send post-msgs for all self-posts
 ** send post-msgs on post
+* switch save/cancel buttons in all views
 * deal with errors in poll-loops
 * add support for feeds in inbox
 * add gui::FeedsForm

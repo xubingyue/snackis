@@ -4,16 +4,15 @@
 namespace snackis {
   Feed::Feed(Ctx &ctx): Rec(ctx) { }
 
-  Feed::Feed(const db::Table<Feed> &tbl, const db::Rec<Feed> &rec):
-    Rec(dynamic_cast<Ctx &>(tbl.ctx)), id(false) {
-    copy(tbl, *this, rec);
+  Feed::Feed(Ctx &ctx, const db::Rec<Feed> &src): Rec(ctx), id(false) {
+    copy(*this, src);
   }
 
   opt<Feed> find_feed_id(Ctx &ctx, UId id) {
     db::Rec<Feed> rec;
     set(rec, ctx.db.feed_id, id);
     if (!load(ctx.db.feeds, rec)) { return nullopt; }
-    return Feed(ctx.db.feeds, rec);
+    return Feed(ctx, rec);
   }
 
   Feed get_feed_id(Ctx &ctx, UId id) {

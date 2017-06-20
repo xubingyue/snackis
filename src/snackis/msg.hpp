@@ -25,7 +25,7 @@ namespace snackis {
     
     Msg(Ctx &ctx);
     Msg(Ctx &ctx, const str &type, const str &to, bool init=true);
-    Msg(const db::Table<Msg> &tbl, const db::Rec<Msg> &rec);
+    Msg(Ctx &ctx, const db::Rec<Msg> &src);
   };
   
   str encode(const Msg &msg);
