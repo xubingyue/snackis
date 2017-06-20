@@ -6,6 +6,7 @@
 * add gui::FeedsForm
 ** tree-view with all feeds
 ** edit on return/dblclk
+*** load feed peers on edit
 *** push feed view
 ** add feeds command
 * add post command
@@ -13,7 +14,7 @@
 *** combo for thread
 *** text-view for body
 *** read-only text-view for history
-*** add edit on return/dblclk to feed posts table
+*** add edit on return/dblclk to feed post list
 * remove ui/main.cpp
 * rename gmain.cpp to main.cpp
 * update readme
