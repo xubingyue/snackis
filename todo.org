@@ -1,14 +1,13 @@
+* finish gui::FeedView
+** insert/update peer
+**  add/remove buttons
+*** enable/disable depending on selected peer status
+** send feed-msg on add peer
 * deal with errors in poll-loops
-* add gui::FeedView
-** auto completed name field
-*** copy reader
-*** load on complete
-** peer list with add/remove buttons 
-** text-view for posting
-** read-only text-view for history
-* add support for joining feeds in inbox
-* rename gmain.cpp to gui.cpp
+* add support for posting to feed
+* add support for feeds in inbox
 * remove ui/main.cpp
+* rename gmain.cpp to main.cpp
 * update readme
 * ---
 * add automagic inbox update

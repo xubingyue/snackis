@@ -4,7 +4,7 @@
 
 namespace snackis {
 namespace gui {
-  enum PeerCol {COL_PEER_PTR=0, COL_PEER_NAME, COL_PEER_EMAIL};
+  enum PeerCol {COL_PEER_PTR=0, COL_PEER_NAME};
     
   static void on_source(gpointer *_, Encrypt *enc) {
     Ctx &ctx(enc->ctx);
@@ -90,7 +90,6 @@ namespace gui {
       gtk_list_store_set(enc.peers, &iter,
 			 COL_PEER_PTR, &peer_rec,
 			 COL_PEER_NAME, peer.name.c_str(),
-			 COL_PEER_EMAIL, peer.email.c_str(),
 			 -1);
     }
     
@@ -141,7 +140,7 @@ namespace gui {
 
   Encrypt::Encrypt(Ctx &ctx):
     View(ctx, "Encrypt"),
-    peers(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
+    peers(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
     peer(gtk_combo_box_new_with_model(GTK_TREE_MODEL(peers))),
     source(gtk_entry_new()),
     target(gtk_entry_new()),

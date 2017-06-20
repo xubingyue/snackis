@@ -3,6 +3,7 @@
 #include "snackis/core/fmt.hpp"
 #include "snackis/gui/decrypt.hpp"
 #include "snackis/gui/encrypt.hpp"
+#include "snackis/gui/feed_view.hpp"
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/inbox.hpp"
 #include "snackis/gui/reader.hpp"
@@ -44,7 +45,7 @@ namespace gui {
 	view->push_view();
 	return true;
       });
-
+    
     rdr.cmds.emplace("fetch", [&ctx](auto id, auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: fetch");
@@ -92,6 +93,17 @@ namespace gui {
 	return true;
       });
     
+    rdr.cmds.emplace("new-feed", [&ctx](auto id, auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: new-feed");
+	  return false;
+	}
+	
+	FeedView *view = new FeedView(ctx);
+	view->push_view();
+	return true;
+      });
+
     rdr.cmds.emplace("send", [&ctx](auto id, auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: send");
