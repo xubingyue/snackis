@@ -192,11 +192,8 @@ namespace gui {
   static void on_activate(GtkWidget *_, Reader *rdr) {
     const str in(gtk_entry_get_text(GTK_ENTRY(rdr->entry)));
     auto cmd(find_cmd(*rdr, in));
-    
-    if (cmd) {
-      gtk_entry_set_text(GTK_ENTRY(rdr->entry), "");
-      exec_cmd(*rdr, in);
-    }
+    if (cmd) { gtk_entry_set_text(GTK_ENTRY(rdr->entry), ""); }
+    if (!exec_cmd(*rdr, in)) { gtk_widget_grab_focus(rdr->entry); }
   }
 
   Reader::Reader(Ctx &ctx): ctx(ctx), entry(gtk_entry_new()) {
