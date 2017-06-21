@@ -107,14 +107,14 @@ namespace gui {
     gtk_widget_set_margin_top(frm, 5);
     gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
     gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
-    GtkWidget *lbl = gtk_label_new("Source");
+    GtkWidget *lbl = gtk_label_new("Source File");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
     gtk_grid_attach(GTK_GRID(frm), lbl, 0, 0, 1, 1);
     gtk_widget_set_hexpand(v.source, true);
     gtk_widget_set_sensitive(v.source, false);
     gtk_grid_attach(GTK_GRID(frm), v.source, 0, 1, 1, 1);
 
-    GtkWidget *btn = gtk_button_new_with_label("Select File");
+    GtkWidget *btn = gtk_button_new_with_label("Select");
     g_signal_connect(btn, "clicked", G_CALLBACK(on_source), &v);
     gtk_grid_attach(GTK_GRID(frm), btn, 1, 1, 1, 1);
     return frm;
@@ -125,14 +125,14 @@ namespace gui {
     gtk_widget_set_margin_top(frm, 5);
     gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
     gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
-    GtkWidget *lbl = gtk_label_new("Target");
+    GtkWidget *lbl = gtk_label_new("Target File");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
     gtk_grid_attach(GTK_GRID(frm), lbl, 0, 0, 1, 1);
     gtk_widget_set_hexpand(v.target, true);
     gtk_widget_set_sensitive(v.target, false);
     gtk_grid_attach(GTK_GRID(frm), v.target, 0, 1, 1, 1);
 
-    GtkWidget *btn = gtk_button_new_with_label("Select File");
+    GtkWidget *btn = gtk_button_new_with_label("Select");
     g_signal_connect(btn, "clicked", G_CALLBACK(on_target), &v);
     gtk_grid_attach(GTK_GRID(frm), btn, 1, 1, 1, 1);
     return frm;
@@ -144,7 +144,9 @@ namespace gui {
     peer(gtk_combo_box_new_with_model(GTK_TREE_MODEL(peers))),
     source(gtk_entry_new()),
     target(gtk_entry_new()),
-    decode(gtk_check_button_new_with_label("Decode")) {
+    decode(gtk_check_button_new_with_label("Decode")),
+    save(gtk_button_new_with_mnemonic("_Save Decrypted File")),
+    cancel(gtk_button_new_with_mnemonic("_Cancel")) {
     GtkWidget *lbl;
 
     GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
@@ -166,13 +168,11 @@ namespace gui {
     gtk_widget_set_valign(btns, GTK_ALIGN_END);
     gtk_container_add(GTK_CONTAINER(panel), btns);
         
-    cancel = gtk_button_new_with_mnemonic("_Cancel Decryption");
-    g_signal_connect(cancel, "clicked", G_CALLBACK(on_cancel), this);
-    gtk_container_add(GTK_CONTAINER(btns), cancel);
-    
-    save = gtk_button_new_with_mnemonic("_Save Decrypted File");
     g_signal_connect(save, "clicked", G_CALLBACK(on_save), this);
     gtk_container_add(GTK_CONTAINER(btns), save);
+
+    g_signal_connect(cancel, "clicked", G_CALLBACK(on_cancel), this);
+    gtk_container_add(GTK_CONTAINER(btns), cancel);
   }
   
   void Decrypt::focus() {

@@ -177,7 +177,7 @@ namespace gui {
 		       get_val(ctx.settings.load_folder)->c_str());
     gtk_grid_attach(GTK_GRID(frm), v.load_folder, 0, 1, 1, 1);
 
-    GtkWidget *btn = gtk_button_new_with_label("Select Folder");
+    GtkWidget *btn = gtk_button_new_with_label("Select");
     g_signal_connect(btn, "clicked", G_CALLBACK(on_load_folder), &v);
     gtk_grid_attach(GTK_GRID(frm), btn, 1, 1, 1, 1);
     return frm;
@@ -198,7 +198,7 @@ namespace gui {
 		       get_val(ctx.settings.save_folder)->c_str());
     gtk_grid_attach(GTK_GRID(frm), v.save_folder, 0, 1, 1, 1);
 
-    GtkWidget *btn = gtk_button_new_with_label("Select Folder");
+    GtkWidget *btn = gtk_button_new_with_label("Select");
     g_signal_connect(btn, "clicked", G_CALLBACK(on_save_folder), &v);
     gtk_grid_attach(GTK_GRID(frm), btn, 1, 1, 1, 1);
     return frm;
@@ -336,7 +336,7 @@ namespace gui {
     smtp_user(gtk_entry_new()),
     smtp_pass(gtk_entry_new()),
     smtp_poll(gtk_entry_new()),
-    save(gtk_button_new_with_mnemonic("_Save")),
+    save(gtk_button_new_with_mnemonic("_Save Setup")),
     cancel(gtk_button_new_with_mnemonic("_Cancel")) {
     GtkWidget *lbl;
 

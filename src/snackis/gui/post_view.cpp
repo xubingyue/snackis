@@ -118,7 +118,7 @@ namespace gui {
     body_text(gtk_text_view_new()),
     body(gtk_scrolled_window_new(NULL, NULL)),
     post_list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(posts))),
-    save(gtk_button_new_with_mnemonic("_Save")),
+    save(gtk_button_new_with_mnemonic("_Save Post")),
     cancel(gtk_button_new_with_mnemonic("_Cancel")) {
     GtkWidget *lbl;
 

@@ -25,7 +25,7 @@ namespace gui {
     peer(peer),
     name(gtk_entry_new()),
     email(gtk_entry_new()),
-    save(gtk_button_new_with_mnemonic("_Save")),
+    save(gtk_button_new_with_mnemonic("_Save Peer")),
     cancel(gtk_button_new_with_mnemonic("_Cancel")) {
     GtkWidget *lbl;
 

@@ -216,14 +216,14 @@ namespace gui {
 			     G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING)),
     name(gtk_entry_new()),
     peer_list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(feed_peers))),
-    remove_peers(gtk_button_new_with_mnemonic("Remove")),
+    remove_peers(gtk_button_new_with_mnemonic("Remove Selected Peers")),
     peer_input(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5)),
     peer(gtk_combo_box_new_with_model(GTK_TREE_MODEL(peers))),
-    add_peer(gtk_button_new_with_mnemonic("Add")),
+    add_peer(gtk_button_new_with_mnemonic("Add Peer")),
     post_list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(posts))),
     new_post_text(gtk_text_view_new()),
     new_post(gtk_scrolled_window_new(NULL, NULL)),
-    save(gtk_button_new_with_mnemonic("_Save")),
+    save(gtk_button_new_with_mnemonic("_Save Feed")),
     cancel(gtk_button_new_with_mnemonic("_Cancel")) {
     GtkWidget *lbl;
 

@@ -10,7 +10,7 @@ namespace snackis {
 namespace gui {
   struct Encrypt: View {
     GtkListStore *peers;
-    GtkWidget *peer, *source, *target, *encode, *cancel, *save;
+    GtkWidget *peer, *source, *target, *encode, *save, *cancel;
     
     Encrypt(Ctx &ctx);
     void focus() override;
