@@ -1,13 +1,11 @@
-* add gui::FeedList
-** add feed.active + checkbox in feed form
-*** only show active in post form
-*** activate on external post
-** search-form & tree-view
+* only show active and current feeds in post form
+* add gui::FeedSearch
+** form & tree-view
 ** edit on return/dblclk
 *** push feed view
 ** add search-feeds command
 * add gui::PostList
-** search-form & tree-view
+** form & tree-view
 ** edit on return/dblclk
 *** push feed view
 ** add search-posts command

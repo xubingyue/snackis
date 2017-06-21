@@ -1,9 +1,14 @@
 *:focused {
-    border-color: #bb4411;
+    background: #ffc2b3;
 }
 
-GtkButton:focused GtkLabel {
-    text-decoration: underline;
+GtkEntry:focused {
+    color: #000000;
+}
+
+GtkTextView .view:focused {
+    background: #ffc2b3;
+    color: #000000;
 }
 
 GtkButton:insensitive GtkLabel {
@@ -32,7 +37,7 @@ GtkLabel {
     font-size: 105%;
 }
 
-GtkTextView .view{
+GtkTextView .view {
     background: #ffffff;
     color: #000000;
 }
@@ -63,6 +68,11 @@ GtkTreeView column-header .label {
     color: #cccccc;
 }
 
+.console .view:focused {
+    background: #333333;
+    color: #cccccc;
+}
+
 .reader {
     font-size: 125%;
     font-family: "Courier New", Courier, monospace;
@@ -74,11 +84,13 @@ GtkTreeView column-header .label {
 }
 
 .view:selected {
-    background: #773311;
+   background: #d9d9d9;
+   color: #000000;
 }
 
 .view:selected:focused {
-    background: #bb4411;
+   background: #ffc2b3;
+   color: #000000;
 }
 
 .view_label {

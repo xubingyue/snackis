@@ -12,18 +12,24 @@ namespace gui {
     pop_view(*v);
   }
 
-  static db::Rec<Feed> &get_sel_feed(PostView &v) {
+  static opt<db::Rec<Feed> *> get_sel_feed(PostView &v) {
     GtkTreeIter iter;
-    gtk_combo_box_get_active_iter(GTK_COMBO_BOX(v.feed), &iter);
+    
+    if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(v.feed), &iter)) {
+      return nullopt;
+    }
+
     db::Rec<Feed> *rec;
     gtk_tree_model_get(GTK_TREE_MODEL(v.feeds), &iter, COL_FEED_PTR, &rec, -1);
-    return *rec;
+    return rec;	
   }
 
-  static void load_posts(PostView &v) {
+  static bool load_posts(PostView &v) {
     Ctx &ctx(v.ctx);
-    Feed feed(ctx, get_sel_feed(v));
     gtk_list_store_clear(v.posts);
+    auto feed_rec(get_sel_feed(v));
+    if (!feed_rec) { return false; }
+    Feed feed(ctx, **feed_rec);
     
     for (auto rec: last_posts(feed, v.post.at, 7)) {
       Post post(ctx, *rec);
@@ -38,6 +44,8 @@ namespace gui {
 			 COL_POST_BODY, post.body.c_str(),
 			 -1);
     }
+    
+    return true;
   }
 
   static void on_feed_sel(gpointer *_, PostView *v) {
@@ -48,12 +56,12 @@ namespace gui {
     Ctx &ctx(v->ctx);
     db::Trans trans(ctx);
     
-    Feed feed(ctx, get_sel_feed(*v));
+    Feed feed(ctx, **get_sel_feed(*v));
+    activate(feed);
     v->post.feed_id = feed.id;
     v->post.body = text_view_str(GTK_TEXT_VIEW(v->body_text));
     db::insert(ctx.db.posts, v->post);
     if (v->post.by_id == whoami(ctx).id) { send(v->post); }
-
     db::commit(trans);
     log(v->ctx, "Saved post");
     pop_view(*v);
@@ -61,14 +69,19 @@ namespace gui {
 
   void init_feeds(PostView &v) {
     Ctx &ctx(v.ctx);
+    size_t cnt(0);
     
     for(const auto &f: ctx.db.feeds.recs) {
-      GtkTreeIter iter;
-      gtk_list_store_append(v.feeds, &iter);
-      gtk_list_store_set(v.feeds, &iter,
-			 COL_FEED_PTR, &f,
-			 COL_FEED_NAME, db::get(f, ctx.db.feed_name)->c_str(),
-			 -1);
+      if (*db::get(f, ctx.db.feed_id) == v.post.feed_id ||
+	  *db::get(f, ctx.db.feed_active)) {
+	GtkTreeIter iter;
+	gtk_list_store_append(v.feeds, &iter);
+	gtk_list_store_set(v.feeds, &iter,
+			   COL_FEED_PTR, &f,
+			   COL_FEED_NAME, db::get(f, ctx.db.feed_name)->c_str(),
+			   -1);
+	cnt++;
+      }
     }
     
     auto col(gtk_cell_renderer_text_new());
@@ -78,6 +91,7 @@ namespace gui {
                                    "text", COL_FEED_NAME,
 				   nullptr);
     gtk_combo_box_set_active(GTK_COMBO_BOX(v.feed), 0);
+    gtk_widget_set_sensitive(v.save, cnt > 0);
   }
   
   static void init_posts(PostView &v) {

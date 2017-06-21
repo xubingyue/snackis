@@ -16,6 +16,7 @@ namespace gui {
     Ctx &ctx(v->ctx);
     db::Trans trans(ctx);
     v->feed.name = gtk_entry_get_text(GTK_ENTRY(v->name));
+    v->feed.active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->active));
     db::upsert(ctx.db.feeds, v->feed);
     const str post_body(text_view_str(GTK_TEXT_VIEW(v->new_post_text)));
 
@@ -215,6 +216,7 @@ namespace gui {
 			     G_TYPE_POINTER,
 			     G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING)),
     name(gtk_entry_new()),
+    active(gtk_check_button_new_with_label("Active")),
     peer_list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(feed_peers))),
     remove_peers(gtk_button_new_with_mnemonic("Remove Selected Peers")),
     peer_input(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5)),
@@ -236,6 +238,9 @@ namespace gui {
     gtk_widget_set_hexpand(name, true);
     gtk_container_add(GTK_CONTAINER(frm), name);
     gtk_entry_set_text(GTK_ENTRY(name), feed.name.c_str());
+
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active), feed.active);
+    gtk_container_add(GTK_CONTAINER(frm), active);
 
     init_peers(*this);
     gtk_widget_set_margin_top(peer_list, 5);

@@ -2,7 +2,7 @@
 #include "snackis/feed.hpp"
 
 namespace snackis {
-  Feed::Feed(Ctx &ctx): Rec(ctx) { }
+  Feed::Feed(Ctx &ctx): Rec(ctx), active(true) { }
 
   Feed::Feed(Ctx &ctx, const db::Rec<Feed> &src): Rec(ctx), id(false) {
     copy(*this, src);
@@ -20,6 +20,13 @@ namespace snackis {
     }
   }
 
+  void activate(Feed &feed) {
+    if (!feed.active) {
+      feed.active = true;
+      db::update(feed.ctx.db.feeds, feed);
+    }
+  }
+  
   opt<Feed> find_feed_id(Ctx &ctx, UId id) {
     db::Rec<Feed> rec;
     set(rec, ctx.db.feed_id, id);

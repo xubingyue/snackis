@@ -1,4 +1,5 @@
 #include "snackis/db.hpp"
+#include "snackis/core/bool_type.hpp"
 #include "snackis/core/int64_type.hpp"
 #include "snackis/core/set_type.hpp"
 #include "snackis/core/str_type.hpp"
@@ -32,10 +33,11 @@ namespace snackis {
 
     feed_id(      "id",       uid_type,     &Feed::id),
     feed_name(    "name",     str_type,     &Feed::name),
+    feed_active(  "active",   bool_type,    &Feed::active),
     feed_peer_ids("peer_ids", uid_set_type, &Feed::peer_ids),
     
     feeds(ctx, "feeds", {&feed_id},
-	  {&feed_name, &feed_peer_ids}),
+	  {&feed_name, &feed_active, &feed_peer_ids}),
 
     post_id(     "id",      uid_type,  &Post::id),
     post_feed_id("feed_id", uid_type,  &Post::feed_id),

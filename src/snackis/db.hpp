@@ -31,6 +31,7 @@ namespace snackis {
 
     db::Col<Feed, UId>           feed_id;
     db::Col<Feed, str>           feed_name;
+    db::Col<Feed, bool>          feed_active;
     db::Col<Feed, std::set<UId>> feed_peer_ids;
     db::Table<Feed> feeds;
 

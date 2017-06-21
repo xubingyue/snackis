@@ -12,7 +12,7 @@
 #include "snackis/crypt/pub_key.hpp"
 
 namespace snackis {
-  using Val = std::variant<int64_t, str, Time, UId,
+  using Val = std::variant<bool, int64_t, str, Time, UId,
 			   crypt::Key, crypt::PubKey>;
 
   template <typename T>

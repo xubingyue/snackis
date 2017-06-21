@@ -13,13 +13,15 @@ namespace snackis {
   struct Feed: Rec {   
     UId id;
     str name;
+    bool active;
     std::set<UId> peer_ids;
-
+    
     Feed(Ctx &ctx);
     Feed(Ctx &ctx, const db::Rec<Feed> &rec);   
     Feed(const Msg &msg);
   };
 
+  void activate(Feed &feed);
   opt<Feed> find_feed_id(Ctx &ctx, UId id);
   Feed get_feed_id(Ctx &ctx, UId id);
   std::vector<const db::Rec<Post> *> last_posts(const Feed &feed,
