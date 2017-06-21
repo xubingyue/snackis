@@ -149,7 +149,7 @@ namespace gui {
     cancel(gtk_button_new_with_mnemonic("_Cancel")) {
     GtkWidget *lbl;
 
-    GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+    GtkWidget *frm(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
     gtk_box_pack_start(GTK_BOX(panel), frm, true, true, 0);
     
     lbl = gtk_label_new("Peer");
@@ -161,9 +161,12 @@ namespace gui {
     
     gtk_container_add(GTK_CONTAINER(frm), init_source(*this));
     gtk_container_add(GTK_CONTAINER(frm), init_target(*this));
-    gtk_container_add(GTK_CONTAINER(frm), encode);
 
-    GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    GtkWidget *encode_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
+    gtk_container_add(GTK_CONTAINER(frm), encode_box);
+    gtk_container_add(GTK_CONTAINER(encode_box), encode);
+
+    GtkWidget *btns(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
     gtk_widget_set_halign(btns, GTK_ALIGN_END);
     gtk_widget_set_valign(btns, GTK_ALIGN_END);
     gtk_container_add(GTK_CONTAINER(panel), btns);

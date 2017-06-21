@@ -1,5 +1,6 @@
 * add gui::FeedSearch
 ** form & tree-view
+** add Find-button to form
 ** edit on return/dblclk
 *** push feed view
 ** add search-feeds command

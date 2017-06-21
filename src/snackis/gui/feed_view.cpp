@@ -239,8 +239,10 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(frm), name);
     gtk_entry_set_text(GTK_ENTRY(name), feed.name.c_str());
 
+    GtkWidget *active_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
+    gtk_container_add(GTK_CONTAINER(frm), active_box);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active), feed.active);
-    gtk_container_add(GTK_CONTAINER(frm), active);
+    gtk_container_add(GTK_CONTAINER(active_box), active);
 
     init_peers(*this);
     gtk_widget_set_margin_top(peer_list, 5);

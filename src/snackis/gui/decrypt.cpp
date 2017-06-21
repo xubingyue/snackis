@@ -160,7 +160,11 @@ namespace gui {
     init_peers(*this);
     
     gtk_container_add(GTK_CONTAINER(frm), init_source(*this));
-    gtk_container_add(GTK_CONTAINER(frm), decode);
+
+    GtkWidget *decode_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
+    gtk_container_add(GTK_CONTAINER(frm), decode_box);
+    gtk_container_add(GTK_CONTAINER(decode_box), decode);
+    
     gtk_container_add(GTK_CONTAINER(frm), init_target(*this));
 
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
