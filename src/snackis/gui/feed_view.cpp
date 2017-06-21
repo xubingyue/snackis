@@ -211,7 +211,6 @@ namespace gui {
     load_posts(v);
   }
   
-  
   FeedView::FeedView(const Feed &feed):
     View(feed.ctx, "Feed"),
     feed(feed),
