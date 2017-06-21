@@ -1,24 +1,25 @@
+* switch save/cancel buttons in all views
+* add post command
+** add gui::PostView
+*** combo for thread
+*** read-only text-view for history
+*** text-view for body
+*** add edit on return/dblclk to feed post list
 * add support for posts in existing feeds to imap
 * add support for duplicate posts to imap
 ** copy from inbox_form
-* switch save/cancel buttons in all views
 * deal with errors in poll-loops
 ** print to console and continue
+* remove ui/main.cpp
+* rename gmain.cpp to main.cpp
+* update readme
+* ---
 * add gui::FeedsForm
 ** tree-view with all feeds
 ** edit on return/dblclk
 *** push feed view
 ** add feeds command
-* add post command
-** add gui::PostView
-*** combo for thread
-*** text-view for body
-*** read-only text-view for history
-*** add edit on return/dblclk to feed post list
-* remove ui/main.cpp
-* rename gmain.cpp to main.cpp
-* update readme
-* ---
+
 * add help command
 ** add Cmd struct
 *** rename Cmd to Fn
