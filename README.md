@@ -92,7 +92,7 @@ Type ```post``` in the reader and press ```Return``` to post in existing feed.
 ![post example](images/post.png?raw=true)
 
 ### Algorithms
-Snackis delegates anything concerning encryption to [libsodium](https://github.com/jedisct1/libsodium). The IETF-variant of ```ChaCha20-Poly1305``` is used to encrypt the master password and database, while ```XSalsa20``` with ```X25519``` key-exchange and ```Poly2305 MAC```-authentication is used for everything else. The master password is hashed using ```Scrypt```, and the password is then encrypted using the hash as key for future validation.
+Snackis delegates anything concerning encryption to [libsodium](https://github.com/jedisct1/libsodium). The IETF-variant of ```ChaCha20-Poly1305``` is used to encrypt the master password and database, while ```XSalsa20``` is used for everything else. The master password is hashed using ```Scrypt```, and the password is then encrypted using the hash as key for future validation.
 
 ### License
 Snackis is licensed under the GNU General Public License Version 3.
