@@ -45,7 +45,7 @@ namespace gui {
 
     if (msg.type == Msg::INVITE) {
       Peer peer(accept_invite(msg));
-      log(ctx, fmt("Accept of %0 saved to outbox", msg.from));
+      log(ctx, fmt("Invite accepted: %0", msg.from));
       auto pv(new PeerView(peer));
       push_view(*pv);
     } else if (msg.type == Msg::ACCEPT) {
@@ -84,7 +84,7 @@ namespace gui {
 
     if (msg.type == Msg::INVITE) {
 	reject_invite(msg);
-	log(ctx, fmt("Reject of %0 saved to outbox", msg.from));
+	log(ctx, fmt("Invite rejected: %0", msg.from));
     } else if (msg.type == Msg::ACCEPT || msg.type == Msg::POST) {
       // Nothing to do here
     } else {
@@ -185,7 +185,7 @@ namespace gui {
     g_signal_connect(reject, "clicked", G_CALLBACK(on_reject), this);
     gtk_container_add(GTK_CONTAINER(list_btns), reject);
     
-    close = gtk_button_new_with_mnemonic("_Close Inbox");
+    close = gtk_button_new_with_mnemonic("_Close");
     gtk_widget_set_halign(close, GTK_ALIGN_END);
     g_signal_connect(close, "clicked", G_CALLBACK(on_close), this);
     gtk_box_pack_start(GTK_BOX(panel), close, false, false, 5);

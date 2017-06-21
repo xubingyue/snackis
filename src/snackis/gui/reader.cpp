@@ -6,6 +6,7 @@
 #include "snackis/gui/feed_view.hpp"
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/inbox.hpp"
+#include "snackis/gui/post_view.hpp"
 #include "snackis/gui/reader.hpp"
 #include "snackis/gui/widget.hpp"
 
@@ -76,8 +77,8 @@ namespace gui {
 	db::Trans trans(ctx);
 	Invite inv(ctx, args[0]);
 	load(ctx.db.invites, inv);
-	post_msg(inv);	
-	log(ctx, fmt("Saved new invite to outbox: %0", inv.to));
+	send(inv);	
+	log(ctx, fmt("Saved new invite: %0", inv.to));
 	db::commit(trans);
 	return true;
       });
@@ -93,9 +94,9 @@ namespace gui {
 	return true;
       });
     
-    rdr.cmds.emplace("new-feed", [&ctx](auto args) {
+    rdr.cmds.emplace("feed", [&ctx](auto args) {
 	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: new-feed");
+	  log(ctx, "Invalid number of arguments, syntax: feed");
 	  return false;
 	}
 	
@@ -104,6 +105,17 @@ namespace gui {
 	return true;
       });
 
+    rdr.cmds.emplace("post", [&ctx](auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: post");
+	  return false;
+	}
+	
+	PostView *v = new PostView(Post(ctx));
+	push_view(*v);
+	return true;
+      });
+    
     rdr.cmds.emplace("send", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: send");

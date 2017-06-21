@@ -4,7 +4,7 @@
 namespace snackis {
 namespace gui {
   static void on_cancel(gpointer *_, PeerView *v) {
-    log(v->ctx, "Cancelled peer changes");
+    log(v->ctx, "Cancelled peer");
     pop_view(*v);
   }
 
@@ -16,7 +16,7 @@ namespace gui {
     v->peer.email = gtk_entry_get_text(GTK_ENTRY(v->email));    
     update(ctx.db.peers, v->peer);
     db::commit(trans);
-    log(ctx, "Saved peer changes");
+    log(ctx, "Saved peer");
     pop_view(*v);
   }
   
@@ -24,7 +24,9 @@ namespace gui {
     View(peer.ctx, "Peer"),
     peer(peer),
     name(gtk_entry_new()),
-    email(gtk_entry_new()) {
+    email(gtk_entry_new()),
+    save(gtk_button_new_with_mnemonic("_Save")),
+    cancel(gtk_button_new_with_mnemonic("_Cancel")) {
     GtkWidget *lbl;
 
     GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
@@ -49,13 +51,11 @@ namespace gui {
     gtk_widget_set_valign(btns, GTK_ALIGN_END);
     gtk_container_add(GTK_CONTAINER(panel), btns);
         
-    cancel = gtk_button_new_with_mnemonic("_Cancel Changes");
-    g_signal_connect(cancel, "clicked", G_CALLBACK(on_cancel), this);
-    gtk_container_add(GTK_CONTAINER(btns), cancel);
-    
-    save = gtk_button_new_with_mnemonic("_Save Changes");
     g_signal_connect(save, "clicked", G_CALLBACK(on_save), this);
     gtk_container_add(GTK_CONTAINER(btns), save);
+
+    g_signal_connect(cancel, "clicked", G_CALLBACK(on_cancel), this);
+    gtk_container_add(GTK_CONTAINER(btns), cancel);
   }
   
   void PeerView::focus() {

@@ -11,7 +11,7 @@ namespace snackis {
 namespace gui {
   struct PeerView: View {
     Peer peer;
-    GtkWidget *name, *email, *cancel, *save;
+    GtkWidget *name, *email, *save, *cancel;
     
     PeerView(const Peer &peer);
     void focus() override;

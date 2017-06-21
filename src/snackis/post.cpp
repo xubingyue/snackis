@@ -4,9 +4,12 @@
 #include "snackis/post.hpp"
 
 namespace snackis {
-  Post::Post(Feed &feed, Peer &by):
-    Rec(feed.ctx), feed_id(feed.id), at(now()), by_id(by.id)
+  Post::Post(Ctx &ctx): Rec(ctx), at(now())
   { }
+
+  Post::Post(Ctx &ctx, const db::Rec<Post> &rec): Rec(ctx), id(false) {
+    copy(*this, rec);
+  }
 
   Post::Post(const Msg &msg):
     Rec(msg.ctx),
@@ -17,10 +20,6 @@ namespace snackis {
     body(msg.post_body)
   { }
 
-  Post::Post(Ctx &ctx, const db::Rec<Post> &rec): Rec(ctx), id(false) {
-    copy(*this, rec);
-  }
-
   opt<Post> find_post_id(Ctx &ctx, UId id) {
     db::Rec<Post> rec;
     set(rec, ctx.db.post_id, id);
@@ -28,7 +27,7 @@ namespace snackis {
     return Post(ctx, rec);
   }
 
-  void create_msgs(const Post &post) {
+  void send(const Post &post) {
     Ctx &ctx(post.ctx);
     Feed feed(get_feed_id(ctx, post.feed_id));
     

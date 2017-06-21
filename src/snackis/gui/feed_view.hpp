@@ -14,7 +14,7 @@ namespace gui {
     Feed feed;
     GtkListStore *peers, *feed_peers, *posts;
     GtkWidget *name, *peer_list, *remove_peers, *peer_input, *peer, *add_peer,
-      *post_list, *new_post_text, *new_post, *cancel, *save;
+      *post_list, *new_post_text, *new_post, *save, *cancel;
     
     FeedView(const Feed &feed);
     void focus() override;

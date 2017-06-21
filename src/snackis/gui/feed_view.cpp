@@ -8,7 +8,7 @@ namespace gui {
   enum PostCol {COL_POST_PTR=0, COL_POST_AT, COL_POST_BY, COL_POST_BODY};
   
   static void on_cancel(gpointer *_, FeedView *v) {
-    log(v->ctx, "Cancelled feed changes");
+    log(v->ctx, "Cancelled feed");
     pop_view(*v);
   }
 
@@ -25,15 +25,17 @@ namespace gui {
     const str post_str(gtk_text_buffer_get_text(post_buf, &start, &end, true));
 
     if (!post_str.empty()) {
-      Post post(v->feed, whoami(ctx));
+      Post post(ctx);
+      post.feed_id = v->feed.id;
+      post.by_id = whoami(ctx).id;
       post.body = post_str;
       db::insert(ctx.db.posts, post);
-      create_msgs(post);
-      log(v->ctx, "Saved new post to outbox");
+      send(post);
+      log(v->ctx, "Saved new post");
     }
     
     db::commit(trans);
-    log(v->ctx, "Saved feed changes");
+    log(v->ctx, "Saved feed");
     pop_view(*v);
   }
 
@@ -228,8 +230,8 @@ namespace gui {
     post_list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(posts))),
     new_post_text(gtk_text_view_new()),
     new_post(gtk_scrolled_window_new(NULL, NULL)),
-    cancel(gtk_button_new_with_mnemonic("_Cancel Changes")),
-    save(gtk_button_new_with_mnemonic("_Save Changes")) {
+    save(gtk_button_new_with_mnemonic("_Save")),
+    cancel(gtk_button_new_with_mnemonic("_Cancel")) {
     GtkWidget *lbl;
 
     GtkWidget *v = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
@@ -275,11 +277,11 @@ namespace gui {
     gtk_widget_set_margin_top(btns, 10);
     gtk_container_add(GTK_CONTAINER(panel), btns);
         
-    g_signal_connect(cancel, "clicked", G_CALLBACK(on_cancel), this);
-    gtk_container_add(GTK_CONTAINER(btns), cancel);
-    
     g_signal_connect(save, "clicked", G_CALLBACK(on_save), this);
     gtk_container_add(GTK_CONTAINER(btns), save);
+
+    g_signal_connect(cancel, "clicked", G_CALLBACK(on_cancel), this);
+    gtk_container_add(GTK_CONTAINER(btns), cancel);
   }
   
   void FeedView::focus() {

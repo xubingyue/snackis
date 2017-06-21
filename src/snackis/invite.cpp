@@ -9,7 +9,7 @@ namespace snackis {
     copy(*this, src);
   }
 
-  void post_msg(Invite &inv) {
+  void send(Invite &inv) {
     Ctx &ctx(inv.ctx);
     inv.posted_at = now();
     upsert(ctx.db.invites, inv);

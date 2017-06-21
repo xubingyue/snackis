@@ -13,7 +13,7 @@ namespace gui {
       *load_folder, *save_folder,
       *imap_url, *imap_port, *imap_user, *imap_pass, *imap_poll,
       *smtp_url, *smtp_port, *smtp_user, *smtp_pass, *smtp_poll,
-      *cancel, *save;
+      *save, *cancel;
     
     Setup(Ctx &ctx);
     void focus() override;
