@@ -88,7 +88,7 @@ GtkTreeView column-header .label {
 }
 
 .view:selected {
-   background: #d9d9d9;
+   background: #bfbfbf;
    color: #000000;
 }
 
