@@ -11,8 +11,8 @@ namespace snackis {
 namespace gui {
   struct PostView: View {
     Post post;
-    GtkListStore *feeds;
-    GtkWidget *feed, *save, *cancel;
+    GtkListStore *feeds, *posts;
+    GtkWidget *feed, *body_text, *body, *post_list, *save, *cancel;
     
     PostView(const Post &post);
     void focus() override;

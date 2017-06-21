@@ -1,10 +1,7 @@
-* finish gui::PostView
-** add read-only text-view for history
-** add text-view for body
-** post in on_save
 * add support for posts in existing feeds to imap
-* add support for duplicate posts to imap
-** copy from inbox_form
+** log to console
+* add support for post updates to imap
+** update body if from same peer as post
 * deal with errors in poll-loops
 ** print to console and continue
 * remove ui/main.cpp
@@ -16,7 +13,6 @@
 ** edit on return/dblclk
 *** push feed view
 ** add feeds command
-
 * add help command
 ** add Cmd struct
 *** rename Cmd to Fn

@@ -94,9 +94,9 @@ namespace gui {
 	return true;
       });
     
-    rdr.cmds.emplace("feed", [&ctx](auto args) {
+    rdr.cmds.emplace("new-feed", [&ctx](auto args) {
 	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: feed");
+	  log(ctx, "Invalid number of arguments, syntax: new-feed");
 	  return false;
 	}
 	

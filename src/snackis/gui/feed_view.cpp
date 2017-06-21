@@ -11,27 +11,20 @@ namespace gui {
     log(v->ctx, "Cancelled feed");
     pop_view(*v);
   }
-
+  
   static void on_save(gpointer *_, FeedView *v) {
     Ctx &ctx(v->ctx);
     db::Trans trans(ctx);
     v->feed.name = gtk_entry_get_text(GTK_ENTRY(v->name));
     db::upsert(ctx.db.feeds, v->feed);
+    const str post_body(text_view_str(GTK_TEXT_VIEW(v->new_post_text)));
 
-    auto post_buf(gtk_text_view_get_buffer(GTK_TEXT_VIEW(v->new_post_text)));
-    GtkTextIter start, end;
-    gtk_text_buffer_get_start_iter(post_buf, &start);
-    gtk_text_buffer_get_end_iter(post_buf, &end);
-    const str post_str(gtk_text_buffer_get_text(post_buf, &start, &end, true));
-
-    if (!post_str.empty()) {
+    if (!post_body.empty()) {
       Post post(ctx);
       post.feed_id = v->feed.id;
-      post.by_id = whoami(ctx).id;
-      post.body = post_str;
+      post.body = post_body;
       db::insert(ctx.db.posts, post);
       send(post);
-      log(v->ctx, "Saved new post");
     }
     
     db::commit(trans);
@@ -171,7 +164,7 @@ namespace gui {
   static void load_posts(FeedView &v) {
     Ctx &ctx(v.ctx);
 
-    for (auto rec: last_posts(v.feed, 7)) {
+    for (auto rec: last_posts(v.feed, Time::max(), 7)) {
       Post post(ctx, *rec);
       Peer peer(get_peer_id(ctx, post.by_id));
       
@@ -190,7 +183,7 @@ namespace gui {
     gtk_widget_set_hexpand(v.post_list, true);
     gtk_widget_set_vexpand(v.post_list, true);
     auto rend(gtk_cell_renderer_text_new());
-    auto at_col(gtk_tree_view_column_new_with_attributes("Post History",
+    auto at_col(gtk_tree_view_column_new_with_attributes("Posts",
 							 rend,
 							 "text", COL_POST_AT,
 							 nullptr));
@@ -234,32 +227,33 @@ namespace gui {
     cancel(gtk_button_new_with_mnemonic("_Cancel")) {
     GtkWidget *lbl;
 
-    GtkWidget *v = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
-    gtk_box_pack_start(GTK_BOX(panel), v, true, true, 0);
+    GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+    gtk_box_pack_start(GTK_BOX(panel), frm, true, true, 0);
     
     lbl = gtk_label_new("Name");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(v), lbl);
+    gtk_container_add(GTK_CONTAINER(frm), lbl);
     gtk_widget_set_hexpand(name, true);
-    gtk_container_add(GTK_CONTAINER(v), name);
+    gtk_container_add(GTK_CONTAINER(frm), name);
     gtk_entry_set_text(GTK_ENTRY(name), feed.name.c_str());
 
     init_peers(*this);
     gtk_widget_set_margin_top(peer_list, 5);
-    gtk_container_add(GTK_CONTAINER(v), peer_list);
+    gtk_container_add(GTK_CONTAINER(frm), peer_list);
     GtkWidget *peer_btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    gtk_container_add(GTK_CONTAINER(v), peer_btns);
+    gtk_container_add(GTK_CONTAINER(frm), peer_btns);
     gtk_container_add(GTK_CONTAINER(peer_btns), remove_peers);
     gtk_widget_set_margin_top(peer_input, 5);
-    gtk_container_add(GTK_CONTAINER(v), peer_input);
-    
+    gtk_container_add(GTK_CONTAINER(frm), peer_input);
+
     init_posts(*this);
     gtk_widget_set_margin_top(post_list, 5);
-    gtk_container_add(GTK_CONTAINER(v), post_list);
+    gtk_container_add(GTK_CONTAINER(frm), post_list);
 
     lbl = gtk_label_new("New Post");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(v), lbl);
+    gtk_widget_set_margin_top(lbl, 5);
+    gtk_container_add(GTK_CONTAINER(frm), lbl);
     gtk_widget_set_hexpand(new_post_text, true);
     gtk_widget_set_vexpand(new_post_text, true);
     gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(new_post_text), GTK_WRAP_WORD);
@@ -269,7 +263,7 @@ namespace gui {
 				   GTK_POLICY_NEVER,
 				   GTK_POLICY_ALWAYS);
     gtk_container_add(GTK_CONTAINER(new_post), new_post_text);
-    gtk_container_add(GTK_CONTAINER(v), new_post);
+    gtk_container_add(GTK_CONTAINER(frm), new_post);
     
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_widget_set_halign(btns, GTK_ALIGN_END);

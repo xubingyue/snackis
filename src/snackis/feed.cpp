@@ -37,14 +37,16 @@ namespace snackis {
     return *found;
   }
 
-  std::vector<const db::Rec<Post> *> last_posts(const Feed &feed, size_t max) {
+  std::vector<const db::Rec<Post> *> last_posts(const Feed &feed,
+						const Time &end,
+						size_t max) {
     Ctx &ctx(feed.ctx);
     std::vector<const db::Rec<Post> *> out;
     if (ctx.db.feed_posts.recs.empty()) { return out; }
 
     db::Rec<Post> key;
     set(key, ctx.db.post_feed_id, feed.id);
-    set(key, ctx.db.post_at, Time::max());
+    set(key, ctx.db.post_at, end);
     auto found(ctx.db.feed_posts.recs.lower_bound(key));
     if (found == ctx.db.feed_posts.recs.begin()) { return out; }
     found--;

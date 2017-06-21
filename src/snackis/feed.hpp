@@ -22,7 +22,9 @@ namespace snackis {
 
   opt<Feed> find_feed_id(Ctx &ctx, UId id);
   Feed get_feed_id(Ctx &ctx, UId id);
-  std::vector<const db::Rec<Post> *> last_posts(const Feed &feed, size_t max);
+  std::vector<const db::Rec<Post> *> last_posts(const Feed &feed,
+						const Time &end,
+						size_t max);
 }
 
 #endif

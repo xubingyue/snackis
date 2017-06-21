@@ -4,7 +4,7 @@
 #include "snackis/post.hpp"
 
 namespace snackis {
-  Post::Post(Ctx &ctx): Rec(ctx), at(now())
+  Post::Post(Ctx &ctx): Rec(ctx), at(now()), by_id(whoami(ctx).id)
   { }
 
   Post::Post(Ctx &ctx, const db::Rec<Post> &rec): Rec(ctx), id(false) {
