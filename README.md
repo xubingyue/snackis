@@ -4,7 +4,7 @@
 #### sugar-free co-creation
 
 ### Introduction
-Snackis is aiming for something that might be described as a post-modern enigma-device; a simple and convenient tool that covers most secure communication needs using any regular email-account as transport. Peers, encryption keys, messages and and settings are stored locally, encrypted using a master password. At present, Snackis supports key-exchange via invites/accepts, encryption/decryption of arbitrary data for specific peers and feeds/posts. Coming up next is signed receipts, system-wide search, scheduled events and more.
+Snackis is aiming for something that might be described as a post-modern enigma-device; a simple and convenient tool that covers most secure communication needs using any regular email-account as transport. Peers, encryption keys, messages and and settings are stored locally, encrypted using a master password. At present, Snackis supports key-exchange via invites/accepts, encryption/decryption of arbitrary data for specific peers and feeds/posts. Coming up next is signed receipts, events, system-wide search and more.
 
 ### Dependencies
 Snackis requires a ```C++1z```-capable compiler and standard library to build, and defaults to using [clang](http://releases.llvm.org/download.html#4.0.0) with ```libc++```; it further depends on ```libcurl```, ```libpthread```, ```libsodium``` and ```libuuid``` for core functionality, as well as ```GTK+ 3``` for the UI.
@@ -40,7 +40,7 @@ Each snackis installation is protected by a master password that is used to encr
 Snackis UI is divided into three parts; to the left is the console, where output is printed; below is the reader, where commands may be given; and to the right is an optional stack of open views. Each new view is pushed onto the stack when opened and popped when closed. All buttons have mnemonics that may be revealed by pressing ```Alt```. Pressing ```Escape``` moves focus between current view and reader.
 
 #### Setup
-Once inside, the first thing you probably want to do is to have a look at the setup. Type ```setup``` and press ```Return``` in the reader to open the setup view. Imap/Smtp-settings are currently required to do anything beyond encrypting/decrypting data for personal use.
+Once inside, the first thing you probably want to do is to have a look at the setup. Type ```setup``` and press ```Return``` in the reader to open the setup view. Imap/Smtp are currently required to do anything beyond encrypting/decrypting data for personal use.
 
 ![setup example](images/setup.png?raw=true)
 
