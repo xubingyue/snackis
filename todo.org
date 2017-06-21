@@ -1,9 +1,18 @@
-* update images in readme
-* add gui::FeedsForm
-** tree-view with all feeds
+* update feed/post-images in readme
+** commit
+* add gui::FeedList
+** add feed.active + checkbox in feed form
+*** only show active in post form
+*** activate on external post
+** search-form & tree-view
 ** edit on return/dblclk
 *** push feed view
-** add feeds command
+** add search-feeds command
+* add gui::PostList
+** search-form & tree-view
+** edit on return/dblclk
+*** push feed view
+** add search-posts command
 * add help command
 ** add Cmd struct
 *** rename Cmd to Fn
