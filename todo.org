@@ -1,5 +1,3 @@
-* deal with errors in poll-loops
-** print to console and continue
 * remove ui/main.cpp
 * rename gmain.cpp to main.cpp
 * update readme
