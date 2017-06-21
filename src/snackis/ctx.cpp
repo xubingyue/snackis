@@ -22,8 +22,12 @@ namespace snackis {
       }
 
       if (!ctx->is_closing) {
-	Imap imap(*ctx);
-	fetch(imap);
+	try {
+	  Imap imap(*ctx);
+	  fetch(imap);
+	} catch (const std::exception &e) {
+	  log(*ctx, fmt("Failed fetching email: %0", e.what()));
+	}
       }
     }
   }
@@ -45,8 +49,12 @@ namespace snackis {
       }
 
       if (!ctx->is_closing && !ctx->db.outbox.recs.empty()) {
-	Smtp smtp(*ctx);
-	send(smtp);
+	try {
+	  Smtp smtp(*ctx);
+	  send(smtp);
+	} catch (const std::exception &e) {
+	  log(*ctx, fmt("Failed sending email: %0", e.what()));
+	}
       }
     }
   }
