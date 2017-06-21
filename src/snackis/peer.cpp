@@ -23,15 +23,11 @@ namespace snackis {
     db::Rec<Peer> rec;
     db::set(rec, ctx.db.peer_email, email);
     
-    if (!load(ctx.db.peer_emails, rec)) { return nullopt; }
-
-    Peer peer(ctx, rec);
-
-    if (!load(ctx.db.peers, peer)) {
-      ERROR(Db, fmt("Peer not found: %0", peer.id));
+    if (!load(ctx.db.peer_emails, rec) || !load(ctx.db.peers, rec)) {
+      return nullopt;
     }
 
-    return peer;
+    return Peer(ctx, rec);
   }
 
   Peer get_peer_email(Ctx &ctx, const str &email) {

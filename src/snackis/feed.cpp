@@ -8,6 +8,18 @@ namespace snackis {
     copy(*this, src);
   }
 
+  Feed::Feed(const Msg &msg): Rec(msg.ctx), id(msg.feed_id) {
+    db::Rec<Feed> rec;
+    set(rec, ctx.db.feed_id, id);
+    bool exists = load(ctx.db.feeds, rec) ? true : false;
+    if (exists) {
+      copy(*this, rec);
+    }
+    else {
+      name = msg.feed_name;
+    }
+  }
+
   opt<Feed> find_feed_id(Ctx &ctx, UId id) {
     db::Rec<Feed> rec;
     set(rec, ctx.db.feed_id, id);
@@ -39,7 +51,7 @@ namespace snackis {
     
     while (out.size() < max) {
       if (*db::get(*found, ctx.db.post_feed_id) != feed.id) { break; }
-      const db::Rec<Post> &rec(*found);
+      const db::Rec<Post> &rec(db::get(ctx.db.posts, *found));
       out.push_back(&rec);
       if (found == ctx.db.feed_posts.recs.begin()) { break; }
       found--;

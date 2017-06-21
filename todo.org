@@ -1,12 +1,12 @@
-* switch save/cancel buttons in all views
-* add support for posts in new feeds to inbox
 * add support for posts in existing feeds to imap
+* add support for duplicate posts to imap
+** copy from inbox_form
+* switch save/cancel buttons in all views
 * deal with errors in poll-loops
 ** print to console and continue
 * add gui::FeedsForm
 ** tree-view with all feeds
 ** edit on return/dblclk
-*** load feed peers on edit
 *** push feed view
 ** add feeds command
 * add post command

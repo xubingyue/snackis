@@ -105,8 +105,25 @@ namespace gui {
     gtk_widget_set_sensitive(v->add_peer, true);
     gtk_widget_set_sensitive(v->remove_peers, false);    
   }
-  
-  void init_peers(FeedView &v) {
+
+  static void load_peers(FeedView &v) {
+    Ctx &ctx(v.ctx);
+    
+    for (const auto &peer_id: v.feed.peer_ids) {
+      db::Rec<Peer> key;
+      db::set(key, ctx.db.peer_id, peer_id);
+      const db::Rec<Peer> &rec(db::get(ctx.db.peers, key));
+      
+      GtkTreeIter iter;
+      gtk_list_store_append(v.feed_peers, &iter);
+      gtk_list_store_set(v.feed_peers, &iter,
+			 COL_PEER_PTR, &rec,
+			 COL_PEER_NAME, db::get(rec, ctx.db.peer_name)->c_str(),
+			 -1);
+    }
+  }
+
+  static void init_peers(FeedView &v) {
     Ctx &ctx(v.ctx);
 
     gtk_widget_set_hexpand(v.peer_list, true);
@@ -146,11 +163,28 @@ namespace gui {
 
     g_signal_connect(v.add_peer, "clicked", G_CALLBACK(on_add_peer), &v);
     gtk_container_add(GTK_CONTAINER(v.peer_input), v.add_peer);    
+    load_peers(v);
   }
 
-  void init_posts(FeedView &v) {
+  static void load_posts(FeedView &v) {
     Ctx &ctx(v.ctx);
 
+    for (auto rec: last_posts(v.feed, 7)) {
+      Post post(ctx, *rec);
+      Peer peer(get_peer_id(ctx, post.by_id));
+      
+      GtkTreeIter iter;
+      gtk_list_store_append(v.posts, &iter);
+      gtk_list_store_set(v.posts, &iter,
+			 COL_POST_PTR, rec,
+			 COL_POST_AT, fmt(post.at, "%a %b %d, %H:%M:%S").c_str(),
+			 COL_POST_BY, peer.name.c_str(),
+			 COL_POST_BODY, post.body.c_str(),
+			 -1);
+    }
+  }
+
+  static void init_posts(FeedView &v) {
     gtk_widget_set_hexpand(v.post_list, true);
     gtk_widget_set_vexpand(v.post_list, true);
     auto rend(gtk_cell_renderer_text_new());
@@ -174,26 +208,13 @@ namespace gui {
 							   nullptr));
     gtk_tree_view_column_set_expand(GTK_TREE_VIEW_COLUMN(body_col), true);
     gtk_tree_view_append_column(GTK_TREE_VIEW(v.post_list), body_col);    
-
-    for (auto post_rec: last_posts(v.feed, 7)) {
-      Post post(ctx, *post_rec);
-      Peer peer(get_peer_id(ctx, post.by_id));
-      
-      GtkTreeIter iter;
-      gtk_list_store_append(v.posts, &iter);
-      gtk_list_store_set(v.posts, &iter,
-			 COL_POST_PTR, post_rec,
-			 COL_POST_AT, fmt(post.at, "%a %b %d, %H:%M:%S").c_str(),
-			 COL_POST_BY, peer.name.c_str(),
-			 COL_POST_BODY, post.body.c_str(),
-			 -1);
-    }
+    load_posts(v);
   }
   
   
-  FeedView::FeedView(Ctx &ctx):
-    View(ctx, "Feed"),
-    feed(ctx),
+  FeedView::FeedView(const Feed &feed):
+    View(feed.ctx, "Feed"),
+    feed(feed),
     peers(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
     feed_peers(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
     posts(gtk_list_store_new(4,
@@ -220,6 +241,7 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(v), lbl);
     gtk_widget_set_hexpand(name, true);
     gtk_container_add(GTK_CONTAINER(v), name);
+    gtk_entry_set_text(GTK_ENTRY(name), feed.name.c_str());
 
     init_peers(*this);
     gtk_widget_set_margin_top(peer_list, 5);

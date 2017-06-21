@@ -99,7 +99,7 @@ namespace gui {
 	  return false;
 	}
 	
-	FeedView *v = new FeedView(ctx);
+	FeedView *v = new FeedView(Feed(ctx));
 	push_view(*v);
 	return true;
       });

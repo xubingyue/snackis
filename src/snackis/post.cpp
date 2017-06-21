@@ -1,24 +1,9 @@
+#include <iostream>
 #include "snackis/ctx.hpp"
 #include "snackis/peer.hpp"
 #include "snackis/post.hpp"
 
 namespace snackis {
-  static Feed get_feed(const Msg &msg) {
-    Ctx &ctx(msg.ctx);
-    db::Rec<Feed> feed_rec;
-    set(feed_rec, ctx.db.feed_id, msg.feed_id);
-    bool exists = load(ctx.db.feeds, feed_rec) ? true : false;
-    Feed feed(ctx, feed_rec);
-    
-    if (!exists) {
-      feed.name = msg.feed_name;
-      Peer peer(get_peer_email(ctx, msg.from));
-      insert(ctx.db.feeds, feed);
-    }
-
-    return feed;
-  }
-
   Post::Post(Feed &feed, Peer &by):
     Rec(feed.ctx), feed_id(feed.id), at(now()), by_id(by.id)
   { }
@@ -26,10 +11,10 @@ namespace snackis {
   Post::Post(const Msg &msg):
     Rec(msg.ctx),
     id(msg.post_id),
-    feed_id(get_feed(msg).id), 
+    feed_id(msg.feed_id), 
     at(msg.post_at), 
     by_id(get_peer_email(ctx, msg.from).id),
-    body(msg.post_body) 
+    body(msg.post_body)
   { }
 
   Post::Post(Ctx &ctx, const db::Rec<Post> &rec): Rec(ctx), id(false) {

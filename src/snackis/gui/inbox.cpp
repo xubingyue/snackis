@@ -1,4 +1,5 @@
 #include "snackis/ctx.hpp"
+#include "snackis/gui/feed_view.hpp"
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/inbox.hpp"
 #include "snackis/gui/reader.hpp"
@@ -51,6 +52,14 @@ namespace gui {
       Peer peer(invite_accepted(msg));
       auto pv(new PeerView(peer));
       push_view(*pv);
+    } else if (msg.type == Msg::POST) {
+      Feed feed(msg);
+      db::insert(ctx.db.feeds, feed);
+      Post post(msg);
+      db::insert(ctx.db.posts, post);
+      Peer peer(get_peer_id(ctx, post.by_id));
+      auto fv(new FeedView(feed));
+      push_view(*fv);
     } else {
 	log(ctx, fmt("Invalid message type: %0", msg.type));
     }
@@ -76,7 +85,7 @@ namespace gui {
     if (msg.type == Msg::INVITE) {
 	reject_invite(msg);
 	log(ctx, fmt("Reject of %0 saved to outbox", msg.from));
-    } else if (msg.type == Msg::ACCEPT) {
+    } else if (msg.type == Msg::ACCEPT || msg.type == Msg::POST) {
       // Nothing to do here
     } else {
 	log(ctx, fmt("Invalid message type: %0", msg.type));
@@ -141,6 +150,10 @@ namespace gui {
 	gtk_list_store_set(mod, &iter, COL_INFO, "Invite accepted", -1);
       } else if (msg.type == Msg::REJECT) {
 	gtk_list_store_set(mod, &iter, COL_INFO, "Invite rejected", -1);
+      } else if (msg.type == Msg::POST) {
+	gtk_list_store_set(mod, &iter, COL_INFO,
+			   fmt("New feed: %0", msg.feed_name).c_str(),
+			   -1);
       } else {
 	gtk_list_store_set(mod, &iter, COL_INFO,
 			   fmt("Invalid message type: %0", msg.type).c_str(),

@@ -92,6 +92,17 @@ namespace db {
   }
 
   template <typename RecT>
+  const Rec<RecT> &get(Table<RecT> &tbl, const Rec<RecT> &key) {
+    auto found = tbl.recs.find(key);
+
+    if (found == tbl.recs.end()) {
+      ERROR(Db, fmt("Record missing in table: %0", tbl.name));
+    }
+    
+    return *found;
+  }
+
+  template <typename RecT>
   bool insert(Table<RecT> &tbl, const RecT &rec) {
     Rec<RecT> trec;
     copy(tbl, trec, rec);

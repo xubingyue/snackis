@@ -16,7 +16,7 @@ namespace gui {
     GtkWidget *name, *peer_list, *remove_peers, *peer_input, *peer, *add_peer,
       *post_list, *new_post_text, *new_post, *cancel, *save;
     
-    FeedView(Ctx &ctx);
+    FeedView(const Feed &feed);
     void focus() override;
   };
 }}
