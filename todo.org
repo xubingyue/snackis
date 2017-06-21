@@ -1,7 +1,3 @@
-* replace variant with any in Val
-** use any_cast in get
-** compile & run
-** remove type.from/to_val
 * switch save/cancel buttons in all views
 * add post command
 ** add gui::PostView
