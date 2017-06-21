@@ -1,4 +1,3 @@
-* only show active and current feeds in post form
 * add gui::FeedSearch
 ** form & tree-view
 ** edit on return/dblclk
