@@ -1,7 +1,4 @@
-* remove ui/main.cpp
-* rename gmain.cpp to main.cpp
-* update readme
-* ---
+* update images in readme
 * add gui::FeedsForm
 ** tree-view with all feeds
 ** edit on return/dblclk

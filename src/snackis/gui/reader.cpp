@@ -122,6 +122,11 @@ namespace gui {
 	  return false;
 	}
 
+	if (ctx.db.outbox.recs.empty()) {
+	  log(ctx, "Nothing to send");
+	  return false;
+	}
+	
 	ctx.send_cond.notify_one();
 	return true;
       });

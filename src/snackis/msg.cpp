@@ -34,7 +34,7 @@ namespace snackis {
 
     if (msg.type == Msg::INVITE) {
       return
-	fmt("%0\r\n%1\r\n%2", PROTO_REV, Msg::INVITE,
+	fmt("%0\r\nf%1", PROTO_REV,
 	    bin_hex(reinterpret_cast<const unsigned char *>(data.c_str()),
 		    data.size()));
     }
@@ -44,8 +44,8 @@ namespace snackis {
 			    reinterpret_cast<const unsigned char *>(data.c_str()),
 			    data.size()));
 
-    return fmt("%0\r\n%1\r\n%2\r\n%3",
-	       PROTO_REV, msg.type, msg.from, bin_hex(&out[0], out.size()));
+    return fmt("%0\r\nt%1\r\n%2",
+	       PROTO_REV, msg.from, bin_hex(&out[0], out.size()));
   }
 
   bool decode(Msg &msg, const str &in) {
@@ -59,20 +59,28 @@ namespace snackis {
     }
     
     if (*proto_rev != PROTO_REV) {
-      log(msg.ctx, "Failed decoding message due to protocol revision mismatch");
+      log(msg.ctx, "Protocol revision mismatch");
       return false;
     }
     
     i += 2;
+    bool encrypted(in[i] == 't');
 
-    auto j(in.find("\r\n", i));
-    if (j == str::npos) { return false; }
-    msg.type = in.substr(i, j-i);
-    i = j+2;
+    if (!encrypted && in[i] != 'f') {
+      log(msg.ctx, "Invalid message format");
+      return false;
+    }
 
-    if (msg.type != Msg::INVITE) {
-      j = in.find("\r\n", i);
-      if (j == str::npos) { return false; }
+    i++;
+    
+    if (encrypted) {
+      auto j(in.find("\r\n", i));
+
+      if (j == str::npos) {
+	log(msg.ctx, "Invalid message format");
+	return false;
+      }
+      
       msg.from = in.substr(i, j-i);
       i = j+2;
     }
@@ -80,7 +88,7 @@ namespace snackis {
     Ctx &ctx(msg.ctx);
     Data dat(hex_bin(in.substr(i)));
 
-    if (msg.type != Msg::INVITE) {
+    if (encrypted) {
       const Peer peer(get_peer_email(ctx, msg.from));
       dat = crypt::decrypt(*get_val(ctx.settings.crypt_key), peer.crypt_key,
 			   &dat[0],

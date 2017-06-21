@@ -56,7 +56,7 @@ Type ```invite foo@bar.com``` in the reader and press ```Return``` to open the i
 ![invite example](images/invite.png?raw=true)
 
 #### Messages
-All Snackis-messages look more or less the same to the outside world. Most of the actual data is encrypted (except for invites), and appended below the ```__SNACKIS__``` marker in binary/encoded form.
+All Snackis-messages look more or less the same to the outside world. Most of the actual data is appended in encrypted (except for invites) form below the ```__SNACKIS__```-marker.
 
 ![message example](images/message.png?raw=true)
 
