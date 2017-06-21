@@ -66,7 +66,7 @@ All Snackis-messages look more or less the same to the outside world. Most of th
 ![message example](images/message.png?raw=true)
 
 #### Sending
-Snackis stores all outgoing messages in an outbox that may be emptied manually at any time by typing ```send``` and pressing ```Return``` in the reader. Automatic sending at regular intervals is supported through ```Smtp Poll``` in ```Setup```.
+Snackis stores all outgoing messages in an outbox that may be manually emptied at any time by typing ```send``` and pressing ```Return``` in the reader. Automatic sending at regular intervals is supported through ```Smtp Poll``` in ```Setup```.
 
 #### Fetching
 Type ```fetch``` and press return in the reader to fetch email manually. Automatic fetching at regular intervals is supported through ```Imap Poll``` in ```Setup```.
@@ -82,7 +82,7 @@ When an invite is accepted/rejected, a reply is sent to inform the inviting peer
 ![accept example](images/accept.png?raw=true)
 
 #### Feeds
-Snackis main mode of communication is through feeds/posts. Type ```new-feed``` in the reader and press ```Return``` to start a new feed. Local posts are sent to all specified peers, and any specified peer may reply.
+Snackis main mode of communication is through feeds/posts. Type ```new-feed``` in the reader and press ```Return``` to start a new feed. Local posts are sent to all specified peers, and any peer may reply.
 
 ![feed example](images/feed.png?raw=true)
 
@@ -98,4 +98,5 @@ Snackis delegates anything concerning encryption to [libsodium](https://github.c
 Snackis is licensed under the GNU General Public License Version 3.
 
 ### Help
-[This is your chance](https://www.paypal.me/c4life) to help Snackis move forward faster, every contribution counts. Thank you!
+[This is your chance](https://www.paypal.me/c4life) to help Snackis move forward faster, every contribution counts.<br/>
+Thank you!
