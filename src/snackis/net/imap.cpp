@@ -136,41 +136,74 @@ namespace snackis {
     int msg_cnt = 0;
     
     for (auto tok = std::next(tokens.begin(), 2); tok != tokens.end(); tok++) {
-      const str uid(*tok);
-      opt<Msg> msg = fetch_uid(imap, uid);
+      try {
+	const str uid(*tok);
+	opt<Msg> msg = fetch_uid(imap, uid);
 
-      if (!msg) {
-	log(ctx, "Failed decoding message");
-	delete_uid(imap, uid);
-	continue;
-      }
-
-      if (load(ctx.db.msgs, *msg)) {
-	log(ctx, "Skipped duplicate message %0", msg->id);
-	delete_uid(imap, uid);
-	continue;
-      }
-
-      if (msg->type == Msg::ACCEPT || msg->type == Msg::REJECT) {
-	db::Rec<Invite> inv;
-	set(inv, ctx.db.invite_to, msg->from);
-	
-	if (!load(ctx.db.invites, inv)) {
-	  log(ctx, fmt("Missing invite: %0", msg->from));
-	  delete_uid(imap, uid);	  
+	if (!msg) {
+	  log(ctx, "Failed decoding message");
+	  delete_uid(imap, uid);
 	  continue;
 	}
-      }
+
+	if (load(ctx.db.msgs, *msg)) {
+	  log(ctx, "Skipped duplicate message %0", msg->id);
+	  delete_uid(imap, uid);
+	  continue;
+	}
+
+	if (msg->type == Msg::ACCEPT || msg->type == Msg::REJECT) {
+	  db::Rec<Invite> inv;
+	  set(inv, ctx.db.invite_to, msg->from);
+	
+	  if (!load(ctx.db.invites, inv)) {
+	    log(ctx, fmt("Missing invite: %0", msg->from));
+	    delete_uid(imap, uid);	  
+	    continue;
+	  }
+	}
       
-      if (msg->type == Msg::REJECT) {
-	invite_rejected(*msg);
-	log(ctx, fmt("Invite to %0 was rejected", msg->from));
-      } else {
-	insert(ctx.db.inbox, *msg);
-      }
+	if (msg->type == Msg::REJECT) {
+	  invite_rejected(*msg);
+	  log(ctx, fmt("Invite to %0 was rejected", msg->from));
+	} else if (msg->type == Msg::POST) {
+	  opt<Feed> feed_found(find_feed_id(ctx, msg->feed_id));
+	  if (feed_found) {
+	    opt<Post> post_found(find_post_id(ctx, msg->post_id));
+	    Peer peer(get_peer_email(ctx, msg->from));
+
+	    if (post_found) {
+	      if (peer.id == post_found->by_id) {
+		post_found->body = msg->post_body;
+		update(ctx.db.posts, *post_found);
+		log(ctx, fmt("Post updated in feed '%0' by %1:\n%2",
+			     feed_found->name,
+			     peer.name,
+			     post_found->body));
+	      } else {
+		log(ctx, fmt("Skipping unautorized post update from %0",
+			     msg->from));
+	      }
+	    } else {
+	      Post post(*msg);
+	      insert(ctx.db.posts, post);
+	      log(ctx, fmt("New post in feed '%0' by %1:\n%2",
+			   feed_found->name,
+			   peer.name,
+			   post.body));
+	    }
+	  } else {
+	    insert(ctx.db.inbox, *msg);
+	  }
+	} else {
+	  insert(ctx.db.inbox, *msg);
+	}
       
-      delete_uid(imap, uid);
-      msg_cnt++;
+	delete_uid(imap, uid);
+	msg_cnt++;
+      } catch (const std::exception &e) {
+	log(ctx, fmt("Error while processing message: %0", e.what()));
+      }
     }
 
     if (tokens.size() > 2) {

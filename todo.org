@@ -1,7 +1,3 @@
-* add support for posts in existing feeds to imap
-** log to console
-* add support for post updates to imap
-** update body if from same peer as post
 * deal with errors in poll-loops
 ** print to console and continue
 * remove ui/main.cpp
