@@ -1,5 +1,3 @@
-* update feed/post-images in readme
-** commit
 * add gui::FeedList
 ** add feed.active + checkbox in feed form
 *** only show active in post form

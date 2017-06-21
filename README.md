@@ -17,16 +17,19 @@ sudo cp -R * /usr/local/
 sudo apt-get install libcurl4-openssl-dev libsodium-dev libuuid1 libgtk-3-dev
 ```
 
+### Getting started
+If you're running ```Linux/64```, copy [/dist](https://github.com/andreas-gone-wild/snackis/tree/master/dist) to where you want to keep Snackis; otherwise you'll have to build the ```snackis```-executable yourself. Snackis is designed to run completely self-contained and will create everything it needs in the directory where it's started.
+
+#### Building
+Once all dependencies are in place, execute the following commands to build Snackis:
+
 ```
 git clone https://github.com/andreas-gone-wild/snackis.git
 mkdir snackis/build
 cd snackis/build
 cmake ..
-make
+make snackis
 ```
-
-### Getting started
-If you're running ```Linux/64```, copy [/dist](https://github.com/andreas-gone-wild/snackis/tree/master/dist) to where you want to keep Snackis; otherwise you'll have to build it yourself. Snackis is designed to run completely self-contained and will create everything it needs in the directory where it's started.
 
 #### Master Password
 Each snackis installation is protected by a master password that is used to encrypt the database; pick a good one, because changing it means re-encrypting the entire database.
@@ -34,10 +37,10 @@ Each snackis installation is protected by a master password that is used to encr
 ![login example](images/login.png?raw=true)
 
 #### UI
-Snackis UI is divided into three different parts; to the left you have the console, where output is printed; below is the reader, where you may input commands; and to the right is an optional stack of open views. Each view is pushed onto the stack when opened and popped when closed. All buttons have mnemonics that may be revealed by pressing ```Alt```. Pressing ```Escape``` moves focus between current view and reader.
+Snackis UI is divided into three parts; to the left is the console, where output is printed; below is the reader, where commands may be given; and to the right is an optional stack of open views. Each new view is pushed onto the stack when opened and popped when closed. All buttons have mnemonics that may be revealed by pressing ```Alt```. Pressing ```Escape``` moves focus between current view and reader.
 
 #### Setup
-Once inside, the first thing you probably want to do is to have a look at the setup. Type ```setup``` and press ```Return``` to open the settings form. Imap/Smtp-settings are currently required to do anything beyond encrypting/decrypting data for personal use.
+Once inside, the first thing you probably want to do is to have a look at the setup. Type ```setup``` and press ```Return``` in the reader to open the setup view. Imap/Smtp-settings are currently required to do anything beyond encrypting/decrypting data for personal use.
 
 ![setup example](images/setup.png?raw=true)
 
@@ -45,27 +48,27 @@ Once inside, the first thing you probably want to do is to have a look at the se
 Type ```lock``` and press ```Return``` in the reader to lock Snackis and return to the login screen, the application will keep running in the background until closed.
 
 #### Encryption
-Snackis supports encrypting arbitrary data for a specific peer. Type ```encrypt``` and press ```Return``` in the reader to open the encryption form. On top of being encrypted; the resulting file is cryptographically signed, and the signature is verified when decrypting. Encoding ensures that the resulting file can be reliable transferred over text-based protocols, it also rougly doubles the size of the output.
+Snackis supports encrypting arbitrary data for specific peers. Type ```encrypt``` and press ```Return``` in the reader to open the encryption view. On top of being encrypted; the resulting file is cryptographically signed, and the signature is verified when decrypting. Encoding ensures that the resulting file can be reliable transferred over text-based protocols, it also rougly doubles the size of the output.
 
 ![encrypt example](images/encrypt.png?raw=true)
 
 #### Decryption
-Type ```decrypt``` and press ```Return``` in the reader to open the decryption form. Decoding is mandatory for files that were encoded as part of the encryption process.
+Type ```decrypt``` and press ```Return``` in the reader to open the decryption view. Decoding is mandatory for files that were encoded as part of the encryption process.
 
 ![decrypt example](images/decrypt.png?raw=true)
 
 #### Invites
-Type ```invite foo@bar.com``` in the reader and press ```Return``` to open the invite form. Snackis will send an email containing your public key to the specified address. The easiest way to see how it works is to try with your own address.
+Type ```invite foo@bar.com``` in the reader and press ```Return``` to create a new invite. Snackis will send an email containing your public encryption key to the specified address. The easiest way to see how it works is to try with your own address.
 
 #### Messages
-All Snackis-messages look more or less the same to the outside world. Most of the actual data is appended in encrypted (except for invites) form below the ```__SNACKIS__```-marker.
+All Snackis-messages look more or less the same to the outside world. Most of the actual data is appended in encrypted (except for invites) and encoded form below the ```__SNACKIS__```-marker.
 
 ![message example](images/message.png?raw=true)
 
-##### Sending
+#### Sending
 Snackis stores all outgoing messages in an outbox that may be emptied manually at any time by typing ```send``` and pressing ```Return``` in the reader. Automatic sending at regular intervals is supported through ```Smtp Poll``` in ```Setup```.
 
-##### Fetching
+#### Fetching
 Type ```fetch``` and press return in the reader to fetch email manually. Automatic fetching at regular intervals is supported through ```Imap Poll``` in ```Setup```.
 
 #### Inbox
@@ -83,7 +86,7 @@ Snackis main mode of communication is through feeds/posts. Type ```new-feed``` i
 
 ![feed example](images/feed.png?raw=true)
 
-##### Posts
+#### Posts
 Type ```post``` in the reader and press ```Return``` to post in existing feed.
 
 ![post example](images/post.png?raw=true)
