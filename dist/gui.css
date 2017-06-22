@@ -41,7 +41,7 @@ GtkEntry {
 }
 
 GtkLabel {
-    color: #bb4411;
+    color: #991f00;
     font-size: 105%;
 }
 
@@ -59,7 +59,7 @@ GtkTreeView column-header .button {
 
 GtkTreeView column-header .label {
     font-weight: normal;
-    color: #bb4411;
+    color: #991f00;
 }
 
 .window {
