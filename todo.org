@@ -1,7 +1,3 @@
-    if (v->post.by_id == whoami(ctx).id) { send(v->post); }
-
-* collapse email and name into same col in inbox
-* add edit on row-activated in post post-list
 * add gui::PostSearch
 ** copy feed search
 ** add feed combo

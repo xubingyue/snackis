@@ -7,7 +7,7 @@
 
 namespace snackis {
 namespace gui {
-  enum Cols { COL_MSG=0, COL_NAME, COL_EMAIL, COL_INFO };
+  enum Cols { COL_PTR=0, COL_FROM, COL_INFO };
   
   static void on_close(gpointer *_, Inbox *v) {
     pop_view(*v);
@@ -40,7 +40,7 @@ namespace gui {
     get_sel(v, &mod, &iter);
 
     db::Rec<Msg> *msg_rec;
-    gtk_tree_model_get(mod, &iter, COL_MSG, &msg_rec, -1);
+    gtk_tree_model_get(mod, &iter, COL_PTR, &msg_rec, -1);
     Msg msg(ctx, *msg_rec);
 
     if (msg.type == Msg::INVITE) {
@@ -79,7 +79,7 @@ namespace gui {
     get_sel(v, &mod, &iter);
 
     db::Rec<Msg> *msg_rec;
-    gtk_tree_model_get(mod, &iter, COL_MSG, &msg_rec, -1);
+    gtk_tree_model_get(mod, &iter, COL_PTR, &msg_rec, -1);
     Msg msg(ctx, *msg_rec);
 
     if (msg.type == Msg::INVITE) {
@@ -105,19 +105,12 @@ namespace gui {
     GtkCellRenderer *rend;
 
     rend = gtk_cell_renderer_text_new();
-    auto name_col(gtk_tree_view_column_new_with_attributes("From",
+    auto from_col(gtk_tree_view_column_new_with_attributes("From",
 							   rend,
-							   "text", COL_NAME,
+							   "text", COL_FROM,
 							   nullptr));
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.list), name_col);    
+    gtk_tree_view_append_column(GTK_TREE_VIEW(v.list), from_col);
   
-    rend = gtk_cell_renderer_text_new();
-    auto email_col(gtk_tree_view_column_new_with_attributes("",
-							    rend,
-							    "text", COL_EMAIL,
-							    nullptr));
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.list), email_col);
-
     rend = gtk_cell_renderer_text_new();
     auto info_col(gtk_tree_view_column_new_with_attributes("Message",
 							   rend,
@@ -125,9 +118,9 @@ namespace gui {
 							   nullptr));
     gtk_tree_view_column_set_expand(GTK_TREE_VIEW_COLUMN(info_col), true);
     gtk_tree_view_append_column(GTK_TREE_VIEW(v.list), info_col);
-    auto mod(gtk_list_store_new(4,
+    auto mod(gtk_list_store_new(3,
 				G_TYPE_POINTER,
-				G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING));
+				G_TYPE_STRING, G_TYPE_STRING));
     Ctx &ctx(v.ctx);
     std::vector<UId> rem;
     
@@ -136,12 +129,15 @@ namespace gui {
 
       GtkTreeIter iter;
       gtk_list_store_append(mod, &iter);
-      
+
       opt<Peer> peer(find_peer_email(ctx, msg.from));
+      const str from(fmt("%0\n%1",
+			 peer ? peer->name.c_str() : msg.peer_name.c_str(),
+			 msg.from.c_str()));
+		    
       gtk_list_store_set(mod, &iter,
-			 COL_MSG, &msg_rec,
-			 COL_NAME, peer ? peer->name.c_str() : msg.peer_name.c_str(),
-			 COL_EMAIL, msg.from.c_str(),
+			 COL_PTR, &msg_rec,
+			 COL_FROM, from.c_str(),
 			 -1);
       
       if (msg.type == Msg::INVITE) {
