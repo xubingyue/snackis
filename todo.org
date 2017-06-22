@@ -1,3 +1,6 @@
+* collapse post_by/at columns in post lists
+** feed_view & post_view
+** name\nat COL_POST_BY
 * add gui::PostSearch
 ** copy feed search
 ** add feed combo
