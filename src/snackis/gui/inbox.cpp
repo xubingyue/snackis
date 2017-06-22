@@ -173,11 +173,11 @@ namespace gui {
     GtkWidget *list_btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_container_add(GTK_CONTAINER(panel), list_btns);
         
-    accept = gtk_button_new_with_mnemonic("_Accept Message");
+    accept = gtk_button_new_with_mnemonic("_Accept");
     g_signal_connect(accept, "clicked", G_CALLBACK(on_accept), this);
     gtk_container_add(GTK_CONTAINER(list_btns), accept);
     
-    reject = gtk_button_new_with_mnemonic("_Reject Message");
+    reject = gtk_button_new_with_mnemonic("_Reject");
     g_signal_connect(reject, "clicked", G_CALLBACK(on_reject), this);
     gtk_container_add(GTK_CONTAINER(list_btns), reject);
     
