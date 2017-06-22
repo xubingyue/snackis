@@ -11,7 +11,7 @@ namespace snackis {
 namespace gui {
   struct FeedSearch: View {
     GtkListStore *peers, *feeds;
-    GtkWidget *peer, *active, *find, *list, *edit, *close;
+    GtkWidget *peer, *active, *find, *list, *close;
     
     FeedSearch(Ctx &ctx);
   };

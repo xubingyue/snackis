@@ -58,9 +58,11 @@ namespace gui {
     return rec;
   }
 
-  static void on_edit(gpointer *_, FeedSearch *v) {
+  void on_edit(GtkTreeView *treeview,
+	       GtkTreePath *path,
+	       GtkTreeViewColumn *col,
+	       FeedSearch *v) {
     Ctx &ctx(v->ctx);
-    gtk_widget_grab_focus(v->list);
     auto feed_rec(get_sel_feed(*v));
     assert(feed_rec);
     Feed feed(ctx, *feed_rec);
@@ -72,12 +74,6 @@ namespace gui {
     pop_view(*v);
   }
   
-  static void on_list_sel(gpointer *_, FeedSearch *v) {
-    auto sel(gtk_tree_view_get_selection(GTK_TREE_VIEW(v->list)));
-    auto cnt(gtk_tree_selection_count_selected_rows(sel));
-    gtk_widget_set_sensitive(v->edit, cnt > 0);
-  }
-
   static void init_peers(FeedSearch &v) {
     GtkTreeIter iter;
     gtk_list_store_append(v.peers, &iter);
@@ -103,10 +99,7 @@ namespace gui {
 							   "text", COL_FEED_NAME,
 							   nullptr));
     gtk_tree_view_append_column(GTK_TREE_VIEW(v.list), name_col);
-    auto sel(gtk_tree_view_get_selection(GTK_TREE_VIEW(v.list)));
-    g_signal_connect(sel, "changed", G_CALLBACK(on_list_sel), &v);
-    gtk_widget_set_sensitive(v.edit, false);
-    g_signal_connect(v.edit, "clicked", G_CALLBACK(on_edit), &v);
+    g_signal_connect(v.list, "row-activated", G_CALLBACK(on_edit), &v);
   }
   
   FeedSearch::FeedSearch(Ctx &ctx):
@@ -117,7 +110,6 @@ namespace gui {
     active(gtk_check_button_new_with_label("Active")),
     find(gtk_button_new_with_mnemonic("_Find Feeds")),
     list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(feeds))),
-    edit(gtk_button_new_with_mnemonic("_Edit Feed")),
     close(gtk_button_new_with_mnemonic("_Close Search")) {
     GtkWidget *lbl;
 
@@ -151,10 +143,6 @@ namespace gui {
     gtk_widget_set_margin_top(list, 5);
     gtk_box_pack_start(GTK_BOX(panel), list, true, true, 0);
 
-    GtkWidget *feed_btns(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
-    gtk_container_add(GTK_CONTAINER(panel), feed_btns);
-    gtk_container_add(GTK_CONTAINER(feed_btns), edit);
-    
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_widget_set_halign(btns, GTK_ALIGN_END);
     gtk_widget_set_valign(btns, GTK_ALIGN_END);
