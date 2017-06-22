@@ -109,5 +109,5 @@ Snackis delegates anything concerning encryption to [libsodium](https://github.c
 Snackis is licensed under the GNU General Public License Version 3.
 
 ### Help
-[This is your chance](https://www.paypal.me/c4life) to help Snackis move forward faster, every contribution counts.<br/>
+[This is your chance](https://www.paypal.me/c4life) to help Snackis move forward, every contribution counts.<br/>
 Thank you!
