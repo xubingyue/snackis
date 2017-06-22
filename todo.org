@@ -18,16 +18,6 @@
 ** receipts table with receipt_id & receipt_at
 ** store msg id & update time when receipt msg is received
 ** send receipt message when accepting post
-* add system-wide ngram search
-** gui.Search
-*** text field & results tre
-*** forward opt cmd arg to text field
-** add db.texts/Text
-*** keys: body, peer_id, feed_id and post_id
-*** fields: count
-*** index peers, thread names & post bodies
-*** create for each ngram on insert/update
-*** dec / delete for each ngram on delete
 * add anonymous forwarding
 ** forward messages through all peers but receiver and self
 * add backup command
@@ -35,7 +25,7 @@
 ** run tar -z proc
 ** store as db_timestamp.tar.gz
 * add table locking
-** shared_mutex
+** shared_mutex in table
 ** add RLock/WLock types
 ** lock in operations
 ** lock externally around loops
