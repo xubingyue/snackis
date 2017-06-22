@@ -5,6 +5,8 @@
 ** copy feed search
 ** add feed combo
 ** add post-search command
+* update readme images
+* ---
 * add help command
 ** add Cmd struct
 *** rename Cmd to Fn

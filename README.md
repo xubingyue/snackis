@@ -71,6 +71,9 @@ Snackis stores all outgoing messages in an outbox that may be manually emptied a
 #### Fetching
 Type ```fetch``` and press return in the reader to fetch email manually. Automatic fetching at regular intervals is supported through ```Imap Poll``` in ```Setup```.
 
+#### Email Security
+If you haven't previously used external clients with your email address, it's quite likely that you'll get an error when Snackis tries connecting to the server. Have a look in your regular inbox and there should in most cases be a message with instructions to enable external access.
+
 #### Inbox
 Incoming traffic that needs approval arrives in the inbox, type ```inbox``` end press ```Return``` in the reader to open the inbox form.
 
