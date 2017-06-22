@@ -1,3 +1,4 @@
+* add 'Edit Selected Post'-btn to feed view
 * add gui::PostSearch
 ** copy feed search
 ** add feed condition
