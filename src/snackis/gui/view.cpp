@@ -60,6 +60,7 @@ namespace gui {
     } else {
       auto next(View::stack.top());
       gtk_container_add(GTK_CONTAINER(gui::panels), next->panel);
+      gtk_widget_show_all(next->ptr());
       gtk_widget_grab_focus(next->focused);
     }
 
