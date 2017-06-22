@@ -11,6 +11,7 @@ namespace snackis {
 
   str trim(const str& in);
   str fill(const str &in, char ch, size_t len);
+  size_t find_ci(const str &stack, const str& needle);
   opt<int64_t> to_int64(const str &in);
 
   template <typename T>

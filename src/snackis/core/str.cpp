@@ -20,6 +20,15 @@ namespace snackis {
     return out;
   }
 
+  size_t find_ci(const str &stack, const str& needle) {
+    auto found(std::search(stack.begin(), stack.end(),
+		       needle.begin(), needle.end(),
+		       [](char x, char y) {
+			 return std::tolower(x) == std::tolower(y);
+			   }));
+    return (found == stack.end()) ? str::npos : found - stack.begin();
+  }
+  
   opt<int64_t> to_int64(const str &in) {
     try {
       return std::stoll(in);
