@@ -53,6 +53,10 @@ GtkLabel {
     font-size: 105%;
 }
 
+GtkTextView {
+    border-radius: 0.3em;
+}
+
 GtkTextView .view {
     background: #ffffff;
     color: #000000;
@@ -68,6 +72,10 @@ GtkTreeView column-header .button {
 GtkTreeView column-header .label {
     font-weight: normal;
     color: #991f00;
+}
+
+GtkTreeView row {
+    border-radius: 0.3em;
 }
 
 .window {
