@@ -37,12 +37,8 @@ GtkEntry {
 }
 
 GtkLabel {
-    color: #ff5c33;
+    color: #bb4411;
     font-size: 105%;
-}
-
-GtkButton GtkLabel {
-    color: #ff5c33;
 }
 
 GtkTextView .view {
