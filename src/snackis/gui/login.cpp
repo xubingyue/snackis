@@ -79,9 +79,6 @@ namespace gui {
     gtk_box_pack_start(GTK_BOX(frm), btn, false, false, 10);
     g_signal_connect(btn, "clicked", G_CALLBACK(on_login), this);
     gtk_widget_set_halign(btn, GTK_ALIGN_CENTER);
-  }
-
-  void Login::focus() {
-    gtk_widget_grab_focus(pass);
+    focused = pass;
   }
 }}

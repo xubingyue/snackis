@@ -15,7 +15,6 @@ namespace gui {
     GtkWidget *feed, *body_text, *body, *post_list, *save, *cancel;
     
     PostView(const Post &post);
-    void focus() override;
   };
 }}
 

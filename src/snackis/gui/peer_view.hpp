@@ -14,7 +14,6 @@ namespace gui {
     GtkWidget *name, *email, *save, *cancel;
     
     PeerView(const Peer &peer);
-    void focus() override;
   };
 }}
 

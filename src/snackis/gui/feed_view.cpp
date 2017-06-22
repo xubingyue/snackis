@@ -118,7 +118,7 @@ namespace gui {
 			 -1);
     }
   }
-
+  
   static void init_peers(FeedView &v) {
     Ctx &ctx(v.ctx);
 
@@ -158,7 +158,7 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(v.peer_input), v.peer);
 
     g_signal_connect(v.add_peer, "clicked", G_CALLBACK(on_add_peer), &v);
-    gtk_container_add(GTK_CONTAINER(v.peer_input), v.add_peer);    
+    gtk_container_add(GTK_CONTAINER(v.peer_input), v.add_peer);
     load_peers(v);
   }
 
@@ -218,10 +218,10 @@ namespace gui {
     name(gtk_entry_new()),
     active(gtk_check_button_new_with_label("Active")),
     peer_list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(feed_peers))),
-    remove_peers(gtk_button_new_with_mnemonic("Remove Selected Peers")),
+    remove_peers(gtk_button_new_with_mnemonic("_Remove Selected Peers")),
     peer_input(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5)),
     peer(gtk_combo_box_new_with_model(GTK_TREE_MODEL(peers))),
-    add_peer(gtk_button_new_with_mnemonic("Add Peer")),
+    add_peer(gtk_button_new_with_mnemonic("_Add Peer")),
     post_list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(posts))),
     new_post_text(gtk_text_view_new()),
     new_post(gtk_scrolled_window_new(NULL, NULL)),
@@ -283,9 +283,6 @@ namespace gui {
 
     g_signal_connect(cancel, "clicked", G_CALLBACK(on_cancel), this);
     gtk_container_add(GTK_CONTAINER(btns), cancel);
-  }
-  
-  void FeedView::focus() {
-    gtk_widget_grab_focus(name);
+    focused = name;
   }
 }}

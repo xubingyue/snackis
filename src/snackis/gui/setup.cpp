@@ -375,9 +375,6 @@ namespace gui {
 
     g_signal_connect(cancel, "clicked", G_CALLBACK(on_cancel), this);
     gtk_container_add(GTK_CONTAINER(btns), cancel);    
-  }
-  
-  void Setup::focus() {
-    gtk_widget_grab_focus(name);
+    focused = name;
   }
 }}

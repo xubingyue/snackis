@@ -4,6 +4,7 @@
 #include "snackis/gui/decrypt.hpp"
 #include "snackis/gui/encrypt.hpp"
 #include "snackis/gui/feed_view.hpp"
+#include "snackis/gui/feed_search.hpp"
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/inbox.hpp"
 #include "snackis/gui/post_view.hpp"
@@ -46,7 +47,18 @@ namespace gui {
 	push_view(*v);
 	return true;
       });
-    
+
+    rdr.cmds.emplace("feed-search", [&ctx](auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: feed-search");
+	  return false;
+	}
+	
+	FeedSearch *v = new FeedSearch(ctx);
+	push_view(*v);
+	return true;
+      });
+
     rdr.cmds.emplace("fetch", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: fetch");

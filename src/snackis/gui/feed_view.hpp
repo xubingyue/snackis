@@ -17,7 +17,6 @@ namespace gui {
       *add_peer, *post_list, *new_post_text, *new_post, *save, *cancel;
     
     FeedView(const Feed &feed);
-    void focus() override;
   };
 }}
 

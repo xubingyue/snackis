@@ -12,7 +12,6 @@ namespace gui {
     GtkWidget *pass, *repeat, *btn;
     
     Login(Ctx &ctx);
-    void focus() override;
   };
 }}
 

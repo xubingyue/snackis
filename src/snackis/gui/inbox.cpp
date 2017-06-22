@@ -190,9 +190,6 @@ namespace gui {
     g_signal_connect(close, "clicked", G_CALLBACK(on_close), this);
     gtk_box_pack_start(GTK_BOX(panel), close, false, false, 5);
     sel_changed(*this);
-  }
-
-  void Inbox::focus() {
-    gtk_widget_grab_focus(list);
+    focused = list;
   }
 }}

@@ -16,7 +16,6 @@ namespace gui {
       *save, *cancel;
     
     Setup(Ctx &ctx);
-    void focus() override;
   };
 }}
 

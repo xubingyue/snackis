@@ -1,14 +1,7 @@
-* add gui::FeedSearch
-** form & tree-view
-** add Find-button to form
-** edit on return/dblclk
-*** push feed view
-** add search-feeds command
-* add gui::PostList
-** form & tree-view
-** edit on return/dblclk
-*** push feed view
-** add search-posts command
+* add gui::PostSearch
+** copy feed search
+** add feed condition
+** add post-search command
 * add help command
 ** add Cmd struct
 *** rename Cmd to Fn

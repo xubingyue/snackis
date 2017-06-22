@@ -177,9 +177,6 @@ namespace gui {
 
     g_signal_connect(cancel, "clicked", G_CALLBACK(on_cancel), this);
     gtk_container_add(GTK_CONTAINER(btns), cancel);
-  }
-  
-  void PostView::focus() {
-    gtk_widget_grab_focus(feed);
+    focused = feed;
   }
 }}

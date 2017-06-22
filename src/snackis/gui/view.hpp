@@ -10,7 +10,7 @@ namespace gui {
   struct View: Widget {
     static std::stack<View *> stack;
     Ctx &ctx;
-    GtkWidget *panel;
+    GtkWidget *panel, *focused;
     
     View(Ctx &ctx, const str &lbl);
     virtual ~View();
