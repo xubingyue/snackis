@@ -1,6 +1,5 @@
-* collapse post_by/at columns in post lists
-** feed_view & post_view
-** name\nat COL_POST_BY
+* extract get_sel_rec fns for combo/tree_view
+* extract get_sel_recs for tree_view
 * add gui::PostSearch
 ** copy feed search
 ** add feed combo
@@ -33,6 +32,7 @@
 ** lock in operations
 ** lock externally around loops
 ** only lock trans_mutex when accessing stack
+* hide stack views instead of removing/adding to container
 * add msg.parts
 ** set<Msg>
 ** add Msg::MULTI type

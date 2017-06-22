@@ -6,7 +6,7 @@
 namespace snackis {
 namespace gui {
   enum FeedCol {COL_FEED_PTR=0, COL_FEED_NAME};
-  enum PostCol {COL_POST_PTR=0, COL_POST_AT, COL_POST_BY, COL_POST_BODY};
+  enum PostCol {COL_POST_PTR=0, COL_POST_BY, COL_POST_BODY};
     
   static void on_cancel(gpointer *_, PostView *v) {
     log(v->ctx, "Cancelled post");
@@ -38,10 +38,13 @@ namespace gui {
       
       GtkTreeIter iter;
       gtk_list_store_append(v.posts, &iter);
+      const str by(fmt("%0\n%1",
+		       peer.name.c_str(),
+		       fmt(post.at, "%a %b %d, %H:%M:%S").c_str()));
+      
       gtk_list_store_set(v.posts, &iter,
 			 COL_POST_PTR, rec,
-			 COL_POST_AT, fmt(post.at, "%a %b %d, %H:%M:%S").c_str(),
-			 COL_POST_BY, peer.name.c_str(),
+			 COL_POST_BY, by.c_str(),
 			 COL_POST_BODY, post.body.c_str(),
 			 -1);
     }
@@ -124,14 +127,7 @@ namespace gui {
     gtk_widget_set_hexpand(v.post_list, true);
     gtk_widget_set_vexpand(v.post_list, true);
     auto rend(gtk_cell_renderer_text_new());
-    auto at_col(gtk_tree_view_column_new_with_attributes("History",
-							 rend,
-							 "text", COL_POST_AT,
-							 nullptr));
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.post_list), at_col);    
-
-    rend = gtk_cell_renderer_text_new();
-    auto by_col(gtk_tree_view_column_new_with_attributes("",
+    auto by_col(gtk_tree_view_column_new_with_attributes("Previous Posts",
 							 rend,
 							 "text", COL_POST_BY,
 							 nullptr));
@@ -152,9 +148,9 @@ namespace gui {
     View(post.ctx, "Post"),
     post(post),
     feeds(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
-    posts(gtk_list_store_new(4,
+    posts(gtk_list_store_new(3,
 			     G_TYPE_POINTER,
-			     G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING)),
+			     G_TYPE_STRING, G_TYPE_STRING)),
     feed(gtk_combo_box_new_with_model(GTK_TREE_MODEL(feeds))),
     body_text(gtk_text_view_new()),
     body(gtk_scrolled_window_new(NULL, NULL)),
