@@ -41,18 +41,10 @@ namespace gui {
     gtk_widget_set_sensitive(v->remove_peers, cnt > 0);
   }
   
-  static db::Rec<Peer> &get_sel_peer(FeedView &v) {
-    GtkTreeIter iter;
-    gtk_combo_box_get_active_iter(GTK_COMBO_BOX(v.peer), &iter);
-    db::Rec<Peer> *rec;
-    gtk_tree_model_get(GTK_TREE_MODEL(v.peers), &iter, COL_PEER_PTR, &rec, -1);
-    return *rec;
-  }
-
   static void on_peer_sel(gpointer *_, FeedView *v) {
     Ctx &ctx(v->ctx);
-    db::Rec<Peer> &rec(get_sel_peer(*v));
-    auto id(*db::get(rec, ctx.db.peer_id));
+    db::Rec<Peer> *rec(get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer)));
+    auto id(*db::get(*rec, ctx.db.peer_id));
     bool exists = v->feed.peer_ids.find(id) != v->feed.peer_ids.end();
     gtk_widget_set_sensitive(v->add_peer, !exists);
     gtk_widget_set_sensitive(v->remove_peers, exists);
@@ -60,25 +52,26 @@ namespace gui {
   
   static void on_add_peer(gpointer *_, FeedView *v) {
     Ctx &ctx(v->ctx);
-    db::Rec<Peer> &rec(get_sel_peer(*v));
+    db::Rec<Peer> *rec(get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer)));
 
     GtkTreeIter iter;    
     gtk_list_store_append(v->feed_peers, &iter);
     gtk_list_store_set(v->feed_peers, &iter,
-		       COL_PEER_PTR, &rec,
-		       COL_PEER_NAME, db::get(rec, ctx.db.peer_name)->c_str(),
+		       COL_PEER_PTR, rec,
+		       COL_PEER_NAME, db::get(*rec, ctx.db.peer_name)->c_str(),
 		       -1);
     auto sel(gtk_tree_view_get_selection(GTK_TREE_VIEW(v->peer_list)));
     gtk_tree_selection_select_iter(sel, &iter);
   
-    v->feed.peer_ids.insert(*db::get(rec, ctx.db.peer_id));
+    v->feed.peer_ids.insert(*db::get(*rec, ctx.db.peer_id));
     gtk_widget_set_sensitive(v->add_peer, false);
-    gtk_widget_set_sensitive(v->remove_peers, true);    
+    gtk_widget_set_sensitive(v->remove_peers, true);
+    gtk_widget_grab_focus(v->peer);
   }
 
   static void on_remove_peers(gpointer *_, FeedView *v) {
     Ctx &ctx(v->ctx);
-    db::Rec<Peer> &rec(get_sel_peer(*v));    
+    
     GtkTreeIter iter;    
     gtk_tree_model_get_iter_first(GTK_TREE_MODEL(v->feed_peers), &iter);
     auto sel(gtk_tree_view_get_selection(GTK_TREE_VIEW(v->peer_list)));
@@ -91,6 +84,8 @@ namespace gui {
 			 -1);
       if (gtk_tree_selection_iter_is_selected(sel, &iter)) {
 	gtk_list_store_remove(v->feed_peers, &iter);
+	v->feed.peer_ids.erase(*db::get(*iter_rec, ctx.db.peer_id));
+
 	if (!gtk_list_store_iter_is_valid(v->feed_peers, &iter)) {
 	  break;
 	}
@@ -99,7 +94,6 @@ namespace gui {
       }
     }
     
-    v->feed.peer_ids.erase(*db::get(rec, ctx.db.peer_id));
     gtk_widget_set_sensitive(v->add_peer, true);
     gtk_widget_set_sensitive(v->remove_peers, false);    
   }

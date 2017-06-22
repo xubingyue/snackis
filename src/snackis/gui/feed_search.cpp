@@ -9,25 +9,13 @@ namespace gui {
   enum PeerCol {COL_PEER_PTR=0, COL_PEER_NAME};
   enum FeedCol {COL_FEED_PTR=0, COL_FEED_NAME};
 
-  static db::Rec<Peer> *get_sel_peer(FeedSearch &v) {
-    GtkTreeIter iter;
-
-    if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(v.peer), &iter)) {
-      return nullptr;
-    }
-
-    db::Rec<Peer> *rec = nullptr;
-    gtk_tree_model_get(GTK_TREE_MODEL(v.peers), &iter, COL_PEER_PTR, &rec, -1); 
-    return rec;
-  }
-
   static void on_find(gpointer *_, FeedSearch *v) {
     Ctx &ctx(v->ctx);
     gtk_list_store_clear(v->feeds);
     size_t cnt(0);
     
     str name_sel(trim(gtk_entry_get_text(GTK_ENTRY(v->name))));
-    auto peer_sel(get_sel_peer(*v));
+    auto peer_sel(get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer)));
     bool active_sel(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->active)));
     
     for (auto &rec: ctx.db.feeds.recs) {
