@@ -62,14 +62,7 @@ namespace gui {
       out_path(gtk_entry_get_text(GTK_ENTRY(v->target)));
 	    
     log(ctx, fmt("Encrypting from '%0' to '%1'...", in_path, out_path));
-    GtkTreeIter iter;
-    gtk_combo_box_get_active_iter(GTK_COMBO_BOX(v->peer), &iter);
-    db::Rec<Peer> *peer_rec;
-    gtk_tree_model_get(GTK_TREE_MODEL(v->peers),
-		       &iter,
-		       COL_PEER_PTR, &peer_rec,
-		       -1);
-    Peer peer(ctx, *peer_rec);
+    Peer peer(ctx, *get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer)));
     
     encrypt(peer,
 	    in_path, out_path,

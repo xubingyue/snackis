@@ -13,24 +13,12 @@ namespace gui {
     pop_view(*v);
   }
 
-  static opt<db::Rec<Feed> *> get_sel_feed(PostView &v) {
-    GtkTreeIter iter;
-    
-    if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(v.feed), &iter)) {
-      return nullopt;
-    }
-
-    db::Rec<Feed> *rec;
-    gtk_tree_model_get(GTK_TREE_MODEL(v.feeds), &iter, COL_FEED_PTR, &rec, -1);
-    return rec;	
-  }
-
   static bool load_posts(PostView &v) {
     Ctx &ctx(v.ctx);
     gtk_list_store_clear(v.posts);
-    auto feed_rec(get_sel_feed(v));
+    auto feed_rec(get_sel_rec<Feed>(GTK_COMBO_BOX(v.feed)));
     if (!feed_rec) { return false; }
-    Feed feed(ctx, **feed_rec);
+    Feed feed(ctx, *feed_rec);
     
     for (auto rec: last_posts(feed, v.post.at, 7)) {
       Post post(ctx, *rec);
@@ -60,7 +48,7 @@ namespace gui {
     Ctx &ctx(v->ctx);
     db::Trans trans(ctx);
     
-    Feed feed(ctx, **get_sel_feed(*v));
+    Feed feed(ctx, *get_sel_rec<Feed>(GTK_COMBO_BOX(v->feed)));
     activate(feed);
     v->post.feed_id = feed.id;
     v->post.body = get_str(GTK_TEXT_VIEW(v->body_text));
