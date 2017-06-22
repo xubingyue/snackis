@@ -208,7 +208,7 @@ namespace gui {
     gtk_widget_set_hexpand(v.post_list, true);
     gtk_widget_set_vexpand(v.post_list, true);
     auto rend(gtk_cell_renderer_text_new());
-    auto by_col(gtk_tree_view_column_new_with_attributes("Posts",
+    auto by_col(gtk_tree_view_column_new_with_attributes("Post History",
 							 rend,
 							 "text", COL_POST_BY,
 							 nullptr));

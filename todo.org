@@ -1,6 +1,5 @@
-* update readme images
 * blog
-** Snackis Reloaded - secure, distributed social networking
+** Snackis Reloaded - secure & distributed social networking
 * extract get_sel_rec for tree_view
 * extract get_sel_recs for tree_view
 * add gui::PostSearch
