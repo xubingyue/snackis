@@ -4,7 +4,7 @@
 #### sugar-free co-creation
 
 ### Introduction
-Snackis is aiming for something that might be described as a post-modern enigma-device; a tool that covers most secure communication needs using any regular email-account as transport. Peers, encryption keys, messages and and settings are stored locally, encrypted using a master password. At present, Snackis supports key-exchange via invites/accepts, encryption/decryption of arbitrary data for specific peers and feeds/posts. Coming up next is signed receipts, scheduled events and more.
+Snackis is aiming for something that might be described as a post-modern enigma-device; a tool that covers most secure communication needs using any regular email-account as transport. Peers, encryption keys, messages and and settings are stored locally, encrypted using a master password. At present; Snackis supports key-exchange via invites/accepts, encryption/decryption of arbitrary data for specific peers and feeds/posts. Coming up next is signed receipts, scheduled events and more.
 
 ### Dependencies
 Snackis requires a ```C++1z```-capable compiler and standard library to build, and defaults to using [clang](http://releases.llvm.org/download.html#4.0.0) with ```libc++```; it further depends on ```libcurl```, ```libpthread```, ```libsodium``` and ```libuuid``` for core functionality, as well as ```GTK+ 3``` for the UI.

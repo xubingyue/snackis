@@ -1,3 +1,5 @@
+* update readme images
+* blog
 * extract get_sel_rec for tree_view
 * extract get_sel_recs for tree_view
 * add gui::PostSearch
@@ -5,7 +7,6 @@
 ** add feed combo
 ** add post-search command
 * add gui::PeerSearch
-* update readme images
 * ---
 * add help command
 ** add Cmd struct
