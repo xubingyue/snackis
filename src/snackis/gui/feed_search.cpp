@@ -116,7 +116,7 @@ namespace gui {
     active(gtk_check_button_new_with_label("Active")),
     find(gtk_button_new_with_mnemonic("_Find Feeds")),
     list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(feeds))),
-    edit(gtk_button_new_with_mnemonic("_Edit Selected Feed")),
+    edit(gtk_button_new_with_mnemonic("_Edit Feed")),
     close(gtk_button_new_with_mnemonic("_Close Search")) {
     GtkWidget *lbl;
 
