@@ -13,12 +13,9 @@ GtkTextView .view:focused {
 
 GtkButton {
     border: 1px solid;
-    border-color: silver;
+    border-color: #cccccc;
     box-shadow: none;
-}
-
-GtkButton GtkLabel {
-    color: #000000;
+    background: #333333;
 }
 
 GtkButton:insensitive GtkLabel {
@@ -27,6 +24,11 @@ GtkButton:insensitive GtkLabel {
 
 GtkCheckButton {
     border-radius: 0.3em;
+}
+
+GtkCheckButton GtkLabel {
+    border-radius: 0.3em;
+    color: #991f00;    
 }
 
 GtkComboBox {
