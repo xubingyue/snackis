@@ -74,6 +74,11 @@ namespace gui {
 	  log(ctx, "Invalid number of arguments, syntax: inbox");
 	  return false;
 	}
+
+	if (ctx.db.inbox.recs.empty()) {
+	  log(ctx, "Inbox is empty");
+	  return true;
+	}
 	
 	Inbox *v = new Inbox(ctx);
 	push_view(*v);
