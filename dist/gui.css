@@ -32,9 +32,15 @@ GtkCheckButton GtkLabel {
 }
 
 GtkComboBox {
-    border-color: silver;
+    border-color: #333333;
     border: none;
     box-shadow: none;
+    background: #ffffff;
+    border-radius: 0.3em;
+}
+
+GtkComboBox GtkButton {
+    background: #ffffff;
 }
 
 GtkEntry {

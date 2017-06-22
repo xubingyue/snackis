@@ -61,7 +61,7 @@ namespace gui {
     v->post.feed_id = feed.id;
     v->post.body = text_view_str(GTK_TEXT_VIEW(v->body_text));
     db::insert(ctx.db.posts, v->post);
-    if (v->post.by_id == whoami(ctx).id) { send(v->post); }
+    send(v->post);
     db::commit(trans);
     log(v->ctx, "Saved post");
     pop_view(*v);

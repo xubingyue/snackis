@@ -1,10 +1,12 @@
-* add edit on row-activated in feed-view post-list
-** copy feed search
+    if (v->post.by_id == whoami(ctx).id) { send(v->post); }
+
+* collapse email and name into same col in inbox
 * add edit on row-activated in post post-list
 * add gui::PostSearch
 ** copy feed search
 ** add feed combo
 ** add post-search command
+* add gui::PeerSearch
 * update readme images
 * ---
 * add help command

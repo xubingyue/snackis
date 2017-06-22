@@ -1,6 +1,8 @@
+#include <cassert>
 #include "snackis/ctx.hpp"
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/feed_view.hpp"
+#include "snackis/gui/post_view.hpp"
 
 namespace snackis {
 namespace gui {
@@ -101,7 +103,7 @@ namespace gui {
     gtk_widget_set_sensitive(v->add_peer, true);
     gtk_widget_set_sensitive(v->remove_peers, false);    
   }
-
+  
   static void load_peers(FeedView &v) {
     Ctx &ctx(v.ctx);
     
@@ -162,6 +164,31 @@ namespace gui {
     load_peers(v);
   }
 
+  static db::Rec<Post> *get_sel_post(FeedView &v) {
+    GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(v.post_list));
+    GtkTreeIter iter;
+
+    if (!gtk_tree_selection_get_selected(sel, nullptr, &iter)) { return nullptr; }
+    db::Rec<Post> *rec(nullptr);
+    gtk_tree_model_get(GTK_TREE_MODEL(v.posts), &iter, COL_POST_PTR, &rec, -1);
+    return rec;
+  }
+
+  static void on_edit_post(GtkTreeView *treeview,
+			   GtkTreePath *path,
+			   GtkTreeViewColumn *col,
+			   FeedView *v) {
+    Ctx &ctx(v->ctx);
+    auto post_rec(get_sel_post(*v));
+    assert(post_rec);
+    Post post(ctx, *post_rec);
+
+    if (post.by_id == whoami(ctx).id) {
+      PostView *pv(new PostView(post));
+      push_view(*pv);
+    }
+  }
+  
   static void load_posts(FeedView &v) {
     Ctx &ctx(v.ctx);
 
@@ -204,6 +231,7 @@ namespace gui {
 							   nullptr));
     gtk_tree_view_column_set_expand(GTK_TREE_VIEW_COLUMN(body_col), true);
     gtk_tree_view_append_column(GTK_TREE_VIEW(v.post_list), body_col);    
+    g_signal_connect(v.post_list, "row-activated", G_CALLBACK(on_edit_post), &v);
     load_posts(v);
   }
   
@@ -256,6 +284,8 @@ namespace gui {
     init_posts(*this);
     gtk_widget_set_margin_top(post_list, 5);
     gtk_container_add(GTK_CONTAINER(frm), post_list);
+    lbl = gtk_label_new("Press Return or double-click to edit selected post");
+    gtk_container_add(GTK_CONTAINER(frm), lbl);
 
     lbl = gtk_label_new("New Post");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);

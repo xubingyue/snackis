@@ -65,10 +65,10 @@ namespace gui {
     return rec;
   }
 
-  void on_edit(GtkTreeView *treeview,
-	       GtkTreePath *path,
-	       GtkTreeViewColumn *col,
-	       FeedSearch *v) {
+  static void on_edit(GtkTreeView *treeview,
+		      GtkTreePath *path,
+		      GtkTreeViewColumn *col,
+		      FeedSearch *v) {
     Ctx &ctx(v->ctx);
     auto feed_rec(get_sel_feed(*v));
     assert(feed_rec);
