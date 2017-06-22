@@ -105,6 +105,7 @@ namespace gui {
     gtk_tree_view_append_column(GTK_TREE_VIEW(v.list), name_col);
     auto sel(gtk_tree_view_get_selection(GTK_TREE_VIEW(v.list)));
     g_signal_connect(sel, "changed", G_CALLBACK(on_list_sel), &v);
+    gtk_widget_set_sensitive(v.edit, false);
     g_signal_connect(v.edit, "clicked", G_CALLBACK(on_edit), &v);
   }
   
