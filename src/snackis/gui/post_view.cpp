@@ -1,3 +1,4 @@
+#include <cassert>
 #include "snackis/ctx.hpp"
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/post_view.hpp"
@@ -59,7 +60,7 @@ namespace gui {
     Feed feed(ctx, **get_sel_feed(*v));
     activate(feed);
     v->post.feed_id = feed.id;
-    v->post.body = text_view_str(GTK_TEXT_VIEW(v->body_text));
+    v->post.body = get_str(GTK_TEXT_VIEW(v->body_text));
     db::insert(ctx.db.posts, v->post);
     send(v->post);
     db::commit(trans);
@@ -93,6 +94,31 @@ namespace gui {
     gtk_combo_box_set_active(GTK_COMBO_BOX(v.feed), 0);
     gtk_widget_set_sensitive(v.save, cnt > 0);
   }
+
+  static db::Rec<Post> *get_sel_post(PostView &v) {
+    GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(v.post_list));
+    GtkTreeIter iter;
+
+    if (!gtk_tree_selection_get_selected(sel, nullptr, &iter)) { return nullptr; }
+    db::Rec<Post> *rec(nullptr);
+    gtk_tree_model_get(GTK_TREE_MODEL(v.posts), &iter, COL_POST_PTR, &rec, -1);
+    return rec;
+  }
+
+  static void on_edit_post(GtkTreeView *treeview,
+			   GtkTreePath *path,
+			   GtkTreeViewColumn *col,
+			   PostView *v) {
+    Ctx &ctx(v->ctx);
+    auto post_rec(get_sel_post(*v));
+    assert(post_rec);
+    Post post(ctx, *post_rec);
+
+    if (post.by_id == whoami(ctx).id) {
+      PostView *pv(new PostView(post));
+      push_view(*pv);
+    }
+  }
   
   static void init_posts(PostView &v) {
     gtk_widget_set_hexpand(v.post_list, true);
@@ -117,7 +143,8 @@ namespace gui {
 							   "text", COL_POST_BODY,
 							   nullptr));
     gtk_tree_view_column_set_expand(GTK_TREE_VIEW_COLUMN(body_col), true);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.post_list), body_col);    
+    gtk_tree_view_append_column(GTK_TREE_VIEW(v.post_list), body_col);
+    g_signal_connect(v.post_list, "row-activated", G_CALLBACK(on_edit_post), &v);
     load_posts(v);
   }
   
@@ -161,10 +188,13 @@ namespace gui {
 				   GTK_POLICY_ALWAYS);
     gtk_container_add(GTK_CONTAINER(body), body_text);
     gtk_container_add(GTK_CONTAINER(frm), body);
+    set_str(GTK_TEXT_VIEW(body_text), post.body);
     
     init_posts(*this);
     gtk_widget_set_margin_top(post_list, 5);
     gtk_container_add(GTK_CONTAINER(frm), post_list);
+    lbl = gtk_label_new("Press Return or double-click to edit selected post");
+    gtk_container_add(GTK_CONTAINER(frm), lbl);
 
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_widget_set_halign(btns, GTK_ALIGN_END);

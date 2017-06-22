@@ -16,7 +16,8 @@ namespace gui {
   extern opt<Console> console;
   extern opt<Reader> reader;
 
-  str text_view_str(GtkTextView *tv);
+  str get_str(GtkTextView *tv);
+  void set_str(GtkTextView *tv, const str &in);
 }}
 
 #endif

@@ -20,7 +20,7 @@ namespace gui {
     v->feed.name = gtk_entry_get_text(GTK_ENTRY(v->name));
     v->feed.active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->active));
     db::upsert(ctx.db.feeds, v->feed);
-    const str post_body(text_view_str(GTK_TEXT_VIEW(v->new_post_text)));
+    const str post_body(get_str(GTK_TEXT_VIEW(v->new_post_text)));
 
     if (!post_body.empty()) {
       Post post(ctx);
