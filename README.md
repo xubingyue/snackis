@@ -39,6 +39,9 @@ Each snackis installation is protected by a master password that is used to encr
 #### UI
 Snackis UI is divided into three parts; to the left is the read-only console, where output is printed; below is the auto-completed reader, where commands may be given; and to the right is an optional stack of open views. Each new view is pushed onto the stack when opened and popped when closed. All buttons have mnemonics that may be revealed by pressing ```Alt```. Pressing ```Escape``` moves focus between current view and reader.
 
+##### Style
+The entire UI may be styled to your taste by editing ```gui.css``` in the root.
+
 #### Setup
 Once inside, the first thing you probably want to do is to have a look at the setup. Type ```setup``` and press ```Return``` in the reader to open the setup view. Imap/Smtp are currently required to do anything beyond encrypting/decrypting data for personal use.
 
