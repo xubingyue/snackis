@@ -26,16 +26,23 @@ namespace gui {
     gtk_list_store_clear(v->feeds);
     size_t cnt(0);
     
-    bool active_sel(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->active)));
+    str name_sel(trim(gtk_entry_get_text(GTK_ENTRY(v->name))));
     auto peer_sel(get_sel_peer(*v));
+    bool active_sel(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->active)));
     
     for (auto &rec: ctx.db.feeds.recs) {
       Feed feed(ctx, rec);
 
-      if ((peer_sel &&
-	   feed.peer_ids.find(*db::get(*peer_sel, ctx.db.peer_id)) ==
-	   feed.peer_ids.end())
-	  || feed.active != active_sel) { continue; }
+      if (feed.active != active_sel) { continue; }
+
+      if (peer_sel) {
+	auto peer_id(*db::get(*peer_sel, ctx.db.peer_id));
+	if (feed.peer_ids.find(peer_id) == feed.peer_ids.end()) { continue; }
+      }      
+
+      if (!name_sel.empty() && find_ci(feed.name, name_sel) == str::npos) {
+	continue;
+      }
       
       GtkTreeIter iter;
       gtk_list_store_append(v->feeds, &iter);
@@ -106,6 +113,7 @@ namespace gui {
     View(ctx, "Feed Search"),
     peers(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
     feeds(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
+    name(gtk_entry_new()),
     peer(gtk_combo_box_new_with_model(GTK_TREE_MODEL(peers))),
     active(gtk_check_button_new_with_label("Active")),
     find(gtk_button_new_with_mnemonic("_Find Feeds")),
@@ -115,6 +123,12 @@ namespace gui {
 
     GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
     gtk_box_pack_start(GTK_BOX(panel), frm, false, false, 0);
+
+    lbl = gtk_label_new("Name");
+    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
+    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    gtk_widget_set_hexpand(name, true);
+    gtk_container_add(GTK_CONTAINER(frm), name);
     
     init_peers(*this);
     lbl = gtk_label_new("Peer");
@@ -153,6 +167,6 @@ namespace gui {
         
     g_signal_connect(close, "clicked", G_CALLBACK(on_close), this);
     gtk_container_add(GTK_CONTAINER(btns), close);
-    focused = peer;
+    focused = name;
   }
 }}

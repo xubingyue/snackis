@@ -1,11 +1,9 @@
-* add Name-field to feed search
-** use find_ci()
 * add edit on row-activated in feed-view post-list
 ** copy feed search
 * add edit on row-activated in post post-list
 * add gui::PostSearch
 ** copy feed search
-** add feed condition
+** add feed combo
 ** add post-search command
 * add help command
 ** add Cmd struct
@@ -32,5 +30,9 @@
 ** lock in operations
 ** lock externally around loops
 ** only lock trans_mutex when accessing stack
+* add msg.parts
+** set<Msg>
+** add Msg::MULTI type
+*** process parts individually in Imap
 * add support for events
 ** label, start, end & peer_ids
