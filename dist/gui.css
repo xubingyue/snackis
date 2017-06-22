@@ -1,5 +1,5 @@
 *:focused {
-    background: #ffc2b3;
+    background: #ffff99;
 }
 
 GtkEntry:focused {
@@ -7,18 +7,22 @@ GtkEntry:focused {
 }
 
 GtkTextView .view:focused {
-    background: #ffc2b3;
+    background: #ffff99;
     color: #000000;
-}
-
-GtkButton:insensitive GtkLabel {
-    color: gray;
 }
 
 GtkButton {
     border: 1px solid;
     border-color: silver;
     box-shadow: none;
+}
+
+GtkButton GtkLabel {
+    color: #000000;
+}
+
+GtkButton:insensitive GtkLabel {
+    color: #888888;
 }
 
 GtkCheckButton {
@@ -55,6 +59,7 @@ GtkTreeView column-header .button {
 
 GtkTreeView column-header .label {
     font-weight: normal;
+    color: #bb4411;
 }
 
 .window {
@@ -88,12 +93,12 @@ GtkTreeView column-header .label {
 }
 
 .view:selected {
-   background: #bfbfbf;
+   background: #cccccc;
    color: #000000;
 }
 
 .view:selected:focused {
-   background: #ffc2b3;
+   background: #ffff99;
    color: #000000;
 }
 

@@ -1,6 +1,7 @@
 * add Name-field to feed search
 ** use find_ci()
 * add edit on row-activated in feed-view post-list
+** copy feed search
 * add edit on row-activated in post post-list
 * add gui::PostSearch
 ** copy feed search
