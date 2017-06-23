@@ -1,6 +1,7 @@
 #include <cassert>
 #include "snackis/ctx.hpp"
 #include "snackis/gui/gui.hpp"
+#include "snackis/gui/feed_view.hpp"
 #include "snackis/gui/post_view.hpp"
 
 namespace snackis {
@@ -40,10 +41,6 @@ namespace gui {
     return true;
   }
 
-  static void on_feed_sel(gpointer *_, PostView *v) {
-    load_posts(*v);
-  }
-
   static void on_save(gpointer *_, PostView *v) {
     Ctx &ctx(v->ctx);
     db::Trans trans(ctx);
@@ -59,6 +56,20 @@ namespace gui {
     pop_view(*v);
   }
 
+  static void on_feed_sel(gpointer *_, PostView *v) {
+    load_posts(*v);
+    gtk_widget_set_sensitive(v->edit_feed,
+			     get_sel_rec<Feed>(GTK_COMBO_BOX(v->feed))
+			     ? true
+			     : false);
+  }
+
+  static void on_edit_feed(gpointer *_, PostView *v) {
+    Feed feed(v->ctx, *get_sel_rec<Feed>(GTK_COMBO_BOX(v->feed)));
+    FeedView *fv(new FeedView(feed));
+    push_view(*fv);
+  }
+  
   void init_feeds(PostView &v) {
     Ctx &ctx(v.ctx);
     size_t cnt(0);
@@ -130,6 +141,7 @@ namespace gui {
 			     G_TYPE_POINTER,
 			     G_TYPE_STRING, G_TYPE_STRING)),
     feed(gtk_combo_box_new_with_model(GTK_TREE_MODEL(feeds))),
+    edit_feed(gtk_button_new_with_mnemonic("_Edit Feed")),
     body_text(gtk_text_view_new()),
     body(gtk_scrolled_window_new(NULL, NULL)),
     post_list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(posts))),
@@ -144,9 +156,13 @@ namespace gui {
     lbl = gtk_label_new("Feed");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_container_add(GTK_CONTAINER(frm), lbl);
+    GtkWidget *feed_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    gtk_container_add(GTK_CONTAINER(frm), feed_box);
     gtk_widget_set_hexpand(feed, true);
     g_signal_connect(feed, "changed", G_CALLBACK(on_feed_sel), this);
-    gtk_container_add(GTK_CONTAINER(frm), feed);
+    gtk_container_add(GTK_CONTAINER(feed_box), feed);
+    g_signal_connect(edit_feed, "clicked", G_CALLBACK(on_edit_feed), this);
+    gtk_container_add(GTK_CONTAINER(feed_box), edit_feed);
     
     lbl = gtk_label_new("Body");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);

@@ -1,9 +1,9 @@
+* add btn to edit feed in post form
 * add gui::PostSearch
 ** copy feed search
 ** add feed combo
 ** add post-search command
 * add gui::PeerSearch
-* ---
 * add help command
 ** add Cmd struct
 *** rename Cmd to Fn

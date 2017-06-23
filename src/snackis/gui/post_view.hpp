@@ -12,7 +12,7 @@ namespace gui {
   struct PostView: View {
     Post post;
     GtkListStore *feeds, *posts;
-    GtkWidget *feed, *body_text, *body, *post_list, *save, *cancel;
+    GtkWidget *feed, *edit_feed, *body_text, *body, *post_list, *save, *cancel;
     
     PostView(const Post &post);
   };
