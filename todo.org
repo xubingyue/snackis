@@ -1,9 +1,8 @@
-* extract get_sel_rec for tree_view
-* extract get_sel_recs for tree_view
 * add gui::PostSearch
 ** copy feed search
 ** add feed combo
 ** add post-search command
+* extract get_sel_recs for tree_view
 * add gui::PeerSearch
 * ---
 * add help command

@@ -29,6 +29,23 @@ namespace gui {
     gtk_tree_model_get(mod, &iter, 0, &rec, -1); 
     return rec;
   }
+
+  opt<GtkTreeIter> get_sel_iter(GtkTreeView *w);
+
+  template <typename RecT>
+  db::Rec<RecT> *get_sel_rec(GtkTreeView *w, GtkTreeIter &it) {
+    db::Rec<RecT> *rec(nullptr);
+    gtk_tree_model_get(gtk_tree_view_get_model(w), &it, 0, &rec, -1);
+    return rec;
+  }
+
+  template <typename RecT>
+  db::Rec<RecT> *get_sel_rec(GtkTreeView *w) {
+    auto iter(get_sel_iter(w));
+    if (!iter) { return nullptr; }
+    return get_sel_rec<RecT>(w, *iter);
+  }
+
 }}
 
 #endif

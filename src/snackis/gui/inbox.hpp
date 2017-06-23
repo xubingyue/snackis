@@ -9,6 +9,7 @@
 namespace snackis {
 namespace gui {
   struct Inbox: View {
+    GtkListStore *msgs;
     GtkWidget *list, *accept, *reject, *close;
     db::Rec<Msg> *sel;
     Inbox(Ctx &ctx);

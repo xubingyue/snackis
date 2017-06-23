@@ -13,20 +13,8 @@ namespace gui {
     pop_view(*v);
   }
 
-  static bool get_sel(Inbox *v, GtkTreeModel **mod, GtkTreeIter *iter) {
-    GtkTreeSelection *tree_sel =
-      gtk_tree_view_get_selection(GTK_TREE_VIEW(v->list));
-    if (!gtk_tree_selection_get_selected(tree_sel, mod, iter)) { return false; }
-    return true;
-  }
-
   static void sel_changed(Inbox &v) {
-    GtkTreeSelection *tree_sel =
-      gtk_tree_view_get_selection(GTK_TREE_VIEW(v.list));
-    GtkTreeModel *mod;
-    GtkTreeIter iter;
-
-    bool sel = gtk_tree_selection_get_selected(tree_sel, &mod, &iter);
+    bool sel(get_sel_rec<Msg>(GTK_TREE_VIEW(v.list)));
     gtk_widget_set_sensitive(v.accept, sel);
     gtk_widget_set_sensitive(v.reject, sel);
   }
@@ -35,13 +23,9 @@ namespace gui {
     TRACE("Inbox accept");
     Ctx &ctx(v->ctx);
     db::Trans trans(ctx);
-    GtkTreeModel *mod;
-    GtkTreeIter iter;
-    get_sel(v, &mod, &iter);
-
-    db::Rec<Msg> *msg_rec;
-    gtk_tree_model_get(mod, &iter, COL_PTR, &msg_rec, -1);
-    Msg msg(ctx, *msg_rec);
+    auto iter(*get_sel_iter(GTK_TREE_VIEW(v->list)));
+    auto &msg_rec(*get_sel_rec<Msg>(GTK_TREE_VIEW(v->list), iter));
+    Msg msg(ctx, msg_rec);
 
     if (msg.type == Msg::INVITE) {
       Peer peer(accept_invite(msg));
@@ -64,9 +48,9 @@ namespace gui {
 	log(ctx, fmt("Invalid message type: %0", msg.type));
     }
 
-    db::erase(ctx.db.inbox, *msg_rec);
+    db::erase(ctx.db.inbox, msg_rec);
     db::commit(trans);
-    gtk_list_store_remove(GTK_LIST_STORE(mod), &iter);    
+    gtk_list_store_remove(v->msgs, &iter);    
     sel_changed(*v);
   }
 
@@ -74,13 +58,9 @@ namespace gui {
     TRACE("Inbox reject");
     Ctx &ctx(v->ctx);
     db::Trans trans(ctx);
-    GtkTreeModel *mod;
-    GtkTreeIter iter;
-    get_sel(v, &mod, &iter);
-
-    db::Rec<Msg> *msg_rec;
-    gtk_tree_model_get(mod, &iter, COL_PTR, &msg_rec, -1);
-    Msg msg(ctx, *msg_rec);
+    auto iter(*get_sel_iter(GTK_TREE_VIEW(v->list)));
+    auto &msg_rec(*get_sel_rec<Msg>(GTK_TREE_VIEW(v->list), iter));
+    Msg msg(ctx, msg_rec);
 
     if (msg.type == Msg::INVITE) {
 	reject_invite(msg);
@@ -91,9 +71,9 @@ namespace gui {
 	log(ctx, fmt("Invalid message type: %0", msg.type));
     }
 
-    db::erase(ctx.db.inbox, *msg_rec);
+    db::erase(ctx.db.inbox, msg_rec);
     db::commit(trans);
-    gtk_list_store_remove(GTK_LIST_STORE(mod), &iter);
+    gtk_list_store_remove(v->msgs, &iter);
     sel_changed(*v);
   }
   
@@ -118,9 +98,6 @@ namespace gui {
 							   nullptr));
     gtk_tree_view_column_set_expand(GTK_TREE_VIEW_COLUMN(info_col), true);
     gtk_tree_view_append_column(GTK_TREE_VIEW(v.list), info_col);
-    auto mod(gtk_list_store_new(3,
-				G_TYPE_POINTER,
-				G_TYPE_STRING, G_TYPE_STRING));
     Ctx &ctx(v.ctx);
     std::vector<UId> rem;
     
@@ -128,36 +105,35 @@ namespace gui {
       Msg msg(ctx, msg_rec);
 
       GtkTreeIter iter;
-      gtk_list_store_append(mod, &iter);
+      gtk_list_store_append(v.msgs, &iter);
 
       opt<Peer> peer(find_peer_email(ctx, msg.from));
       const str from(fmt("%0\n%1",
 			 peer ? peer->name.c_str() : msg.peer_name.c_str(),
 			 msg.from.c_str()));
 		    
-      gtk_list_store_set(mod, &iter,
+      gtk_list_store_set(v.msgs, &iter,
 			 COL_PTR, &msg_rec,
 			 COL_FROM, from.c_str(),
 			 -1);
       
       if (msg.type == Msg::INVITE) {
-	gtk_list_store_set(mod, &iter, COL_INFO, "Invite", -1);
+	gtk_list_store_set(v.msgs, &iter, COL_INFO, "Invite", -1);
       } else if (msg.type == Msg::ACCEPT) {
-	gtk_list_store_set(mod, &iter, COL_INFO, "Invite accepted", -1);
+	gtk_list_store_set(v.msgs, &iter, COL_INFO, "Invite accepted", -1);
       } else if (msg.type == Msg::REJECT) {
-	gtk_list_store_set(mod, &iter, COL_INFO, "Invite rejected", -1);
+	gtk_list_store_set(v.msgs, &iter, COL_INFO, "Invite rejected", -1);
       } else if (msg.type == Msg::POST) {
-	gtk_list_store_set(mod, &iter, COL_INFO,
+	gtk_list_store_set(v.msgs, &iter, COL_INFO,
 			   fmt("New feed: %0", msg.feed_name).c_str(),
 			   -1);
       } else {
-	gtk_list_store_set(mod, &iter, COL_INFO,
+	gtk_list_store_set(v.msgs, &iter, COL_INFO,
 			   fmt("Invalid message type: %0", msg.type).c_str(),
 			   -1);
       }
     }
 
-    gtk_tree_view_set_model(GTK_TREE_VIEW(v.list), GTK_TREE_MODEL(mod));
     g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(v.list)),
 		     "changed",
 		     G_CALLBACK(on_select),
@@ -166,18 +142,21 @@ namespace gui {
   
   Inbox::Inbox(Ctx &ctx):
     View(ctx, "Inbox"),
-    list(gtk_tree_view_new()) {
+    msgs(gtk_list_store_new(3,
+			    G_TYPE_POINTER,
+			    G_TYPE_STRING, G_TYPE_STRING)),
+    list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(msgs))) {
     init_list(*this);
     gtk_box_pack_start(GTK_BOX(panel), list, true, true, 0);
 
     GtkWidget *list_btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_container_add(GTK_CONTAINER(panel), list_btns);
         
-    accept = gtk_button_new_with_mnemonic("_Accept");
+    accept = gtk_button_new_with_mnemonic("_Accept Message");
     g_signal_connect(accept, "clicked", G_CALLBACK(on_accept), this);
     gtk_container_add(GTK_CONTAINER(list_btns), accept);
     
-    reject = gtk_button_new_with_mnemonic("_Reject");
+    reject = gtk_button_new_with_mnemonic("_Reject Message");
     g_signal_connect(reject, "clicked", G_CALLBACK(on_reject), this);
     gtk_container_add(GTK_CONTAINER(list_btns), reject);
     

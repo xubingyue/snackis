@@ -44,21 +44,12 @@ namespace gui {
     gtk_widget_grab_focus(cnt ? v->list : v->peer);
   }
 
-  static db::Rec<Feed> *get_sel_feed(FeedSearch &v) {
-    GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(v.list));
-    GtkTreeIter iter;
-    if (!gtk_tree_selection_get_selected(sel, nullptr, &iter)) { return nullptr; }
-    db::Rec<Feed> *rec = nullptr;
-    gtk_tree_model_get(GTK_TREE_MODEL(v.feeds), &iter, COL_FEED_PTR, &rec, -1);
-    return rec;
-  }
-
   static void on_edit(GtkTreeView *treeview,
 		      GtkTreePath *path,
 		      GtkTreeViewColumn *col,
 		      FeedSearch *v) {
     Ctx &ctx(v->ctx);
-    auto feed_rec(get_sel_feed(*v));
+    auto feed_rec(get_sel_rec<Feed>(GTK_TREE_VIEW(v->list)));
     assert(feed_rec);
     Feed feed(ctx, *feed_rec);
     FeedView *fv(new FeedView(feed));

@@ -158,22 +158,12 @@ namespace gui {
     load_peers(v);
   }
 
-  static db::Rec<Post> *get_sel_post(FeedView &v) {
-    GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(v.post_list));
-    GtkTreeIter iter;
-
-    if (!gtk_tree_selection_get_selected(sel, nullptr, &iter)) { return nullptr; }
-    db::Rec<Post> *rec(nullptr);
-    gtk_tree_model_get(GTK_TREE_MODEL(v.posts), &iter, COL_POST_PTR, &rec, -1);
-    return rec;
-  }
-
   static void on_edit_post(GtkTreeView *treeview,
 			   GtkTreePath *path,
 			   GtkTreeViewColumn *col,
 			   FeedView *v) {
     Ctx &ctx(v->ctx);
-    auto post_rec(get_sel_post(*v));
+    auto post_rec(get_sel_rec<Post>(GTK_TREE_VIEW(v->post_list)));
     assert(post_rec);
     Post post(ctx, *post_rec);
 

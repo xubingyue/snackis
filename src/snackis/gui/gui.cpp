@@ -21,4 +21,12 @@ namespace gui {
     auto buf(gtk_text_view_get_buffer(tv));
     gtk_text_buffer_set_text(buf, in.c_str(), in.size());
   }
+
+  opt<GtkTreeIter> get_sel_iter(GtkTreeView *w) {
+    GtkTreeSelection *sel(gtk_tree_view_get_selection(w));
+    GtkTreeIter iter;
+    GtkTreeModel *mod;
+    if (!gtk_tree_selection_get_selected(sel, &mod, &iter)) { return nullopt; }
+    return iter;
+  }
 }}
