@@ -280,7 +280,7 @@ namespace gui {
     gtk_grid_attach(GTK_GRID(frm), v.imap_poll, 2, row+1, 1, 1);
 
     row += 2;
-    GtkWidget *btn = gtk_button_new_with_label("Test Imap");
+    GtkWidget *btn = gtk_button_new_with_label("Connect");
     g_signal_connect(btn, "clicked", G_CALLBACK(on_imap), &v);
     gtk_grid_attach(GTK_GRID(frm), btn, 2, row, 1, 1);
     return frm;
@@ -338,7 +338,7 @@ namespace gui {
     gtk_grid_attach(GTK_GRID(frm), v.smtp_poll, 2, row+1, 1, 1);
 
     row += 2;
-    GtkWidget *btn = gtk_button_new_with_label("Test Smtp");
+    GtkWidget *btn = gtk_button_new_with_label("Connect");
     g_signal_connect(btn, "clicked", G_CALLBACK(on_smtp), &v);
     gtk_grid_attach(GTK_GRID(frm), btn, 2, row, 1, 1);
     return frm;
@@ -367,13 +367,13 @@ namespace gui {
     gtk_widget_set_vexpand(tabs, true);
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
 			     init_general(*this),
-			     gtk_label_new("General"));
+			     gtk_label_new_with_mnemonic("_1 General"));
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
 			     init_imap(*this),
-			     gtk_label_new("Imap"));
+			     gtk_label_new_with_mnemonic("_2 Imap"));
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
 			     init_smtp(*this),
-			     gtk_label_new("Smtp"));
+			     gtk_label_new_with_mnemonic("_3 Smtp"));
     gtk_container_add(GTK_CONTAINER(panel), tabs);
     
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
