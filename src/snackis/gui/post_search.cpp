@@ -37,11 +37,11 @@ namespace gui {
     
     bool active_sel(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->active)));
     
-    for (auto rec = ctx.db.at_posts.recs.rbegin();
-	 rec != ctx.db.at_posts.recs.rend();
-	 rec++) {
-      Post post(ctx, *rec);
-      db::load(ctx.db.posts, post);
+    for (auto key = ctx.db.at_posts.recs.rbegin();
+	 key != ctx.db.at_posts.recs.rend();
+	 key++) {
+      const db::Rec<Post> &rec(db::get(ctx.db.posts, *key));
+      Post post(ctx, rec);
       Feed feed(get_feed_id(ctx, post.feed_id));
       
       if (feed.active != active_sel) { continue; }
@@ -92,8 +92,8 @@ namespace gui {
     Ctx &ctx(v->ctx);
     auto post_rec(get_sel_rec<Post>(GTK_TREE_VIEW(v->list)));
     assert(post_rec);
-
     Post post(ctx, *post_rec);
+    
     if (post.by_id == whoami(ctx).id) {
       PostView *fv(new PostView(post));
       push_view(*fv);
