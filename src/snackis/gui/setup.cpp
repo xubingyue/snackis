@@ -204,6 +204,30 @@ namespace gui {
     return frm;
   }
 
+  static GtkWidget *init_general(Setup &v) {
+    GtkWidget *lbl;
+    GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+    Peer &me(whoami(v.ctx));
+
+    lbl = gtk_label_new("Name");
+    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
+    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    gtk_widget_set_hexpand(v.name, true);
+    gtk_entry_set_text(GTK_ENTRY(v.name), me.name.c_str());
+    gtk_container_add(GTK_CONTAINER(frm), v.name);
+    
+    lbl = gtk_label_new("Email");
+    gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
+    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    gtk_widget_set_hexpand(v.email, true);
+    gtk_entry_set_text(GTK_ENTRY(v.email), me.email.c_str());
+    gtk_container_add(GTK_CONTAINER(frm), v.email);
+
+    gtk_container_add(GTK_CONTAINER(frm), init_load_folder(v));
+    gtk_container_add(GTK_CONTAINER(frm), init_save_folder(v));
+    return frm;
+  }
+  
   static GtkWidget *init_imap(Setup &v) {
     Ctx &ctx(v.ctx);
     
@@ -215,7 +239,7 @@ namespace gui {
     int row = 0;
     GtkWidget *lbl(nullptr);
     
-    lbl = gtk_label_new("Imap URL");
+    lbl = gtk_label_new("URL");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
     gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 2, 1);
     gtk_widget_set_hexpand(v.imap_url, true);
@@ -223,7 +247,7 @@ namespace gui {
 		       get_val(ctx.settings.imap_url)->c_str());
     gtk_grid_attach(GTK_GRID(frm), v.imap_url, 0, row+1, 2, 1);
 
-    lbl = gtk_label_new("Imap SSL Port");
+    lbl = gtk_label_new("SSL Port");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_grid_attach(GTK_GRID(frm), lbl, 2, row, 1, 1);
     gtk_entry_set_text(GTK_ENTRY(v.imap_port),
@@ -231,7 +255,7 @@ namespace gui {
     gtk_grid_attach(GTK_GRID(frm), v.imap_port, 2, row+1, 1, 1);
 
     row += 2;
-    lbl = gtk_label_new("Imap User");
+    lbl = gtk_label_new("User");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
     gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 1, 1);
     gtk_widget_set_hexpand(v.imap_user, true);
@@ -239,7 +263,7 @@ namespace gui {
 		       get_val(ctx.settings.imap_user)->c_str());
     gtk_grid_attach(GTK_GRID(frm), v.imap_user, 0, row+1, 1, 1);
 
-    lbl = gtk_label_new("Imap Password");
+    lbl = gtk_label_new("Password");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
     gtk_grid_attach(GTK_GRID(frm), lbl, 1, row, 1, 1);
     gtk_entry_set_visibility(GTK_ENTRY(v.imap_pass), false);
@@ -248,7 +272,7 @@ namespace gui {
 		       get_val(ctx.settings.imap_pass)->c_str());
     gtk_grid_attach(GTK_GRID(frm), v.imap_pass, 1, row+1, 1, 1);
 
-    lbl = gtk_label_new("Imap Poll (s)");
+    lbl = gtk_label_new("Poll (s)");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_grid_attach(GTK_GRID(frm), lbl, 2, row, 1, 1);
     gtk_entry_set_text(GTK_ENTRY(v.imap_poll),
@@ -273,7 +297,7 @@ namespace gui {
     int row = 0;
     GtkWidget *lbl(nullptr);
     
-    lbl = gtk_label_new("Smtp URL");
+    lbl = gtk_label_new("URL");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
     gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 2, 1);
     gtk_widget_set_hexpand(v.smtp_url, true);
@@ -281,7 +305,7 @@ namespace gui {
 		       get_val(ctx.settings.smtp_url)->c_str());
     gtk_grid_attach(GTK_GRID(frm), v.smtp_url, 0, row+1, 2, 1);
 
-    lbl = gtk_label_new("Smtp SSL Port");
+    lbl = gtk_label_new("SSL Port");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_grid_attach(GTK_GRID(frm), lbl, 2, row, 1, 1);
     gtk_entry_set_text(GTK_ENTRY(v.smtp_port),
@@ -289,7 +313,7 @@ namespace gui {
     gtk_grid_attach(GTK_GRID(frm), v.smtp_port, 2, row+1, 1, 1);
 
     row += 2;
-    lbl = gtk_label_new("Smtp User");
+    lbl = gtk_label_new("User");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
     gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 1, 1);
     gtk_widget_set_hexpand(v.smtp_user, true);
@@ -297,7 +321,7 @@ namespace gui {
 		       get_val(ctx.settings.smtp_user)->c_str());
     gtk_grid_attach(GTK_GRID(frm), v.smtp_user, 0, row+1, 1, 1);
 
-    lbl = gtk_label_new("Smtp Password");
+    lbl = gtk_label_new("Password");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
     gtk_grid_attach(GTK_GRID(frm), lbl, 1, row, 1, 1);
     gtk_entry_set_visibility(GTK_ENTRY(v.smtp_pass), false);
@@ -306,7 +330,7 @@ namespace gui {
 		       get_val(ctx.settings.smtp_pass)->c_str());
     gtk_grid_attach(GTK_GRID(frm), v.smtp_pass, 1, row+1, 1, 1);
 
-    lbl = gtk_label_new("Smtp Poll (s)");
+    lbl = gtk_label_new("Poll (s)");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_grid_attach(GTK_GRID(frm), lbl, 2, row, 1, 1);
     gtk_entry_set_text(GTK_ENTRY(v.smtp_poll),
@@ -338,32 +362,19 @@ namespace gui {
     smtp_poll(gtk_entry_new()),
     save(gtk_button_new_with_mnemonic("_Save Setup")),
     cancel(gtk_button_new_with_mnemonic("_Cancel")) {
-    GtkWidget *lbl;
 
-    GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
-    gtk_box_pack_start(GTK_BOX(panel), frm, true, true, 0);
-    
-    Peer &me(whoami(ctx));
-
-    lbl = gtk_label_new("Name");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(frm), lbl);
-    gtk_widget_set_hexpand(name, true);
-    gtk_entry_set_text(GTK_ENTRY(name), me.name.c_str());
-    gtk_container_add(GTK_CONTAINER(frm), name);
-    
-    lbl = gtk_label_new("Email");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
-    gtk_container_add(GTK_CONTAINER(frm), lbl);
-    gtk_widget_set_hexpand(email, true);
-    gtk_entry_set_text(GTK_ENTRY(email), me.email.c_str());
-    gtk_container_add(GTK_CONTAINER(frm), email);
-
-    gtk_container_add(GTK_CONTAINER(frm), init_load_folder(*this));
-    gtk_container_add(GTK_CONTAINER(frm), init_save_folder(*this));
-
-    gtk_container_add(GTK_CONTAINER(frm), init_imap(*this));
-    gtk_container_add(GTK_CONTAINER(frm), init_smtp(*this));
+    GtkWidget *tabs = gtk_notebook_new();
+    gtk_widget_set_vexpand(tabs, true);
+    gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
+			     init_general(*this),
+			     gtk_label_new("General"));
+    gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
+			     init_imap(*this),
+			     gtk_label_new("Imap"));
+    gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
+			     init_smtp(*this),
+			     gtk_label_new("Smtp"));
+    gtk_container_add(GTK_CONTAINER(panel), tabs);
     
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_widget_set_halign(btns, GTK_ALIGN_END);

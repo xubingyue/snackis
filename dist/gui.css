@@ -53,6 +53,28 @@ GtkLabel {
     font-size: 105%;
 }
 
+GtkNotebook {
+    background: #333333;
+    border: none;
+}
+
+GtkNotebook:focused {
+    background: #333333;
+}
+
+GtkNotebook tab {
+    border-color: #cccccc;
+    border: 1px solid;
+}
+
+GtkNotebook tab:active {
+    border-bottom: none;
+}
+
+GtkNotebook tab:active:focused {
+    background: #ffff99
+}
+
 GtkTextView {
     border-radius: 0.3em;
 }
