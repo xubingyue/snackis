@@ -93,7 +93,7 @@ Snackis main mode of communication is through feeds/posts. Type ```feed``` in th
 ![feed example](images/feed.png?raw=true)
 
 ##### Searching
-Type ```feed-search``` in the reader and press ```Return``` to search available feeds.
+Type ```feed-search``` in the reader and press ```Return``` to search feeds.
 
 ![feed search example](images/feed_search.png?raw=true)
 
@@ -101,6 +101,11 @@ Type ```feed-search``` in the reader and press ```Return``` to search available 
 Type ```post``` in the reader and press ```Return``` to post in existing feed.
 
 ![post example](images/post.png?raw=true)
+
+##### Searching
+Type ```post-search``` in the reader and press ```Return``` to search posts. By default, a list of last weeks posts in reverse chronological order is displayed.
+
+![post search example](images/post_search.png?raw=true)
 
 ### Algorithms
 Snackis delegates anything concerning encryption to [libsodium](https://github.com/jedisct1/libsodium). The IETF-variant of ```ChaCha20-Poly1305``` is used to encrypt the master password and database, while ```XSalsa20``` is used for everything else. The master password is hashed using ```Scrypt```, and encrypted using the hash as key for future validation.

@@ -37,8 +37,11 @@ namespace gui {
     
     bool active_sel(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->active)));
     
-    for (auto &rec: ctx.db.posts.recs) {
-      Post post(ctx, rec);
+    for (auto rec = ctx.db.at_posts.recs.rbegin();
+	 rec != ctx.db.at_posts.recs.rend();
+	 rec++) {
+      Post post(ctx, *rec);
+      db::load(ctx.db.posts, post);
       Feed feed(get_feed_id(ctx, post.feed_id));
       
       if (feed.active != active_sel) { continue; }
@@ -79,7 +82,7 @@ namespace gui {
       cnt++;
     }
 
-    gtk_widget_grab_focus(cnt ? v->list : v->peer);
+    gtk_widget_grab_focus(cnt ? v->list : v->feed_name);
   }
 
   static void on_edit(GtkTreeView *treeview,

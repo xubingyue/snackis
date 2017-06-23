@@ -49,7 +49,7 @@ namespace gui {
     activate(feed);
     v->post.feed_id = feed.id;
     v->post.body = get_str(GTK_TEXT_VIEW(v->body_text));
-    db::insert(ctx.db.posts, v->post);
+    db::upsert(ctx.db.posts, v->post);
     send(v->post);
     db::commit(trans);
     log(v->ctx, "Saved post");

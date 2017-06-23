@@ -40,7 +40,7 @@ namespace snackis {
     db::Col<Post, Time>          post_at;
     db::Col<Post, UId>           post_by_id;
     db::Col<Post, str>           post_body;
-    db::Table<Post> posts, feed_posts;
+    db::Table<Post> posts, feed_posts, at_posts;
     
     db::Col<Msg, UId>           msg_id;
     db::Col<Msg, str>           msg_type;

@@ -49,6 +49,7 @@ namespace snackis {
 	  {&post_id, &post_feed_id, &post_at, &post_by_id, &post_body}),
 
     feed_posts(ctx, "feed_posts", {&post_feed_id, &post_at, &post_id}, {}),
+    at_posts(ctx, "at_posts", {&post_at, &post_id}, {}),
     
     msg_id(        "id",         uid_type,            &Msg::id),
     msg_type(      "type",       str_type,            &Msg::type),
@@ -76,5 +77,6 @@ namespace snackis {
     inbox.indexes.insert(&msgs);
     peers.indexes.insert(&peer_emails);
     posts.indexes.insert(&feed_posts);
+    posts.indexes.insert(&at_posts);
   }
 }
