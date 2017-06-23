@@ -135,7 +135,7 @@ namespace gui {
     init_list(*this);
     gtk_widget_set_margin_top(list, 5);
     gtk_box_pack_start(GTK_BOX(panel), list, true, true, 0);
-    lbl = gtk_label_new("Press Return or double-click to edit selected feed");
+    lbl = gtk_label_new("Press Return or double-click to edit feed");
     gtk_container_add(GTK_CONTAINER(panel), lbl);
 
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);

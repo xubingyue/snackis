@@ -35,19 +35,12 @@ namespace gui {
     pop_view(*v);
   }
 
-  static void on_peer_list_sel(gpointer *_, FeedView *v) {
-    auto sel(gtk_tree_view_get_selection(GTK_TREE_VIEW(v->peer_list)));
-    auto cnt(gtk_tree_selection_count_selected_rows(sel));
-    gtk_widget_set_sensitive(v->remove_peers, cnt > 0);
-  }
-  
   static void on_peer_sel(gpointer *_, FeedView *v) {
     Ctx &ctx(v->ctx);
     db::Rec<Peer> *rec(get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer)));
     auto id(*db::get(*rec, ctx.db.peer_id));
     bool exists = v->feed.peer_ids.find(id) != v->feed.peer_ids.end();
     gtk_widget_set_sensitive(v->add_peer, !exists);
-    gtk_widget_set_sensitive(v->remove_peers, exists);
   }
   
   static void on_add_peer(gpointer *_, FeedView *v) {
@@ -65,37 +58,24 @@ namespace gui {
   
     v->feed.peer_ids.insert(*db::get(*rec, ctx.db.peer_id));
     gtk_widget_set_sensitive(v->add_peer, false);
-    gtk_widget_set_sensitive(v->remove_peers, true);
     gtk_widget_grab_focus(v->peer);
   }
 
-  static void on_remove_peers(gpointer *_, FeedView *v) {
+  static void on_remove_peer(GtkTreeView *treeview,
+			     GtkTreePath *path,
+			     GtkTreeViewColumn *col,
+			     FeedView *v) {
     Ctx &ctx(v->ctx);
-    
-    GtkTreeIter iter;    
-    gtk_tree_model_get_iter_first(GTK_TREE_MODEL(v->feed_peers), &iter);
-    auto sel(gtk_tree_view_get_selection(GTK_TREE_VIEW(v->peer_list)));
-    
-    while (true) {
-      db::Rec<Peer> *iter_rec;
-      gtk_tree_model_get(GTK_TREE_MODEL(v->feed_peers),
-			 &iter,
-			 COL_PEER_PTR, &iter_rec,
-			 -1);
-      if (gtk_tree_selection_iter_is_selected(sel, &iter)) {
-	gtk_list_store_remove(v->feed_peers, &iter);
-	v->feed.peer_ids.erase(*db::get(*iter_rec, ctx.db.peer_id));
+    auto iter(get_sel_iter(GTK_TREE_VIEW(v->peer_list)));
 
-	if (!gtk_list_store_iter_is_valid(v->feed_peers, &iter)) {
-	  break;
-	}
-      } else if (!gtk_tree_model_iter_next(GTK_TREE_MODEL(v->feed_peers), &iter)) {
-	break;
-      }
+    if (iter) {
+      auto it(*iter);
+      auto rec(get_sel_rec<Peer>(GTK_TREE_VIEW(v->peer_list), it));
+      v->feed.peer_ids.erase(*db::get(*rec, ctx.db.peer_id));
+      gtk_list_store_remove(v->feed_peers, &it);
     }
-    
-    gtk_widget_set_sensitive(v->add_peer, true);
-    gtk_widget_set_sensitive(v->remove_peers, false);    
+
+    on_peer_sel(nullptr, v);
   }
   
   static void load_peers(FeedView &v) {
@@ -125,9 +105,7 @@ namespace gui {
 							   "text", COL_PEER_NAME,
 							   nullptr));
     gtk_tree_view_append_column(GTK_TREE_VIEW(v.peer_list), name_col);    
-    auto sel(gtk_tree_view_get_selection(GTK_TREE_VIEW(v.peer_list)));
-    gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
-    g_signal_connect(sel, "changed", G_CALLBACK(on_peer_list_sel), &v);
+    g_signal_connect(v.peer_list, "row-activated", G_CALLBACK(on_remove_peer), &v);
     
     for(const auto &peer_rec: ctx.db.peers.recs) {
       Peer peer(ctx, peer_rec);
@@ -139,8 +117,6 @@ namespace gui {
 			 COL_PEER_NAME, peer.name.c_str(),
 			 -1);
     }
-
-    g_signal_connect(v.remove_peers, "clicked", G_CALLBACK(on_remove_peers), &v);
 
     rend = gtk_cell_renderer_text_new();
     gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(v.peer), rend, true);
@@ -226,7 +202,6 @@ namespace gui {
     name(gtk_entry_new()),
     active(gtk_check_button_new_with_label("Active")),
     peer_list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(feed_peers))),
-    remove_peers(gtk_button_new_with_mnemonic("_Remove Selected Peers")),
     peer_input(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5)),
     peer(gtk_combo_box_new_with_model(GTK_TREE_MODEL(peers))),
     add_peer(gtk_button_new_with_mnemonic("_Add Peer")),
@@ -255,16 +230,15 @@ namespace gui {
     init_peers(*this);
     gtk_widget_set_margin_top(peer_list, 5);
     gtk_container_add(GTK_CONTAINER(frm), peer_list);
-    GtkWidget *peer_btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    gtk_container_add(GTK_CONTAINER(frm), peer_btns);
-    gtk_container_add(GTK_CONTAINER(peer_btns), remove_peers);
+    gtk_container_add(GTK_CONTAINER(frm),
+		      gtk_label_new("Press Return or double-click to remove peer"));
     gtk_widget_set_margin_top(peer_input, 5);
     gtk_container_add(GTK_CONTAINER(frm), peer_input);
 
     init_posts(*this);
     gtk_widget_set_margin_top(post_list, 5);
     gtk_container_add(GTK_CONTAINER(frm), post_list);
-    lbl = gtk_label_new("Press Return or double-click to edit selected post");
+    lbl = gtk_label_new("Press Return or double-click to edit post");
     gtk_container_add(GTK_CONTAINER(frm), lbl);
 
     lbl = gtk_label_new("New Post");

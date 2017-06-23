@@ -183,7 +183,7 @@ namespace gui {
     init_posts(*this);
     gtk_widget_set_margin_top(post_list, 5);
     gtk_container_add(GTK_CONTAINER(frm), post_list);
-    lbl = gtk_label_new("Press Return or double-click to edit selected post");
+    lbl = gtk_label_new("Press Return or double-click to edit post");
     gtk_container_add(GTK_CONTAINER(frm), lbl);
 
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
