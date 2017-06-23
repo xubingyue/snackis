@@ -1,8 +1,10 @@
 * add gui::PostSearch
 ** copy feed search
 ** add feed combo
-** add from_time field
-** list posts in time order
+** add days field
+*** 'Posted Within (days):'
+** list posts in reverse time order
+*** copy feed.last_posts
 ** add post-search command
 * add gui::PeerSearch
 * sort inbox by fetched_at
