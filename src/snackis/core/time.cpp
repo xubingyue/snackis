@@ -19,4 +19,12 @@ namespace snackis {
     buf << std::put_time(localtime_r(&t, &tm), spec.c_str());
     return buf.str();
   }
+
+  opt<Time> parse_time(const str &spec, const str &in) {
+    InStream buf(in);
+    tm tm;
+    buf >> std::get_time(&tm, spec.c_str());
+    if (buf.fail()) { return nullopt; }
+    return Clock::from_time_t(mktime(&tm));
+  }
 }

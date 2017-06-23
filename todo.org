@@ -1,9 +1,7 @@
 * add gui::PostSearch
-** add body field below feed name
 ** switch to reverse time order
 *** copy feed.last_posts
-** add days field
-*** 'Age Limit (h):'
+* fix entry focused selection color
 * add gui::PeerSearch
 * sort inbox by fetched_at
 ** add fetched_msgs idx
