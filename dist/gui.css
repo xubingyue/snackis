@@ -48,6 +48,11 @@ GtkEntry {
     border-color: silver;
 }
 
+GtkEntry:selected:focused {
+   background: #ffffff;
+   color: #000000;
+}
+
 GtkLabel {
     color: #991f00;
     font-size: 105%;
