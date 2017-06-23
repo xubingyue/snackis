@@ -3,10 +3,11 @@
 #include "snackis/core/fmt.hpp"
 #include "snackis/gui/decrypt.hpp"
 #include "snackis/gui/encrypt.hpp"
-#include "snackis/gui/feed_view.hpp"
 #include "snackis/gui/feed_search.hpp"
+#include "snackis/gui/feed_view.hpp"
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/inbox.hpp"
+#include "snackis/gui/post_search.hpp"
 #include "snackis/gui/post_view.hpp"
 #include "snackis/gui/reader.hpp"
 #include "snackis/gui/widget.hpp"
@@ -129,6 +130,17 @@ namespace gui {
 	}
 	
 	PostView *v = new PostView(Post(ctx));
+	push_view(*v);
+	return true;
+      });
+
+    rdr.cmds.emplace("post-search", [&ctx](auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: post-search");
+	  return false;
+	}
+	
+	PostSearch *v = new PostSearch(ctx);
 	push_view(*v);
 	return true;
       });

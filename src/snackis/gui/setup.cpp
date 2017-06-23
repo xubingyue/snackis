@@ -232,7 +232,6 @@ namespace gui {
     Ctx &ctx(v.ctx);
     
     GtkWidget *frm = gtk_grid_new();
-    gtk_widget_set_margin_top(frm, 5);
     gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
     gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
 
@@ -290,7 +289,6 @@ namespace gui {
     Ctx &ctx(v.ctx);
     
     GtkWidget *frm = gtk_grid_new();
-    gtk_widget_set_margin_top(frm, 5);
     gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
     gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
 

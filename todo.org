@@ -1,12 +1,9 @@
 * add gui::PostSearch
-** copy feed search
-** add feed combo
-** add days field
-*** 'Posted Within (days):'
-*** spin-button
-** list posts in reverse time order
+** add body field below feed name
+** switch to reverse time order
 *** copy feed.last_posts
-** add post-search command
+** add days field
+*** 'Age Limit (h):'
 * add gui::PeerSearch
 * sort inbox by fetched_at
 ** add fetched_msgs idx
@@ -32,7 +29,9 @@
 ** store msg id & update time when receipt msg is received
 ** send receipt message when accepting post
 * add anonymous forwarding
-** forward messages through all peers but receiver and self
+** forward messages through other peers
+** count down hops
+** add sender at each hop
 * add backup command
 ** backup folder setting, default /backup
 ** run tar -z proc
