@@ -88,7 +88,7 @@ When an invite is accepted/rejected, a reply is sent to inform the inviting peer
 ![accept example](images/accept.png?raw=true)
 
 #### Feeds
-Snackis main mode of communication is through feeds/posts. Type ```new-feed``` in the reader and press ```Return``` to start a new feed. Local posts are sent to all specified peers, and any peer may reply.
+Snackis main mode of communication is through feeds/posts. Type ```feed``` in the reader and press ```Return``` to start a new feed. Local posts are sent to all specified peers, and any peer may reply.
 
 ![feed example](images/feed.png?raw=true)
 

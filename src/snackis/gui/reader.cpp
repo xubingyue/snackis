@@ -48,6 +48,17 @@ namespace gui {
 	return true;
       });
 
+    rdr.cmds.emplace("feed", [&ctx](auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: feed");
+	  return false;
+	}
+	
+	FeedView *v = new FeedView(Feed(ctx));
+	push_view(*v);
+	return true;
+      });
+
     rdr.cmds.emplace("feed-search", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: feed-search");
@@ -111,17 +122,6 @@ namespace gui {
 	return true;
       });
     
-    rdr.cmds.emplace("new-feed", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: new-feed");
-	  return false;
-	}
-	
-	FeedView *v = new FeedView(Feed(ctx));
-	push_view(*v);
-	return true;
-      });
-
     rdr.cmds.emplace("post", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: post");
