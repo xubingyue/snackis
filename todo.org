@@ -9,8 +9,11 @@
 ** add fetched_msgs idx
 *** fetched_at & id key
 ** copy feed.last_posts
-* sort feed search by name
+** feeds by name
 ** add feed_names idx
+*** name & id key
+* sort peers by name
+** add peer_names idx
 *** name & id key
 * add help command
 ** add Cmd struct
