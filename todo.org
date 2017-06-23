@@ -1,9 +1,17 @@
-* add btn to edit feed in post form
 * add gui::PostSearch
 ** copy feed search
 ** add feed combo
+** add from_time field
+** list posts in time order
 ** add post-search command
 * add gui::PeerSearch
+* sort inbox by fetched_at
+** add fetched_msgs idx
+*** fetched_at & id key
+** copy feed.last_posts
+* sort feed search by name
+** add feed_names idx
+*** name & id key
 * add help command
 ** add Cmd struct
 *** rename Cmd to Fn
