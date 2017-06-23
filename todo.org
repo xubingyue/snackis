@@ -1,4 +1,3 @@
-* fix entry focused selection color
 * add gui::PeerSearch
 * sort inbox by fetched_at
 ** add fetched_msgs idx

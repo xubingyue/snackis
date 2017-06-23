@@ -7,7 +7,7 @@
 Snackis is aiming for something that might be described as a post-modern enigma-device; a tool that covers most secure communication needs using any regular email-account as transport. Peers, encryption keys, messages and and settings are stored locally, encrypted using a master password. At present; Snackis supports key-exchange via invites/accepts, encryption/decryption of arbitrary data for specific peers and feeds/posts. Coming up next is signed receipts, scheduled events and more.
 
 ### Dependencies
-Snackis requires a ```C++1z```-capable compiler and standard library to build, and defaults to using [clang](http://releases.llvm.org/download.html#4.0.0) with ```libc++```; it further depends on ```libcurl```, ```libpthread```, ```libsodium``` and ```libuuid``` for core functionality, as well as ```GTK+ 3``` for the UI.
+Snackis requires a ```C++1z```-capable compiler and standard library to build, and defaults to using [clang](http://releases.llvm.org/download.html#4.0.0) with ```libc++```. This unfortunately often means downloading and manually installing [clang](http://releases.llvm.org/download.html#4.0.0) to even run the application, but will improve over time. Snackis further depends on ```libcurl```, ```libpthread```, ```libsodium``` and ```libuuid``` for core functionality, as well as ```GTK+ 3``` for the UI.
 
 ```
 tar -xzf clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
@@ -98,7 +98,7 @@ Type ```feed-search``` in the reader and press ```Return``` to search feeds.
 ![feed search example](images/feed_search.png?raw=true)
 
 #### Posts
-Type ```post``` in the reader and press ```Return``` to post in existing feed.
+Type ```post``` in the reader and press ```Return``` to post in existing feed. Existing posts may be updated and updates are propagated to all local feed peers.
 
 ![post example](images/post.png?raw=true)
 
