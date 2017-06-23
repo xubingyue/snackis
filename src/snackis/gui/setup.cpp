@@ -223,7 +223,7 @@ namespace gui {
 		       get_val(ctx.settings.imap_url)->c_str());
     gtk_grid_attach(GTK_GRID(frm), v.imap_url, 0, row+1, 2, 1);
 
-    lbl = gtk_label_new("Imap Port");
+    lbl = gtk_label_new("Imap SSL Port");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_grid_attach(GTK_GRID(frm), lbl, 2, row, 1, 1);
     gtk_entry_set_text(GTK_ENTRY(v.imap_port),
@@ -281,7 +281,7 @@ namespace gui {
 		       get_val(ctx.settings.smtp_url)->c_str());
     gtk_grid_attach(GTK_GRID(frm), v.smtp_url, 0, row+1, 2, 1);
 
-    lbl = gtk_label_new("Smtp Port");
+    lbl = gtk_label_new("Smtp SSL Port");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_grid_attach(GTK_GRID(frm), lbl, 2, row, 1, 1);
     gtk_entry_set_text(GTK_ENTRY(v.smtp_port),
