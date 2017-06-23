@@ -25,6 +25,15 @@ namespace gui {
       gtk_widget_grab_focus(v->min_time);
       return;
     }
+
+    str max_time(trim(gtk_entry_get_text(GTK_ENTRY(v->max_time))));
+    auto max_time_sel(parse_time("%Y-%m-%d %H:%M", max_time));
+    
+    if (!max_time.empty() && !max_time_sel) {
+      log(ctx, fmt("Failed parsing time: '%0'", max_time));
+      gtk_widget_grab_focus(v->max_time);
+      return;
+    }
     
     bool active_sel(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->active)));
     
@@ -48,6 +57,10 @@ namespace gui {
       }
 
       if (min_time_sel && post.at < *min_time_sel) {
+	continue;
+      }
+
+      if (max_time_sel && post.at > *max_time_sel) {
 	continue;
       }
       
@@ -76,9 +89,12 @@ namespace gui {
     Ctx &ctx(v->ctx);
     auto post_rec(get_sel_rec<Post>(GTK_TREE_VIEW(v->list)));
     assert(post_rec);
+
     Post post(ctx, *post_rec);
-    PostView *fv(new PostView(post));
-    push_view(*fv);
+    if (post.by_id == whoami(ctx).id) {
+      PostView *fv(new PostView(post));
+      push_view(*fv);
+    }
   }
   
   static void on_close(gpointer *_, PostSearch *v) {
@@ -138,8 +154,9 @@ namespace gui {
     feed_name(gtk_entry_new()),
     active(gtk_check_button_new_with_label("Active")),
     body(gtk_entry_new()),
-    peer(gtk_combo_box_new_with_model(GTK_TREE_MODEL(peers))),
     min_time(gtk_entry_new()),
+    max_time(gtk_entry_new()),
+    peer(gtk_combo_box_new_with_model(GTK_TREE_MODEL(peers))),
     find(gtk_button_new_with_mnemonic("_Find Posts")),
     list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(posts))),
     close(gtk_button_new_with_mnemonic("_Close Search")) {
@@ -171,9 +188,18 @@ namespace gui {
     gtk_grid_set_column_spacing(GTK_GRID(post_box), 5);
     gtk_container_add(GTK_CONTAINER(frm), post_box);
 
-    lbl = gtk_label_new("Posted By");
+    lbl = gtk_label_new("Posted");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(post_box), lbl, 0, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(post_box), lbl, 0, 0, 3, 1);
+    gtk_entry_set_text(GTK_ENTRY(min_time),
+		       fmt(now() - std::chrono::hours(7), "%Y-%m-%d %H:%M").c_str());
+    gtk_grid_attach(GTK_GRID(post_box), min_time, 0, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(post_box), gtk_label_new("-"), 1, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(post_box), max_time, 2, 1, 1, 1);
+
+    lbl = gtk_label_new("By");
+    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
+    gtk_grid_attach(GTK_GRID(post_box), lbl, 3, 0, 1, 1);
 
     auto rend(gtk_cell_renderer_text_new());
     gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(peer), rend, true);
@@ -182,14 +208,7 @@ namespace gui {
                                    "text", COL_PEER_NAME,
 				   nullptr);
     gtk_widget_set_hexpand(peer, true);
-    gtk_grid_attach(GTK_GRID(post_box), peer, 0, 1, 1, 1);
-
-    lbl = gtk_label_new("Posted After");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(post_box), lbl, 1, 0, 1, 1);
-    gtk_grid_attach(GTK_GRID(post_box), min_time, 1, 1, 1, 1);
-    gtk_entry_set_text(GTK_ENTRY(min_time),
-		       fmt(now() - std::chrono::hours(7), "%Y-%m-%d %H:%M").c_str());
+    gtk_grid_attach(GTK_GRID(post_box), peer, 3, 1, 1, 1);
     
     gtk_widget_set_halign(find, GTK_ALIGN_END);
     g_signal_connect(find, "clicked", G_CALLBACK(on_find), this);

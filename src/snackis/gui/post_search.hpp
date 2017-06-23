@@ -11,7 +11,8 @@ namespace snackis {
 namespace gui {
   struct PostSearch: View {
     GtkListStore *peers, *posts;
-    GtkWidget *feed_name, *active, *body, *peer, *min_time, *find, *list, *close;
+    GtkWidget *feed_name, *active, *body, *min_time, *max_time, *peer, *find, *list,
+      *close;
     
     PostSearch(Ctx &ctx);
   };

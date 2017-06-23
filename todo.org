@@ -1,4 +1,6 @@
 * add gui::PostSearch
+** add max_time like min_time
+*** posted min-max by x
 ** switch to reverse time order
 *** copy feed.last_posts
 * fix entry focused selection color
