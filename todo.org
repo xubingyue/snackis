@@ -5,7 +5,7 @@
 * add project cmd
 ** add gui::ProjectView
 *** tabs General / Feed
-
+*** only allow saving if owner_id = whoami
 * add gui::PeerSearch
 * sort inbox by fetched_at
 ** add fetched_msgs idx
