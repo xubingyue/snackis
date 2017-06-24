@@ -1,3 +1,4 @@
+#include "snackis/ctx.hpp"
 #include "snackis/db.hpp"
 #include "snackis/core/bool_type.hpp"
 #include "snackis/core/int64_type.hpp"
@@ -8,7 +9,7 @@
 #include "snackis/crypt/pub_key_type.hpp"
 
 namespace snackis {
-  Db::Db(db::Ctx &ctx):
+  Db::Db(Ctx &ctx):
     setting_key("key", str_type, &BasicSetting::key),
     setting_val("val", str_type, &BasicSetting::val),
     
@@ -86,5 +87,16 @@ namespace snackis {
     inbox.indexes.insert(&msgs);
     posts.indexes.insert(&feed_posts);
     posts.indexes.insert(&at_posts);
+
+    projects.on_update.push_back([&](auto _, auto rec) {
+	Project prj(ctx, rec);
+	opt<Feed> feed(find_feed_id(ctx, *db::get(rec, ctx.db.project_id)));
+
+	if (feed) {
+	  feed->name = fmt("Project %0", prj.name);
+	  feed->peer_ids = prj.peer_ids;
+	  db::update(feeds, *feed);
+	}
+      });
   }
 }

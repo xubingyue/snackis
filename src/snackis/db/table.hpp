@@ -27,10 +27,12 @@ namespace db {
   struct Table: BasicTable, Schema<RecT> {
     using CmpRec = func<bool (const Rec<RecT> &, const Rec<RecT> &)>;
     using Cols = std::initializer_list<const BasicCol<RecT> *>;
-    
+    using OnUpdate = func<void (const Rec<RecT> &, Rec<RecT> &)>;
+      
     const Schema<RecT> key;
     std::set<Table<RecT> *> indexes;
     std::set<Rec<RecT>, CmpRec> recs;
+    std::vector<OnUpdate> on_update;
     
     Table(Ctx &ctx, const str &name, Cols key_cols, Cols cols);
     virtual ~Table();
@@ -124,8 +126,8 @@ namespace db {
       }
     }
     
-    log_change(get_trans(tbl.ctx), new Insert<RecT>(tbl, rec));
     tbl.recs.insert(rec);
+    log_change(get_trans(tbl.ctx), new Insert<RecT>(tbl, rec));
     return true;
   }
 
@@ -137,7 +139,7 @@ namespace db {
   }
 
   template <typename RecT>
-  bool update(Table<RecT> &tbl, const Rec<RecT> &rec) {
+  bool update(Table<RecT> &tbl, Rec<RecT> &rec) {
     TRACE(fmt("Updating table: %0", tbl.name));
     auto found(tbl.recs.find(rec));
     if (found == tbl.recs.end()) { return false; }
@@ -153,9 +155,10 @@ namespace db {
       }
     }
     
-    log_change(get_trans(tbl.ctx), new Update<RecT>(tbl, rec, *found));
+    for (auto e: tbl.on_update) { e(*found, rec); }
     tbl.recs.erase(found);
     tbl.recs.insert(rec);
+    log_change(get_trans(tbl.ctx), new Update<RecT>(tbl, rec, *found));
     return true;
   }
 
@@ -179,8 +182,8 @@ namespace db {
     auto found(tbl.recs.find(rec));
     if (found == tbl.recs.end()) { return false; }
     for (auto idx: tbl.indexes) { erase(*idx, *found); }
-    log_change(get_trans(tbl.ctx), new Erase<RecT>(tbl, *found));
     tbl.recs.erase(found);
+    log_change(get_trans(tbl.ctx), new Erase<RecT>(tbl, *found));
     return true;
   }
 

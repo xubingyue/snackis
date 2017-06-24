@@ -34,6 +34,7 @@ namespace snackis {
     
     if (!db::load(ctx.db.feeds, feed)) {
       feed.name = prj.name;
+      feed.peer_ids = prj.peer_ids;
       db::upsert(ctx.db.feeds, feed);
     }
 

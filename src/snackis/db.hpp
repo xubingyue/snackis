@@ -63,7 +63,7 @@ namespace snackis {
     db::Col<Project, std::set<UId>> project_peer_ids;
     db::Table<Project> projects;
     
-    Db(db::Ctx &ctx);
+    Db(Ctx &ctx);
   };
 }
 

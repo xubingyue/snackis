@@ -1,6 +1,6 @@
-* update feed name / peers on project update
-** add table event
 * add task
+** copy project
+** add feed update like project
 * add project cmd
 ** add gui::ProjectView
 *** tabs General / Feed
