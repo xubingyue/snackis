@@ -1,8 +1,5 @@
 * update task feed peers when project peers change
-** add task.peers in-between
-** add added and remove removed on project save
-** only update tasks if peers changed
-** change feed update to use task.peers
+** change feed peer updates to add added & remove removed
 * switch UId to null default
 ** go through all Rec classes (grep public Rec)
 ** pass t for gen & remove false
@@ -45,5 +42,3 @@
 ** set<Msg>
 ** add Msg::MULTI type
 *** process parts individually in Imap
-* add support for events
-** label, start, end & peer_ids
