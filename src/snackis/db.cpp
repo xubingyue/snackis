@@ -44,7 +44,7 @@ namespace snackis {
     post_body(   "body",    str_type,  &Post::body),
 
     posts(ctx, "posts", {&post_id},
-	  {&post_id, &post_feed_id, &post_at, &post_by_id, &post_body}),
+	  {&post_feed_id, &post_at, &post_by_id, &post_body}),
 
     feed_posts(ctx, "feed_posts", {&post_feed_id, &post_at, &post_id}, {}),
     at_posts(ctx, "at_posts", {&post_at, &post_id}, {}),
@@ -73,7 +73,16 @@ namespace snackis {
     outbox(ctx, "outbox", {&msg_id},
 	   {&msg_type, &msg_from, &msg_from_id, &msg_to, &msg_to_id, &msg_peer_name,
 	       &msg_crypt_key, &msg_feed_id, &msg_feed_name, &msg_post_id,
-	       &msg_post_at, &msg_post_body}) {
+	       &msg_post_at, &msg_post_body}),
+
+    project_id(      "id",       uid_type,     &Project::id),
+    project_name(    "name",     str_type,     &Project::name),
+    project_owner_id("owner_id", uid_type,     &Project::owner_id),
+    project_info(    "info",     str_type,     &Project::info),
+    project_peer_ids("peer_ids", uid_set_type, &Project::peer_ids),
+    
+    projects(ctx, "projects", {&project_id},
+	     {&project_name, &project_owner_id, &project_info, &project_peer_ids}) {
     inbox.indexes.insert(&msgs);
     posts.indexes.insert(&feed_posts);
     posts.indexes.insert(&at_posts);

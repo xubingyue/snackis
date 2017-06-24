@@ -5,6 +5,7 @@
 #include "snackis/msg.hpp"
 #include "snackis/peer.hpp"
 #include "snackis/post.hpp"
+#include "snackis/project.hpp"
 #include "snackis/setting.hpp"
 #include "snackis/feed.hpp"
 #include "snackis/core/str.hpp"
@@ -55,6 +56,13 @@ namespace snackis {
     db::Col<Msg, str>           msg_post_body;
     db::Table<Msg> msgs, inbox, outbox;
 
+    db::Col<Project, UId>           project_id;
+    db::Col<Project, str>           project_name;
+    db::Col<Project, UId>           project_owner_id;
+    db::Col<Project, str>           project_info;
+    db::Col<Project, std::set<UId>> project_peer_ids;
+    db::Table<Project> projects;
+    
     Db(db::Ctx &ctx);
   };
 }

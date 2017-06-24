@@ -1,3 +1,11 @@
+* add get_feed(project)
+** create new feed with same id if not exists
+** update feed name / peers on project update
+*** add table event
+* add project cmd
+** add gui::ProjectView
+*** tabs General / Feed
+
 * add gui::PeerSearch
 * sort inbox by fetched_at
 ** add fetched_msgs idx
