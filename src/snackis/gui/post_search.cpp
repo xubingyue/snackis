@@ -92,12 +92,9 @@ namespace gui {
     Ctx &ctx(v->ctx);
     auto post_rec(get_sel_rec<Post>(GTK_TREE_VIEW(v->list)));
     assert(post_rec);
-    Post post(ctx, *post_rec);
-    
-    if (post.by_id == whoami(ctx).id) {
-      PostView *fv(new PostView(post));
-      push_view(*fv);
-    }
+    Post post(ctx, *post_rec);    
+    PostView *fv(new PostView(post));
+    push_view(*fv);
   }
   
   static void on_close(gpointer *_, PostSearch *v) {

@@ -142,11 +142,8 @@ namespace gui {
     auto post_rec(get_sel_rec<Post>(GTK_TREE_VIEW(v->post_list)));
     assert(post_rec);
     Post post(ctx, *post_rec);
-
-    if (post.by_id == whoami(ctx).id) {
-      PostView *pv(new PostView(post));
-      push_view(*pv);
-    }
+    PostView *pv(new PostView(post));
+    push_view(*pv);
   }
   
   static void load_posts(FeedView &v) {

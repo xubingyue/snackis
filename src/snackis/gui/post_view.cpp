@@ -105,11 +105,8 @@ namespace gui {
     auto post_rec(get_sel_rec<Post>(GTK_TREE_VIEW(v->post_list)));
     assert(post_rec);
     Post post(ctx, *post_rec);
-
-    if (post.by_id == whoami(ctx).id) {
-      PostView *pv(new PostView(post));
-      push_view(*pv);
-    }
+    PostView *pv(new PostView(post));
+    push_view(*pv);
   }
   
   static void init_posts(PostView &v) {
@@ -193,6 +190,7 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(panel), btns);
         
     g_signal_connect(save, "clicked", G_CALLBACK(on_save), this);
+    gtk_widget_set_sensitive(save, post.by_id == whoami(ctx).id);
     gtk_container_add(GTK_CONTAINER(btns), save);
 
     g_signal_connect(cancel, "clicked", G_CALLBACK(on_cancel), this);
