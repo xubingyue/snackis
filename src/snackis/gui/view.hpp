@@ -10,9 +10,9 @@ namespace gui {
   struct View: Widget {
     static std::stack<View *> stack;
     Ctx &ctx;
-    GtkWidget *panel, *focused;
+    GtkWidget *panel, *label, *info, *focused;
     
-    View(Ctx &ctx, const str &lbl);
+    View(Ctx &ctx, const str &lbl, const str &inf="");
     virtual ~View();
     GtkWidget *ptr() override;
   };

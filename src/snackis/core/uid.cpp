@@ -19,11 +19,15 @@ namespace snackis {
     return uuid_compare(x.val, y.val) < 0;
   }
 
+  str to_str(const UId &in) {
+    char cs[37];
+    uuid_unparse_lower(in.val, cs);
+    return cs;
+  }
+
   template <>
   str fmt_arg(const UId &arg) {
-    char cs[37];
-    uuid_unparse_lower(arg.val, cs);
-    return cs;
+    return to_str(arg);
   }
 
   opt<UId> parse_uid(const str &in) {

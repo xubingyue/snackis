@@ -21,7 +21,7 @@ namespace gui {
   }
   
   PeerView::PeerView(const Peer &peer):
-    View(peer.ctx, "Peer"),
+    View(peer.ctx, "Peer", to_str(peer.id)),
     peer(peer),
     name(gtk_entry_new()),
     email(gtk_entry_new()),

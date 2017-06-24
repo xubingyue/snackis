@@ -7,24 +7,26 @@ namespace snackis {
 namespace gui {
   std::stack<View *> View::stack;
 
-  static void on_focus_out(gpointer *_, View *v) {
-    log(v->ctx, "focus out");
-  }
-  
-  View::View(Ctx &ctx, const str &lbl): 
-    ctx(ctx), panel(gtk_box_new(GTK_ORIENTATION_VERTICAL, 0)), focused(panel) { 
+  View::View(Ctx &ctx, const str &lbl, const str &inf): 
+    ctx(ctx),
+    panel(gtk_box_new(GTK_ORIENTATION_VERTICAL, 0)),
+    label(gtk_label_new(lbl.c_str())),
+    info(gtk_label_new(inf.c_str())),
+    focused(panel) { 
     add_style(panel, "view");
     gtk_widget_set_margin_start(panel, 5);
     gtk_widget_set_margin_end(panel, 5);
     gtk_widget_set_margin_top(panel, 5);
     gtk_widget_set_margin_bottom(panel, 5);
 
-    GtkWidget *l = gtk_label_new(lbl.c_str());
-    add_style(l, "view_label");
-    gtk_widget_set_halign(l, GTK_ALIGN_END);
-    gtk_container_add(GTK_CONTAINER(panel), l);
-
-    g_signal_connect(panel, "focus-out-event", G_CALLBACK(on_focus_out), this);
+    auto hdr = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    gtk_container_add(GTK_CONTAINER(panel), hdr);
+    gtk_widget_set_halign(info, GTK_ALIGN_START);
+    gtk_widget_set_hexpand(info, GTK_ALIGN_START);
+    gtk_container_add(GTK_CONTAINER(hdr), info);
+    add_style(label, "view_label");
+    gtk_widget_set_halign(label, GTK_ALIGN_END);
+    gtk_container_add(GTK_CONTAINER(hdr), label);
   }
 
   View::~View() {

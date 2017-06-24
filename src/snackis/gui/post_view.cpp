@@ -134,7 +134,7 @@ namespace gui {
   }
   
   PostView::PostView(const Post &post):
-    View(post.ctx, "Post"),
+    View(post.ctx, "Post", to_str(post.id)),
     post(post),
     feeds(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
     posts(gtk_list_store_new(3,

@@ -192,7 +192,7 @@ namespace gui {
   }
   
   FeedView::FeedView(const Feed &feed):
-    View(feed.ctx, "Feed"),
+    View(feed.ctx, "Feed", to_str(feed.id)),
     feed(feed),
     peers(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
     feed_peers(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),

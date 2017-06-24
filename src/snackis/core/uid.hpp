@@ -16,6 +16,7 @@ namespace snackis {
   bool operator!=(const UId &x, const UId &y);
   bool operator<(const UId &x, const UId &y);
 
+  str to_str(const UId &in);
   template <>
   str fmt_arg(const UId &arg);
   opt<UId> parse_uid(const str &in);
