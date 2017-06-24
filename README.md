@@ -61,7 +61,7 @@ Type ```decrypt``` and press ```Return``` in the reader to open the decryption v
 ![decrypt example](images/decrypt.png?raw=true)
 
 #### Invites
-Type ```invite foo@bar.com``` in the reader and press ```Return``` to create a new invite. Snackis will send an email containing your public encryption key to the specified address. The easiest way to see how it works is to try with your own address.
+Type ```invite foo@bar.com``` in the reader and press ```Return``` to create a new invite. Snackis will send an email containing your public encryption key to the specified address. When an invite is accepted/rejected, a reply is sent to inform the inviting peer. The easiest way to see how it works is to try with your own address.
 
 #### Messages
 All Snackis-messages look more or less the same to the outside world. Most of the actual data is appended in encrypted (except for invites) and encoded form below the ```__SNACKIS__```-marker.
@@ -81,11 +81,6 @@ If you haven't previously used external clients with your email-address, it's qu
 Incoming traffic that needs approval arrives in the inbox, type ```inbox``` end press ```Return``` in the reader to open the inbox form.
 
 ![inbox example](images/inbox.png?raw=true)
-
-#### Peers
-When an invite is accepted/rejected, a reply is sent to inform the inviting peer. Peers are uniquely identified by their email-address and may be invited any number of times, encryption-keys are exchanged each time an invitation is accepted.
-
-![accept example](images/accept.png?raw=true)
 
 #### Feeds
 Snackis main mode of communication is through feeds/posts. Type ```feed``` in the reader and press ```Return``` to start a new feed. Local posts are sent to all specified peers, and any peer may reply.
