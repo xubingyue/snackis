@@ -107,7 +107,7 @@ namespace gui {
       GtkTreeIter iter;
       gtk_list_store_append(v.msgs, &iter);
 
-      opt<Peer> peer(find_peer_email(ctx, msg.from));
+      opt<Peer> peer(find_peer_id(ctx, msg.from_id));
       const str from(fmt("%0\n%1",
 			 peer ? peer->name.c_str() : msg.peer_name.c_str(),
 			 msg.from.c_str()));

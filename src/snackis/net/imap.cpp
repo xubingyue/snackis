@@ -170,7 +170,7 @@ namespace snackis {
 	  opt<Feed> feed_found(find_feed_id(ctx, msg->feed_id));
 	  if (feed_found) {
 	    opt<Post> post_found(find_post_id(ctx, msg->post_id));
-	    Peer peer(get_peer_email(ctx, msg->from));
+	    Peer peer(get_peer_id(ctx, msg->from_id));
 
 	    if (post_found) {
 	      if (peer.id == post_found->by_id) {

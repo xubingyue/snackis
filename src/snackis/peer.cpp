@@ -8,33 +8,18 @@ namespace snackis {
     copy(*this, src);
   }
 
-  Peer get_peer_id(Ctx &ctx, const UId &id) {
+  opt<Peer> find_peer_id(Ctx &ctx, const UId &id) {
     db::Rec<Peer> rec;
     set(rec, ctx.db.peer_id, id);
-
-    if (!load(ctx.db.peers, rec)) {
-      ERROR(Db, fmt("Peer id not found: %0", id));
-    }
-
+    if (!load(ctx.db.peers, rec)) { return nullopt; }
     return Peer(ctx, rec);
   }
 
-  opt<Peer> find_peer_email(Ctx &ctx, const str &email) {
-    db::Rec<Peer> rec;
-    db::set(rec, ctx.db.peer_email, email);
-    
-    if (!load(ctx.db.peer_emails, rec) || !load(ctx.db.peers, rec)) {
-      return nullopt;
-    }
+  Peer get_peer_id(Ctx &ctx, const UId &id) {
+    auto found(find_peer_id(ctx, id));
 
-    return Peer(ctx, rec);
-  }
-
-  Peer get_peer_email(Ctx &ctx, const str &email) {
-    auto found(find_peer_email(ctx, email));
-    
     if (!found) {
-      ERROR(Db, fmt("Peer email not found: %0", email));
+      ERROR(Db, fmt("Peer id not found: %0", id));
     }
 
     return *found;

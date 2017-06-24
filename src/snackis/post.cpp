@@ -16,7 +16,7 @@ namespace snackis {
     id(msg.post_id),
     feed_id(msg.feed_id), 
     at(msg.post_at), 
-    by_id(get_peer_email(ctx, msg.from).id),
+    by_id(msg.from_id),
     body(msg.post_body)
   { }
 
@@ -33,7 +33,9 @@ namespace snackis {
     
     for (auto &pid: feed.peer_ids) {
       Peer peer(get_peer_id(ctx, pid));
-      Msg msg(ctx, Msg::POST, peer.email);
+      Msg msg(ctx, Msg::POST);
+      msg.to = peer.email;
+      msg.to_id = peer.id;
       msg.feed_id = feed.id;
       msg.feed_name = feed.name;
       msg.post_id = post.id;

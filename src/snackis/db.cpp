@@ -29,8 +29,6 @@ namespace snackis {
     peers(ctx, "peers", {&peer_id},
 	  {&peer_name, &peer_email, &peer_crypt_key}),
 
-    peer_emails(ctx, "peer_emails", {&peer_email}, {&peer_id}),
-
     feed_id(      "id",       uid_type,     &Feed::id),
     feed_name(    "name",     str_type,     &Feed::name),
     feed_active(  "active",   bool_type,    &Feed::active),
@@ -55,6 +53,8 @@ namespace snackis {
     msg_type(      "type",       str_type,            &Msg::type),
     msg_from(      "from",       str_type,            &Msg::from),
     msg_to(        "to",         str_type,            &Msg::to),
+    msg_from_id(   "from_id",    uid_type,            &Msg::from_id),
+    msg_to_id(     "to_id",      uid_type,            &Msg::to_id),
     msg_fetched_at("fetched_at", time_type,           &Msg::fetched_at),
     msg_peer_name( "peer_name",  str_type,            &Msg::peer_name),
     msg_crypt_key( "crypt_key",  crypt::pub_key_type, &Msg::crypt_key),
@@ -66,16 +66,15 @@ namespace snackis {
     msgs(ctx, "msgs", {&msg_id}, {}),
     
     inbox(ctx, "inbox", {&msg_id},
-	  {&msg_type, &msg_fetched_at, &msg_peer_name, &msg_from, &msg_crypt_key,
-	      &msg_feed_id, &msg_feed_name,
-	      &msg_post_id, &msg_post_at, &msg_post_body}),
+	  {&msg_type, &msg_fetched_at, &msg_peer_name, &msg_from, &msg_from_id,
+	      &msg_crypt_key, &msg_feed_id, &msg_feed_name, &msg_post_id,
+	      &msg_post_at, &msg_post_body}),
     
     outbox(ctx, "outbox", {&msg_id},
-	   {&msg_type, &msg_to, &msg_peer_name, &msg_crypt_key,
-	       &msg_feed_id, &msg_feed_name,
-	       &msg_post_id, &msg_post_at, &msg_post_body}) {
+	   {&msg_type, &msg_from, &msg_from_id, &msg_to, &msg_to_id, &msg_peer_name,
+	       &msg_crypt_key, &msg_feed_id, &msg_feed_name, &msg_post_id,
+	       &msg_post_at, &msg_post_body}) {
     inbox.indexes.insert(&msgs);
-    peers.indexes.insert(&peer_emails);
     posts.indexes.insert(&feed_posts);
     posts.indexes.insert(&at_posts);
   }

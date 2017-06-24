@@ -15,6 +15,7 @@ namespace snackis {
     str type;
     Time fetched_at;
     str from, to;
+    UId from_id, to_id;
     str peer_name;
     crypt::PubKey crypt_key;
     UId feed_id;
@@ -24,7 +25,7 @@ namespace snackis {
     str post_body;
     
     Msg(Ctx &ctx);
-    Msg(Ctx &ctx, const str &type, const str &to, bool init=true);
+    Msg(Ctx &ctx, const str &type);
     Msg(Ctx &ctx, const db::Rec<Msg> &src);
   };
   

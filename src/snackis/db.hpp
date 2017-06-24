@@ -15,8 +15,7 @@
 
 namespace snackis {
   struct Db {
-    db::Col<BasicSetting, str> setting_key;
-    db::Col<BasicSetting, str> setting_val;
+    db::Col<BasicSetting, str> setting_key, setting_val;
     db::Table<BasicSetting> settings;
     
     db::Col<Invite, str>  invite_to;
@@ -27,7 +26,7 @@ namespace snackis {
     db::Col<Peer, str>           peer_name;
     db::Col<Peer, str>           peer_email;
     db::Col<Peer, crypt::PubKey> peer_crypt_key;
-    db::Table<Peer> peers, peer_emails;
+    db::Table<Peer> peers;
 
     db::Col<Feed, UId>           feed_id;
     db::Col<Feed, str>           feed_name;
@@ -44,8 +43,8 @@ namespace snackis {
     
     db::Col<Msg, UId>           msg_id;
     db::Col<Msg, str>           msg_type;
-    db::Col<Msg, str>           msg_from;
-    db::Col<Msg, str>           msg_to;
+    db::Col<Msg, str>           msg_from, msg_to;
+    db::Col<Msg, UId>           msg_from_id, msg_to_id;
     db::Col<Msg, Time>          msg_fetched_at;
     db::Col<Msg, str>           msg_peer_name;
     db::Col<Msg, crypt::PubKey> msg_crypt_key;

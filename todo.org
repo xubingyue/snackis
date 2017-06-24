@@ -18,14 +18,6 @@
 * add automagic inbox update
 ** register for inserts on inbox table
 ** insert first in model in ui thread
-* add receipts
-** receipts table with receipt_id & receipt_at
-** store msg id & update time when receipt msg is received
-** send receipt message when accepting post
-* add anonymous forwarding
-** forward messages through other peers
-** count down hops
-** add sender at each hop
 * add backup command
 ** backup folder setting, default /backup
 ** run tar -z proc

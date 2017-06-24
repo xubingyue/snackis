@@ -25,4 +25,10 @@ namespace snackis {
     uuid_unparse_lower(arg.val, cs);
     return cs;
   }
+
+  opt<UId> parse_uid(const str &in) {
+    UId out;
+    if (uuid_parse(in.c_str(), out.val) != 0) { return nullopt; }
+    return out;
+  }
 }

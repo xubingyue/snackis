@@ -18,6 +18,7 @@ namespace snackis {
 
   template <>
   str fmt_arg(const UId &arg);
+  opt<UId> parse_uid(const str &in);
 }
 
 #endif

@@ -19,9 +19,8 @@ namespace snackis {
     Peer(Ctx &ctx, const db::Rec<Peer> &src);
   };
 
+  opt<Peer> find_peer_id(Ctx &ctx, const UId &id);
   Peer get_peer_id(Ctx &ctx, const UId &id);
-  opt<Peer> find_peer_email(Ctx &ctx, const str &email);
-  Peer get_peer_email(Ctx &ctx, const str &email);
   void encrypt(const Peer &peer, const Path &in, const Path &out, bool encode);
   void decrypt(const Peer &peer, const Path &in, const Path &out, bool encode);
 }
