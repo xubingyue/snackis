@@ -1,7 +1,6 @@
-* add get_feed(project)
-** create new feed with same id if not exists
-** update feed name / peers on project update
-*** add table event
+* update feed name / peers on project update
+** add table event
+* add task
 * add project cmd
 ** add gui::ProjectView
 *** tabs General / Feed

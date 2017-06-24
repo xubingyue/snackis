@@ -25,4 +25,18 @@ namespace snackis {
     if (!load(ctx.db.projects, rec)) { return nullopt; }
     return Project(ctx, rec);
   }
+
+  Feed get_feed(const Project &prj) {
+    Ctx &ctx(prj.ctx);
+    db::Rec<Feed> feed_rec;
+    db::set(feed_rec, ctx.db.feed_id, prj.id);
+    Feed feed(ctx, feed_rec);
+    
+    if (!db::load(ctx.db.feeds, feed)) {
+      feed.name = prj.name;
+      db::upsert(ctx.db.feeds, feed);
+    }
+
+    return feed;
+  }
 }
