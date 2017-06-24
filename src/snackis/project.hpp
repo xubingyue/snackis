@@ -10,8 +10,8 @@
 namespace snackis {
   struct Project: Rec {
     UId id;
-    str name;
     UId owner_id;
+    str name;
     str info;
     std::set<UId> peer_ids;
     
@@ -21,6 +21,7 @@ namespace snackis {
   };
 
   opt<Project> find_project_id(Ctx &ctx, UId id);
+  Project get_project_id(Ctx &ctx, UId id);
   Feed get_feed(const Project &prj);
 }
 

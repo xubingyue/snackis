@@ -1,13 +1,14 @@
 #ifndef SNACKIS_DB_HPP
 #define SNACKIS_DB_HPP
 
+#include "snackis/feed.hpp"
 #include "snackis/invite.hpp"
 #include "snackis/msg.hpp"
 #include "snackis/peer.hpp"
 #include "snackis/post.hpp"
 #include "snackis/project.hpp"
 #include "snackis/setting.hpp"
-#include "snackis/feed.hpp"
+#include "snackis/task.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/crypt/pub_key.hpp"
 #include "snackis/db/col.hpp"
@@ -57,11 +58,21 @@ namespace snackis {
     db::Table<Msg> msgs, inbox, outbox;
 
     db::Col<Project, UId>           project_id;
-    db::Col<Project, str>           project_name;
     db::Col<Project, UId>           project_owner_id;
+    db::Col<Project, str>           project_name;
     db::Col<Project, str>           project_info;
     db::Col<Project, std::set<UId>> project_peer_ids;
     db::Table<Project> projects;
+
+    db::Col<Task, UId>  task_id;
+    db::Col<Task, UId>  task_project_id;
+    db::Col<Task, UId>  task_owner_id;
+    db::Col<Task, Time> task_created_at;
+    db::Col<Task, str>  task_name;
+    db::Col<Task, str>  task_info;
+    db::Col<Task, Time> task_deadline;
+    db::Col<Task, bool> task_done;
+    db::Table<Task> tasks;
     
     Db(Ctx &ctx);
   };

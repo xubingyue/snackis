@@ -77,24 +77,47 @@ namespace snackis {
 	       &msg_post_at, &msg_post_body}),
 
     project_id(      "id",       uid_type,     &Project::id),
-    project_name(    "name",     str_type,     &Project::name),
     project_owner_id("owner_id", uid_type,     &Project::owner_id),
+    project_name(    "name",     str_type,     &Project::name),
     project_info(    "info",     str_type,     &Project::info),
     project_peer_ids("peer_ids", uid_set_type, &Project::peer_ids),
     
     projects(ctx, "projects", {&project_id},
-	     {&project_name, &project_owner_id, &project_info, &project_peer_ids}) {
+	     {&project_owner_id, &project_name, &project_info, &project_peer_ids}),
+
+    task_id(        "id",         uid_type,  &Task::id),
+    task_project_id("project_id", uid_type,  &Task::project_id),
+    task_owner_id(  "owner_id",   uid_type,  &Task::owner_id),
+    task_created_at("created_at", time_type, &Task::created_at),
+    task_name(      "name",       str_type,  &Task::name),
+    task_info(      "info",       str_type,  &Task::info),
+    task_deadline(  "deadline",   time_type, &Task::deadline),
+    task_done(      "done",       bool_type, &Task::done),
+    
+    tasks(ctx, "tasks", {&task_id},
+	  {&task_project_id, &task_owner_id, &task_name, &task_info, &task_deadline})
+  {
     inbox.indexes.insert(&msgs);
     posts.indexes.insert(&feed_posts);
     posts.indexes.insert(&at_posts);
 
     projects.on_update.push_back([&](auto _, auto rec) {
-	Project prj(ctx, rec);
 	opt<Feed> feed(find_feed_id(ctx, *db::get(rec, ctx.db.project_id)));
 
 	if (feed) {
+	  Project prj(ctx, rec);
 	  feed->name = fmt("Project %0", prj.name);
 	  feed->peer_ids = prj.peer_ids;
+	  db::update(feeds, *feed);
+	}
+      });
+
+    tasks.on_update.push_back([&](auto _, auto rec) {
+	opt<Feed> feed(find_feed_id(ctx, *db::get(rec, ctx.db.task_id)));
+
+	if (feed) {
+	  Task tsk(ctx, rec);
+	  feed->name = fmt("Task %0", tsk.name);
 	  db::update(feeds, *feed);
 	}
       });

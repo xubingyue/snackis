@@ -26,6 +26,16 @@ namespace snackis {
     return Project(ctx, rec);
   }
 
+  Project get_project_id(Ctx &ctx, UId id) {
+    auto found(find_project_id(ctx, id));
+    
+    if (!found) {
+      ERROR(Db, fmt("Project id not found: %0", id));
+    }
+
+    return *found;
+  }
+
   Feed get_feed(const Project &prj) {
     Ctx &ctx(prj.ctx);
     db::Rec<Feed> feed_rec;
@@ -33,7 +43,7 @@ namespace snackis {
     Feed feed(ctx, feed_rec);
     
     if (!db::load(ctx.db.feeds, feed)) {
-      feed.name = prj.name;
+      feed.name = fmt("Project %0", prj.name);
       feed.peer_ids = prj.peer_ids;
       db::upsert(ctx.db.feeds, feed);
     }

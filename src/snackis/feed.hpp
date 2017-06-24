@@ -8,6 +8,7 @@
 #include "snackis/core/uid.hpp"
 
 namespace snackis {
+  struct Msg;
   struct Post;
   
   struct Feed: Rec {   

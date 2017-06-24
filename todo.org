@@ -1,6 +1,7 @@
-* add task
-** copy project
-** add feed update like project
+* update task feed peers when project peers change
+** add task peers in-between?
+* switch UId to null default
+** go through all Rec classes (grep public Rec) and pass t for gen
 * add project cmd
 ** add gui::ProjectView
 *** tabs General / Feed
