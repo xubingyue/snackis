@@ -26,6 +26,7 @@ namespace snackis {
   void open(Ctx &ctx);
   void log(const Ctx &ctx, const str &msg);
   Peer &whoami(Ctx &ctx);
+  Queue todo_queue(Ctx &ctx);
 }
 
 #endif

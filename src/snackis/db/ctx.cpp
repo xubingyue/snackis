@@ -38,7 +38,7 @@ namespace db {
 		      DB_REV));
       }
     } else {
-      log(ctx, "New database initialized with revision #%0", DB_REV);
+      log(ctx, "Initialized database, revision %0", DB_REV);
     }
     
     std::ofstream out;

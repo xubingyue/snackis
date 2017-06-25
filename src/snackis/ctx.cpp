@@ -95,7 +95,7 @@ namespace snackis {
     if (!found_crypt_key) {
       crypt::Key key(ctx.whoami.crypt_key);
       set_val(ctx.settings.crypt_key, key);
-      log(ctx, "New encryption-key created");
+      log(ctx, "Initialized encryption-key");
     }
     
     db::upsert(ctx.db.peers, ctx.whoami);
@@ -112,5 +112,22 @@ namespace snackis {
     }
 
     return ctx.whoami;
+  }
+
+  Queue todo_queue(Ctx &ctx) {
+    auto id(get_val(ctx.settings.todo_queue));
+
+    if (!id) {
+      db::Trans trans(ctx);
+      Queue queue(ctx);
+      queue.name = "Todo";
+      set_val(ctx.settings.todo_queue, queue.id);
+      db::insert(ctx.db.queues, queue);
+      db::commit(trans);
+      log(ctx, "Initialized Todo queue");
+      return queue;
+    }
+    
+    return get_queue_id(ctx, *id);
   }
 }

@@ -7,6 +7,7 @@
 #include "snackis/peer.hpp"
 #include "snackis/post.hpp"
 #include "snackis/project.hpp"
+#include "snackis/queue.hpp"
 #include "snackis/setting.hpp"
 #include "snackis/task.hpp"
 #include "snackis/core/str.hpp"
@@ -73,6 +74,13 @@ namespace snackis {
     db::Col<Task, Time>          task_deadline;
     db::Col<Task, bool>          task_done;
     db::Table<Task> tasks;
+
+    db::Col<Queue, UId>           queue_id;
+    db::Col<Queue, UId>           queue_owner_id;
+    db::Col<Queue, str>           queue_name;
+    db::Col<Queue, str>           queue_info;
+    db::Col<Queue, std::set<UId>> queue_peer_ids;
+    db::Table<Queue> queues;
     
     Db(Ctx &ctx);
   };

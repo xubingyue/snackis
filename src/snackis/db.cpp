@@ -96,7 +96,17 @@ namespace snackis {
     
     tasks(ctx, "tasks", {&task_id},
 	  {&task_project_id, &task_owner_id, &task_name, &task_info, &task_peer_ids,
-	      &task_deadline, &task_done})
+	      &task_deadline, &task_done}),
+
+    queue_id(      "id",       uid_type,     &Queue::id),
+    queue_owner_id("owner_id", uid_type,     &Queue::owner_id),
+    queue_name(    "name",     str_type,     &Queue::name),
+    queue_info(    "info",     str_type,     &Queue::info),
+    queue_peer_ids("peer_ids", uid_set_type, &Queue::peer_ids),
+    
+    queues(ctx, "queues", {&queue_id},
+	     {&queue_owner_id, &queue_name, &queue_info, &queue_peer_ids})
+    
   {
     inbox.indexes.insert(&msgs);
     posts.indexes.insert(&feed_posts);

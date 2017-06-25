@@ -182,6 +182,16 @@ namespace gui {
 	push_view(*v);
 	return true;
       });
+
+    rdr.cmds.emplace("todo", [&ctx](auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: todo");
+	  return false;
+	}
+
+	Queue queue(todo_queue(ctx));
+	return true;
+      });
   }
 
   static void init_completion(Reader &rdr) {

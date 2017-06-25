@@ -7,8 +7,8 @@
 
 namespace snackis {
   Settings::Settings(Ctx &ctx):
-    whoami(ctx,    "whoami",    uid_type,        nullopt),
-    crypt_key(ctx, "crypt_key", crypt::key_type, nullopt),
+    whoami(ctx,    "whoami",    uid_type),
+    crypt_key(ctx, "crypt_key", crypt::key_type),
 
     load_folder(ctx, "load_folder", str_type, str("load/")),
     save_folder(ctx, "save_folder", str_type, str("save/")),
@@ -23,6 +23,8 @@ namespace snackis {
     smtp_port(ctx, "smtp_port", int64_type, 587),
     smtp_user(ctx, "smtp_user", str_type,   str("")),
     smtp_pass(ctx, "smtp_pass", str_type,   str("")),
-    smtp_poll(ctx, "smtp_poll", int64_type, 0)
+    smtp_poll(ctx, "smtp_poll", int64_type, 0),
+
+    todo_queue(ctx, "todo_queue", uid_type)
   { }
 }

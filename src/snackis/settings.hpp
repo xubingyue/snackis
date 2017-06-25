@@ -20,6 +20,7 @@ namespace snackis {
     Setting<str> smtp_user, smtp_pass;
     Setting<int64_t> smtp_poll;
     
+    Setting<UId> todo_queue;
     Settings(Ctx &ctx);
   };
 }

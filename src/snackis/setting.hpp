@@ -22,7 +22,7 @@ namespace snackis {
 
     Setting(Ctx &ctx,
 	    const str &key, const Type<ValT> &type,
-	    opt<ValT> init_val);
+	    opt<ValT> init_val=nullopt);
   };
 
   template <typename ValT>

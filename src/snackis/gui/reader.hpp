@@ -17,7 +17,7 @@ namespace gui {
     opt<str> last_cmd;
     
     Reader(Ctx &ctx);
-    GtkWidget *ptr();
+    GtkWidget *ptr() override;
   };
 }}
 
