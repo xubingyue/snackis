@@ -26,9 +26,9 @@ namespace snackis {
 
   template <typename ValT, typename BinT>
   ValT PrimType<ValT, BinT>::read(std::istream &in) const {
-    BinT val = -1;
-    in.read((char *)&val, sizeof val);
-    return val;
+    BinT bin = -1;
+    in.read((char *)&bin, sizeof bin);
+    return bin;
   }
   
   template <typename ValT, typename BinT>
