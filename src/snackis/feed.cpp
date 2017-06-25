@@ -2,9 +2,9 @@
 #include "snackis/feed.hpp"
 
 namespace snackis {
-  Feed::Feed(Ctx &ctx): Rec(ctx), active(true) { }
+  Feed::Feed(Ctx &ctx): Rec(ctx), id(true), active(true) { }
 
-  Feed::Feed(Ctx &ctx, const db::Rec<Feed> &src): Rec(ctx), id(false) {
+  Feed::Feed(Ctx &ctx, const db::Rec<Feed> &src): Rec(ctx) {
     copy(*this, src);
   }
 

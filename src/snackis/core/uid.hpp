@@ -9,7 +9,7 @@ namespace snackis {
   struct UId {
     uuid_t val;
 
-    UId(bool init=true);
+    UId(bool init=false);
   };
   
   bool operator==(const UId &x, const UId &y);

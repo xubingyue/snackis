@@ -9,7 +9,7 @@ namespace snackis {
 
   Msg::Msg(Ctx &ctx): Rec(ctx) { }
 
-  Msg::Msg(Ctx &ctx, const str &type): Rec(ctx), type(type) {
+  Msg::Msg(Ctx &ctx, const str &type): Rec(ctx), id(true), type(type) {
     Peer &me(whoami(ctx));
     from = me.email;
     
@@ -20,7 +20,7 @@ namespace snackis {
     }
   }
 
-  Msg::Msg(Ctx &ctx, const db::Rec<Msg> &src): Rec(ctx), id(false) {
+  Msg::Msg(Ctx &ctx, const db::Rec<Msg> &src): Rec(ctx) {
     copy(*this, src);
   }
 

@@ -7,6 +7,7 @@
 namespace snackis {
   Task::Task(Project &prj):
     Rec(prj.ctx),
+    id(true),
     project_id(prj.id),
     owner_id(whoami(ctx).id),
     created_at(now()),
@@ -17,7 +18,7 @@ namespace snackis {
     prj.task_ids.insert(id);
   }
 
-  Task::Task(Ctx &ctx, const db::Rec<Task> &rec): Rec(ctx), id(false) {
+  Task::Task(Ctx &ctx, const db::Rec<Task> &rec): Rec(ctx) {
     copy(*this, rec);
   }
 

@@ -2,9 +2,10 @@
 #include "snackis/peer.hpp"
 
 namespace snackis {
-  Peer::Peer(Ctx &ctx): Rec(ctx) { }
+  Peer::Peer(Ctx &ctx): Rec(ctx), id(true)
+  { }
 
-  Peer::Peer(Ctx &ctx, const db::Rec<Peer> &src): Rec(ctx), id(false) {
+  Peer::Peer(Ctx &ctx, const db::Rec<Peer> &src): Rec(ctx) {
     copy(*this, src);
   }
 

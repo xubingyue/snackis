@@ -6,7 +6,7 @@
 
 namespace snackis {
 namespace gui {
-  enum FeedCol {COL_FEED_PTR=0, COL_FEED_NAME};
+  enum FeedCol {COL_FEED_PTR=0, COL_FEED_ID, COL_FEED_NAME};
   enum PostCol {COL_POST_PTR=0, COL_POST_BY, COL_POST_BODY};
     
   static void on_cancel(gpointer *_, PostView *v) {
@@ -74,14 +74,16 @@ namespace gui {
     Ctx &ctx(v.ctx);
     size_t cnt(0);
     
-    for(const auto &f: ctx.db.feeds.recs) {
-      if (*db::get(f, ctx.db.feed_id) == v.post.feed_id ||
-	  *db::get(f, ctx.db.feed_active)) {
+    for(const auto &feed_rec: ctx.db.feeds.recs) {
+      Feed feed(ctx, feed_rec);
+      
+      if (feed.id == v.post.feed_id || feed.active) {
 	GtkTreeIter iter;
 	gtk_list_store_append(v.feeds, &iter);
 	gtk_list_store_set(v.feeds, &iter,
-			   COL_FEED_PTR, &f,
-			   COL_FEED_NAME, db::get(f, ctx.db.feed_name)->c_str(),
+			   COL_FEED_PTR, &feed_rec,
+			   COL_FEED_ID, to_str(feed.id).c_str(),
+			   COL_FEED_NAME, feed.name.c_str(),
 			   -1);
 	cnt++;
       }
@@ -93,7 +95,13 @@ namespace gui {
 				   col,
                                    "text", COL_FEED_NAME,
 				   nullptr);
-    gtk_combo_box_set_active(GTK_COMBO_BOX(v.feed), 0);
+    
+    gtk_combo_box_set_id_column(GTK_COMBO_BOX(v.feed), COL_FEED_ID);
+    if (!gtk_combo_box_set_active_id(GTK_COMBO_BOX(v.feed),
+				     to_str(v.post.feed_id).c_str())) {
+      gtk_combo_box_set_active(GTK_COMBO_BOX(v.feed), 0);
+    }
+    
     gtk_widget_set_sensitive(v.save, cnt > 0);
   }
 
@@ -133,10 +141,8 @@ namespace gui {
   PostView::PostView(const Post &post):
     View(post.ctx, "Post", to_str(post.id)),
     post(post),
-    feeds(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
-    posts(gtk_list_store_new(3,
-			     G_TYPE_POINTER,
-			     G_TYPE_STRING, G_TYPE_STRING)),
+    feeds(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
+    posts(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
     feed(gtk_combo_box_new_with_model(GTK_TREE_MODEL(feeds))),
     edit_feed(gtk_button_new_with_mnemonic("_Edit Feed")),
     body_text(gtk_text_view_new()),
