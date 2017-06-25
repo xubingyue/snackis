@@ -89,7 +89,6 @@ namespace snackis {
     task_id(        "id",         uid_type,     &Task::id),
     task_project_id("project_id", uid_type,     &Task::project_id),
     task_owner_id(  "owner_id",   uid_type,     &Task::owner_id),
-    task_created_at("created_at", time_type,    &Task::created_at),
     task_name(      "name",       str_type,     &Task::name),
     task_info(      "info",       str_type,     &Task::info),
     task_peer_ids(  "peer_ids",   uid_set_type, &Task::peer_ids),
@@ -97,8 +96,8 @@ namespace snackis {
     task_done(      "done",       bool_type,    &Task::done),
     
     tasks(ctx, "tasks", {&task_id},
-	  {&task_project_id, &task_owner_id, &task_created_at, &task_name,
-	      &task_info, &task_peer_ids, &task_deadline, &task_done})
+	  {&task_project_id, &task_owner_id, &task_name, &task_info, &task_peer_ids,
+	      &task_deadline, &task_done})
   {
     inbox.indexes.insert(&msgs);
     posts.indexes.insert(&feed_posts);

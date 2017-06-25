@@ -10,7 +10,6 @@ namespace snackis {
     id(true),
     project_id(prj.id),
     owner_id(whoami(ctx).id),
-    created_at(now()),
     peer_ids(prj.peer_ids),
     deadline(Time::max()),
     done(false)

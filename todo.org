@@ -1,18 +1,16 @@
 * add Queue
-* add default_project setting
-** add lazy default_project(ctx) fn
-** use as default 
+* add gui::QueueView
+** name, info & peers
+** add queue command
+** general & tasks tabs
+** owner can add all
+*** peers can add owned tasks
+** owner can remove all
+*** peers can remove owned tasks
 * add todo cmd
 ** add todo_queue setting
 *** add lazy todo_queue(ctx)
-** if called with arg add task to todo queue immediately
-* add task.prio
-** int64, default 0
-* prio_tasks idx
-** key prio, deadline, created, id
-* add gui::QueueView
-** add queue command
-** open for todo queue when todo is called without arg
+*** open queue view focused on items
 * add gui::PeerSearch
 * sort inbox by fetched_at
 ** add fetched_msgs idx
