@@ -2,10 +2,9 @@
 ** int64, default 0
 * prio_tasks idx
 ** key prio, deadline, created, id
-* add project cmd
-** add gui::ProjectView
-*** tabs General / Feed
-*** only allow saving if owner_id = whoami
+* add Queue
+* add todo cmd
+** open QueueView with todo queue
 * add gui::PeerSearch
 * sort inbox by fetched_at
 ** add fetched_msgs idx
