@@ -62,16 +62,18 @@ namespace snackis {
     db::Col<Project, str>           project_name;
     db::Col<Project, str>           project_info;
     db::Col<Project, std::set<UId>> project_peer_ids;
+    db::Col<Project, std::set<UId>> project_task_ids;
     db::Table<Project> projects;
 
-    db::Col<Task, UId>  task_id;
-    db::Col<Task, UId>  task_project_id;
-    db::Col<Task, UId>  task_owner_id;
-    db::Col<Task, Time> task_created_at;
-    db::Col<Task, str>  task_name;
-    db::Col<Task, str>  task_info;
-    db::Col<Task, Time> task_deadline;
-    db::Col<Task, bool> task_done;
+    db::Col<Task, UId>           task_id;
+    db::Col<Task, UId>           task_project_id;
+    db::Col<Task, UId>           task_owner_id;
+    db::Col<Task, Time>          task_created_at;
+    db::Col<Task, str>           task_name;
+    db::Col<Task, str>           task_info;
+    db::Col<Task, std::set<UId>> task_peer_ids;
+    db::Col<Task, Time>          task_deadline;
+    db::Col<Task, bool>          task_done;
     db::Table<Task> tasks;
     
     Db(Ctx &ctx);

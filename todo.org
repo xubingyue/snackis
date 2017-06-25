@@ -1,8 +1,10 @@
-* update task feed peers when project peers change
-** change feed peer updates to add added & remove removed
 * switch UId to null default
 ** go through all Rec classes (grep public Rec)
 ** pass t for gen & remove false
+* --
+* insert tasks into task_ids
+** when?
+* --
 * add project cmd
 ** add gui::ProjectView
 *** tabs General / Feed

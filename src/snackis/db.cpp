@@ -9,6 +9,17 @@
 #include "snackis/crypt/pub_key_type.hpp"
 
 namespace snackis {
+  using UIdDiff = std::pair<std::vector<UId>, std::vector<UId>>;
+  
+  static UIdDiff diff_uids(const std::set<UId> &x, const std::set<UId> &y) {
+    std::vector<UId> add, rem;
+    std::set_difference(y.begin(), y.end(), x.begin(), x.end(),
+			std::back_inserter(add));
+    std::set_difference(x.begin(), x.end(), y.begin(), y.end(),
+			std::back_inserter(rem));
+    return std::make_pair(add, rem);
+  }
+  
   Db::Db(Ctx &ctx):
     setting_key("key", str_type, &BasicSetting::key),
     setting_val("val", str_type, &BasicSetting::val),
@@ -81,44 +92,82 @@ namespace snackis {
     project_name(    "name",     str_type,     &Project::name),
     project_info(    "info",     str_type,     &Project::info),
     project_peer_ids("peer_ids", uid_set_type, &Project::peer_ids),
+    project_task_ids("task_ids", uid_set_type, &Project::task_ids),
     
     projects(ctx, "projects", {&project_id},
 	     {&project_owner_id, &project_name, &project_info, &project_peer_ids}),
 
-    task_id(        "id",         uid_type,  &Task::id),
-    task_project_id("project_id", uid_type,  &Task::project_id),
-    task_owner_id(  "owner_id",   uid_type,  &Task::owner_id),
-    task_created_at("created_at", time_type, &Task::created_at),
-    task_name(      "name",       str_type,  &Task::name),
-    task_info(      "info",       str_type,  &Task::info),
-    task_deadline(  "deadline",   time_type, &Task::deadline),
-    task_done(      "done",       bool_type, &Task::done),
+    task_id(        "id",         uid_type,     &Task::id),
+    task_project_id("project_id", uid_type,     &Task::project_id),
+    task_owner_id(  "owner_id",   uid_type,     &Task::owner_id),
+    task_created_at("created_at", time_type,    &Task::created_at),
+    task_name(      "name",       str_type,     &Task::name),
+    task_info(      "info",       str_type,     &Task::info),
+    task_peer_ids(  "peer_ids",   uid_set_type, &Task::peer_ids),
+    task_deadline(  "deadline",   time_type,    &Task::deadline),
+    task_done(      "done",       bool_type,    &Task::done),
     
     tasks(ctx, "tasks", {&task_id},
-	  {&task_project_id, &task_owner_id, &task_name, &task_info, &task_deadline})
+	  {&task_project_id, &task_owner_id, &task_name, &task_info, &task_peer_ids,
+	      &task_deadline, &task_done})
   {
     inbox.indexes.insert(&msgs);
     posts.indexes.insert(&feed_posts);
     posts.indexes.insert(&at_posts);
+    
+    projects.on_update.push_back([&](auto prev_rec, auto curr_rec) {
+	Project prev(ctx, prev_rec), curr(ctx, curr_rec);
+	opt<Feed> feed(find_feed_id(ctx, curr.id));
+	bool feed_dirty(false);
+	
+	if (curr.peer_ids != prev.peer_ids) {		    
+	  auto diff(diff_uids(prev.peer_ids, curr.peer_ids));
 
-    projects.on_update.push_back([&](auto _, auto rec) {
-	opt<Feed> feed(find_feed_id(ctx, *db::get(rec, ctx.db.project_id)));
+	  for (auto tid: curr.task_ids) {
+	    Task t(get_task_id(ctx, tid));
+	    for (auto pid: diff.first) { t.peer_ids.insert(pid); }
+	    for (auto pid: diff.second) { t.peer_ids.erase(pid); }
+	    db::update(tasks, t);
+	  }
 
-	if (feed) {
-	  Project prj(ctx, rec);
-	  feed->name = fmt("Project %0", prj.name);
-	  feed->peer_ids = prj.peer_ids;
-	  db::update(feeds, *feed);
+	  if (feed) {
+	    for (auto pid: diff.first) { feed->peer_ids.insert(pid); }
+	    for (auto pid: diff.second) { feed->peer_ids.erase(pid); }
+	    feed_dirty = true;
+	  }
 	}
+
+	if (feed && curr.name != prev.name &&
+	    feed->name == fmt("Project %0", prev.name)) {
+	  feed->name = fmt("Project %0", curr.name);
+	  feed_dirty = true;
+	}
+
+	if (feed_dirty) { db::update(feeds, *feed); }
       });
 
-    tasks.on_update.push_back([&](auto _, auto rec) {
-	opt<Feed> feed(find_feed_id(ctx, *db::get(rec, ctx.db.task_id)));
-
+    tasks.on_update.push_back([&](auto prev_rec, auto curr_rec) {
+	Task prev(ctx, prev_rec), curr(ctx, curr_rec);
+	opt<Feed> feed(find_feed_id(ctx, curr.id));
+	
 	if (feed) {
-	  Task tsk(ctx, rec);
-	  feed->name = fmt("Task %0", tsk.name);
-	  db::update(feeds, *feed);
+	  bool feed_dirty(false);
+
+	  if (feed && curr.name != prev.name &&
+	      feed->name == fmt("Task %0", prev.name)) {
+	    feed_dirty = true;
+	    feed->name = fmt("Task %0", curr.name);
+	  }
+
+	  
+	  if (curr.peer_ids != prev.peer_ids) {		    
+	    auto diff(diff_uids(prev.peer_ids, curr.peer_ids));
+	    for (auto pid: diff.first) { feed->peer_ids.insert(pid); }
+	    for (auto pid: diff.second) { feed->peer_ids.erase(pid); }
+	    feed_dirty = true;
+	  }
+
+	  if (feed_dirty) { db::update(feeds, *feed); }
 	}
       });
   }

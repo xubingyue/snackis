@@ -14,6 +14,7 @@ namespace snackis {
     str name;
     str info;
     std::set<UId> peer_ids;
+    std::set<UId> task_ids;
     
     Project(Ctx &ctx);
     Project(Ctx &ctx, const db::Rec<Project> &rec);   

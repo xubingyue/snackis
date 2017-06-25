@@ -5,9 +5,14 @@
 #include "snackis/task.hpp"
 
 namespace snackis {
-  Task::Task(Ctx &ctx, const Project &prj):
-    Rec(ctx), project_id(prj.id), owner_id(whoami(ctx).id), created_at(now()),
-    deadline(Time::max()), done(false)
+  Task::Task(const Project &prj):
+    Rec(prj.ctx),
+    project_id(prj.id),
+    owner_id(whoami(ctx).id),
+    created_at(now()),
+    peer_ids(prj.peer_ids),
+    deadline(Time::max()),
+    done(false)
   { }
 
   Task::Task(Ctx &ctx, const db::Rec<Task> &rec): Rec(ctx), id(false) {
@@ -29,6 +34,16 @@ namespace snackis {
     return Task(ctx, rec);
   }
 
+  Task get_task_id(Ctx &ctx, UId id) {
+    auto found(find_task_id(ctx, id));
+    
+    if (!found) {
+      ERROR(Db, fmt("Task id not found: %0", id));
+    }
+
+    return *found;
+  }
+
   Feed get_feed(const Task &tsk) {
     Ctx &ctx(tsk.ctx);
     db::Rec<Feed> feed_rec;
@@ -37,8 +52,7 @@ namespace snackis {
     
     if (!db::load(ctx.db.feeds, feed)) {
       feed.name = fmt("Task %0", tsk.name);
-      auto prj(get_project_id(ctx, tsk.project_id));
-      feed.peer_ids = prj.peer_ids;
+      feed.peer_ids = tsk.peer_ids;
       db::upsert(ctx.db.feeds, feed);
     }
 
