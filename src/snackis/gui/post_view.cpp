@@ -58,10 +58,9 @@ namespace gui {
 
   static void on_feed_sel(gpointer *_, PostView *v) {
     load_posts(*v);
-    gtk_widget_set_sensitive(v->edit_feed,
-			     get_sel_rec<Feed>(GTK_COMBO_BOX(v->feed))
-			     ? true
-			     : false);
+    auto sel(get_sel_rec<Feed>(GTK_COMBO_BOX(v->feed)) ? true : false);
+    gtk_widget_set_sensitive(v->edit_feed, sel);
+    gtk_widget_set_sensitive(v->save, sel && v->post.by_id == whoami(v->ctx).id);
   }
 
   static void on_edit_feed(gpointer *_, PostView *v) {
@@ -133,7 +132,6 @@ namespace gui {
     gtk_tree_view_column_set_expand(GTK_TREE_VIEW_COLUMN(body_col), true);
     gtk_tree_view_append_column(GTK_TREE_VIEW(v.post_list), body_col);
     g_signal_connect(v.post_list, "row-activated", G_CALLBACK(on_edit_post), &v);
-    load_posts(v);
   }
   
   PostView::PostView(const Post &post):
@@ -163,6 +161,7 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(feed_box), feed);
     g_signal_connect(edit_feed, "clicked", G_CALLBACK(on_edit_feed), this);
     gtk_container_add(GTK_CONTAINER(feed_box), edit_feed);
+    on_feed_sel(nullptr, this);
     
     lbl = gtk_label_new("Body");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
@@ -184,7 +183,6 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(panel), btns);
         
     g_signal_connect(save, "clicked", G_CALLBACK(on_save), this);
-    gtk_widget_set_sensitive(save, post.by_id == whoami(ctx).id);
     gtk_container_add(GTK_CONTAINER(btns), save);
 
     g_signal_connect(cancel, "clicked", G_CALLBACK(on_cancel), this);
