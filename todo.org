@@ -2,8 +2,7 @@
 ** general & tasks tabs
 *** select tasks if table not empty
 ** add queue command
-* add todo cmd
-*** open queue view
+** open on todo cmd
 * add thread.owner_id + db
 ** init to whoami
 ** only allow save if owner
