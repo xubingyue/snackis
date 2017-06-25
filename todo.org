@@ -1,17 +1,13 @@
-* add gui::QueueView
-** general & tasks tabs
-*** select tasks if table not empty
-** add queue command
-** open on todo cmd
-* add thread.owner_id + db
-** init to whoami
-** only allow save if owner
-* add thread.info + db + form
-** add msg.thread_info
-** send in posts
+* remove queue/project.info
 * add TaskView
 ** copy post view
 ** sort projects by name
+** open for new task in todo queue on todo
+* add gui::QueueView
+** add queue command
+* add thread.owner_id + db
+** init to whoami
+** only allow save if owner
 * add gui::PeerSearch
 * sort inbox by fetched_at
 ** add fetched_msgs idx
