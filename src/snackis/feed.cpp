@@ -2,13 +2,16 @@
 #include "snackis/feed.hpp"
 
 namespace snackis {
-  Feed::Feed(Ctx &ctx, UId id): Rec(ctx), id(id), active(true) { }
+  Feed::Feed(Ctx &ctx, UId id):
+    Rec(ctx), id(id), owner_id(whoami(ctx).id), active(true)
+  { }
 
   Feed::Feed(Ctx &ctx, const db::Rec<Feed> &src): Rec(ctx) {
     copy(*this, src);
   }
 
-  Feed::Feed(const Msg &msg): Rec(msg.ctx), id(msg.feed_id) {
+  Feed::Feed(const Msg &msg):
+    Rec(msg.ctx), id(msg.feed_id), owner_id(msg.from_id), info(msg.feed_info) {
     db::Rec<Feed> rec;
     set(rec, ctx.db.feed_id, id);
     bool exists = load(ctx.db.feeds, rec) ? true : false;

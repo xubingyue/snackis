@@ -19,7 +19,7 @@ namespace snackis {
     str peer_name;
     crypt::PubKey crypt_key;
     UId feed_id;
-    str feed_name;
+    str feed_name, feed_info;
     UId post_id;
     Time post_at;
     str post_body;

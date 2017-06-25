@@ -18,9 +18,10 @@ namespace gui {
     Ctx &ctx(v->ctx);
     db::Trans trans(ctx);
     v->feed.name = gtk_entry_get_text(GTK_ENTRY(v->name));
+    v->feed.info = get_str(GTK_TEXT_VIEW(v->info));
     v->feed.active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->active));
     db::upsert(ctx.db.feeds, v->feed);
-    const str post_body(get_str(GTK_TEXT_VIEW(v->new_post_text)));
+    const str post_body(get_str(GTK_TEXT_VIEW(v->new_post)));
 
     if (!post_body.empty()) {
       Post post(ctx);
@@ -198,13 +199,13 @@ namespace gui {
 			     G_TYPE_STRING, G_TYPE_STRING)),
     name(gtk_entry_new()),
     active(gtk_check_button_new_with_label("Active")),
+    info(new_text_view()),
     peer_list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(feed_peers))),
     peer_input(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5)),
     peer(gtk_combo_box_new_with_model(GTK_TREE_MODEL(peers))),
     add_peer(gtk_button_new_with_mnemonic("_Add Peer")),
     post_list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(posts))),
-    new_post_text(gtk_text_view_new()),
-    new_post(gtk_scrolled_window_new(NULL, NULL)),
+    new_post(new_text_view()),
     save(gtk_button_new_with_mnemonic("_Save Feed")),
     cancel(gtk_button_new_with_mnemonic("_Cancel")) {
     GtkWidget *lbl;
@@ -215,15 +216,20 @@ namespace gui {
     lbl = gtk_label_new("Name");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_container_add(GTK_CONTAINER(frm), lbl);
+    GtkWidget *name_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    gtk_container_add(GTK_CONTAINER(frm), name_box);
     gtk_widget_set_hexpand(name, true);
-    gtk_container_add(GTK_CONTAINER(frm), name);
+    gtk_container_add(GTK_CONTAINER(name_box), name);    
     gtk_entry_set_text(GTK_ENTRY(name), feed.name.c_str());
-
-    GtkWidget *active_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
-    gtk_container_add(GTK_CONTAINER(frm), active_box);
+    gtk_container_add(GTK_CONTAINER(name_box), active);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active), feed.active);
-    gtk_container_add(GTK_CONTAINER(active_box), active);
 
+    lbl = gtk_label_new("Info");
+    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
+    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    gtk_container_add(GTK_CONTAINER(frm), gtk_widget_get_parent(info));
+    set_str(GTK_TEXT_VIEW(info), feed.info);
+    
     init_peers(*this);
     gtk_widget_set_margin_top(peer_list, 5);
     gtk_container_add(GTK_CONTAINER(frm), peer_list);
@@ -242,16 +248,7 @@ namespace gui {
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_widget_set_margin_top(lbl, 5);
     gtk_container_add(GTK_CONTAINER(frm), lbl);
-    gtk_widget_set_hexpand(new_post_text, true);
-    gtk_widget_set_vexpand(new_post_text, true);
-    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(new_post_text), GTK_WRAP_WORD);
-    gtk_scrolled_window_set_overlay_scrolling(GTK_SCROLLED_WINDOW(new_post),
-					      false);
-    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(new_post),
-				   GTK_POLICY_NEVER,
-				   GTK_POLICY_ALWAYS);
-    gtk_container_add(GTK_CONTAINER(new_post), new_post_text);
-    gtk_container_add(GTK_CONTAINER(frm), new_post);
+    gtk_container_add(GTK_CONTAINER(frm), gtk_widget_get_parent(new_post));
     
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_widget_set_halign(btns, GTK_ALIGN_END);
@@ -259,6 +256,7 @@ namespace gui {
     gtk_widget_set_margin_top(btns, 10);
     gtk_container_add(GTK_CONTAINER(panel), btns);
         
+    gtk_widget_set_sensitive(save, feed.owner_id == whoami(ctx).id);
     g_signal_connect(save, "clicked", G_CALLBACK(on_save), this);
     gtk_container_add(GTK_CONTAINER(btns), save);
 

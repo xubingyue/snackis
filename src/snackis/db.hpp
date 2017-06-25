@@ -32,7 +32,9 @@ namespace snackis {
     db::Table<Peer> peers;
 
     db::Col<Feed, UId>           feed_id;
+    db::Col<Feed, UId>           feed_owner_id;
     db::Col<Feed, str>           feed_name;
+    db::Col<Feed, str>           feed_info;
     db::Col<Feed, bool>          feed_active;
     db::Col<Feed, std::set<UId>> feed_peer_ids;
     db::Table<Feed> feeds;
@@ -52,7 +54,7 @@ namespace snackis {
     db::Col<Msg, str>           msg_peer_name;
     db::Col<Msg, crypt::PubKey> msg_crypt_key;
     db::Col<Msg, UId>           msg_feed_id;
-    db::Col<Msg, str>           msg_feed_name;
+    db::Col<Msg, str>           msg_feed_name, msg_feed_info;
     db::Col<Msg, UId>           msg_post_id;
     db::Col<Msg, Time>          msg_post_at;
     db::Col<Msg, str>           msg_post_body;

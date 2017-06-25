@@ -48,7 +48,7 @@ namespace gui {
     Feed feed(ctx, *get_sel_rec<Feed>(GTK_COMBO_BOX(v->feed)));
     activate(feed);
     v->post.feed_id = feed.id;
-    v->post.body = get_str(GTK_TEXT_VIEW(v->body_text));
+    v->post.body = get_str(GTK_TEXT_VIEW(v->body));
     db::upsert(ctx.db.posts, v->post);
     send(v->post);
     db::commit(trans);
@@ -101,8 +101,6 @@ namespace gui {
 				     to_str(v.post.feed_id).c_str())) {
       gtk_combo_box_set_active(GTK_COMBO_BOX(v.feed), 0);
     }
-    
-    gtk_widget_set_sensitive(v.save, cnt > 0);
   }
 
   static void on_edit_post(GtkTreeView *treeview,
@@ -145,8 +143,7 @@ namespace gui {
     posts(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
     feed(gtk_combo_box_new_with_model(GTK_TREE_MODEL(feeds))),
     edit_feed(gtk_button_new_with_mnemonic("_Edit Feed")),
-    body_text(gtk_text_view_new()),
-    body(gtk_scrolled_window_new(NULL, NULL)),
+    body(new_text_view()),
     post_list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(posts))),
     save(gtk_button_new_with_mnemonic("_Save Post")),
     cancel(gtk_button_new_with_mnemonic("_Cancel")) {
@@ -171,17 +168,8 @@ namespace gui {
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_widget_set_margin_top(lbl, 5);
     gtk_container_add(GTK_CONTAINER(frm), lbl);
-    gtk_widget_set_hexpand(body_text, true);
-    gtk_widget_set_vexpand(body_text, true);
-    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(body_text), GTK_WRAP_WORD);
-    gtk_scrolled_window_set_overlay_scrolling(GTK_SCROLLED_WINDOW(body),
-					      false);
-    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(body),
-				   GTK_POLICY_NEVER,
-				   GTK_POLICY_ALWAYS);
-    gtk_container_add(GTK_CONTAINER(body), body_text);
-    gtk_container_add(GTK_CONTAINER(frm), body);
-    set_str(GTK_TEXT_VIEW(body_text), post.body);
+    gtk_container_add(GTK_CONTAINER(frm), gtk_widget_get_parent(body));
+    set_str(GTK_TEXT_VIEW(body), post.body);
     
     init_posts(*this);
     gtk_widget_set_margin_top(post_list, 5);

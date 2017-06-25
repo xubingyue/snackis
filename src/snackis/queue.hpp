@@ -9,10 +9,8 @@
 
 namespace snackis {
   struct Queue: Rec {
-    UId id;
-    UId owner_id;
-    str name;
-    str info;
+    UId id, owner_id;
+    str name, info;
     std::set<UId> peer_ids;
     
     Queue(Ctx &ctx);

@@ -31,12 +31,14 @@ namespace snackis {
 	  {&peer_name, &peer_email, &peer_crypt_key}),
 
     feed_id(      "id",       uid_type,     &Feed::id),
+    feed_owner_id("owner_id", uid_type,     &Feed::owner_id),
     feed_name(    "name",     str_type,     &Feed::name),
+    feed_info(    "into",     str_type,     &Feed::info),
     feed_active(  "active",   bool_type,    &Feed::active),
     feed_peer_ids("peer_ids", uid_set_type, &Feed::peer_ids),
     
     feeds(ctx, "feeds", {&feed_id},
-	  {&feed_name, &feed_active, &feed_peer_ids}),
+	  {&feed_owner_id, &feed_name, &feed_info, &feed_active, &feed_peer_ids}),
 
     post_id(     "id",      uid_type,  &Post::id),
     post_feed_id("feed_id", uid_type,  &Post::feed_id),
@@ -61,6 +63,7 @@ namespace snackis {
     msg_crypt_key( "crypt_key",  crypt::pub_key_type, &Msg::crypt_key),
     msg_feed_id(   "feed_id",    uid_type,            &Msg::feed_id),
     msg_feed_name( "feed_name",  str_type,            &Msg::feed_name),
+    msg_feed_info( "feed_info",  str_type,            &Msg::feed_info),
     msg_post_id(   "post_id",    uid_type,            &Msg::post_id),
     msg_post_at(   "post_at",    time_type,           &Msg::post_at),
     msg_post_body( "post_body",  str_type,            &Msg::post_body),
@@ -68,13 +71,13 @@ namespace snackis {
     
     inbox(ctx, "inbox", {&msg_id},
 	  {&msg_type, &msg_fetched_at, &msg_peer_name, &msg_from, &msg_from_id,
-	      &msg_crypt_key, &msg_feed_id, &msg_feed_name, &msg_post_id,
-	      &msg_post_at, &msg_post_body}),
+	      &msg_crypt_key, &msg_feed_id, &msg_feed_name, &msg_feed_info,
+	      &msg_post_id, &msg_post_at, &msg_post_body}),
     
     outbox(ctx, "outbox", {&msg_id},
 	   {&msg_type, &msg_from, &msg_from_id, &msg_to, &msg_to_id, &msg_peer_name,
-	       &msg_crypt_key, &msg_feed_id, &msg_feed_name, &msg_post_id,
-	       &msg_post_at, &msg_post_body}),
+	       &msg_crypt_key, &msg_feed_id, &msg_feed_name, &msg_feed_info,
+	       &msg_post_id, &msg_post_at, &msg_post_body}),
 
     project_id(      "id",       uid_type,     &Project::id),
     project_owner_id("owner_id", uid_type,     &Project::owner_id),

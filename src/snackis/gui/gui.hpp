@@ -46,6 +46,7 @@ namespace gui {
     return get_sel_rec<RecT>(w, *iter);
   }
 
+  GtkWidget *new_text_view();
 }}
 
 #endif

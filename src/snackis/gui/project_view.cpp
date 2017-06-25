@@ -16,7 +16,7 @@ namespace gui {
     db::Trans trans(ctx);
     
     v->project.name = gtk_entry_get_text(GTK_ENTRY(v->name));
-    v->project.info = get_str(GTK_TEXT_VIEW(v->info_text));
+    v->project.info = get_str(GTK_TEXT_VIEW(v->info));
     db::upsert(ctx.db.projects, v->project);
     db::commit(trans);
     log(v->ctx, "Saved project");
@@ -27,8 +27,7 @@ namespace gui {
     View(project.ctx, "Project", to_str(project.id)),
     project(project),
     name(gtk_entry_new()),
-    info_text(gtk_text_view_new()),
-    info(gtk_scrolled_window_new(NULL, NULL)),
+    info(new_text_view()),
     save(gtk_button_new_with_mnemonic("_Save Project")),
     cancel(gtk_button_new_with_mnemonic("_Cancel")) {
     GtkWidget *lbl;
@@ -46,17 +45,8 @@ namespace gui {
     lbl = gtk_label_new("Info");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_container_add(GTK_CONTAINER(frm), lbl);
-    gtk_widget_set_hexpand(info_text, true);
-    gtk_widget_set_vexpand(info_text, true);
-    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(info_text), GTK_WRAP_WORD);
-    gtk_scrolled_window_set_overlay_scrolling(GTK_SCROLLED_WINDOW(info),
-					      false);
-    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(info),
-				   GTK_POLICY_NEVER,
-				   GTK_POLICY_ALWAYS);
-    gtk_container_add(GTK_CONTAINER(info), info_text);
-    gtk_container_add(GTK_CONTAINER(frm), info);
-    set_str(GTK_TEXT_VIEW(info_text), project.info);
+    gtk_container_add(GTK_CONTAINER(frm), gtk_widget_get_parent(info));
+    set_str(GTK_TEXT_VIEW(info), project.info);
     
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_widget_set_halign(btns, GTK_ALIGN_END);

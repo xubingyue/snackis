@@ -12,8 +12,8 @@ namespace snackis {
   struct Post;
   
   struct Feed: Rec {   
-    UId id;
-    str name;
+    UId id, owner_id;
+    str name, info;
     bool active;
     std::set<UId> peer_ids;
     

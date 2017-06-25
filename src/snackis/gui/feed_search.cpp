@@ -106,9 +106,13 @@ namespace gui {
     lbl = gtk_label_new("Name");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_container_add(GTK_CONTAINER(frm), lbl);
+    GtkWidget *name_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
+    gtk_container_add(GTK_CONTAINER(frm), name_box);
     gtk_widget_set_hexpand(name, true);
-    gtk_container_add(GTK_CONTAINER(frm), name);
-    
+    gtk_container_add(GTK_CONTAINER(name_box), name);
+    gtk_container_add(GTK_CONTAINER(name_box), active);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active), true);
+
     init_peers(*this);
     lbl = gtk_label_new("Peer");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
@@ -123,11 +127,6 @@ namespace gui {
     gtk_widget_set_hexpand(peer, true);
     gtk_container_add(GTK_CONTAINER(frm), peer);
     
-    GtkWidget *active_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
-    gtk_container_add(GTK_CONTAINER(frm), active_box);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active), true);
-    gtk_container_add(GTK_CONTAINER(active_box), active);
-
     gtk_widget_set_halign(find, GTK_ALIGN_END);
     g_signal_connect(find, "clicked", G_CALLBACK(on_find), this);
     gtk_container_add(GTK_CONTAINER(frm), find);
