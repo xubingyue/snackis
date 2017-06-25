@@ -5,6 +5,10 @@
 * insert tasks into task_ids
 ** when?
 * --
+* add task.prio
+** int64, default 0
+* prio_tasks idx
+** key prio, deadline, created, id
 * add project cmd
 ** add gui::ProjectView
 *** tabs General / Feed

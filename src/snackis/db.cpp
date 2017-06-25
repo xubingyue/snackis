@@ -108,8 +108,8 @@ namespace snackis {
     task_done(      "done",       bool_type,    &Task::done),
     
     tasks(ctx, "tasks", {&task_id},
-	  {&task_project_id, &task_owner_id, &task_name, &task_info, &task_peer_ids,
-	      &task_deadline, &task_done})
+	  {&task_project_id, &task_owner_id, &task_created_at, &task_name,
+	      &task_info, &task_peer_ids, &task_deadline, &task_done})
   {
     inbox.indexes.insert(&msgs);
     posts.indexes.insert(&feed_posts);
