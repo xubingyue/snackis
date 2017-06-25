@@ -15,7 +15,7 @@ namespace snackis {
     Db db;
     Settings settings;
     Peer whoami;
-    std::mutex fetch_mutex, send_mutex;
+    std::mutex loop_mutex;
     std::condition_variable fetch_cond, send_cond;
     std::thread fetcher, sender;
     bool is_closing;

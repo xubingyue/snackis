@@ -4,7 +4,7 @@
 namespace snackis {
 namespace db {
   Trans::Trans(Ctx &ctx): ctx(ctx) {
-    ctx.trans_mutex.lock();
+    ctx.mutex.lock();
     super = ctx.trans;
     ctx.trans = this;
   }
@@ -12,7 +12,7 @@ namespace db {
   Trans::~Trans() {
     if (!changes.empty()) { rollback(*this); }
     ctx.trans = super;
-    ctx.trans_mutex.unlock();
+    ctx.mutex.unlock();
   }
   
   void log_change(Trans &trans, const Change *change) {

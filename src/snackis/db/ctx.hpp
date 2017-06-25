@@ -24,7 +24,7 @@ namespace db {
     std::set<BasicTable *> tables;
     Trans *trans;
     std::set<std::ostream *> dirty_files;
-    std::recursive_mutex trans_mutex;
+    std::recursive_mutex mutex;
 
     
     Ctx(const Path &path);

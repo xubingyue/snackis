@@ -1,3 +1,6 @@
+* rename trans_mutex to mutex
+** replace fetch_mutex/send_mutex with mutex
+* ---
 * add TaskView
 ** copy post view
 ** sort projects by name

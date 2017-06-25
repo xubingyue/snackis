@@ -7,18 +7,19 @@
 namespace snackis {
   static void fetch_loop(Ctx *ctx) {
     {
-      std::unique_lock<std::mutex> lock(ctx->fetch_mutex);
+      std::unique_lock<std::mutex> lock(ctx->loop_mutex);
       ctx->fetch_cond.wait(lock);
     }
 
     while (!ctx->is_closing) {
+      std::unique_lock<std::recursive_mutex> lock(ctx->mutex);      
       auto poll(*get_val(ctx->settings.imap_poll));
-      std::unique_lock<std::mutex> lock(ctx->fetch_mutex);
+      std::unique_lock<std::mutex> fetch_lock(ctx->loop_mutex);
       
       if (poll) {
-	ctx->fetch_cond.wait_for(lock, std::chrono::seconds(poll));
+	ctx->fetch_cond.wait_for(fetch_lock, std::chrono::seconds(poll));
       } else {
-	ctx->fetch_cond.wait(lock);
+	ctx->fetch_cond.wait(fetch_lock);
       }
 
       if (!ctx->is_closing) {
@@ -34,18 +35,19 @@ namespace snackis {
 
   static void send_loop(Ctx *ctx) {
     {
-      std::unique_lock<std::mutex> lock(ctx->send_mutex);
+      std::unique_lock<std::mutex> lock(ctx->loop_mutex);
       ctx->send_cond.wait(lock);
     }
 
     while (!ctx->is_closing) {
+      std::unique_lock<std::recursive_mutex> lock(ctx->mutex);      
       auto poll(*get_val(ctx->settings.smtp_poll));
-      std::unique_lock<std::mutex> lock(ctx->send_mutex);
+      std::unique_lock<std::mutex> send_lock(ctx->loop_mutex);
       
       if (poll) {
-	ctx->send_cond.wait_for(lock, std::chrono::seconds(poll));	
+	ctx->send_cond.wait_for(send_lock, std::chrono::seconds(poll));	
       } else {
-	ctx->send_cond.wait(lock);
+	ctx->send_cond.wait(send_lock);
       }
 
       if (!ctx->is_closing && !ctx->db.outbox.recs.empty()) {
