@@ -1,5 +1,5 @@
 * switch UId to null default
-** go through all Rec classes (grep public Rec)
+** go through all Rec classes (grep : Rec)
 ** pass t for gen & remove false
 * --
 * insert tasks into task_ids

@@ -11,13 +11,18 @@
 namespace snackis {
   using UIdDiff = std::pair<std::vector<UId>, std::vector<UId>>;
   
-  static UIdDiff diff_uids(const std::set<UId> &x, const std::set<UId> &y) {
+  static UIdDiff diff(const std::set<UId> &x, const std::set<UId> &y) {
     std::vector<UId> add, rem;
     std::set_difference(y.begin(), y.end(), x.begin(), x.end(),
 			std::back_inserter(add));
     std::set_difference(x.begin(), x.end(), y.begin(), y.end(),
 			std::back_inserter(rem));
     return std::make_pair(add, rem);
+  }
+
+  static void patch(std::set<UId> &out, const UIdDiff &diff) {
+    for (auto pid: diff.first) { out.insert(pid); }
+    for (auto pid: diff.second) { out.erase(pid); }
   }
   
   Db::Db(Ctx &ctx):
@@ -121,18 +126,16 @@ namespace snackis {
 	bool feed_dirty(false);
 	
 	if (curr.peer_ids != prev.peer_ids) {		    
-	  auto diff(diff_uids(prev.peer_ids, curr.peer_ids));
+	  auto ids(diff(prev.peer_ids, curr.peer_ids));
 
 	  for (auto tid: curr.task_ids) {
 	    Task t(get_task_id(ctx, tid));
-	    for (auto pid: diff.first) { t.peer_ids.insert(pid); }
-	    for (auto pid: diff.second) { t.peer_ids.erase(pid); }
+	    patch(t.peer_ids, ids);
 	    db::update(tasks, t);
 	  }
 
 	  if (feed) {
-	    for (auto pid: diff.first) { feed->peer_ids.insert(pid); }
-	    for (auto pid: diff.second) { feed->peer_ids.erase(pid); }
+	    patch(feed->peer_ids, ids);
 	    feed_dirty = true;
 	  }
 	}
@@ -155,15 +158,13 @@ namespace snackis {
 
 	  if (feed && curr.name != prev.name &&
 	      feed->name == fmt("Task %0", prev.name)) {
-	    feed_dirty = true;
 	    feed->name = fmt("Task %0", curr.name);
+	    feed_dirty = true;
 	  }
 
 	  
 	  if (curr.peer_ids != prev.peer_ids) {		    
-	    auto diff(diff_uids(prev.peer_ids, curr.peer_ids));
-	    for (auto pid: diff.first) { feed->peer_ids.insert(pid); }
-	    for (auto pid: diff.second) { feed->peer_ids.erase(pid); }
+	    patch(feed->peer_ids, diff(prev.peer_ids, curr.peer_ids));
 	    feed_dirty = true;
 	  }
 
