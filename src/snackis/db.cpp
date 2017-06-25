@@ -1,6 +1,7 @@
 #include "snackis/ctx.hpp"
 #include "snackis/db.hpp"
 #include "snackis/core/bool_type.hpp"
+#include "snackis/core/diff.hpp"
 #include "snackis/core/int64_type.hpp"
 #include "snackis/core/set_type.hpp"
 #include "snackis/core/str_type.hpp"
@@ -8,23 +9,7 @@
 #include "snackis/core/uid_type.hpp"
 #include "snackis/crypt/pub_key_type.hpp"
 
-namespace snackis {
-  using UIdDiff = std::pair<std::vector<UId>, std::vector<UId>>;
-  
-  static UIdDiff diff(const std::set<UId> &x, const std::set<UId> &y) {
-    std::vector<UId> add, rem;
-    std::set_difference(y.begin(), y.end(), x.begin(), x.end(),
-			std::back_inserter(add));
-    std::set_difference(x.begin(), x.end(), y.begin(), y.end(),
-			std::back_inserter(rem));
-    return std::make_pair(add, rem);
-  }
-
-  static void patch(std::set<UId> &out, const UIdDiff &diff) {
-    for (auto pid: diff.first) { out.insert(pid); }
-    for (auto pid: diff.second) { out.erase(pid); }
-  }
-  
+namespace snackis {  
   Db::Db(Ctx &ctx):
     setting_key("key", str_type, &BasicSetting::key),
     setting_val("val", str_type, &BasicSetting::val),

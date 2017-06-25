@@ -5,7 +5,7 @@
 #include "snackis/task.hpp"
 
 namespace snackis {
-  Task::Task(const Project &prj):
+  Task::Task(Project &prj):
     Rec(prj.ctx),
     project_id(prj.id),
     owner_id(whoami(ctx).id),
@@ -13,7 +13,9 @@ namespace snackis {
     peer_ids(prj.peer_ids),
     deadline(Time::max()),
     done(false)
-  { }
+  {
+    prj.task_ids.insert(id);
+  }
 
   Task::Task(Ctx &ctx, const db::Rec<Task> &rec): Rec(ctx), id(false) {
     copy(*this, rec);

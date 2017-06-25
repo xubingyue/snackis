@@ -20,7 +20,7 @@ namespace snackis {
     Time deadline;
     bool done;
     
-    Task(const Project &prj);
+    Task(Project &prj);
     Task(Ctx &ctx, const db::Rec<Task> &rec);   
     Task(const Msg &msg);
   };
