@@ -37,7 +37,7 @@ namespace gui {
 
   static void on_peer_sel(gpointer *_, FeedView *v) {
     Ctx &ctx(v->ctx);
-    db::Rec<Peer> *rec(get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer)));
+    auto rec(get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer)));
     auto id(*db::get(*rec, ctx.db.peer_id));
     bool exists = v->feed.peer_ids.find(id) != v->feed.peer_ids.end();
     gtk_widget_set_sensitive(v->add_peer, !exists);
@@ -45,7 +45,7 @@ namespace gui {
   
   static void on_add_peer(gpointer *_, FeedView *v) {
     Ctx &ctx(v->ctx);
-    db::Rec<Peer> *rec(get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer)));
+    auto rec(get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer)));
 
     GtkTreeIter iter;    
     gtk_list_store_append(v->feed_peers, &iter);
