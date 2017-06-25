@@ -40,15 +40,6 @@ namespace snackis {
   using BoolType = PrimType<bool, int8_t>;
   extern BoolType bool_type;
 
-  using Int8Type = PrimType<int8_t>;
-  extern Int8Type int8_type;
-
-  using Int16Type = PrimType<int16_t>;
-  extern Int16Type int16_type;
-
-  using Int32Type = PrimType<int32_t>;
-  extern Int32Type int32_type;
-
   using Int64Type = PrimType<int64_t>;
   extern Int64Type int64_type;
 }
