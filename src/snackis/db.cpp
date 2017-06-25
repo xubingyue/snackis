@@ -81,7 +81,6 @@ namespace snackis {
     project_name(    "name",     str_type,     &Project::name),
     project_info(    "info",     str_type,     &Project::info),
     project_peer_ids("peer_ids", uid_set_type, &Project::peer_ids),
-    project_task_ids("task_ids", uid_set_type, &Project::task_ids),
     
     projects(ctx, "projects", {&project_id},
 	     {&project_owner_id, &project_name, &project_info, &project_peer_ids}),
@@ -106,30 +105,24 @@ namespace snackis {
     projects.on_update.push_back([&](auto prev_rec, auto curr_rec) {
 	Project prev(ctx, prev_rec), curr(ctx, curr_rec);
 	opt<Feed> feed(find_feed_id(ctx, curr.id));
-	bool feed_dirty(false);
-	
-	if (curr.peer_ids != prev.peer_ids) {		    
-	  auto ids(diff(prev.peer_ids, curr.peer_ids));
 
-	  for (auto tid: curr.task_ids) {
-	    Task t(get_task_id(ctx, tid));
-	    patch(t.peer_ids, ids);
-	    db::update(tasks, t);
-	  }
-
-	  if (feed) {
+	if (feed) {
+	  bool feed_dirty(false);
+	  
+	  if (curr.peer_ids != prev.peer_ids) {		    
+	    auto ids(diff(prev.peer_ids, curr.peer_ids));
 	    patch(feed->peer_ids, ids);
 	    feed_dirty = true;
 	  }
-	}
 
-	if (feed && curr.name != prev.name &&
-	    feed->name == fmt("Project %0", prev.name)) {
-	  feed->name = fmt("Project %0", curr.name);
-	  feed_dirty = true;
-	}
+	  if (curr.name != prev.name &&
+	      feed->name == fmt("Project %0", prev.name)) {
+	    feed->name = fmt("Project %0", curr.name);
+	    feed_dirty = true;
+	  }
 
-	if (feed_dirty) { db::update(feeds, *feed); }
+	  if (feed_dirty) { db::update(feeds, *feed); }
+	}
       });
 
     tasks.on_update.push_back([&](auto prev_rec, auto curr_rec) {

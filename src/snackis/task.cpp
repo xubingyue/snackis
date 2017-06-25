@@ -13,9 +13,7 @@ namespace snackis {
     peer_ids(prj.peer_ids),
     deadline(Time::max()),
     done(false)
-  {
-    prj.task_ids.insert(id);
-  }
+  { }
 
   Task::Task(Ctx &ctx, const db::Rec<Task> &rec): Rec(ctx) {
     copy(*this, rec);

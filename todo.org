@@ -1,3 +1,6 @@
+* add ProjectView
+** name & info
+** add project cmd
 * add Queue
 ** name, info & peers_ids
 ** only allow adding/removing owned tasks
