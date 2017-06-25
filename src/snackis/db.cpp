@@ -101,6 +101,13 @@ namespace snackis {
     inbox.indexes.insert(&msgs);
     posts.indexes.insert(&feed_posts);
     posts.indexes.insert(&at_posts);
+    projects.on_insert.push_back([&](auto rec) {
+	Project prj(ctx, rec);
+	Feed feed(ctx, prj.id);
+	feed.name = fmt("Project %0", prj.name);
+	feed.peer_ids = prj.peer_ids;
+	db::upsert(ctx.db.feeds, feed);
+      });
     
     projects.on_update.push_back([&](auto prev_rec, auto curr_rec) {
 	Project prev(ctx, prev_rec), curr(ctx, curr_rec);
@@ -125,6 +132,14 @@ namespace snackis {
 	}
       });
 
+    tasks.on_insert.push_back([&](auto rec) {
+	Task tsk(ctx, rec);
+	Feed feed(ctx, tsk.id);
+	feed.name = fmt("Task %0", tsk.name);
+	feed.peer_ids = tsk.peer_ids;
+	db::upsert(ctx.db.feeds, feed);
+      });
+    
     tasks.on_update.push_back([&](auto prev_rec, auto curr_rec) {
 	Task prev(ctx, prev_rec), curr(ctx, curr_rec);
 	opt<Feed> feed(find_feed_id(ctx, curr.id));

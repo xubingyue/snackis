@@ -27,11 +27,13 @@ namespace db {
   struct Table: BasicTable, Schema<RecT> {
     using CmpRec = func<bool (const Rec<RecT> &, const Rec<RecT> &)>;
     using Cols = std::initializer_list<const BasicCol<RecT> *>;
-    using OnUpdate = func<void (const Rec<RecT> &, Rec<RecT> &)>;
+    using OnInsert = func<void (const Rec<RecT> &)>;
+    using OnUpdate = func<void (const Rec<RecT> &, const Rec<RecT> &)>;
       
     const Schema<RecT> key;
     std::set<Table<RecT> *> indexes;
     std::set<Rec<RecT>, CmpRec> recs;
+    std::vector<OnInsert> on_insert;
     std::vector<OnUpdate> on_update;
     
     Table(Ctx &ctx, const str &name, Cols key_cols, Cols cols);
@@ -126,6 +128,7 @@ namespace db {
       }
     }
     
+    for (auto e: tbl.on_insert) { e(rec); }
     tbl.recs.insert(rec);
     log_change(get_trans(tbl.ctx), new Insert<RecT>(tbl, rec));
     return true;
@@ -139,7 +142,7 @@ namespace db {
   }
 
   template <typename RecT>
-  bool update(Table<RecT> &tbl, Rec<RecT> &rec) {
+  bool update(Table<RecT> &tbl, const Rec<RecT> &rec) {
     TRACE(fmt("Updating table: %0", tbl.name));
     auto found(tbl.recs.find(rec));
     if (found == tbl.recs.end()) { return false; }

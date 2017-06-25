@@ -26,7 +26,6 @@ namespace snackis {
 
   opt<Task> find_task_id(Ctx &ctx, UId id);
   Task get_task_id(Ctx &ctx, UId id);
-  Feed get_feed(const Task &prj);
 }
 
 #endif

@@ -17,7 +17,7 @@ namespace snackis {
     bool active;
     std::set<UId> peer_ids;
     
-    Feed(Ctx &ctx);
+    Feed(Ctx &ctx, UId id=UId(true));
     Feed(Ctx &ctx, const db::Rec<Feed> &rec);   
     Feed(const Msg &msg);
   };

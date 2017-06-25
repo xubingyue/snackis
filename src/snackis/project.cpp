@@ -35,19 +35,4 @@ namespace snackis {
 
     return *found;
   }
-
-  Feed get_feed(const Project &prj) {
-    Ctx &ctx(prj.ctx);
-    db::Rec<Feed> feed_rec;
-    db::set(feed_rec, ctx.db.feed_id, prj.id);
-    Feed feed(ctx, feed_rec);
-    
-    if (!db::load(ctx.db.feeds, feed)) {
-      feed.name = fmt("Project %0", prj.name);
-      feed.peer_ids = prj.peer_ids;
-      db::upsert(ctx.db.feeds, feed);
-    }
-
-    return feed;
-  }
 }
