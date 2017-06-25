@@ -9,6 +9,7 @@
 #include "snackis/gui/inbox.hpp"
 #include "snackis/gui/post_search.hpp"
 #include "snackis/gui/post_view.hpp"
+#include "snackis/gui/project_view.hpp"
 #include "snackis/gui/reader.hpp"
 #include "snackis/gui/widget.hpp"
 
@@ -141,6 +142,17 @@ namespace gui {
 	}
 	
 	PostSearch *v = new PostSearch(ctx);
+	push_view(*v);
+	return true;
+      });
+
+    rdr.cmds.emplace("project", [&ctx](auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: project");
+	  return false;
+	}
+	
+	ProjectView *v = new ProjectView(Project(ctx));
 	push_view(*v);
 	return true;
       });
