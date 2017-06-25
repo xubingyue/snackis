@@ -1,12 +1,9 @@
 * add Queue
-* add gui::QueueView
-** name, info & peers
+** name, info & peers_ids
+** only allow adding/removing owned tasks
 ** add queue command
+* add gui::QueueView
 ** general & tasks tabs
-** owner can add all
-*** peers can add owned tasks
-** owner can remove all
-*** peers can remove owned tasks
 * add todo cmd
 ** add todo_queue setting
 *** add lazy todo_queue(ctx)
