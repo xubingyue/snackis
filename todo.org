@@ -1,11 +1,13 @@
 * add Queue
+* add default_project setting
+** add lazy default_project(ctx) fn
+** use as default 
 * add todo cmd
-** init todo_queue lazily
-*** add setting
-*** add Queue todo_queue(ctx)
+** add todo_queue setting
+*** add lazy todo_queue(ctx)
 ** if called with arg add task to todo queue immediately
 * add task.prio
-** int64, default 0
+** int8, default 0
 * prio_tasks idx
 ** key prio, deadline, created, id
 * add gui::QueueView
