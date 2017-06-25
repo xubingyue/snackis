@@ -1,13 +1,16 @@
 * remove queue/project.info
+* add thread.owner_id + db
+** init to whoami
+** only allow save if owner
 * add TaskView
 ** copy post view
 ** sort projects by name
 ** open for new task in todo queue on todo
+* add gui::TaskSearch
+** project, queue, text & done
+*** match text against both name & info
 * add gui::QueueView
 ** add queue command
-* add thread.owner_id + db
-** init to whoami
-** only allow save if owner
 * add gui::PeerSearch
 * sort inbox by fetched_at
 ** add fetched_msgs idx
