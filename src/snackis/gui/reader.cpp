@@ -184,12 +184,14 @@ namespace gui {
       });
 
     rdr.cmds.emplace("todo", [&ctx](auto args) {
-	if (!args.empty()) {
+	if (args.size() > 1) {
 	  log(ctx, "Invalid number of arguments, syntax: todo");
 	  return false;
 	}
 
 	Queue queue(todo_queue(ctx));
+	Task task(ctx);
+	if (args.size() > 0) { task.name = args[0]; }
 	return true;
       });
   }

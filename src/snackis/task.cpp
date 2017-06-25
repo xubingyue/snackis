@@ -5,12 +5,10 @@
 #include "snackis/task.hpp"
 
 namespace snackis {
-  Task::Task(Project &prj):
-    Rec(prj.ctx),
+  Task::Task(Ctx &ctx):
+    Rec(ctx),
     id(true),
-    project_id(prj.id),
     owner_id(whoami(ctx).id),
-    peer_ids(prj.peer_ids),
     deadline(Time::max()),
     done(false)
   { }
@@ -42,5 +40,10 @@ namespace snackis {
     }
 
     return *found;
+  }
+
+  void set_project(Task &tsk, const Project &prj) {
+    tsk.project_id = prj.id;
+    tsk.peer_ids = prj.peer_ids;
   }
 }

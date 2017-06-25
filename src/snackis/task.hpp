@@ -19,13 +19,14 @@ namespace snackis {
     Time deadline;
     bool done;
     
-    Task(Project &prj);
+    Task(Ctx &ctx);
     Task(Ctx &ctx, const db::Rec<Task> &rec);   
     Task(const Msg &msg);
   };
 
   opt<Task> find_task_id(Ctx &ctx, UId id);
   Task get_task_id(Ctx &ctx, UId id);
+  void set_project(Task &tsk, const Project &prj);
 }
 
 #endif
