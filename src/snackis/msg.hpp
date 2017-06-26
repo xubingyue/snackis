@@ -24,7 +24,6 @@ namespace snackis {
     Time post_at;
     str post_body;
     
-    Msg(Ctx &ctx);
     Msg(Ctx &ctx, const str &type);
     Msg(Ctx &ctx, const db::Rec<Msg> &src);
   };

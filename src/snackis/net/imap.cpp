@@ -97,7 +97,8 @@ namespace snackis {
       ERROR(Imap, fmt("Failed fetching uid: %0", curl_easy_strerror(res)));
     }
 
-    Msg msg(imap.ctx);
+    db::Rec<Msg> rec;
+    Msg msg(imap.ctx, rec);
     const str body(out.str());
     const str tag("__SNACKIS__\r\n");
     auto i(body.find(tag) + tag.size());

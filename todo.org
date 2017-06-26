@@ -1,5 +1,5 @@
-* debug invites
-** bad variant access
+* debug bad variant access when sending msgs
+** add trace of column name when writing
 * add TaskView
 ** copy post view
 ** sort projects by name

@@ -12,14 +12,13 @@ namespace snackis {
     }
 
     while (!ctx->is_closing) {
+      std::unique_lock<std::mutex> lock(ctx->loop_mutex);
       int64_t poll(0);
       
       {
 	std::unique_lock<std::recursive_mutex> lock(ctx->mutex);
 	poll = *get_val(ctx->settings.imap_poll);
       }
-
-      std::unique_lock<std::mutex> lock(ctx->loop_mutex);
       
       if (poll) {
 	ctx->fetch_cond.wait_for(lock, std::chrono::seconds(poll));
@@ -45,6 +44,7 @@ namespace snackis {
     }
 
     while (!ctx->is_closing) {
+      std::unique_lock<std::mutex> send_lock(ctx->loop_mutex);
       int64_t poll(0);
       
       {
@@ -52,8 +52,6 @@ namespace snackis {
 	poll = *get_val(ctx->settings.smtp_poll);
       }
       
-      std::unique_lock<std::mutex> send_lock(ctx->loop_mutex);
-
       if (poll) {
 	ctx->send_cond.wait_for(send_lock, std::chrono::seconds(poll));	
       } else {
