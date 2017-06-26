@@ -52,15 +52,18 @@ namespace gui {
   void init_feeds(PostView &v) {
     Ctx &ctx(v.ctx);
     size_t cnt(0);
-    
-    for(const auto &feed_rec: ctx.db.feeds.recs) {
-      Feed feed(ctx, feed_rec);
+
+    for(auto key = ctx.db.feeds_sort.recs.begin();
+	key != ctx.db.feeds_sort.recs.end();
+	key++) {
+      auto &rec(db::get(ctx.db.feeds, *key));
+      Feed feed(ctx, rec);
       
       if (feed.id == v.rec.feed_id || feed.active) {
 	GtkTreeIter iter;
 	gtk_list_store_append(v.feed_store, &iter);
 	gtk_list_store_set(v.feed_store, &iter,
-			   COL_FEED_PTR, &feed_rec,
+			   COL_FEED_PTR, &rec,
 			   COL_FEED_ID, to_str(feed.id).c_str(),
 			   COL_FEED_NAME, feed.name.c_str(),
 			   -1);
@@ -151,11 +154,12 @@ namespace gui {
       get_sel_rec<Feed>(GTK_COMBO_BOX(feed_fld));
   }
 
-  void PostView::save() {
+  bool PostView::save() {
     Feed feed(ctx, *get_sel_rec<Feed>(GTK_COMBO_BOX(feed_fld)));
     rec.feed_id = feed.id;
     rec.body = get_str(GTK_TEXT_VIEW(body_fld));
     db::upsert(ctx.db.posts, rec);
     send(rec);
+    return true;
   }
 }}

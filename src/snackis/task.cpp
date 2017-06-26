@@ -9,6 +9,7 @@ namespace snackis {
     Rec(ctx),
     id(true),
     owner_id(whoami(ctx).id),
+    created_at(now()),
     deadline(Time::max()),
     done(false)
   { }
@@ -20,7 +21,8 @@ namespace snackis {
   Task::Task(const Msg &msg):
     Rec(msg.ctx),
     //id(msg.task_id),
-    owner_id(msg.from_id)
+    owner_id(msg.from_id),
+    created_at(now())
     //name(msg.task_name),
     //info(msg.task_info)
   { }

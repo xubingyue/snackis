@@ -190,13 +190,12 @@ namespace gui {
 	  return false;
 	}
 
-	Queue queue(todo_queue(ctx));
-
 	if (args.empty()) {  
 	} else {
 	  Task task(ctx);
 	  task.name = args[0];
-	  TaskView *v(new TaskView(task));
+	  auto v(new TaskView(task));
+	  v->queue.emplace(todo_queue(ctx));
 	  push_view(*v);
 	}
 	

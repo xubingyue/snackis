@@ -37,9 +37,10 @@ namespace gui {
     return rec.owner_id == whoami(ctx).id;
   }
 
-  void ProjectView::save() {
+  bool ProjectView::save() {
     rec.name = gtk_entry_get_text(GTK_ENTRY(name_fld));
     rec.info = get_str(GTK_TEXT_VIEW(info_fld));
     db::upsert(ctx.db.projects, rec);
+    return true;
   }
 }}

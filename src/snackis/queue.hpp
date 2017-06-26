@@ -8,6 +8,8 @@
 #include "snackis/core/uid.hpp"
 
 namespace snackis {
+  struct Task;
+  
   struct Queue: Rec {
     UId id, owner_id;
     str name, info;
@@ -20,6 +22,7 @@ namespace snackis {
 
   opt<Queue> find_queue_id(Ctx &ctx, UId id);
   Queue get_queue_id(Ctx &ctx, UId id);
+  void add_task(Queue &q, const Task &tsk);
 }
 
 #endif

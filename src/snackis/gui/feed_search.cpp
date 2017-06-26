@@ -18,7 +18,10 @@ namespace gui {
     auto peer_sel(get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer)));
     bool active_sel(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->active)));
     
-    for (auto &rec: ctx.db.feeds.recs) {
+    for (auto key = ctx.db.feeds_sort.recs.begin();
+	 key != ctx.db.feeds_sort.recs.end();
+	 key++) {
+      auto &rec(db::get(ctx.db.feeds, *key));
       Feed feed(ctx, rec);
 
       if (feed.active != active_sel) { continue; }
@@ -69,7 +72,10 @@ namespace gui {
 		       COL_PEER_NAME, "",
 		       -1);
 
-    for (auto &rec: v.ctx.db.peers.recs) {
+    for(auto key = v.ctx.db.peers_sort.recs.begin();
+	key != v.ctx.db.peers_sort.recs.end();
+	key++) {
+      auto &rec(db::get(v.ctx.db.peers, *key));
       Peer peer(v.ctx, rec);
       gtk_list_store_append(v.peers, &iter);
       gtk_list_store_set(v.peers, &iter,

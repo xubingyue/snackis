@@ -35,4 +35,8 @@ namespace snackis {
 
     return *found;
   }
+
+  void add_task(Queue &q, const Task &tsk) {
+    log(q.ctx, "Adding task");
+  }
 }

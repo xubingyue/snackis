@@ -12,7 +12,7 @@ namespace snackis {
   
   Time now();
   str fmt(const Time &time, const str &spec);
-  opt<Time> parse_time(const str &spec, const str &in);
+  opt<Time> parse_time(const str &spec, const str &in, opt<Time> empty=nullopt);
 };
 
 #endif

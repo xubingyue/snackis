@@ -3,7 +3,7 @@
 
 namespace snackis {
   Feed::Feed(Ctx &ctx, UId id):
-    Rec(ctx), id(id), owner_id(whoami(ctx).id), active(true)
+    Rec(ctx), id(id), owner_id(whoami(ctx).id), created_at(now()), active(true)
   { }
 
   Feed::Feed(Ctx &ctx, const db::Rec<Feed> &src): Rec(ctx) {
@@ -14,6 +14,7 @@ namespace snackis {
     Rec(msg.ctx),
     id(msg.feed_id),
     owner_id(msg.from_id),
+    created_at(now()),
     info(msg.feed_info),
     active(true) {
     db::Rec<Feed> rec;

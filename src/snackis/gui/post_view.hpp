@@ -15,7 +15,7 @@ namespace gui {
     
     PostView(const Post &post);
     bool allow_save() const override;
-    void save() override;
+    bool save() override;
   };
 }}
 

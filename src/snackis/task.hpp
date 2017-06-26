@@ -10,11 +10,9 @@
 
 namespace snackis {
   struct Task: Rec {
-    UId id;
-    UId project_id;
-    UId owner_id;
-    str name;
-    str info;
+    UId id, project_id, owner_id;
+    Time created_at;
+    str name, info;
     std::set<UId> peer_ids;
     Time deadline;
     bool done;

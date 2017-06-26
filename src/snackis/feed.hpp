@@ -13,6 +13,7 @@ namespace snackis {
   
   struct Feed: Rec {   
     UId id, owner_id;
+    Time created_at;
     str name, info;
     bool active;
     std::set<UId> peer_ids;

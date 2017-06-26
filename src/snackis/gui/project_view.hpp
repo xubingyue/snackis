@@ -14,7 +14,7 @@ namespace gui {
     
     ProjectView(const Project &project);
     bool allow_save() const override;
-    void save() override;
+    bool save() override;
   };
 }}
 

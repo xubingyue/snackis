@@ -30,16 +30,22 @@ namespace snackis {
     peers(ctx, "peers", {&peer_id},
 	  {&peer_name, &peer_email, &peer_crypt_key}),
 
-    feed_id(      "id",       uid_type,     &Feed::id),
-    feed_owner_id("owner_id", uid_type,     &Feed::owner_id),
-    feed_name(    "name",     str_type,     &Feed::name),
-    feed_info(    "into",     str_type,     &Feed::info),
-    feed_active(  "active",   bool_type,    &Feed::active),
-    feed_peer_ids("peer_ids", uid_set_type, &Feed::peer_ids),
+    peers_sort(ctx, "peers_sort", {&peer_name, &peer_id}, {}),
+    
+    feed_id(        "id",         uid_type,     &Feed::id),
+    feed_owner_id(  "owner_id",   uid_type,     &Feed::owner_id),
+    feed_created_at("created_at", time_type,    &Feed::created_at),
+    feed_name(      "name",       str_type,     &Feed::name),
+    feed_info(      "into",       str_type,     &Feed::info),
+    feed_active(    "active",     bool_type,    &Feed::active),
+    feed_peer_ids(  "peer_ids",   uid_set_type, &Feed::peer_ids),
     
     feeds(ctx, "feeds", {&feed_id},
-	  {&feed_owner_id, &feed_name, &feed_info, &feed_active, &feed_peer_ids}),
+	  {&feed_owner_id, &feed_created_at, &feed_name, &feed_info, &feed_active,
+	      &feed_peer_ids}),
 
+    feeds_sort(ctx, "feeds_sort", {&feed_created_at, &feed_id}, {}),
+		  
     post_id(     "id",      uid_type,  &Post::id),
     post_feed_id("feed_id", uid_type,  &Post::feed_id),
     post_at(     "at",      time_type, &Post::at),
@@ -49,8 +55,8 @@ namespace snackis {
     posts(ctx, "posts", {&post_id},
 	  {&post_feed_id, &post_at, &post_by_id, &post_body}),
 
+    posts_sort(ctx, "posts_sort", {&post_at, &post_id}, {}),
     feed_posts(ctx, "feed_posts", {&post_feed_id, &post_at, &post_id}, {}),
-    at_posts(ctx, "at_posts", {&post_at, &post_id}, {}),
     
     msg_id(        "id",         uid_type,            &Msg::id),
     msg_type(      "type",       str_type,            &Msg::type),
@@ -67,12 +73,13 @@ namespace snackis {
     msg_post_id(   "post_id",    uid_type,            &Msg::post_id),
     msg_post_at(   "post_at",    time_type,           &Msg::post_at),
     msg_post_body( "post_body",  str_type,            &Msg::post_body),
-    msgs(ctx, "msgs", {&msg_id}, {}),
     
     inbox(ctx, "inbox", {&msg_id},
 	  {&msg_type, &msg_fetched_at, &msg_peer_name, &msg_from, &msg_from_id,
 	      &msg_crypt_key, &msg_feed_id, &msg_feed_name, &msg_feed_info,
 	      &msg_post_id, &msg_post_at, &msg_post_body}),
+
+    inbox_sort(ctx, "inbox_sort", {&msg_fetched_at, &msg_id}, {}),
     
     outbox(ctx, "outbox", {&msg_id},
 	   {&msg_type, &msg_from, &msg_from_id, &msg_to, &msg_to_id, &msg_peer_name,
@@ -90,9 +97,12 @@ namespace snackis {
 	     {&project_owner_id, &project_name, &project_info, &project_active,
 		 &project_peer_ids}),
 
+    projects_sort(ctx, "projects_sort", {&project_name, &project_id}, {}),
+    
     task_id(        "id",         uid_type,     &Task::id),
     task_project_id("project_id", uid_type,     &Task::project_id),
     task_owner_id(  "owner_id",   uid_type,     &Task::owner_id),
+    task_created_at("created_at", time_type,    &Task::created_at),
     task_name(      "name",       str_type,     &Task::name),
     task_info(      "info",       str_type,     &Task::info),
     task_peer_ids(  "peer_ids",   uid_set_type, &Task::peer_ids),
@@ -100,9 +110,11 @@ namespace snackis {
     task_done(      "done",       bool_type,    &Task::done),
     
     tasks(ctx, "tasks", {&task_id},
-	  {&task_project_id, &task_owner_id, &task_name, &task_info, &task_peer_ids,
-	      &task_deadline, &task_done}),
+	  {&task_project_id, &task_owner_id, &task_created_at, &task_name,
+	      &task_info, &task_peer_ids, &task_deadline, &task_done}),
 
+    tasks_sort(ctx, "tasks_sort", {&task_created_at, &task_id}, {}),
+    
     queue_id(      "id",       uid_type,     &Queue::id),
     queue_owner_id("owner_id", uid_type,     &Queue::owner_id),
     queue_name(    "name",     str_type,     &Queue::name),
@@ -110,12 +122,19 @@ namespace snackis {
     queue_peer_ids("peer_ids", uid_set_type, &Queue::peer_ids),
     
     queues(ctx, "queues", {&queue_id},
-	     {&queue_owner_id, &queue_name, &queue_info, &queue_peer_ids})
-    
+	   {&queue_owner_id, &queue_name, &queue_info, &queue_peer_ids}),
+
+    queues_sort(ctx, "queues_sort", {&queue_name, &queue_id}, {})
   {
-    inbox.indexes.insert(&msgs);
+    peers.indexes.insert(&peers_sort);
+    inbox.indexes.insert(&inbox_sort);
+    feeds.indexes.insert(&feeds_sort);
+    posts.indexes.insert(&posts_sort);
     posts.indexes.insert(&feed_posts);
-    posts.indexes.insert(&at_posts);
+    projects.indexes.insert(&projects_sort);
+    tasks.indexes.insert(&tasks_sort);
+    queues.indexes.insert(&queues_sort);
+
     projects.on_insert.push_back([&](auto rec) {
 	Project prj(ctx, rec);
 	Feed feed(ctx, prj.id);

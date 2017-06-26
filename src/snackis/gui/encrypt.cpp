@@ -75,13 +75,16 @@ namespace gui {
   void init_peers(Encrypt &v) {
     Ctx &ctx(v.ctx);
     
-    for(const auto &peer_rec: ctx.db.peers.recs) {
-      Peer peer(ctx, peer_rec);
+    for(auto key = ctx.db.peers_sort.recs.begin();
+	key != ctx.db.peers_sort.recs.end();
+	key++) {
+      auto &rec(db::get(ctx.db.peers, *key));
+      Peer peer(ctx, rec);
       
       GtkTreeIter iter;
       gtk_list_store_append(v.peers, &iter);
       gtk_list_store_set(v.peers, &iter,
-			 COL_PEER_PTR, &peer_rec,
+			 COL_PEER_PTR, &rec,
 			 COL_PEER_ID, to_str(peer.id).c_str(),
 			 COL_PEER_NAME, peer.name.c_str(),
 			 -1);
@@ -89,7 +92,7 @@ namespace gui {
     
     gtk_combo_box_set_active(GTK_COMBO_BOX(v.peer), 0);
   }
-  
+
   static GtkWidget *init_source(Encrypt &v) {
     GtkWidget *frm = gtk_grid_new();
     gtk_widget_set_margin_top(frm, 5);

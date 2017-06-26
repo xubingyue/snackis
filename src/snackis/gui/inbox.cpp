@@ -101,8 +101,11 @@ namespace gui {
     Ctx &ctx(v.ctx);
     std::vector<UId> rem;
     
-    for(const auto &msg_rec: ctx.db.inbox.recs) {
-      Msg msg(ctx, msg_rec);
+    for(auto key = ctx.db.inbox_sort.recs.begin();
+	key != ctx.db.inbox_sort.recs.end();
+	key++) {
+      auto &rec(db::get(ctx.db.inbox, *key));
+      Msg msg(ctx, rec);
 
       GtkTreeIter iter;
       gtk_list_store_append(v.msgs, &iter);
@@ -113,7 +116,7 @@ namespace gui {
 			 msg.from.c_str()));
 		    
       gtk_list_store_set(v.msgs, &iter,
-			 COL_PTR, &msg_rec,
+			 COL_PTR, &rec,
 			 COL_FROM, from.c_str(),
 			 -1);
       

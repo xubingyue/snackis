@@ -75,13 +75,16 @@ namespace gui {
   void init_peers(Decrypt &v) {
     Ctx &ctx(v.ctx);
     
-    for(const auto &peer_rec: ctx.db.peers.recs) {
-      Peer peer(ctx, peer_rec);
+    for(auto key = ctx.db.peers_sort.recs.begin();
+	key != ctx.db.peers_sort.recs.end();
+	key++) {
+      auto &rec(db::get(ctx.db.peers, *key));
+      Peer peer(ctx, rec);
       
       GtkTreeIter iter;
       gtk_list_store_append(v.peers, &iter);
       gtk_list_store_set(v.peers, &iter,
-			 COL_PEER_PTR, &peer_rec,
+			 COL_PEER_PTR, &rec,
 			 COL_PEER_ID, to_str(peer.id).c_str(),
 			 COL_PEER_NAME, peer.name.c_str(),
 			 -1);

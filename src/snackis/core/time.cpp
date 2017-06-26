@@ -12,15 +12,20 @@ namespace snackis {
   }
 
   str fmt(const Time &tim, const str &spec) {
-    const time_t t = Clock::to_time_t(tim);
-    tm tm;
-    localtime_r(&t, &tm);
     Stream buf;
-    buf << std::put_time(localtime_r(&t, &tm), spec.c_str());
+
+    if (tim != Time::max()) {
+      const time_t t = Clock::to_time_t(tim);
+      tm tm;
+      localtime_r(&t, &tm);
+      buf << std::put_time(localtime_r(&t, &tm), spec.c_str());
+    }
+    
     return buf.str();
   }
 
-  opt<Time> parse_time(const str &spec, const str &in) {
+  opt<Time> parse_time(const str &spec, const str &in, opt<Time> empty) {
+    if (in.empty()) { return empty; }
     InStream buf(in);
     tm tm;
     buf >> std::get_time(&tm, spec.c_str());

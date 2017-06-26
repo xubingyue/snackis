@@ -4,6 +4,7 @@
 #include <vector>
 #include <mutex>
 
+#include "snackis/queue.hpp"
 #include "snackis/task.hpp"
 #include "snackis/gui/rec_view.hpp"
 
@@ -11,11 +12,13 @@ namespace snackis {
 namespace gui {
   struct TaskView: RecView<Task> {
     GtkListStore *project_store;
-    GtkWidget *project_fld, *edit_project_btn, *name_fld, *info_fld;
+    GtkWidget *project_fld, *edit_project_btn, *name_fld, *info_fld,
+      *deadline_fld, *done_fld;
+    opt<Queue> queue;
     
     TaskView(const Task &task);
     bool allow_save() const override;
-    void save() override;
+    bool save() override;
   };
 }}
 

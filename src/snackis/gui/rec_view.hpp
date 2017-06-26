@@ -15,7 +15,7 @@ namespace gui {
     GtkWidget *fields, *save_btn, *cancel_btn;
     RecView(const str &lbl, const RecT &rec);
     virtual bool allow_save() const;
-    virtual void save()=0;
+    virtual bool save()=0;
   };
 
   template <typename RecT>
@@ -28,10 +28,12 @@ namespace gui {
   void on_save_rec(gpointer *_, RecView<RecT> *v) {
     Ctx &ctx(v->ctx);
     db::Trans trans(ctx);
-    v->save();
-    db::commit(trans);
-    log(ctx, fmt("Saved %0", gtk_label_get_text(GTK_LABEL(v->label))));
-    pop_view(*v);
+
+    if (v->save()) {
+      db::commit(trans);
+      log(ctx, fmt("Saved %0", gtk_label_get_text(GTK_LABEL(v->label))));
+      pop_view(*v);
+    }
   }
   
   template <typename RecT>

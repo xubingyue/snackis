@@ -29,22 +29,23 @@ namespace snackis {
     db::Col<Peer, str>           peer_name;
     db::Col<Peer, str>           peer_email;
     db::Col<Peer, crypt::PubKey> peer_crypt_key;
-    db::Table<Peer> peers;
+    db::Table<Peer> peers, peers_sort;
 
     db::Col<Feed, UId>           feed_id;
     db::Col<Feed, UId>           feed_owner_id;
+    db::Col<Feed, Time>          feed_created_at;
     db::Col<Feed, str>           feed_name;
     db::Col<Feed, str>           feed_info;
     db::Col<Feed, bool>          feed_active;
     db::Col<Feed, std::set<UId>> feed_peer_ids;
-    db::Table<Feed> feeds;
+    db::Table<Feed> feeds, feeds_sort;
 
     db::Col<Post, UId>           post_id;
     db::Col<Post, UId>           post_feed_id;
     db::Col<Post, Time>          post_at;
     db::Col<Post, UId>           post_by_id;
     db::Col<Post, str>           post_body;
-    db::Table<Post> posts, feed_posts, at_posts;
+    db::Table<Post> posts, posts_sort, feed_posts;
     
     db::Col<Msg, UId>           msg_id;
     db::Col<Msg, str>           msg_type;
@@ -58,7 +59,7 @@ namespace snackis {
     db::Col<Msg, UId>           msg_post_id;
     db::Col<Msg, Time>          msg_post_at;
     db::Col<Msg, str>           msg_post_body;
-    db::Table<Msg> msgs, inbox, outbox;
+    db::Table<Msg> inbox, inbox_sort, outbox;
 
     db::Col<Project, UId>           project_id;
     db::Col<Project, UId>           project_owner_id;
@@ -66,24 +67,25 @@ namespace snackis {
     db::Col<Project, str>           project_info;
     db::Col<Project, bool>          project_active;
     db::Col<Project, std::set<UId>> project_peer_ids;
-    db::Table<Project> projects;
+    db::Table<Project> projects, projects_sort;
 
     db::Col<Task, UId>           task_id;
     db::Col<Task, UId>           task_project_id;
     db::Col<Task, UId>           task_owner_id;
+    db::Col<Task, Time>          task_created_at;
     db::Col<Task, str>           task_name;
     db::Col<Task, str>           task_info;
     db::Col<Task, std::set<UId>> task_peer_ids;
     db::Col<Task, Time>          task_deadline;
     db::Col<Task, bool>          task_done;
-    db::Table<Task> tasks;
+    db::Table<Task> tasks, tasks_sort;
 
     db::Col<Queue, UId>           queue_id;
     db::Col<Queue, UId>           queue_owner_id;
     db::Col<Queue, str>           queue_name;
     db::Col<Queue, str>           queue_info;
     db::Col<Queue, std::set<UId>> queue_peer_ids;
-    db::Table<Queue> queues;
+    db::Table<Queue> queues, queues_sort;
     
     Db(Ctx &ctx);
   };

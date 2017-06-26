@@ -17,7 +17,7 @@ namespace gui {
     
     FeedView(const Feed &feed);
     bool allow_save() const override;
-    void save() override;
+    bool save() override;
   };
 }}
 

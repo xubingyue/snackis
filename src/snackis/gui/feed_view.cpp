@@ -86,13 +86,16 @@ namespace gui {
     gtk_tree_view_append_column(GTK_TREE_VIEW(v.peer_lst), name_col);    
     g_signal_connect(v.peer_lst, "row-activated", G_CALLBACK(on_remove_peer), &v);
     
-    for(const auto &peer_rec: ctx.db.peers.recs) {
-      Peer peer(ctx, peer_rec);
+    for(auto key = ctx.db.peers_sort.recs.begin();
+	key != ctx.db.peers_sort.recs.end();
+	key++) {
+      auto &rec(db::get(ctx.db.peers, *key));
+      Peer peer(ctx, rec);
       
       GtkTreeIter iter;
       gtk_list_store_append(v.peer_store, &iter);
       gtk_list_store_set(v.peer_store, &iter,
-			 COL_PEER_PTR, &peer_rec,
+			 COL_PEER_PTR, &rec,
 			 COL_PEER_NAME, peer.name.c_str(),
 			 -1);
     }
@@ -223,7 +226,7 @@ namespace gui {
     return rec.owner_id == whoami(ctx).id;
   }
 
-  void FeedView::save() {
+  bool FeedView::save() {
     rec.name = gtk_entry_get_text(GTK_ENTRY(name_fld));
     rec.info = get_str(GTK_TEXT_VIEW(info_fld));
     rec.active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(active_fld));
@@ -237,6 +240,8 @@ namespace gui {
       db::insert(ctx.db.posts, post);
       send(post);
     }
+
+    return true;
   }
 
 }}

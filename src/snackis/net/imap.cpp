@@ -147,12 +147,6 @@ namespace snackis {
 	  continue;
 	}
 
-	if (load(ctx.db.msgs, *msg)) {
-	  log(ctx, "Skipped duplicate message %0", msg->id);
-	  delete_uid(imap, uid);
-	  continue;
-	}
-
 	if (msg->type == Msg::ACCEPT || msg->type == Msg::REJECT) {
 	  db::Rec<Invite> inv;
 	  set(inv, ctx.db.invite_to, msg->from);

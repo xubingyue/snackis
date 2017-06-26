@@ -1,9 +1,10 @@
 * add todo tasks to queue
-** add optional queue combo to task view
 ** add QueueTask && queue_tasks
-* sort task view projects by name
 * add ProjectView peers
+** add tabs, separate Peers page
 ** extract gui::Peers struct
+* add TaskView peers
+** add tabs, separate Peers page
 * add task message
 ** send along project info
 ** send to all peers when task is saved
@@ -15,16 +16,6 @@
 ** add queue command
 * add project view peers
 * add gui::PeerSearch
-* sort inbox by fetched_at
-** add fetched_msgs idx
-*** fetched_at & id key
-** copy feed.last_posts
-** feeds by name
-** add feed_names idx
-*** name & id key
-* sort peers by name
-** add peer_names idx
-*** name & id key
 * add help command
 ** add Cmd struct
 *** rename Cmd to Fn

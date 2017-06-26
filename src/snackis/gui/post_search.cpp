@@ -37,10 +37,10 @@ namespace gui {
     
     bool active_sel(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->active)));
     
-    for (auto key = ctx.db.at_posts.recs.rbegin();
-	 key != ctx.db.at_posts.recs.rend();
+    for (auto key = ctx.db.posts_sort.recs.begin();
+	 key != ctx.db.posts_sort.recs.end();
 	 key++) {
-      const db::Rec<Post> &rec(db::get(ctx.db.posts, *key));
+      auto &rec(db::get(ctx.db.posts, *key));
       Post post(ctx, rec);
       Feed feed(get_feed_id(ctx, post.feed_id));
       
@@ -110,7 +110,10 @@ namespace gui {
 		       COL_PEER_NAME, "",
 		       -1);
 
-    for (auto &rec: v.ctx.db.peers.recs) {
+    for(auto key = v.ctx.db.peers_sort.recs.begin();
+	key != v.ctx.db.peers_sort.recs.end();
+	key++) {
+      auto &rec(db::get(v.ctx.db.peers, *key));
       Peer peer(v.ctx, rec);
       gtk_list_store_append(v.peers, &iter);
       gtk_list_store_set(v.peers, &iter,
@@ -194,10 +197,14 @@ namespace gui {
     lbl = gtk_label_new("Posted");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_grid_attach(GTK_GRID(post_box), lbl, 0, 0, 3, 1);
+    gtk_entry_set_placeholder_text(GTK_ENTRY(min_time),
+				   "yyyy-mm-dd hh:mm");
+    gtk_grid_attach(GTK_GRID(post_box), min_time, 0, 1, 1, 1);
     gtk_entry_set_text(GTK_ENTRY(min_time),
 		       fmt(now() - std::chrono::hours(7), "%Y-%m-%d %H:%M").c_str());
-    gtk_grid_attach(GTK_GRID(post_box), min_time, 0, 1, 1, 1);
     gtk_grid_attach(GTK_GRID(post_box), gtk_label_new("-"), 1, 1, 1, 1);
+    gtk_entry_set_placeholder_text(GTK_ENTRY(max_time),
+				   "yyyy-mm-dd hh:mm");
     gtk_grid_attach(GTK_GRID(post_box), max_time, 2, 1, 1, 1);
 
     lbl = gtk_label_new("By");
