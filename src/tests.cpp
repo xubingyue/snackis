@@ -1,10 +1,9 @@
-#include <cassert>
 #include <iostream>
 
 #include "snackis/ctx.hpp"
 #include "snackis/snackis.hpp"
 #include "snackis/core/data.hpp"
-#include "snackis/core/int64_type.hpp"
+#include "snackis/core/prim_type.hpp"
 #include "snackis/core/set_type.hpp"
 #include "snackis/core/str_type.hpp"
 #include "snackis/core/str.hpp"
@@ -21,8 +20,8 @@ using namespace snackis;
 using namespace snackis::db;
 
 static void str_tests() {
-  assert(find_ci("foo", "bar") == str::npos);
-  assert(find_ci("foobar", "BAR") == 3);
+  CHECK(find_ci("foo", "bar"), _ == str::npos);
+  CHECK(find_ci("foobar", "BAR"), _ == 3);
 }
 
 static void crypt_secret_tests() {
@@ -36,7 +35,7 @@ static void crypt_secret_tests() {
   Data cmsg(encrypt(sec, (const unsigned char *)msg.c_str(), msg.size())),
     dmsg(decrypt(sec, &cmsg[0], cmsg.size()));
 
-  assert(str(dmsg.begin(), dmsg.end()) == msg);
+  CHECK(str(dmsg.begin(), dmsg.end()), _ == msg);
 }
 
 static void crypt_key_tests() {
@@ -48,7 +47,7 @@ static void crypt_key_tests() {
   Data cmsg(encrypt(foo, bar_pub, (const unsigned char *)msg.c_str(), msg.size())),
     dmsg(decrypt(bar, foo_pub, &cmsg[0], cmsg.size()));
 
-  assert(str(dmsg.begin(), dmsg.end()) == msg);
+  CHECK(str(dmsg.begin(), dmsg.end()), _ == msg);
 }
 
 struct Foo {
@@ -57,9 +56,9 @@ struct Foo {
   Time ftime;
   UId fuid;
   std::set<int64_t> fset;
-  Foo(): fint64(0), ftime(now()) { }
+  Foo(): fint64(0), ftime(now()), fuid(true) { }
 
-  Foo(db::Table<Foo> &tbl, db::Rec<Foo> &rec): fuid(false) {
+  Foo(db::Table<Foo> &tbl, db::Rec<Foo> &rec) {
     copy(tbl, *this, rec);
   }
 };
@@ -72,9 +71,9 @@ namespace snackis {
 }
 
 static void fmt_tests() {
-  assert(fmt("%0 %1\n", "abc", 42) == "abc 42\n");
-  assert(fmt("%0 %%1 %1", "abc", 42) == "abc %1 42");
-  assert(fmt("%0 %1 %2", "abc", Foo(), "42") == "abc Foo 42");
+  CHECK(fmt("%0 %1\n", "abc", 42), _ == "abc 42\n");
+  CHECK(fmt("%0 %%1 %1", "abc", 42), _ == "abc %1 42");
+  CHECK(fmt("%0 %1 %2", "abc", Foo(), "42"), _ == "abc Foo 42");
 }
 
 static void schema_tests() {
@@ -83,13 +82,13 @@ static void schema_tests() {
 
   Rec<Foo> foo, bar;
   set(foo, col, int64_t(42));
-  assert(compare(scm, foo, bar) == 1);
+  CHECK(compare(scm, foo, bar), _ == 1);
 
   set(bar, col, int64_t(42));
-  assert(compare(scm, foo, bar) == 0);
+  CHECK(compare(scm, foo, bar), _ == 0);
   
   set(bar, col, int64_t(43));
-  assert(compare(scm, foo, bar) == -1);
+  CHECK(compare(scm, foo, bar), _ == -1);
 }
 
 const Col<Foo, int64_t> int64_col("int64", int64_type, &Foo::fint64); 
@@ -108,11 +107,11 @@ void table_insert_tests() {
   open(tbl);
   Foo foo;
   Trans trans(ctx);
-  assert(insert(tbl, foo));
-  assert(load(tbl, foo));
-  assert(!insert(tbl, foo));
+  CHECK(insert(tbl, foo), _);
+  CHECK(load(tbl, foo) ? true : false, _);
+  CHECK(insert(tbl, foo), !_);
   commit(trans);
-  assert(load(tbl, foo));
+  CHECK(load(tbl, foo) ? true : false, _);
   close(tbl);
 }
 
@@ -124,15 +123,15 @@ static void table_slurp_tests() {
   
   Foo foo, bar;
   Trans trans(ctx);
-  assert(insert(tbl, foo));
-  assert(insert(tbl, bar));
+  CHECK(insert(tbl, foo), _);
+  CHECK(insert(tbl, bar), _);
   commit(trans);
   
   tbl.recs.clear();
   slurp(tbl);
   
-  assert(load(tbl, foo));
-  assert(load(tbl, bar));
+  CHECK(load(tbl, foo) ? true : false, _);
+  CHECK(load(tbl, bar) ? true : false, _);
   close(tbl);
 }
 
@@ -158,7 +157,7 @@ static void read_write_tests() {
   write(tbl, rec, buf, sec);
   Rec<Foo> rrec;
   read(tbl, buf, rrec, sec);
-  assert(compare(tbl, rrec, rec) == 0);
+  CHECK(compare(tbl, rrec, rec), _ == 0);
   
   close(tbl);
 }

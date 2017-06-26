@@ -27,7 +27,6 @@ namespace gui {
   }
 
   void PeerView::on_save() {
-    TRACE("Saving peer");
     rec.name = gtk_entry_get_text(GTK_ENTRY(name));
     rec.email = gtk_entry_get_text(GTK_ENTRY(email));    
     update(ctx.db.peers, rec);

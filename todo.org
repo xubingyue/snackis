@@ -1,5 +1,5 @@
 * move thread start from constr to open
-** store threads as opt
+** default-construct and assign in open
 ** replaces wait/notify
 * debug bad variant access when sending msgs
 ** add trace of column name when writing
