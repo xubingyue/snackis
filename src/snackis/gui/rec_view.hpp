@@ -12,7 +12,7 @@ namespace gui {
   template <typename RecT>
   struct RecView: View {
     RecT rec;
-    GtkWidget *fields, *save, *cancel;
+    GtkWidget *fields, *save_btn, *cancel_btn;
     RecView(const str &lbl, const RecT &rec);
     virtual void on_save()=0;
   };
@@ -38,8 +38,8 @@ namespace gui {
     View(rec.ctx, lbl, to_str(rec.id)),
     rec(rec),
     fields(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5)),
-    save(gtk_button_new_with_mnemonic(fmt("_Save %0", lbl).c_str())),
-    cancel(gtk_button_new_with_mnemonic("_Cancel"))
+    save_btn(gtk_button_new_with_mnemonic(fmt("_Save %0", lbl).c_str())),
+    cancel_btn(gtk_button_new_with_mnemonic("_Cancel"))
   {
     gtk_box_pack_start(GTK_BOX(panel), fields, true, true, 0);
     
@@ -48,11 +48,11 @@ namespace gui {
     gtk_widget_set_valign(btns, GTK_ALIGN_END);
     gtk_container_add(GTK_CONTAINER(panel), btns);
         
-    g_signal_connect(save, "clicked", G_CALLBACK(on_save_rec<RecT>), this);
-    gtk_container_add(GTK_CONTAINER(btns), save);
+    g_signal_connect(save_btn, "clicked", G_CALLBACK(on_save_rec<RecT>), this);
+    gtk_container_add(GTK_CONTAINER(btns), save_btn);
 
-    g_signal_connect(cancel, "clicked", G_CALLBACK(on_cancel_rec<RecT>), this);
-    gtk_container_add(GTK_CONTAINER(btns), cancel);
+    g_signal_connect(cancel_btn, "clicked", G_CALLBACK(on_cancel_rec<RecT>), this);
+    gtk_container_add(GTK_CONTAINER(btns), cancel_btn);
   }
 }}
 

@@ -10,7 +10,7 @@
 namespace snackis {
 namespace gui {
   struct PeerView: RecView<Peer> {
-    GtkWidget *name, *email, *save, *cancel;
+    GtkWidget *name_fld, *email_fld;
     
     PeerView(const Peer &peer);
     void on_save() override;

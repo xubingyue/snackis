@@ -40,7 +40,7 @@ namespace gui {
     load_posts(*v);
     auto sel(get_sel_rec<Feed>(GTK_COMBO_BOX(v->feed_fld)) ? true : false);
     gtk_widget_set_sensitive(v->edit_feed_btn, sel);
-    gtk_widget_set_sensitive(v->save, sel && v->rec.by_id == whoami(v->ctx).id);
+    gtk_widget_set_sensitive(v->save_btn, sel && v->rec.by_id == whoami(v->ctx).id);
   }
 
   static void on_edit_feed(gpointer *_, PostView *v) {
