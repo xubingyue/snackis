@@ -5,16 +5,16 @@
 #include <mutex>
 
 #include "snackis/post.hpp"
-#include "snackis/gui/view.hpp"
+#include "snackis/gui/rec_view.hpp"
 
 namespace snackis {
 namespace gui {
-  struct PostView: View {
-    Post post;
-    GtkListStore *feeds, *posts;
-    GtkWidget *feed, *edit_feed, *body, *post_list, *save, *cancel;
+  struct PostView: RecView<Post> {
+    GtkListStore *feed_store, *post_store;
+    GtkWidget *feed_fld, *edit_feed_btn, *body_fld, *post_lst;
     
     PostView(const Post &post);
+    void on_save() override;
   };
 }}
 
