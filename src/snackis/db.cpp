@@ -83,6 +83,7 @@ namespace snackis {
     project_owner_id("owner_id", uid_type,     &Project::owner_id),
     project_name(    "name",     str_type,     &Project::name),
     project_info(    "info",     str_type,     &Project::info),
+    project_active(  "active",   bool_type,    &Project::active),
     project_peer_ids("peer_ids", uid_set_type, &Project::peer_ids),
     
     projects(ctx, "projects", {&project_id},

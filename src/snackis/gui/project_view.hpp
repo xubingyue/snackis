@@ -11,7 +11,7 @@ namespace snackis {
 namespace gui {
   struct ProjectView: View {
     Project project;
-    GtkWidget *name, *info, *save, *cancel;
+    GtkWidget *name, *active, *info, *save, *cancel;
     
     ProjectView(const Project &project);
   };

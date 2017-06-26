@@ -11,6 +11,7 @@
 #include "snackis/gui/post_view.hpp"
 #include "snackis/gui/project_view.hpp"
 #include "snackis/gui/reader.hpp"
+#include "snackis/gui/task_view.hpp"
 #include "snackis/gui/widget.hpp"
 
 namespace snackis {
@@ -190,8 +191,15 @@ namespace gui {
 	}
 
 	Queue queue(todo_queue(ctx));
-	Task task(ctx);
-	if (args.size() > 0) { task.name = args[0]; }
+
+	if (args.empty()) {  
+	} else {
+	  Task task(ctx);
+	  task.name = args[0];
+	  TaskView *v(new TaskView(task));
+	  push_view(*v);
+	}
+	
 	return true;
       });
   }

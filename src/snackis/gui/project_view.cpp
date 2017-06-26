@@ -27,6 +27,7 @@ namespace gui {
     View(project.ctx, "Project", to_str(project.id)),
     project(project),
     name(gtk_entry_new()),
+    active(gtk_check_button_new_with_label("Active")),    
     info(new_text_view()),
     save(gtk_button_new_with_mnemonic("_Save Project")),
     cancel(gtk_button_new_with_mnemonic("_Cancel")) {
@@ -38,9 +39,13 @@ namespace gui {
     lbl = gtk_label_new("Name");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_container_add(GTK_CONTAINER(frm), lbl);
+    GtkWidget *name_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    gtk_container_add(GTK_CONTAINER(frm), name_box);
     gtk_widget_set_hexpand(name, true);    
-    gtk_container_add(GTK_CONTAINER(frm), name);
+    gtk_container_add(GTK_CONTAINER(name_box), name);
     gtk_entry_set_text(GTK_ENTRY(name), project.name.c_str());
+    gtk_container_add(GTK_CONTAINER(name_box), active);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active), project.active);
     
     lbl = gtk_label_new("Info");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);

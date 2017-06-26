@@ -17,8 +17,10 @@ namespace gui {
   extern opt<Console> console;
   extern opt<Reader> reader;
 
-  str get_str(GtkTextView *tv);
-  void set_str(GtkTextView *tv, const str &in);
+  str get_str(GtkEntry *w);
+  str get_str(GtkTextView *w);
+  void set_str(GtkEntry *w, const str &in);
+  void set_str(GtkTextView *w, const str &in);
 
   template <typename RecT>
   const db::Rec<RecT> *get_sel_rec(GtkComboBox *w) {

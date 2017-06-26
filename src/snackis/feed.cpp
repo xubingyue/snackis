@@ -23,13 +23,6 @@ namespace snackis {
     }
   }
 
-  void activate(Feed &feed) {
-    if (!feed.active) {
-      feed.active = true;
-      db::update(feed.ctx.db.feeds, feed);
-    }
-  }
-  
   opt<Feed> find_feed_id(Ctx &ctx, UId id) {
     db::Rec<Feed> rec;
     set(rec, ctx.db.feed_id, id);

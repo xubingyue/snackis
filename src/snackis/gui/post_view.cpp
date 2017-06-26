@@ -155,7 +155,6 @@ namespace gui {
 
   void PostView::on_save() {
     Feed feed(ctx, *get_sel_rec<Feed>(GTK_COMBO_BOX(feed_fld)));
-    activate(feed);
     rec.feed_id = feed.id;
     rec.body = get_str(GTK_TEXT_VIEW(body_fld));
     db::upsert(ctx.db.posts, rec);

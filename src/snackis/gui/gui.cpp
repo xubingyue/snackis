@@ -9,16 +9,24 @@ namespace gui {
   opt<Reader> reader;
   opt<Setup> setup;
 
-  str get_str(GtkTextView *tv) {
-    auto buf(gtk_text_view_get_buffer(tv));
+  str get_str(GtkEntry *w) {
+    return gtk_entry_get_text(w);
+  }
+
+  str get_str(GtkTextView *w) {
+    auto buf(gtk_text_view_get_buffer(w));
     GtkTextIter start, end;
     gtk_text_buffer_get_start_iter(buf, &start);
     gtk_text_buffer_get_end_iter(buf, &end);
     return gtk_text_buffer_get_text(buf, &start, &end, true);
   }
 
-  void set_str(GtkTextView *tv, const str &in) {
-    auto buf(gtk_text_view_get_buffer(tv));
+  void set_str(GtkEntry *w, const str &in) {
+    gtk_entry_set_text(w, in.c_str());
+  }
+
+  void set_str(GtkTextView *w, const str &in) {
+    auto buf(gtk_text_view_get_buffer(w));
     gtk_text_buffer_set_text(buf, in.c_str(), in.size());
   }
 

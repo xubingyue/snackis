@@ -175,7 +175,6 @@ namespace snackis {
 
 	    if (post_found) {
 	      if (peer.id == post_found->by_id) {
-		activate(*feed_found);
 		post_found->body = msg->post_body;
 		update(ctx.db.posts, *post_found);
 		log(ctx, fmt("Post updated in feed '%0' by %1:\n%2",
@@ -187,7 +186,6 @@ namespace snackis {
 			     msg->from));
 	      }
 	    } else {
-	      activate(*feed_found);
 	      Post post(*msg);
 	      insert(ctx.db.posts, post);
 	      log(ctx, fmt("New post in feed '%0' by %1:\n%2",

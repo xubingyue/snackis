@@ -64,6 +64,7 @@ namespace snackis {
     db::Col<Project, UId>           project_owner_id;
     db::Col<Project, str>           project_name;
     db::Col<Project, str>           project_info;
+    db::Col<Project, bool>          project_active;
     db::Col<Project, std::set<UId>> project_peer_ids;
     db::Table<Project> projects;
 

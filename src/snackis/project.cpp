@@ -4,7 +4,8 @@
 #include "snackis/project.hpp"
 
 namespace snackis {
-  Project::Project(Ctx &ctx): Rec(ctx), id(true), owner_id(whoami(ctx).id)
+  Project::Project(Ctx &ctx):
+    Rec(ctx), id(true), owner_id(whoami(ctx).id), active(true)
   { }
 
   Project::Project(Ctx &ctx, const db::Rec<Project> &rec): Rec(ctx) {
