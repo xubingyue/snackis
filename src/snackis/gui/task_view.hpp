@@ -14,7 +14,8 @@ namespace gui {
     GtkWidget *project_fld, *edit_project_btn, *name_fld, *info_fld;
     
     TaskView(const Task &task);
-    void on_save() override;
+    bool allow_save() const override;
+    void save() override;
   };
 }}
 

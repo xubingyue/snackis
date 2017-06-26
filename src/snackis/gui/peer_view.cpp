@@ -26,7 +26,7 @@ namespace gui {
     focused = name_fld;
   }
 
-  void PeerView::on_save() {
+  void PeerView::save() {
     rec.name = gtk_entry_get_text(GTK_ENTRY(name_fld));
     rec.email = gtk_entry_get_text(GTK_ENTRY(email_fld));    
     update(ctx.db.peers, rec);

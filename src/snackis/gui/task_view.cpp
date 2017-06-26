@@ -11,8 +11,7 @@ namespace gui {
   static void on_project_sel(gpointer *_, TaskView *v) {
     auto sel(get_sel_rec<Project>(GTK_COMBO_BOX(v->project_fld)) ? true : false);
     gtk_widget_set_sensitive(v->edit_project_btn, sel);
-    gtk_widget_set_sensitive(v->save_btn,
-			     sel && v->rec.owner_id == whoami(v->ctx).id);
+    refresh(*v);
   }
 
   static void on_edit_project(gpointer *_, TaskView *v) {
@@ -91,9 +90,16 @@ namespace gui {
     set_str(GTK_TEXT_VIEW(info_fld), task.info);
     
     focused = project_fld;
+    refresh(*this);
   }
 
-  void TaskView::on_save() {
+  bool TaskView::allow_save() const {
+    return
+      rec.owner_id == whoami(ctx).id &&
+      get_sel_rec<Project>(GTK_COMBO_BOX(project_fld));
+  }
+
+  void TaskView::save() {
     Project project(ctx, *get_sel_rec<Project>(GTK_COMBO_BOX(project_fld)));
     rec.project_id = project.id;
     rec.name = get_str(GTK_ENTRY(name_fld));

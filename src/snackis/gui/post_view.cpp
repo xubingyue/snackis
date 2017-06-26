@@ -40,7 +40,7 @@ namespace gui {
     load_posts(*v);
     auto sel(get_sel_rec<Feed>(GTK_COMBO_BOX(v->feed_fld)) ? true : false);
     gtk_widget_set_sensitive(v->edit_feed_btn, sel);
-    gtk_widget_set_sensitive(v->save_btn, sel && v->rec.by_id == whoami(v->ctx).id);
+    refresh(*v);
   }
 
   static void on_edit_feed(gpointer *_, PostView *v) {
@@ -135,7 +135,6 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(feed_box), feed_fld);
     g_signal_connect(edit_feed_btn, "clicked", G_CALLBACK(on_edit_feed), this);
     gtk_container_add(GTK_CONTAINER(feed_box), edit_feed_btn);
-    on_feed_sel(nullptr, this);
     
     lbl = gtk_label_new("Body");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
@@ -151,9 +150,16 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(fields), lbl);
 
     focused = feed_fld;
+    refresh(*this);
   }
 
-  void PostView::on_save() {
+  bool PostView::allow_save() const {
+    return
+      rec.by_id == whoami(ctx).id &&
+      get_sel_rec<Feed>(GTK_COMBO_BOX(feed_fld));
+  }
+
+  void PostView::save() {
     Feed feed(ctx, *get_sel_rec<Feed>(GTK_COMBO_BOX(feed_fld)));
     rec.feed_id = feed.id;
     rec.body = get_str(GTK_TEXT_VIEW(body_fld));

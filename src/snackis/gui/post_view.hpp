@@ -14,7 +14,8 @@ namespace gui {
     GtkWidget *feed_fld, *edit_feed_btn, *body_fld, *post_lst;
     
     PostView(const Post &post);
-    void on_save() override;
+    bool allow_save() const override;
+    void save() override;
   };
 }}
 
