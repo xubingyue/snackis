@@ -159,9 +159,9 @@ namespace db {
     }
     
     for (auto e: tbl.on_update) { e(*found, rec); }
+    log_change(get_trans(tbl.ctx), new Update<RecT>(tbl, rec, *found));
     tbl.recs.erase(found);
     tbl.recs.insert(rec);
-    log_change(get_trans(tbl.ctx), new Update<RecT>(tbl, rec, *found));
     return true;
   }
 
@@ -184,9 +184,9 @@ namespace db {
     TRACE(fmt("Erasing from table: %0", tbl.name));
     auto found(tbl.recs.find(rec));
     if (found == tbl.recs.end()) { return false; }
+    log_change(get_trans(tbl.ctx), new Erase<RecT>(tbl, *found));
     for (auto idx: tbl.indexes) { erase(*idx, *found); }
     tbl.recs.erase(found);
-    log_change(get_trans(tbl.ctx), new Erase<RecT>(tbl, *found));
     return true;
   }
 

@@ -10,14 +10,12 @@ namespace gui {
 
     if (v->repeat) {  
       if (pass != gtk_entry_get_text(GTK_ENTRY(v->repeat))) {
-	log(v->ctx, "Password mismatch, please try again");
 	gtk_widget_grab_focus(v->pass);
 	return;
       }
       
       db::init_pass(v->ctx, pass);
     } if (!db::login(v->ctx, pass)) {
-	log(v->ctx, "Wrong password, please try again");
 	gtk_widget_grab_focus(v->pass);
 	return;
     }

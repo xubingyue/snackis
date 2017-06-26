@@ -67,6 +67,7 @@ namespace db {
   }
 
   bool login(Ctx &ctx, const str &pass) {
+    TRACE("Logging in");
     crypt::Secret secret;
     
     std::ifstream file;
@@ -94,6 +95,7 @@ namespace db {
   }
 
   void open(Ctx &ctx) {
+    TRACE("Opening DB context");
     init_db_rev(ctx);
     for (auto t: ctx.tables) { open(*t); }
   }

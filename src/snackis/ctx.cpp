@@ -61,19 +61,25 @@ namespace snackis {
   }
 
   Ctx::Ctx(const Path &path):
-    db::Ctx(path), db(*this), settings(*this), whoami(*this),
-    is_closing(false)
+    db::Ctx(path), db(*this), settings(*this), whoami(*this), is_closing(false)
   { }
 
   Ctx::~Ctx() {
     is_closing = true;
-    fetch_cond.notify_one();
-    fetcher->join();
-    send_cond.notify_one();
-    sender->join();
+
+    if (fetcher) {
+      fetch_cond.notify_one();
+      fetcher->join();
+    }
+
+    if (sender) {
+      send_cond.notify_one();
+      sender->join();
+    }
   }
   
   void open(Ctx &ctx) {
+    TRACE("Opening Snackis context");
     open(dynamic_cast<db::Ctx &>(ctx));
     create_path(*get_val(ctx.settings.load_folder));
     create_path(*get_val(ctx.settings.save_folder));

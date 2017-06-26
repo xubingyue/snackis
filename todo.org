@@ -1,9 +1,3 @@
-* move thread start from constr to open
-** default-construct and assign in open
-** replaces wait/notify
-* debug bad variant access when sending msgs
-** add trace of column name when writing
-* convert post view to use RecView
 * add TaskView
 ** copy post view
 ** sort projects by name
