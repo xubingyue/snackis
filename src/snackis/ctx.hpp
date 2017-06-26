@@ -17,7 +17,7 @@ namespace snackis {
     Peer whoami;
     std::mutex loop_mutex;
     std::condition_variable fetch_cond, send_cond;
-    std::thread fetcher, sender;
+    opt<std::thread> fetcher, sender;
     bool is_closing;
     Ctx(const Path &path);
     virtual ~Ctx();

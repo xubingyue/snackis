@@ -6,11 +6,6 @@
 
 namespace snackis {
   static void fetch_loop(Ctx *ctx) {
-    {
-      std::unique_lock<std::mutex> lock(ctx->loop_mutex);
-      ctx->fetch_cond.wait(lock);
-    }
-
     while (!ctx->is_closing) {
       std::unique_lock<std::mutex> lock(ctx->loop_mutex);
       int64_t poll(0);
@@ -38,11 +33,6 @@ namespace snackis {
   }
 
   static void send_loop(Ctx *ctx) {
-    {
-      std::unique_lock<std::mutex> lock(ctx->loop_mutex);
-      ctx->send_cond.wait(lock);
-    }
-
     while (!ctx->is_closing) {
       std::unique_lock<std::mutex> send_lock(ctx->loop_mutex);
       int64_t poll(0);
@@ -58,30 +48,29 @@ namespace snackis {
 	ctx->send_cond.wait(send_lock);
       }
 
+      std::unique_lock<std::recursive_mutex> lock(ctx->mutex);
       if (!ctx->is_closing && !ctx->db.outbox.recs.empty()) {
 	//try {
-	  Smtp smtp(*ctx);
-	  send(smtp);
-	  //} catch (const std::exception &e) {
-	  //log(*ctx, fmt("Failed sending email: %0", e.what()));
-	  //}
+	Smtp smtp(*ctx);
+	send(smtp);
+	//} catch (const std::exception &e) {
+	//log(*ctx, fmt("Failed sending email: %0", e.what()));
+	//}
       }
     }
   }
 
   Ctx::Ctx(const Path &path):
     db::Ctx(path), db(*this), settings(*this), whoami(*this),
-    fetcher(fetch_loop, this),
-    sender(send_loop, this),
     is_closing(false)
   { }
 
   Ctx::~Ctx() {
     is_closing = true;
     fetch_cond.notify_one();
-    fetcher.join();
+    fetcher->join();
     send_cond.notify_one();
-    sender.join();
+    sender->join();
   }
   
   void open(Ctx &ctx) {
@@ -110,8 +99,8 @@ namespace snackis {
     
     db::upsert(ctx.db.peers, ctx.whoami);
     db::commit(trans);
-    ctx.fetch_cond.notify_one();
-    ctx.send_cond.notify_one();
+    ctx.fetcher.emplace(fetch_loop, &ctx);
+    ctx.sender.emplace(send_loop, &ctx);
   }
 
   void log(const Ctx &ctx, const str &msg) { db::log(ctx,msg); }
