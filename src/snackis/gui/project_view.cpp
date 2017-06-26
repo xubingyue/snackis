@@ -6,65 +6,40 @@
 
 namespace snackis {
 namespace gui {
-  static void on_cancel(gpointer *_, ProjectView *v) {
-    log(v->ctx, "Cancelled project");
-    pop_view(*v);
-  }
-
-  static void on_save(gpointer *_, ProjectView *v) {
-    Ctx &ctx(v->ctx);
-    db::Trans trans(ctx);
-    
-    v->project.name = gtk_entry_get_text(GTK_ENTRY(v->name));
-    v->project.info = get_str(GTK_TEXT_VIEW(v->info));
-    db::upsert(ctx.db.projects, v->project);
-    db::commit(trans);
-    log(v->ctx, "Saved project");
-    pop_view(*v);
-  }
-
   ProjectView::ProjectView(const Project &project):
-    View(project.ctx, "Project", to_str(project.id)),
-    project(project),
-    name(gtk_entry_new()),
-    active(gtk_check_button_new_with_label("Active")),    
-    info(new_text_view()),
-    save(gtk_button_new_with_mnemonic("_Save Project")),
-    cancel(gtk_button_new_with_mnemonic("_Cancel")) {
+    RecView<Project>("Project", project),
+    name_fld(gtk_entry_new()),
+    active_fld(gtk_check_button_new_with_label("Active")),    
+    info_fld(new_text_view()) {
     GtkWidget *lbl;
-
-    GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
-    gtk_box_pack_start(GTK_BOX(panel), frm, true, true, 0);
 
     lbl = gtk_label_new("Name");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    gtk_container_add(GTK_CONTAINER(fields), lbl);
     GtkWidget *name_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    gtk_container_add(GTK_CONTAINER(frm), name_box);
-    gtk_widget_set_hexpand(name, true);    
-    gtk_container_add(GTK_CONTAINER(name_box), name);
-    gtk_entry_set_text(GTK_ENTRY(name), project.name.c_str());
-    gtk_container_add(GTK_CONTAINER(name_box), active);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active), project.active);
+    gtk_container_add(GTK_CONTAINER(fields), name_box);
+    gtk_widget_set_hexpand(name_fld, true);    
+    gtk_container_add(GTK_CONTAINER(name_box), name_fld);
+    gtk_entry_set_text(GTK_ENTRY(name_fld), project.name.c_str());
+    gtk_container_add(GTK_CONTAINER(name_box), active_fld);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active_fld), project.active);
     
     lbl = gtk_label_new("Info");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(frm), lbl);
-    gtk_container_add(GTK_CONTAINER(frm), gtk_widget_get_parent(info));
-    set_str(GTK_TEXT_VIEW(info), project.info);
+    gtk_container_add(GTK_CONTAINER(fields), lbl);
+    gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(info_fld));
+    set_str(GTK_TEXT_VIEW(info_fld), project.info);
     
-    GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    gtk_widget_set_halign(btns, GTK_ALIGN_END);
-    gtk_widget_set_valign(btns, GTK_ALIGN_END);
-    gtk_widget_set_margin_top(btns, 10);
-    gtk_container_add(GTK_CONTAINER(panel), btns);
-        
-    g_signal_connect(save, "clicked", G_CALLBACK(on_save), this);
-    gtk_widget_set_sensitive(save, project.owner_id == whoami(ctx).id);
-    gtk_container_add(GTK_CONTAINER(btns), save);
+    focused = name_fld;
+  }
 
-    g_signal_connect(cancel, "clicked", G_CALLBACK(on_cancel), this);
-    gtk_container_add(GTK_CONTAINER(btns), cancel);
-    focused = name;
+  bool ProjectView::allow_save() const {
+    return rec.owner_id == whoami(ctx).id;
+  }
+
+  void ProjectView::save() {
+    rec.name = gtk_entry_get_text(GTK_ENTRY(name_fld));
+    rec.info = get_str(GTK_TEXT_VIEW(info_fld));
+    db::upsert(ctx.db.projects, rec);
   }
 }}

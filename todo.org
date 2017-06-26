@@ -1,8 +1,14 @@
-* convert project view to RecView
 * add todo tasks to queue
-** add QueueTask && queue_tasks
 ** add optional queue combo to task view
+*** extract gui::new_combo_box()
+** add QueueTask && queue_tasks
 * sort task view projects by name
+* add ProjectView peers
+** extract gui::Peers struct
+* add task message
+** send along project info
+** send to all peers when task is saved
+** copy send(post) to task
 * add gui::TaskSearch
 ** project, queue, text & done
 *** match text against both name & info

@@ -5,15 +5,16 @@
 #include <mutex>
 
 #include "snackis/project.hpp"
-#include "snackis/gui/view.hpp"
+#include "snackis/gui/rec_view.hpp"
 
 namespace snackis {
 namespace gui {
-  struct ProjectView: View {
-    Project project;
-    GtkWidget *name, *active, *info, *save, *cancel;
+  struct ProjectView: RecView<Project> {
+    GtkWidget *name_fld, *active_fld, *info_fld;
     
     ProjectView(const Project &project);
+    bool allow_save() const override;
+    void save() override;
   };
 }}
 
