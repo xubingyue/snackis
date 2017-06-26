@@ -1,12 +1,8 @@
-* extract virtual bool RecView.allow_save;
-** implement in post_view & task_view
-** add refresh(RecView) to update buttons
-* convert feed view to RecView
 * convert project view to RecView
 * add todo tasks to queue
 ** add QueueTask && queue_tasks
-* finish TaskView
-** sort projects by name
+** add optional queue combo to task view
+* sort task view projects by name
 * add gui::TaskSearch
 ** project, queue, text & done
 *** match text against both name & info

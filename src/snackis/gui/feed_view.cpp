@@ -9,57 +9,30 @@ namespace gui {
   enum PeerCol {COL_PEER_PTR=0, COL_PEER_NAME};
   enum PostCol {COL_POST_PTR=0, COL_POST_BY, COL_POST_BODY};
   
-  static void on_cancel(gpointer *_, FeedView *v) {
-    log(v->ctx, "Cancelled feed");
-    pop_view(*v);
-  }
-  
-  static void on_save(gpointer *_, FeedView *v) {
-    Ctx &ctx(v->ctx);
-    db::Trans trans(ctx);
-    v->feed.name = gtk_entry_get_text(GTK_ENTRY(v->name));
-    v->feed.info = get_str(GTK_TEXT_VIEW(v->info));
-    v->feed.active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->active));
-    db::upsert(ctx.db.feeds, v->feed);
-    const str post_body(get_str(GTK_TEXT_VIEW(v->new_post)));
-
-    if (!post_body.empty()) {
-      Post post(ctx);
-      post.feed_id = v->feed.id;
-      post.body = post_body;
-      db::insert(ctx.db.posts, post);
-      send(post);
-    }
-    
-    db::commit(trans);
-    log(v->ctx, "Saved feed");
-    pop_view(*v);
-  }
-
   static void on_peer_sel(gpointer *_, FeedView *v) {
     Ctx &ctx(v->ctx);
-    auto rec(get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer)));
+    auto rec(get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer_fld)));
     auto id(*db::get(*rec, ctx.db.peer_id));
-    bool exists = v->feed.peer_ids.find(id) != v->feed.peer_ids.end();
-    gtk_widget_set_sensitive(v->add_peer, !exists);
+    bool exists = v->rec.peer_ids.find(id) != v->rec.peer_ids.end();
+    gtk_widget_set_sensitive(v->add_peer_btn, !exists);
   }
   
   static void on_add_peer(gpointer *_, FeedView *v) {
     Ctx &ctx(v->ctx);
-    auto rec(get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer)));
+    auto rec(get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer_fld)));
 
     GtkTreeIter iter;    
-    gtk_list_store_append(v->feed_peers, &iter);
-    gtk_list_store_set(v->feed_peers, &iter,
+    gtk_list_store_append(v->feed_peer_store, &iter);
+    gtk_list_store_set(v->feed_peer_store, &iter,
 		       COL_PEER_PTR, rec,
 		       COL_PEER_NAME, db::get(*rec, ctx.db.peer_name)->c_str(),
 		       -1);
-    auto sel(gtk_tree_view_get_selection(GTK_TREE_VIEW(v->peer_list)));
+    auto sel(gtk_tree_view_get_selection(GTK_TREE_VIEW(v->peer_lst)));
     gtk_tree_selection_select_iter(sel, &iter);
   
-    v->feed.peer_ids.insert(*db::get(*rec, ctx.db.peer_id));
-    gtk_widget_set_sensitive(v->add_peer, false);
-    gtk_widget_grab_focus(v->peer);
+    v->rec.peer_ids.insert(*db::get(*rec, ctx.db.peer_id));
+    gtk_widget_set_sensitive(v->add_peer_btn, false);
+    gtk_widget_grab_focus(v->peer_fld);
   }
 
   static void on_remove_peer(GtkTreeView *treeview,
@@ -67,13 +40,13 @@ namespace gui {
 			     GtkTreeViewColumn *col,
 			     FeedView *v) {
     Ctx &ctx(v->ctx);
-    auto iter(get_sel_iter(GTK_TREE_VIEW(v->peer_list)));
+    auto iter(get_sel_iter(GTK_TREE_VIEW(v->peer_lst)));
 
     if (iter) {
       auto it(*iter);
-      auto rec(get_sel_rec<Peer>(GTK_TREE_VIEW(v->peer_list), it));
-      v->feed.peer_ids.erase(*db::get(*rec, ctx.db.peer_id));
-      gtk_list_store_remove(v->feed_peers, &it);
+      auto rec(get_sel_rec<Peer>(GTK_TREE_VIEW(v->peer_lst), it));
+      v->rec.peer_ids.erase(*db::get(*rec, ctx.db.peer_id));
+      gtk_list_store_remove(v->feed_peer_store, &it);
     }
 
     on_peer_sel(nullptr, v);
@@ -82,14 +55,14 @@ namespace gui {
   static void load_peers(FeedView &v) {
     Ctx &ctx(v.ctx);
     
-    for (const auto &peer_id: v.feed.peer_ids) {
+    for (const auto &peer_id: v.rec.peer_ids) {
       db::Rec<Peer> key;
       db::set(key, ctx.db.peer_id, peer_id);
       const db::Rec<Peer> &rec(db::get(ctx.db.peers, key));
       
       GtkTreeIter iter;
-      gtk_list_store_append(v.feed_peers, &iter);
-      gtk_list_store_set(v.feed_peers, &iter,
+      gtk_list_store_append(v.feed_peer_store, &iter);
+      gtk_list_store_set(v.feed_peer_store, &iter,
 			 COL_PEER_PTR, &rec,
 			 COL_PEER_NAME, db::get(rec, ctx.db.peer_name)->c_str(),
 			 -1);
@@ -99,39 +72,47 @@ namespace gui {
   static void init_peers(FeedView &v) {
     Ctx &ctx(v.ctx);
 
-    gtk_widget_set_hexpand(v.peer_list, true);
+    gtk_widget_set_margin_top(v.peer_lst, 5);
+    gtk_widget_set_hexpand(v.peer_lst, true);
     auto rend(gtk_cell_renderer_text_new());
     auto name_col(gtk_tree_view_column_new_with_attributes("Peers",
 							   rend,
 							   "text", COL_PEER_NAME,
 							   nullptr));
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.peer_list), name_col);    
-    g_signal_connect(v.peer_list, "row-activated", G_CALLBACK(on_remove_peer), &v);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(v.peer_lst), name_col);    
+    g_signal_connect(v.peer_lst, "row-activated", G_CALLBACK(on_remove_peer), &v);
     
     for(const auto &peer_rec: ctx.db.peers.recs) {
       Peer peer(ctx, peer_rec);
       
       GtkTreeIter iter;
-      gtk_list_store_append(v.peers, &iter);
-      gtk_list_store_set(v.peers, &iter,
+      gtk_list_store_append(v.peer_store, &iter);
+      gtk_list_store_set(v.peer_store, &iter,
 			 COL_PEER_PTR, &peer_rec,
 			 COL_PEER_NAME, peer.name.c_str(),
 			 -1);
     }
 
+    gtk_container_add(GTK_CONTAINER(v.fields), v.peer_lst);
+    gtk_container_add(GTK_CONTAINER(v.fields),
+		      gtk_label_new("Press Return or double-click to remove peer"));
+
+    GtkWidget *peer_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
+    gtk_container_add(GTK_CONTAINER(v.fields), peer_box);
+
     rend = gtk_cell_renderer_text_new();
-    gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(v.peer), rend, true);
-    gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(v.peer),
+    gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(v.peer_fld), rend, true);
+    gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(v.peer_fld),
 				   rend,
                                    "text", COL_PEER_NAME,
 				   nullptr);
-    gtk_widget_set_hexpand(v.peer, true);
-    g_signal_connect(v.peer, "changed", G_CALLBACK(on_peer_sel), &v);
-    gtk_combo_box_set_active(GTK_COMBO_BOX(v.peer), 0);
-    gtk_container_add(GTK_CONTAINER(v.peer_input), v.peer);
+    gtk_widget_set_hexpand(v.peer_fld, true);
+    g_signal_connect(v.peer_fld, "changed", G_CALLBACK(on_peer_sel), &v);
+    gtk_combo_box_set_active(GTK_COMBO_BOX(v.peer_fld), 0);
+    gtk_container_add(GTK_CONTAINER(peer_box), v.peer_fld);
 
-    g_signal_connect(v.add_peer, "clicked", G_CALLBACK(on_add_peer), &v);
-    gtk_container_add(GTK_CONTAINER(v.peer_input), v.add_peer);
+    g_signal_connect(v.add_peer_btn, "clicked", G_CALLBACK(on_add_peer), &v);
+    gtk_container_add(GTK_CONTAINER(peer_box), v.add_peer_btn);
     load_peers(v);
   }
 
@@ -140,7 +121,7 @@ namespace gui {
 			   GtkTreeViewColumn *col,
 			   FeedView *v) {
     Ctx &ctx(v->ctx);
-    auto post_rec(get_sel_rec<Post>(GTK_TREE_VIEW(v->post_list)));
+    auto post_rec(get_sel_rec<Post>(GTK_TREE_VIEW(v->post_lst)));
     assert(post_rec);
     Post post(ctx, *post_rec);
     PostView *pv(new PostView(post));
@@ -150,17 +131,17 @@ namespace gui {
   static void load_posts(FeedView &v) {
     Ctx &ctx(v.ctx);
 
-    for (auto rec: last_posts(v.feed, Time::max(), 7)) {
+    for (auto rec: last_posts(v.rec, Time::max(), 7)) {
       Post post(ctx, *rec);
       Peer peer(get_peer_id(ctx, post.by_id));
       
       GtkTreeIter iter;
-      gtk_list_store_append(v.posts, &iter);
+      gtk_list_store_append(v.post_store, &iter);
       const str by(fmt("%0\n%1",
 		       peer.name.c_str(),
 		       fmt(post.at, "%a %b %d, %H:%M:%S").c_str()));
       
-      gtk_list_store_set(v.posts, &iter,
+      gtk_list_store_set(v.post_store, &iter,
 			 COL_POST_PTR, rec,
 			 COL_POST_BY, by.c_str(),
 			 COL_POST_BODY, post.body.c_str(),
@@ -169,14 +150,14 @@ namespace gui {
   }
 
   static void init_posts(FeedView &v) {
-    gtk_widget_set_hexpand(v.post_list, true);
-    gtk_widget_set_vexpand(v.post_list, true);
+    gtk_widget_set_hexpand(v.post_lst, true);
+    gtk_widget_set_vexpand(v.post_lst, true);
     auto rend(gtk_cell_renderer_text_new());
     auto by_col(gtk_tree_view_column_new_with_attributes("Post History",
 							 rend,
 							 "text", COL_POST_BY,
 							 nullptr));
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.post_list), by_col);    
+    gtk_tree_view_append_column(GTK_TREE_VIEW(v.post_lst), by_col);    
 
     rend = gtk_cell_renderer_text_new();
     auto body_col(gtk_tree_view_column_new_with_attributes("",
@@ -184,84 +165,80 @@ namespace gui {
 							   "text", COL_POST_BODY,
 							   nullptr));
     gtk_tree_view_column_set_expand(GTK_TREE_VIEW_COLUMN(body_col), true);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.post_list), body_col);    
-    g_signal_connect(v.post_list, "row-activated", G_CALLBACK(on_edit_post), &v);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(v.post_lst), body_col);    
+    g_signal_connect(v.post_lst, "row-activated", G_CALLBACK(on_edit_post), &v);
     load_posts(v);
   }
   
   FeedView::FeedView(const Feed &feed):
-    View(feed.ctx, "Feed", to_str(feed.id)),
-    feed(feed),
-    peers(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
-    feed_peers(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
-    posts(gtk_list_store_new(3,
-			     G_TYPE_POINTER,
-			     G_TYPE_STRING, G_TYPE_STRING)),
-    name(gtk_entry_new()),
-    active(gtk_check_button_new_with_label("Active")),
-    info(new_text_view()),
-    peer_list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(feed_peers))),
-    peer_input(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5)),
-    peer(gtk_combo_box_new_with_model(GTK_TREE_MODEL(peers))),
-    add_peer(gtk_button_new_with_mnemonic("_Add Peer")),
-    post_list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(posts))),
-    new_post(new_text_view()),
-    save(gtk_button_new_with_mnemonic("_Save Feed")),
-    cancel(gtk_button_new_with_mnemonic("_Cancel")) {
+    RecView("Feed", feed),
+    peer_store(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
+    feed_peer_store(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
+    post_store(gtk_list_store_new(3,
+				  G_TYPE_POINTER,
+				  G_TYPE_STRING, G_TYPE_STRING)),
+    name_fld(gtk_entry_new()),
+    active_fld(gtk_check_button_new_with_label("Active")),
+    info_fld(new_text_view()),
+    peer_lst(gtk_tree_view_new_with_model(GTK_TREE_MODEL(feed_peer_store))),
+    peer_fld(gtk_combo_box_new_with_model(GTK_TREE_MODEL(peer_store))),
+    add_peer_btn(gtk_button_new_with_mnemonic("_Add Peer")),
+    post_lst(gtk_tree_view_new_with_model(GTK_TREE_MODEL(post_store))),
+    post_fld(new_text_view()) {
     GtkWidget *lbl;
 
-    GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
-    gtk_box_pack_start(GTK_BOX(panel), frm, true, true, 0);
-    
     lbl = gtk_label_new("Name");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    gtk_container_add(GTK_CONTAINER(fields), lbl);
     GtkWidget *name_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    gtk_container_add(GTK_CONTAINER(frm), name_box);
-    gtk_widget_set_hexpand(name, true);
-    gtk_container_add(GTK_CONTAINER(name_box), name);    
-    gtk_entry_set_text(GTK_ENTRY(name), feed.name.c_str());
-    gtk_container_add(GTK_CONTAINER(name_box), active);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active), feed.active);
+    gtk_container_add(GTK_CONTAINER(fields), name_box);
+    gtk_widget_set_hexpand(name_fld, true);
+    gtk_container_add(GTK_CONTAINER(name_box), name_fld);    
+    gtk_entry_set_text(GTK_ENTRY(name_fld), feed.name.c_str());
+    gtk_container_add(GTK_CONTAINER(name_box), active_fld);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active_fld), feed.active);
 
     lbl = gtk_label_new("Info");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(frm), lbl);
-    gtk_container_add(GTK_CONTAINER(frm), gtk_widget_get_parent(info));
-    set_str(GTK_TEXT_VIEW(info), feed.info);
+    gtk_container_add(GTK_CONTAINER(fields), lbl);
+    gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(info_fld));
+    set_str(GTK_TEXT_VIEW(info_fld), feed.info);
     
     init_peers(*this);
-    gtk_widget_set_margin_top(peer_list, 5);
-    gtk_container_add(GTK_CONTAINER(frm), peer_list);
-    gtk_container_add(GTK_CONTAINER(frm),
-		      gtk_label_new("Press Return or double-click to remove peer"));
-    gtk_widget_set_margin_top(peer_input, 5);
-    gtk_container_add(GTK_CONTAINER(frm), peer_input);
 
     init_posts(*this);
-    gtk_widget_set_margin_top(post_list, 5);
-    gtk_container_add(GTK_CONTAINER(frm), post_list);
+    gtk_widget_set_margin_top(post_lst, 5);
+    gtk_container_add(GTK_CONTAINER(fields), post_lst);
     lbl = gtk_label_new("Press Return or double-click to edit post");
-    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    gtk_container_add(GTK_CONTAINER(fields), lbl);
 
     lbl = gtk_label_new("New Post");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_widget_set_margin_top(lbl, 5);
-    gtk_container_add(GTK_CONTAINER(frm), lbl);
-    gtk_container_add(GTK_CONTAINER(frm), gtk_widget_get_parent(new_post));
+    gtk_container_add(GTK_CONTAINER(fields), lbl);
+    gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(post_fld));
     
-    GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    gtk_widget_set_halign(btns, GTK_ALIGN_END);
-    gtk_widget_set_valign(btns, GTK_ALIGN_END);
-    gtk_widget_set_margin_top(btns, 10);
-    gtk_container_add(GTK_CONTAINER(panel), btns);
-        
-    gtk_widget_set_sensitive(save, feed.owner_id == whoami(ctx).id);
-    g_signal_connect(save, "clicked", G_CALLBACK(on_save), this);
-    gtk_container_add(GTK_CONTAINER(btns), save);
-
-    g_signal_connect(cancel, "clicked", G_CALLBACK(on_cancel), this);
-    gtk_container_add(GTK_CONTAINER(btns), cancel);
-    focused = name;
+    focused = name_fld;
   }
+
+  bool FeedView::allow_save() const {
+    return rec.owner_id == whoami(ctx).id;
+  }
+
+  void FeedView::save() {
+    rec.name = gtk_entry_get_text(GTK_ENTRY(name_fld));
+    rec.info = get_str(GTK_TEXT_VIEW(info_fld));
+    rec.active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(active_fld));
+    db::upsert(ctx.db.feeds, rec);
+    const str post_body(get_str(GTK_TEXT_VIEW(post_fld)));
+
+    if (!post_body.empty()) {
+      Post post(ctx);
+      post.feed_id = rec.id;
+      post.body = post_body;
+      db::insert(ctx.db.posts, post);
+      send(post);
+    }
+  }
+
 }}
