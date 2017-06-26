@@ -38,6 +38,18 @@ namespace gui {
     return iter;
   }
 
+  GtkWidget *new_combo_box(GtkTreeModel *mod) {
+    GtkWidget *w(gtk_combo_box_new_with_model(mod));
+    gtk_combo_box_set_id_column(GTK_COMBO_BOX(w), 1);
+    auto col(gtk_cell_renderer_text_new());
+    gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(w), col, true);
+    gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(w),
+				   col,
+				   "text", 2,
+				   nullptr);
+    return w;
+  }
+  
   GtkWidget *new_text_view() {
     GtkWidget *w(gtk_text_view_new());
     gtk_widget_set_hexpand(w, true);

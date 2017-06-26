@@ -68,14 +68,6 @@ namespace gui {
       }
     }
     
-    auto col(gtk_cell_renderer_text_new());
-    gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(v.feed_fld), col, true);
-    gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(v.feed_fld),
-				   col,
-                                   "text", COL_FEED_NAME,
-				   nullptr);
-    
-    gtk_combo_box_set_id_column(GTK_COMBO_BOX(v.feed_fld), COL_FEED_ID);
     if (!gtk_combo_box_set_active_id(GTK_COMBO_BOX(v.feed_fld),
 				     to_str(v.rec.feed_id).c_str())) {
       gtk_combo_box_set_active(GTK_COMBO_BOX(v.feed_fld), 0);
@@ -118,7 +110,7 @@ namespace gui {
     RecView("Post", post),
     feed_store(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
     post_store(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
-    feed_fld(gtk_combo_box_new_with_model(GTK_TREE_MODEL(feed_store))),
+    feed_fld(new_combo_box(GTK_TREE_MODEL(feed_store))),
     edit_feed_btn(gtk_button_new_with_mnemonic("_Edit Feed")),
     body_fld(new_text_view()),
     post_lst(gtk_tree_view_new_with_model(GTK_TREE_MODEL(post_store))) {

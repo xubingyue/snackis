@@ -4,7 +4,7 @@
 
 namespace snackis {
 namespace gui {
-  enum PeerCol {COL_PEER_PTR=0, COL_PEER_NAME};
+  enum PeerCol {COL_PEER_PTR=0, COL_PEER_ID, COL_PEER_NAME};
     
   static void on_source(gpointer *_, Encrypt *v) {
     Ctx &ctx(v->ctx);
@@ -82,16 +82,11 @@ namespace gui {
       gtk_list_store_append(v.peers, &iter);
       gtk_list_store_set(v.peers, &iter,
 			 COL_PEER_PTR, &peer_rec,
+			 COL_PEER_ID, to_str(peer.id).c_str(),
 			 COL_PEER_NAME, peer.name.c_str(),
 			 -1);
     }
     
-    auto col(gtk_cell_renderer_text_new());
-    gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(v.peer), col, true);
-    gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(v.peer),
-				   col,
-                                   "text", COL_PEER_NAME,
-				   nullptr);
     gtk_combo_box_set_active(GTK_COMBO_BOX(v.peer), 0);
   }
   
@@ -133,8 +128,8 @@ namespace gui {
 
   Encrypt::Encrypt(Ctx &ctx):
     View(ctx, "Encrypt"),
-    peers(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
-    peer(gtk_combo_box_new_with_model(GTK_TREE_MODEL(peers))),
+    peers(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
+    peer(new_combo_box(GTK_TREE_MODEL(peers))),
     source(gtk_entry_new()),
     target(gtk_entry_new()),
     encode(gtk_check_button_new_with_label("Encode")),

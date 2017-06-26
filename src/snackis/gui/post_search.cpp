@@ -6,7 +6,7 @@
 
 namespace snackis {
 namespace gui {
-  enum PeerCol {COL_PEER_PTR=0, COL_PEER_NAME};
+  enum PeerCol {COL_PEER_PTR=0, COL_PEER_ID, COL_PEER_NAME};
   enum PostCol {COL_PTR=0, COL_BY, COL_FEED, COL_BODY};
 
   static void on_find(gpointer *_, PostSearch *v) {
@@ -106,14 +106,17 @@ namespace gui {
     gtk_list_store_append(v.peers, &iter);
     gtk_list_store_set(v.peers, &iter,
 		       COL_PEER_PTR, nullptr,
+		       COL_PEER_ID, "",
 		       COL_PEER_NAME, "",
 		       -1);
 
     for (auto &rec: v.ctx.db.peers.recs) {
+      Peer peer(v.ctx, rec);
       gtk_list_store_append(v.peers, &iter);
       gtk_list_store_set(v.peers, &iter,
 			 COL_PEER_PTR, &rec,
-			 COL_PEER_NAME, db::get(rec, v.ctx.db.peer_name)->c_str(),
+			 COL_PEER_ID, to_str(peer.id).c_str(),
+			 COL_PEER_NAME, peer.name.c_str(),
 			 -1);
     }
   }
@@ -147,7 +150,7 @@ namespace gui {
   
   PostSearch::PostSearch(Ctx &ctx):
     View(ctx, "Post Search"),
-    peers(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
+    peers(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
     posts(gtk_list_store_new(4,
 			     G_TYPE_POINTER,
 			     G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING)),
@@ -156,7 +159,7 @@ namespace gui {
     body(gtk_entry_new()),
     min_time(gtk_entry_new()),
     max_time(gtk_entry_new()),
-    peer(gtk_combo_box_new_with_model(GTK_TREE_MODEL(peers))),
+    peer(new_combo_box(GTK_TREE_MODEL(peers))),
     find(gtk_button_new_with_mnemonic("_Find Posts")),
     list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(posts))),
     close(gtk_button_new_with_mnemonic("_Close Search")) {
@@ -201,12 +204,6 @@ namespace gui {
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_grid_attach(GTK_GRID(post_box), lbl, 3, 0, 1, 1);
 
-    auto rend(gtk_cell_renderer_text_new());
-    gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(peer), rend, true);
-    gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(peer),
-				   rend,
-                                   "text", COL_PEER_NAME,
-				   nullptr);
     gtk_widget_set_hexpand(peer, true);
     gtk_grid_attach(GTK_GRID(post_box), peer, 3, 1, 1, 1);
     

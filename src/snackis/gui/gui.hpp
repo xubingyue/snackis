@@ -48,6 +48,7 @@ namespace gui {
     return get_sel_rec<RecT>(w, *iter);
   }
 
+  GtkWidget *new_combo_box(GtkTreeModel *mod);
   GtkWidget *new_text_view();
 }}
 

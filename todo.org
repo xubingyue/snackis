@@ -1,6 +1,5 @@
 * add todo tasks to queue
 ** add optional queue combo to task view
-*** extract gui::new_combo_box()
 ** add QueueTask && queue_tasks
 * sort task view projects by name
 * add ProjectView peers

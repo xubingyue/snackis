@@ -39,14 +39,6 @@ namespace gui {
       }
     }
     
-    auto col(gtk_cell_renderer_text_new());
-    gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(v.project_fld), col, true);
-    gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(v.project_fld),
-				   col,
-                                   "text", COL_PROJECT_NAME,
-				   nullptr);
-    
-    gtk_combo_box_set_id_column(GTK_COMBO_BOX(v.project_fld), COL_PROJECT_ID);
     if (!gtk_combo_box_set_active_id(GTK_COMBO_BOX(v.project_fld),
 				     to_str(v.rec.project_id).c_str())) {
       gtk_combo_box_set_active(GTK_COMBO_BOX(v.project_fld), 0);
@@ -57,7 +49,7 @@ namespace gui {
     RecView("Task", task),
     project_store(gtk_list_store_new(3, G_TYPE_POINTER,
 				     G_TYPE_STRING, G_TYPE_STRING)),
-    project_fld(gtk_combo_box_new_with_model(GTK_TREE_MODEL(project_store))),
+    project_fld(new_combo_box(GTK_TREE_MODEL(project_store))),
     edit_project_btn(gtk_button_new_with_mnemonic("_Edit Project")),
     name_fld(gtk_entry_new()),
     info_fld(new_text_view()) {

@@ -6,7 +6,7 @@
 
 namespace snackis {
 namespace gui {
-  enum PeerCol {COL_PEER_PTR=0, COL_PEER_NAME};
+  enum PeerCol {COL_PEER_PTR=0, COL_PEER_ID, COL_PEER_NAME};
   enum FeedCol {COL_FEED_PTR=0, COL_FEED_NAME};
 
   static void on_find(gpointer *_, FeedSearch *v) {
@@ -65,14 +65,17 @@ namespace gui {
     gtk_list_store_append(v.peers, &iter);
     gtk_list_store_set(v.peers, &iter,
 		       COL_PEER_PTR, nullptr,
+		       COL_PEER_ID, "",
 		       COL_PEER_NAME, "",
 		       -1);
 
     for (auto &rec: v.ctx.db.peers.recs) {
+      Peer peer(v.ctx, rec);
       gtk_list_store_append(v.peers, &iter);
       gtk_list_store_set(v.peers, &iter,
 			 COL_PEER_PTR, &rec,
-			 COL_PEER_NAME, db::get(rec, v.ctx.db.peer_name)->c_str(),
+			 COL_PEER_ID, to_str(peer.id).c_str(),
+			 COL_PEER_NAME, peer.name.c_str(),
 			 -1);
     }
   }
@@ -90,10 +93,10 @@ namespace gui {
   
   FeedSearch::FeedSearch(Ctx &ctx):
     View(ctx, "Feed Search"),
-    peers(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
+    peers(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
     feeds(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
     name(gtk_entry_new()),
-    peer(gtk_combo_box_new_with_model(GTK_TREE_MODEL(peers))),
+    peer(new_combo_box(GTK_TREE_MODEL(peers))),
     active(gtk_check_button_new_with_label("Active")),
     find(gtk_button_new_with_mnemonic("_Find Feeds")),
     list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(feeds))),
@@ -117,13 +120,6 @@ namespace gui {
     lbl = gtk_label_new("Peer");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_container_add(GTK_CONTAINER(frm), lbl);
-
-    auto rend(gtk_cell_renderer_text_new());
-    gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(peer), rend, true);
-    gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(peer),
-				   rend,
-                                   "text", COL_PEER_NAME,
-				   nullptr);
     gtk_widget_set_hexpand(peer, true);
     gtk_container_add(GTK_CONTAINER(frm), peer);
     

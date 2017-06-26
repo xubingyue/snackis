@@ -6,7 +6,7 @@
 
 namespace snackis {
 namespace gui {
-  enum PeerCol {COL_PEER_PTR=0, COL_PEER_NAME};
+  enum PeerCol {COL_PEER_PTR=0, COL_PEER_ID, COL_PEER_NAME};
   enum PostCol {COL_POST_PTR=0, COL_POST_BY, COL_POST_BODY};
   
   static void on_peer_sel(gpointer *_, FeedView *v) {
@@ -20,17 +20,20 @@ namespace gui {
   static void on_add_peer(gpointer *_, FeedView *v) {
     Ctx &ctx(v->ctx);
     auto rec(get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer_fld)));
-
+    CHECK(rec ? true : false, _);
+    Peer peer(ctx, *rec);
+    
     GtkTreeIter iter;    
     gtk_list_store_append(v->feed_peer_store, &iter);
     gtk_list_store_set(v->feed_peer_store, &iter,
 		       COL_PEER_PTR, rec,
-		       COL_PEER_NAME, db::get(*rec, ctx.db.peer_name)->c_str(),
+		       COL_PEER_ID, to_str(peer.id).c_str(),
+		       COL_PEER_NAME, peer.name.c_str(),
 		       -1);
     auto sel(gtk_tree_view_get_selection(GTK_TREE_VIEW(v->peer_lst)));
     gtk_tree_selection_select_iter(sel, &iter);
   
-    v->rec.peer_ids.insert(*db::get(*rec, ctx.db.peer_id));
+    v->rec.peer_ids.insert(peer.id);
     gtk_widget_set_sensitive(v->add_peer_btn, false);
     gtk_widget_grab_focus(v->peer_fld);
   }
@@ -45,6 +48,7 @@ namespace gui {
     if (iter) {
       auto it(*iter);
       auto rec(get_sel_rec<Peer>(GTK_TREE_VIEW(v->peer_lst), it));
+      CHECK(rec ? true : false, _);
       v->rec.peer_ids.erase(*db::get(*rec, ctx.db.peer_id));
       gtk_list_store_remove(v->feed_peer_store, &it);
     }
@@ -100,12 +104,6 @@ namespace gui {
     GtkWidget *peer_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
     gtk_container_add(GTK_CONTAINER(v.fields), peer_box);
 
-    rend = gtk_cell_renderer_text_new();
-    gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(v.peer_fld), rend, true);
-    gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(v.peer_fld),
-				   rend,
-                                   "text", COL_PEER_NAME,
-				   nullptr);
     gtk_widget_set_hexpand(v.peer_fld, true);
     g_signal_connect(v.peer_fld, "changed", G_CALLBACK(on_peer_sel), &v);
     gtk_combo_box_set_active(GTK_COMBO_BOX(v.peer_fld), 0);
@@ -172,7 +170,7 @@ namespace gui {
   
   FeedView::FeedView(const Feed &feed):
     RecView("Feed", feed),
-    peer_store(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
+    peer_store(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
     feed_peer_store(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
     post_store(gtk_list_store_new(3,
 				  G_TYPE_POINTER,
@@ -181,7 +179,7 @@ namespace gui {
     active_fld(gtk_check_button_new_with_label("Active")),
     info_fld(new_text_view()),
     peer_lst(gtk_tree_view_new_with_model(GTK_TREE_MODEL(feed_peer_store))),
-    peer_fld(gtk_combo_box_new_with_model(GTK_TREE_MODEL(peer_store))),
+    peer_fld(new_combo_box(GTK_TREE_MODEL(peer_store))),
     add_peer_btn(gtk_button_new_with_mnemonic("_Add Peer")),
     post_lst(gtk_tree_view_new_with_model(GTK_TREE_MODEL(post_store))),
     post_fld(new_text_view()) {
