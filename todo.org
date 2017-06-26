@@ -1,6 +1,5 @@
-* rename trans_mutex to mutex
-** replace fetch_mutex/send_mutex with mutex
-* ---
+* debug invites
+** bad variant access
 * add TaskView
 ** copy post view
 ** sort projects by name

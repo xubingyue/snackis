@@ -12,14 +12,19 @@ namespace snackis {
     }
 
     while (!ctx->is_closing) {
-      std::unique_lock<std::recursive_mutex> lock(ctx->mutex);      
-      auto poll(*get_val(ctx->settings.imap_poll));
-      std::unique_lock<std::mutex> fetch_lock(ctx->loop_mutex);
+      int64_t poll(0);
+      
+      {
+	std::unique_lock<std::recursive_mutex> lock(ctx->mutex);
+	poll = *get_val(ctx->settings.imap_poll);
+      }
+
+      std::unique_lock<std::mutex> lock(ctx->loop_mutex);
       
       if (poll) {
-	ctx->fetch_cond.wait_for(fetch_lock, std::chrono::seconds(poll));
+	ctx->fetch_cond.wait_for(lock, std::chrono::seconds(poll));
       } else {
-	ctx->fetch_cond.wait(fetch_lock);
+	ctx->fetch_cond.wait(lock);
       }
 
       if (!ctx->is_closing) {
@@ -40,10 +45,15 @@ namespace snackis {
     }
 
     while (!ctx->is_closing) {
-      std::unique_lock<std::recursive_mutex> lock(ctx->mutex);      
-      auto poll(*get_val(ctx->settings.smtp_poll));
-      std::unique_lock<std::mutex> send_lock(ctx->loop_mutex);
+      int64_t poll(0);
       
+      {
+	std::unique_lock<std::recursive_mutex> lock(ctx->mutex);
+	poll = *get_val(ctx->settings.smtp_poll);
+      }
+      
+      std::unique_lock<std::mutex> send_lock(ctx->loop_mutex);
+
       if (poll) {
 	ctx->send_cond.wait_for(send_lock, std::chrono::seconds(poll));	
       } else {
@@ -51,12 +61,12 @@ namespace snackis {
       }
 
       if (!ctx->is_closing && !ctx->db.outbox.recs.empty()) {
-	try {
+	//try {
 	  Smtp smtp(*ctx);
 	  send(smtp);
-	} catch (const std::exception &e) {
-	  log(*ctx, fmt("Failed sending email: %0", e.what()));
-	}
+	  //} catch (const std::exception &e) {
+	  //log(*ctx, fmt("Failed sending email: %0", e.what()));
+	  //}
       }
     }
   }

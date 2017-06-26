@@ -5,15 +5,15 @@
 #include <vector>
 
 #include "snackis/peer.hpp"
-#include "snackis/gui/view.hpp"
+#include "snackis/gui/rec_view.hpp"
 
 namespace snackis {
 namespace gui {
-  struct PeerView: View {
-    Peer peer;
+  struct PeerView: RecView<Peer> {
     GtkWidget *name, *email, *save, *cancel;
     
     PeerView(const Peer &peer);
+    void on_save() override;
   };
 }}
 
