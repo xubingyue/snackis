@@ -81,7 +81,7 @@ namespace gui {
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_widget_set_margin_top(lbl, 5);
     gtk_container_add(GTK_CONTAINER(fields), lbl);
-    gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(name_fld));
+    gtk_container_add(GTK_CONTAINER(fields), name_fld);
     set_str(GTK_ENTRY(name_fld), task.name);
 
     lbl = gtk_label_new("Info");

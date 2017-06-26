@@ -15,9 +15,10 @@ namespace snackis {
   Project::Project(const Msg &msg):
     Rec(msg.ctx),
     //id(msg.project_id),
-    owner_id(msg.from_id)
+    owner_id(msg.from_id),
     //name(msg.project_name),
-    //info(msg.project_info)
+    //info(msg.project_info),
+    active(true)
   { }
 
   opt<Project> find_project_id(Ctx &ctx, UId id) {

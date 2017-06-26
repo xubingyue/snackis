@@ -87,7 +87,8 @@ namespace snackis {
     project_peer_ids("peer_ids", uid_set_type, &Project::peer_ids),
     
     projects(ctx, "projects", {&project_id},
-	     {&project_owner_id, &project_name, &project_info, &project_peer_ids}),
+	     {&project_owner_id, &project_name, &project_info, &project_active,
+		 &project_peer_ids}),
 
     task_id(        "id",         uid_type,     &Task::id),
     task_project_id("project_id", uid_type,     &Task::project_id),

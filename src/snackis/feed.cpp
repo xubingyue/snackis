@@ -11,7 +11,11 @@ namespace snackis {
   }
 
   Feed::Feed(const Msg &msg):
-    Rec(msg.ctx), id(msg.feed_id), owner_id(msg.from_id), info(msg.feed_info) {
+    Rec(msg.ctx),
+    id(msg.feed_id),
+    owner_id(msg.from_id),
+    info(msg.feed_info),
+    active(true) {
     db::Rec<Feed> rec;
     set(rec, ctx.db.feed_id, id);
     bool exists = load(ctx.db.feeds, rec) ? true : false;

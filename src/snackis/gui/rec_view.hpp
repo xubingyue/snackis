@@ -44,6 +44,7 @@ namespace gui {
     gtk_box_pack_start(GTK_BOX(panel), fields, true, true, 0);
     
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    gtk_widget_set_margin_top(btns, 10);
     gtk_widget_set_halign(btns, GTK_ALIGN_END);
     gtk_widget_set_valign(btns, GTK_ALIGN_END);
     gtk_container_add(GTK_CONTAINER(panel), btns);
