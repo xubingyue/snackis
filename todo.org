@@ -1,4 +1,3 @@
-* add task.queue_ids
 * add task search queue combo
 ** switch iterators to queue_tasks if selected
 ** use task.queue_ids to check
@@ -14,7 +13,10 @@
 * add gui::QueueView
 ** add queue command
 * add gui::ProjectSearch
+** extract SearchView
 * add gui::PeerSearch
+* add id field to search views
+** use find_ci to match ids
 * add help command
 ** add Cmd struct
 *** rename Cmd to Fn
