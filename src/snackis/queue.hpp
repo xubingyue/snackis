@@ -3,15 +3,15 @@
 
 #include <set>
 
-#include "snackis/rec.hpp"
+#include "snackis/id_rec.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/core/uid.hpp"
 
 namespace snackis {
   struct Task;
   
-  struct Queue: Rec {
-    UId id, owner_id;
+  struct Queue: IdRec {
+    UId owner_id;
     str name, info;
     std::set<UId> task_ids;
     

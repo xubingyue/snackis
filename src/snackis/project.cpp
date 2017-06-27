@@ -5,15 +5,15 @@
 
 namespace snackis {
   Project::Project(Ctx &ctx):
-    Rec(ctx), id(true), owner_id(whoami(ctx).id), active(true)
+    IdRec(ctx), owner_id(whoami(ctx).id), active(true)
   { }
 
-  Project::Project(Ctx &ctx, const db::Rec<Project> &rec): Rec(ctx) {
+  Project::Project(Ctx &ctx, const db::Rec<Project> &rec): IdRec(ctx, null_uid) {
     copy(*this, rec);
   }
 
   Project::Project(const Msg &msg):
-    Rec(msg.ctx),
+    IdRec(msg.ctx, null_uid),
     //id(msg.project_id),
     owner_id(msg.from_id),
     //name(msg.project_name),

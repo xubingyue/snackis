@@ -3,14 +3,14 @@
 
 #include <set>
 
-#include "snackis/rec.hpp"
+#include "snackis/id_rec.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/core/time.hpp"
 #include "snackis/core/uid.hpp"
 
 namespace snackis {
-  struct Task: Rec {
-    UId id, project_id, owner_id;
+  struct Task: IdRec {
+    UId project_id, owner_id;
     Time created_at;
     str name, info;
     bool done;

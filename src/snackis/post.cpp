@@ -4,16 +4,15 @@
 #include "snackis/post.hpp"
 
 namespace snackis {
-  Post::Post(Ctx &ctx): Rec(ctx), id(true), at(now()), by_id(whoami(ctx).id)
+  Post::Post(Ctx &ctx): IdRec(ctx), at(now()), by_id(whoami(ctx).id)
   { }
 
-  Post::Post(Ctx &ctx, const db::Rec<Post> &rec): Rec(ctx) {
+  Post::Post(Ctx &ctx, const db::Rec<Post> &rec): IdRec(ctx, null_uid) {
     copy(*this, rec);
   }
 
   Post::Post(const Msg &msg):
-    Rec(msg.ctx),
-    id(msg.post_id),
+    IdRec(msg.ctx, msg.post_id),
     feed_id(msg.feed_id), 
     at(msg.post_at), 
     by_id(msg.from_id),

@@ -46,6 +46,7 @@ namespace gui {
     text_view(gtk_text_view_new()), scroll_view(gtk_scrolled_window_new(NULL, NULL)) {
     add_style(text_view, "console");
     gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), false);
+    gtk_text_view_set_monospace(GTK_TEXT_VIEW(text_view), true);
     gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_CHAR);
     gtk_scrolled_window_set_overlay_scrolling(GTK_SCROLLED_WINDOW(scroll_view),
 					      false);

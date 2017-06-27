@@ -4,15 +4,15 @@
 #include "snackis/queue.hpp"
 
 namespace snackis {
-  Queue::Queue(Ctx &ctx): Rec(ctx), id(true), owner_id(whoami(ctx).id)
+  Queue::Queue(Ctx &ctx): IdRec(ctx), owner_id(whoami(ctx).id)
   { }
 
-  Queue::Queue(Ctx &ctx, const db::Rec<Queue> &rec): Rec(ctx) {
+  Queue::Queue(Ctx &ctx, const db::Rec<Queue> &rec): IdRec(ctx, null_uid) {
     copy(*this, rec);
   }
 
   Queue::Queue(const Msg &msg):
-    Rec(msg.ctx),
+    IdRec(msg.ctx, null_uid),
     //id(msg.queue_id),
     owner_id(msg.from_id)
     //name(msg.queue_name),

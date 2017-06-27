@@ -1,7 +1,7 @@
 #ifndef SNACKIS_PEER_HPP
 #define SNACKIS_PEER_HPP
 
-#include "snackis/rec.hpp"
+#include "snackis/id_rec.hpp"
 #include "snackis/core/path.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/core/time.hpp"
@@ -10,8 +10,7 @@
 #include "snackis/db/rec.hpp"
 
 namespace snackis {
-  struct Peer: Rec {
-    UId id;
+  struct Peer: IdRec {
     str name, email;
     crypt::PubKey crypt_key;
     

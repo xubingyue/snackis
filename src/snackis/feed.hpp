@@ -11,8 +11,8 @@ namespace snackis {
   struct Msg;
   struct Post;
   
-  struct Feed: Rec {   
-    UId id, owner_id;
+  struct Feed: IdRec {   
+    UId owner_id;
     Time created_at;
     str name, info;
     bool active, visible;

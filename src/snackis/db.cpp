@@ -148,7 +148,7 @@ namespace snackis {
     projects.on_insert.push_back([&](auto rec) {
 	Project prj(ctx, rec);
 	Feed feed(ctx, prj.id);
-	feed.name = fmt("Project %0", to_str(prj.id).substr(0, 8));
+	feed.name = fmt("Project %0", id_str(prj));
 	feed.peer_ids = prj.peer_ids;
 	feed.visible = false;
 	db::upsert(ctx.db.feeds, feed);
@@ -160,11 +160,6 @@ namespace snackis {
 
 	bool feed_dirty(false);
 
-	if (curr.active != prev.active) {
-	  feed.active = curr.active;
-	  feed_dirty = true;
-	}
-	
 	if (curr.peer_ids != prev.peer_ids) {
 	  feed.peer_ids = curr.peer_ids;
 	  feed_dirty = true;
@@ -176,7 +171,7 @@ namespace snackis {
     tasks.on_insert.push_back([&](auto rec) {
 	Task tsk(ctx, rec);
 	Feed feed(ctx, tsk.id);
-	feed.name = fmt("Task %0", to_str(tsk.id).substr(0, 8));
+	feed.name = fmt("Task %0", id_str(tsk));
 	feed.peer_ids = tsk.peer_ids;
 	feed.visible = false;
 	db::upsert(ctx.db.feeds, feed);
@@ -187,11 +182,6 @@ namespace snackis {
 	Feed feed(get_feed_id(ctx, curr.id));	
 	bool feed_dirty(false);
 
-	if (curr.done != prev.done) {
-	  feed.active = !curr.done;
-	  feed_dirty = true;
-	}
-	
 	if (curr.peer_ids != prev.peer_ids) {		    
 	  feed.peer_ids = curr.peer_ids;
 	  feed_dirty = true;

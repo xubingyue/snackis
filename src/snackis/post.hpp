@@ -1,7 +1,7 @@
 #ifndef SNACKIS_POST_HPP
 #define SNACKIS_POST_HPP
 
-#include "snackis/rec.hpp"
+#include "snackis/id_rec.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/core/time.hpp"
 #include "snackis/core/uid.hpp"
@@ -10,8 +10,8 @@ namespace snackis {
   struct Peer;
   struct Feed;
   
-  struct Post: Rec {
-    UId id, feed_id;
+  struct Post: IdRec {
+    UId feed_id;
     Time at;
     UId by_id;
     str body;

@@ -3,13 +3,12 @@
 
 #include <set>
 
-#include "snackis/rec.hpp"
+#include "snackis/id_rec.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/core/uid.hpp"
 
 namespace snackis {
-  struct Project: Rec {
-    UId id;
+  struct Project: IdRec {
     UId owner_id;
     str name;
     str info;

@@ -6,19 +6,18 @@
 
 namespace snackis {
   Task::Task(Ctx &ctx):
-    Rec(ctx),
-    id(true),
+    IdRec(ctx),
     owner_id(whoami(ctx).id),
     created_at(now()),
     done(false)
   { }
 
-  Task::Task(Ctx &ctx, const db::Rec<Task> &rec): Rec(ctx) {
+  Task::Task(Ctx &ctx, const db::Rec<Task> &rec): IdRec(ctx, false) {
     copy(*this, rec);
   }
 
   Task::Task(const Msg &msg):
-    Rec(msg.ctx),
+    IdRec(msg.ctx, null_uid),
     //id(msg.task_id),
     owner_id(msg.from_id),
     created_at(now())

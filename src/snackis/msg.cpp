@@ -7,7 +7,7 @@ namespace snackis {
   Msg::INVITE("invite"), Msg::ACCEPT("accept"), Msg::REJECT("reject"),
     Msg::POST("post");
 
-  Msg::Msg(Ctx &ctx, const str &type): Rec(ctx), id(true), type(type) {
+  Msg::Msg(Ctx &ctx, const str &type): IdRec(ctx), type(type) {
     Peer &me(whoami(ctx));
     from = me.email;
     
@@ -18,7 +18,7 @@ namespace snackis {
     }
   }
 
-  Msg::Msg(Ctx &ctx, const db::Rec<Msg> &src): Rec(ctx) {
+  Msg::Msg(Ctx &ctx, const db::Rec<Msg> &src): IdRec(ctx, null_uid) {
     copy(*this, src);
   }
 

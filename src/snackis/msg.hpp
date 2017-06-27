@@ -1,17 +1,16 @@
 #ifndef SNACKIS_MSG_HPP
 #define SNACKIS_MSG_HPP
 
-#include "snackis/rec.hpp"
+#include "snackis/id_rec.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/core/time.hpp"
 #include "snackis/core/uid.hpp"
 #include "snackis/crypt/pub_key.hpp"
 
 namespace snackis {
-  struct Msg: Rec {
+  struct Msg: IdRec {
     static const str INVITE, ACCEPT, REJECT, POST;
     
-    UId id;
     str type;
     Time fetched_at;
     str from, to;
