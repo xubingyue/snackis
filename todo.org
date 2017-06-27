@@ -16,7 +16,7 @@
 ** send to all task peers and all queue peers when task is saved
 ** copy send(post) to task
 ** use queue_ids
-** include project info
+** include project info, done
 * add TaskView queues
 * add ProjectView peers
 ** add tabs, separate Peers page
