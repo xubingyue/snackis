@@ -1,10 +1,9 @@
+* hide feed name in post search if feed is selected
+* hide peer if peer is selected
 * extract gui::add_column
-* add 'Find Posts' button to feed view
-** copy buttons to project view
-*** add 'New _Task' btn
-*** add '_Find Tasks' btn
-** copy buttons to task view
-*** add '_Copy Task' btn
+* copy feed view-buttons to project view
+** add 'New _Task' btn
+* copy feed view-buttons to task view
 * add task search project combo
 ** copy post search feed
 * add task.queue_ids
@@ -13,8 +12,8 @@
 ** switch iterators to queue_tasks if selected
 ** use task.queue_ids to check
 * send task messages
-** send to all task peers and all queue peers when task is saved
-** copy send(post) to task
+** send to union(task peers, queue peers) on task save
+** copy send(post)
 ** use queue_ids
 ** include project info, done
 * add TaskView queues

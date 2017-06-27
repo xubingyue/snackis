@@ -263,4 +263,15 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(btns), close);
     focused = feed_fld;
   }
+
+  bool sel_feed(PostSearch &v, opt<Feed> feed) {
+    if (!feed) {
+      gtk_combo_box_set_active(GTK_COMBO_BOX(v.feed_fld), 0);
+      return true;
+    }
+    
+    return gtk_combo_box_set_active_id(GTK_COMBO_BOX(v.feed_fld),
+				       to_str(feed->id).c_str());
+      
+  }
 }}

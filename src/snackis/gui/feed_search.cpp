@@ -28,7 +28,8 @@ namespace gui {
 
       if (peer_sel) {
 	auto peer_id(*db::get(*peer_sel, ctx.db.peer_id));
-	if (feed.peer_ids.find(peer_id) == feed.peer_ids.end()) { continue; }
+	if (feed.owner_id != peer_id &&
+	    feed.peer_ids.find(peer_id) == feed.peer_ids.end()) { continue; }
       }      
 
       if (!name_sel.empty() && find_ci(feed.name, name_sel) == str::npos) {

@@ -17,6 +17,8 @@ namespace gui {
     opt<Feed> feed;
     PostSearch(Ctx &ctx);
   };
+
+  bool sel_feed(PostSearch &v, opt<Feed> feed);
 }}
 
 #endif

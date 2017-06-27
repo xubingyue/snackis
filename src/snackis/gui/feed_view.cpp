@@ -2,6 +2,7 @@
 #include "snackis/ctx.hpp"
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/feed_view.hpp"
+#include "snackis/gui/post_search.hpp"
 #include "snackis/gui/post_view.hpp"
 
 namespace snackis {
@@ -117,6 +118,12 @@ namespace gui {
     load_peers(v);
   }
 
+  static void on_find_posts(gpointer *_, FeedView *v) {
+    PostSearch *ps = new PostSearch(v->ctx);
+    sel_feed(*ps, v->rec);
+    push_view(*ps);
+  }
+
   static void on_post(gpointer *_, FeedView *v) {
     Post post(v->ctx);
     post.feed_id = v->rec.id;
@@ -128,6 +135,7 @@ namespace gui {
     RecView("Feed", feed),
     peer_store(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
     feed_peer_store(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
+    find_posts_btn(gtk_button_new_with_mnemonic("_Find Posts")),
     post_btn(gtk_button_new_with_mnemonic("New _Post")),
     name_fld(gtk_entry_new()),
     active_fld(gtk_check_button_new_with_label("Active")),
@@ -141,6 +149,8 @@ namespace gui {
     gtk_widget_set_margin_bottom(btns, 5);
     gtk_widget_set_valign(btns, GTK_ALIGN_END);
     gtk_container_add(GTK_CONTAINER(fields), btns);
+    g_signal_connect(find_posts_btn, "clicked", G_CALLBACK(on_find_posts), this);
+    gtk_container_add(GTK_CONTAINER(btns), find_posts_btn);
     g_signal_connect(post_btn, "clicked", G_CALLBACK(on_post), this);
     gtk_container_add(GTK_CONTAINER(btns), post_btn);
 

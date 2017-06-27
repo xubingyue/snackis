@@ -29,7 +29,8 @@ namespace gui {
 
       if (peer_sel) {
 	auto peer_id(*db::get(*peer_sel, ctx.db.peer_id));
-	if (task.peer_ids.find(peer_id) == task.peer_ids.end()) { continue; }
+	if (task.owner_id != peer_id &&
+	    task.peer_ids.find(peer_id) == task.peer_ids.end()) { continue; }
       }      
 
       if (!text_sel.empty() &&
