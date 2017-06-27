@@ -1,11 +1,12 @@
 * add task search queue combo
 ** switch iterators to queue_tasks if selected
 ** use task.queue_ids to check
+* open task search for todo queue if no args
 * send task messages
 ** send to task peers on task save
 ** copy send(post)
 ** use queue_ids
-** include project info, done
+** include project active, info, & task done
 * add ProjectView peers
 ** extract gui::Peers struct
 * add TaskView peers

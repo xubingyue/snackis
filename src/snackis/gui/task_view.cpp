@@ -70,6 +70,12 @@ namespace gui {
   }
 
   static void on_post(gpointer *_, TaskView *v) {
+    {
+      db::Trans trans(v->ctx);
+      v->save();
+      db::commit(trans);
+    }
+
     Post post(v->ctx);
     post.feed_id = v->rec.id;
     PostView *pv = new PostView(post);
