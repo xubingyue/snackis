@@ -5,15 +5,16 @@
 #include <set>
 #include <vector>
 
+#include "snackis/feed.hpp"
 #include "snackis/gui/view.hpp"
 
 namespace snackis {
 namespace gui {
   struct PostSearch: View {
-    GtkListStore *peers, *posts;
-    GtkWidget *feed_name, *active, *body, *min_time, *max_time, *peer, *find, *list,
+    GtkListStore *feed_store, *peers, *posts;
+    GtkWidget *feed_fld, *body, *min_time, *max_time, *peer, *find, *list,
       *close;
-    
+    opt<Feed> feed;
     PostSearch(Ctx &ctx);
   };
 }}

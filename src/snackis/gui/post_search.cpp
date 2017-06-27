@@ -6,6 +6,7 @@
 
 namespace snackis {
 namespace gui {
+  enum FeedCol {COL_FEED_PTR=0, COL_FEED_ID, COL_FEED_NAME};
   enum PeerCol {COL_PEER_PTR=0, COL_PEER_ID, COL_PEER_NAME};
   enum PostCol {COL_PTR=0, COL_BY, COL_FEED, COL_BODY};
 
@@ -14,7 +15,7 @@ namespace gui {
     gtk_list_store_clear(v->posts);
     size_t cnt(0);
     
-    str feed_name_sel(trim(gtk_entry_get_text(GTK_ENTRY(v->feed_name))));
+    auto feed_sel(get_sel_rec<Feed>(GTK_COMBO_BOX(v->feed_fld)));
     str body_sel(trim(gtk_entry_get_text(GTK_ENTRY(v->body))));
     auto peer_sel(get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer)));
     str min_time(trim(gtk_entry_get_text(GTK_ENTRY(v->min_time))));
@@ -35,8 +36,6 @@ namespace gui {
       return;
     }
     
-    bool active_sel(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->active)));
-    
     for (auto key = ctx.db.posts_sort.recs.begin();
 	 key != ctx.db.posts_sort.recs.end();
 	 key++) {
@@ -44,14 +43,12 @@ namespace gui {
       Post post(ctx, rec);
       Feed feed(get_feed_id(ctx, post.feed_id));
       
-      if (feed.active != active_sel) { continue; }
-
       if (peer_sel) {
 	auto peer_id(*db::get(*peer_sel, ctx.db.peer_id));
 	if (post.by_id != peer_id) { continue; }
       }      
 
-      if (!feed_name_sel.empty() && find_ci(feed.name, feed_name_sel) == str::npos) {
+      if (feed_sel && feed.id != *db::get(*feed_sel, ctx.db.feed_id)) {
 	continue;
       }
 
@@ -82,7 +79,7 @@ namespace gui {
       cnt++;
     }
 
-    gtk_widget_grab_focus(cnt ? v->list : v->feed_name);
+    gtk_widget_grab_focus(cnt ? v->list : v->feed_fld);
   }
 
   static void on_edit(GtkTreeView *treeview,
@@ -101,6 +98,41 @@ namespace gui {
     pop_view(*v);
   }
   
+  static void init_feeds(PostSearch &v) {
+    Ctx &ctx(v.ctx);
+    
+    GtkTreeIter iter;
+    gtk_list_store_append(v.feed_store, &iter);
+    gtk_list_store_set(v.feed_store, &iter,
+		       COL_FEED_PTR, nullptr,
+		       COL_FEED_ID, "",
+		       COL_FEED_NAME, "",
+		       -1);
+
+    for(auto key = ctx.db.feeds_sort.recs.begin();
+	key != ctx.db.feeds_sort.recs.end();
+	key++) {
+      auto &rec(db::get(ctx.db.feeds, *key));
+      Feed feed(ctx, rec);
+      
+      if (feed.active || (v.feed && v.feed->id == feed.id)) {
+	gtk_list_store_append(v.feed_store, &iter);
+	gtk_list_store_set(v.feed_store, &iter,
+			   COL_FEED_PTR, &rec,
+			   COL_FEED_ID, to_str(feed.id).c_str(),
+			   COL_FEED_NAME, feed.name.c_str(),
+			   -1);
+      }
+    }
+
+    if (v.feed) {
+      gtk_combo_box_set_active_id(GTK_COMBO_BOX(v.feed_fld),
+				  to_str(v.feed->id).c_str());
+    } else {
+      gtk_combo_box_set_active(GTK_COMBO_BOX(v.feed_fld), 0);
+    }
+  }
+
   static void init_peers(PostSearch &v) {
     GtkTreeIter iter;
     gtk_list_store_append(v.peers, &iter);
@@ -153,12 +185,12 @@ namespace gui {
   
   PostSearch::PostSearch(Ctx &ctx):
     View(ctx, "Post Search"),
+    feed_store(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
     peers(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
     posts(gtk_list_store_new(4,
 			     G_TYPE_POINTER,
 			     G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING)),
-    feed_name(gtk_entry_new()),
-    active(gtk_check_button_new_with_label("Active")),
+    feed_fld(new_combo_box(GTK_TREE_MODEL(feed_store))),
     body(gtk_entry_new()),
     min_time(gtk_entry_new()),
     max_time(gtk_entry_new()),
@@ -171,15 +203,12 @@ namespace gui {
     GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
     gtk_box_pack_start(GTK_BOX(panel), frm, false, false, 0);
 
-    lbl = gtk_label_new("Feed Name");
+    init_feeds(*this);
+    lbl = gtk_label_new("Feed");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_container_add(GTK_CONTAINER(frm), lbl);
-    GtkWidget *feed_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
-    gtk_container_add(GTK_CONTAINER(frm), feed_box);
-    gtk_widget_set_hexpand(feed_name, true);
-    gtk_container_add(GTK_CONTAINER(feed_box), feed_name);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active), true);
-    gtk_container_add(GTK_CONTAINER(feed_box), active);
+    gtk_widget_set_hexpand(feed_fld, true);
+    gtk_container_add(GTK_CONTAINER(frm), feed_fld);
 
     lbl = gtk_label_new("Body");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
@@ -232,6 +261,6 @@ namespace gui {
         
     g_signal_connect(close, "clicked", G_CALLBACK(on_close), this);
     gtk_container_add(GTK_CONTAINER(btns), close);
-    focused = feed_name;
+    focused = feed_fld;
   }
 }}

@@ -49,9 +49,8 @@ namespace gui {
     push_view(*fv);
   }
   
-  void init_feeds(PostView &v) {
+  static void init_feeds(PostView &v) {
     Ctx &ctx(v.ctx);
-    size_t cnt(0);
 
     for(auto key = ctx.db.feeds_sort.recs.begin();
 	key != ctx.db.feeds_sort.recs.end();
@@ -67,7 +66,6 @@ namespace gui {
 			   COL_FEED_ID, to_str(feed.id).c_str(),
 			   COL_FEED_NAME, feed.name.c_str(),
 			   -1);
-	cnt++;
       }
     }
     
