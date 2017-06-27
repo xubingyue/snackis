@@ -114,6 +114,7 @@ namespace gui {
 							   rend,
 							   "text", COL_TASK_NAME,
 							   nullptr));
+    gtk_tree_view_column_set_expand(GTK_TREE_VIEW_COLUMN(name_col), true);
     gtk_tree_view_append_column(GTK_TREE_VIEW(v.lst), name_col);
     g_signal_connect(v.lst, "row-activated", G_CALLBACK(on_edit), &v);
   }
