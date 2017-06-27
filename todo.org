@@ -2,6 +2,9 @@
 ** switch iterators to queue_tasks if selected
 ** use task.queue_ids to check
 * open task search for todo queue if no args
+* add REJECT_FEED msg
+** send when rejecting feed
+** remove feed peer
 * send task messages
 ** send to task peers on task save
 ** copy send(post)
