@@ -145,49 +145,30 @@ namespace snackis {
     tasks.indexes.insert(&tasks_sort);
     queues.indexes.insert(&queues_sort);
 
-    projects.on_insert.push_back([&](auto rec) {
-	Project prj(ctx, rec);
-	Feed feed(ctx, prj.id);
-	feed.name = fmt("Project %0", id_str(prj));
-	feed.peer_ids = prj.peer_ids;
-	feed.visible = false;
-	db::upsert(ctx.db.feeds, feed);
-      });
-    
     projects.on_update.push_back([&](auto prev_rec, auto curr_rec) {
 	Project prev(ctx, prev_rec), curr(ctx, curr_rec);
-	Feed feed(get_feed_id(ctx, curr.id));
-
-	bool feed_dirty(false);
 
 	if (curr.peer_ids != prev.peer_ids) {
-	  feed.peer_ids = curr.peer_ids;
-	  feed_dirty = true;
+	  auto feed(find_feed_id(ctx, curr.id));
+
+	  if (feed) {
+	    feed->peer_ids = curr.peer_ids;
+	    db::update(feeds, *feed);
+	  }
 	}
-	
-	if (feed_dirty) { db::update(feeds, feed); }
       });
 
-    tasks.on_insert.push_back([&](auto rec) {
-	Task tsk(ctx, rec);
-	Feed feed(ctx, tsk.id);
-	feed.name = fmt("Task %0", id_str(tsk));
-	feed.peer_ids = tsk.peer_ids;
-	feed.visible = false;
-	db::upsert(ctx.db.feeds, feed);
-      });
-    
     tasks.on_update.push_back([&](auto prev_rec, auto curr_rec) {
 	Task prev(ctx, prev_rec), curr(ctx, curr_rec);
-	Feed feed(get_feed_id(ctx, curr.id));	
-	bool feed_dirty(false);
 
-	if (curr.peer_ids != prev.peer_ids) {		    
-	  feed.peer_ids = curr.peer_ids;
-	  feed_dirty = true;
+	if (curr.peer_ids != prev.peer_ids) {		    	
+	  auto feed(find_feed_id(ctx, curr.id));
+
+	  if (feed) {
+	    feed->peer_ids = curr.peer_ids;
+	    db::update(feeds, *feed);
+	  }
 	}
-
-	if (feed_dirty) { db::update(feeds, feed); }
       });
   }
 }

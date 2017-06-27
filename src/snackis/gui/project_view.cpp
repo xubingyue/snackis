@@ -2,6 +2,7 @@
 #include "snackis/ctx.hpp"
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/feed_view.hpp"
+#include "snackis/gui/post_search.hpp"
 #include "snackis/gui/post_view.hpp"
 #include "snackis/gui/project_view.hpp"
 #include "snackis/gui/task_search.hpp"
@@ -13,6 +14,7 @@ namespace gui {
     RecView<Project>("Project", rec),
     find_tasks_btn(gtk_button_new_with_mnemonic("_Find Tasks")),
     new_task_btn(gtk_button_new_with_mnemonic("New _Task")),
+    find_posts_btn(gtk_button_new_with_mnemonic("Find Posts")),
     post_btn(gtk_button_new_with_mnemonic("New _Post")),
     name_fld(gtk_entry_new()),
     active_fld(gtk_check_button_new_with_label("Active")),    
@@ -31,17 +33,22 @@ namespace gui {
     push_view(*tv);
   }
 
-  static void on_post(gpointer *_, ProjectView *v) {
-    {
-      db::Trans trans(v->ctx);
-      v->save();
-      db::commit(trans);
-    }
+  static void on_find_posts(gpointer *_, TaskView *v) {
+    PostSearch *ps = new PostSearch(v->ctx);
+    ps->feed.emplace(get_feed(v->rec));
+    push_view(*ps);
+  }
 
+  static void on_post(gpointer *_, ProjectView *v) {
+    db::Trans trans(v->ctx);
+    v->save();
+    
     Post post(v->ctx);
-    post.feed_id = v->rec.id;
+    post.feed_id = get_feed(v->rec).id;
     PostView *pv = new PostView(post);
     push_view(*pv);
+
+    db::commit(trans);
   }
   
   void ProjectView::init() {
@@ -54,6 +61,8 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(btns), find_tasks_btn);
     g_signal_connect(new_task_btn, "clicked", G_CALLBACK(on_new_task), this);
     gtk_container_add(GTK_CONTAINER(btns), new_task_btn);
+    g_signal_connect(find_posts_btn, "clicked", G_CALLBACK(on_find_posts), this);
+    gtk_container_add(GTK_CONTAINER(btns), find_posts_btn);
     g_signal_connect(post_btn, "clicked", G_CALLBACK(on_post), this);
     gtk_container_add(GTK_CONTAINER(btns), post_btn);
     

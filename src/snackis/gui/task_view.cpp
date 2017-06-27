@@ -65,21 +65,20 @@ namespace gui {
 
   static void on_find_posts(gpointer *_, TaskView *v) {
     PostSearch *ps = new PostSearch(v->ctx);
-    ps->feed.emplace(get_feed_id(v->ctx, v->rec.id));
+    ps->feed.emplace(get_feed(v->rec));
     push_view(*ps);
   }
 
   static void on_post(gpointer *_, TaskView *v) {
-    {
-      db::Trans trans(v->ctx);
-      v->save();
-      db::commit(trans);
-    }
+    db::Trans trans(v->ctx);
+    v->save();
 
     Post post(v->ctx);
-    post.feed_id = v->rec.id;
+    post.feed_id = get_feed(v->rec).id;
     PostView *pv = new PostView(post);
     push_view(*pv);
+
+    db::commit(trans);
   }
   
   void TaskView::init() {

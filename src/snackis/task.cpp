@@ -46,4 +46,20 @@ namespace snackis {
     tsk.project_id = prj.id;
     tsk.peer_ids = prj.peer_ids;
   }
+
+  Feed get_feed(const Task &tsk) {
+    Ctx &ctx(tsk.ctx);
+    db::Rec<Feed> rec;
+    db::set(rec, ctx.db.feed_id, tsk.id);
+    Feed feed(ctx, rec);
+
+    if (!db::load(ctx.db.feeds, feed)) {
+      feed.name = fmt("Task %0", id_str(tsk));
+      feed.visible = false;
+      feed.peer_ids = tsk.peer_ids;
+      db::insert(ctx.db.feeds, feed);
+    }
+    
+    return feed;
+  }
 }
