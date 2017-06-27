@@ -1,6 +1,12 @@
 * add task search queue combo
 ** switch iterators to queue_tasks if selected
 ** use task.queue_ids to check
+* add feed.hidden
+** default false
+** true for project & task feeds
+** exclude from feed search
+** exclude from post search
+** exclude from post view
 * send task messages
 ** send to union(task peers, queue peers) on task save
 ** copy send(post)

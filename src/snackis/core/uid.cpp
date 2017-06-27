@@ -24,6 +24,7 @@ namespace snackis {
   str to_str(const UId &in) {
     char cs[37];
     uuid_unparse_lower(in.val, cs);
+    cs[8] = 0;
     return cs;
   }
 
