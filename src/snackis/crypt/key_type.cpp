@@ -7,6 +7,8 @@ namespace crypt {
   KeyType::KeyType(): Type<Key>("crypt::Key")
   { }
 
+  bool KeyType::is_null(const Key &val) const { return val == null_key; }
+
   Key KeyType::from_val(const Val &in) const { return get<Key>(in); }
 
   Val KeyType::to_val(const Key &in) const { return in; }

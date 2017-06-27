@@ -5,6 +5,8 @@
 
 namespace snackis {
 namespace crypt {
+  const Key null_key;
+  
   Key::Key() {
     memset(data, 0, sizeof data);
   }
@@ -15,6 +17,10 @@ namespace crypt {
 
   Key::Key(std::istream &in) {
     in.read((char *)data, sizeof data);
+  }
+
+  bool operator ==(const Key &x, const Key &y) {
+    return x.data == y.data;
   }
   
   bool operator <(const Key &x, const Key &y) {

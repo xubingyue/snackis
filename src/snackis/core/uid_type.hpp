@@ -8,6 +8,7 @@
 namespace snackis {
   struct UIdType: Type<UId> {
     UIdType();
+    bool is_null(const UId &val) const override;
     UId from_val(const Val &in) const override;
     Val to_val(const UId &in) const override;
     UId read(std::istream &in) const override;

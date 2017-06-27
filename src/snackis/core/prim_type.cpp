@@ -2,5 +2,5 @@
 
 namespace snackis {
   BoolType bool_type("Bool");
-  Int64Type int64_type("Int64");
+  Int64Type int64_type("Int64", 0);
 }

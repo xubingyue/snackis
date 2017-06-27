@@ -5,6 +5,8 @@ namespace snackis {
 
   TimeType::TimeType(): Type<Time>("Time") { }
 
+  bool TimeType::is_null(const Time &val) const { return val == null_time; }
+
   Time TimeType::from_val(const Val &in) const { return get<Time>(in); }
 
   Val TimeType::to_val(const Time &in) const { return in; }

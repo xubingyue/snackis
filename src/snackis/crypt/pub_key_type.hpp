@@ -9,6 +9,7 @@ namespace snackis {
 namespace crypt {
   struct PubKeyType: Type<PubKey> {
     PubKeyType();
+    bool is_null(const PubKey &val) const override;
     PubKey from_val(const Val &in) const override;
     Val to_val(const PubKey &in) const override;
     PubKey read(std::istream &in) const override;

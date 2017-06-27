@@ -6,6 +6,7 @@
 namespace snackis {
   struct StrType: Type<str> {
     StrType();
+    bool is_null(const str &val) const override;
     str from_val(const Val &in) const override;
     Val to_val(const str &in) const override;
     str read(std::istream &in) const override;

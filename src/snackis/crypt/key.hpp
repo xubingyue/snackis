@@ -13,6 +13,9 @@ namespace crypt {
     Key(std::istream &in);
   };  
 
+  extern const Key null_key;
+
+  bool operator ==(const Key &x, const Key &y);
   bool operator <(const Key &x, const Key &y);
     
   Data encrypt(const Key &key, const PubKey &pub_key,

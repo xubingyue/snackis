@@ -11,6 +11,7 @@ namespace snackis {
     Type<ValT> &val_type;
     
     SetType(Type<ValT> &val_type);
+    bool is_null(const std::set<ValT> &val) const override;
     std::set<ValT> from_val(const Val &in) const override;
     Val to_val(const std::set<ValT> &in) const override;
     std::set<ValT> read(std::istream &in) const override;
@@ -24,6 +25,11 @@ namespace snackis {
   SetType<ValT>::SetType(Type<ValT> &val_type):
     Type<std::set<ValT>>(fmt("Set(%0)", val_type.name)), val_type(val_type)
   { }
+
+  template <typename ValT>
+  bool SetType<ValT>::is_null(const std::set<ValT> &val) const {
+    return val.empty();
+  }
 
   template <typename ValT>
   std::set<ValT> SetType<ValT>::from_val(const Val &in) const {

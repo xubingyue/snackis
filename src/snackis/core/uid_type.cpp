@@ -6,6 +6,8 @@ namespace snackis {
 
   UIdType::UIdType(): Type<UId>("UId") { }
 
+  bool UIdType::is_null(const UId &val) const { return val == null_uid; }
+
   UId UIdType::from_val(const Val &in) const { return get<UId>(in); }
 
   Val UIdType::to_val(const UId &in) const { return in; }

@@ -4,8 +4,10 @@ namespace snackis {
 namespace crypt {
   PubKeyType pub_key_type;
 
-  PubKeyType::PubKeyType(): Type<PubKey>("crypt::PubKey") {
-  }
+  PubKeyType::PubKeyType(): Type<PubKey>("crypt::PubKey")
+  { }
+
+  bool PubKeyType::is_null(const PubKey &val) const { return val == null_pub_key; }
 
   PubKey PubKeyType::from_val(const Val &in) const { return get<PubKey>(in); }
 

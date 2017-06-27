@@ -5,6 +5,8 @@ namespace snackis {
 
   StrType::StrType(): Type<str>("Str") { }
 
+  bool StrType::is_null(const str &val) const { return val.empty(); }
+
   str StrType::from_val(const Val &in) const { return get<str>(in); }
 
   Val StrType::to_val(const str &in) const { return in; }

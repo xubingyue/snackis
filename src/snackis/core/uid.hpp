@@ -11,6 +11,8 @@ namespace snackis {
 
     UId(bool init=false);
   };
+
+  extern const UId null_uid;
   
   bool operator==(const UId &x, const UId &y);
   bool operator!=(const UId &x, const UId &y);

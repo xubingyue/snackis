@@ -36,7 +36,8 @@ namespace db {
 
   template <typename RecT, typename ValT>
   void Col<RecT, ValT>::copy(Rec<RecT> &dest, const RecT &src) const {
-    dest[this] = type.to_val(src.*field);
+    auto &val(src.*field);
+    if (!type.is_null(val)) { dest[this] = type.to_val(val); }
   }
 
   template <typename RecT, typename ValT>

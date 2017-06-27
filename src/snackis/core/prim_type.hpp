@@ -7,7 +7,10 @@
 namespace snackis {
   template <typename ValT, typename BinT=ValT>
   struct PrimType: Type<ValT> {
-    PrimType(const str &name);
+    opt<ValT> null_val;
+    
+    PrimType(const str &name, opt<ValT> null_val=nullopt);
+    bool is_null(const ValT &val) const override;
     ValT from_val(const Val &in) const override;
     Val to_val(const ValT &in) const override;
     ValT read(std::istream &in) const override;
@@ -15,8 +18,14 @@ namespace snackis {
   };
 
   template <typename ValT, typename BinT>
-  PrimType<ValT, BinT>::PrimType(const str &name): Type<ValT>(name)
+  PrimType<ValT, BinT>::PrimType(const str &name, opt<ValT> null_val):
+    Type<ValT>(name), null_val(null_val)
   { }
+
+  template <typename ValT, typename BinT>
+  bool PrimType<ValT, BinT>::is_null(const ValT &val) const {
+    return null_val && val == *null_val; 
+  }
 
   template <typename ValT, typename BinT>
   ValT PrimType<ValT, BinT>::from_val(const Val &in) const { return get<ValT>(in); }

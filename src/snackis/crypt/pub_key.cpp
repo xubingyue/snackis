@@ -5,12 +5,18 @@
 
 namespace snackis {
 namespace crypt {
+  const PubKey null_pub_key;
+
   PubKey::PubKey() {
     memset(data, 0, sizeof data);
   }
 
   PubKey::PubKey(std::istream &in) {
     in.read((char *)data, sizeof data);
+  }
+
+  bool operator ==(const PubKey &x, const PubKey &y) {
+    return x.data == y.data;
   }
 
   bool operator <(const PubKey &x, const PubKey &y) {

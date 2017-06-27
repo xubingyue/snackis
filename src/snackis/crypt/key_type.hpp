@@ -9,6 +9,7 @@ namespace snackis {
 namespace crypt {
   struct KeyType: Type<Key> {
     KeyType();
+    bool is_null(const Key &val) const override;
     Key from_val(const Val &in) const override;
     Val to_val(const Key &in) const override;
     Key read(std::istream &in) const override;

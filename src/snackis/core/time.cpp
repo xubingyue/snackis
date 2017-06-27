@@ -4,7 +4,7 @@
 #include "snackis/core/time.hpp"
 
 namespace snackis {
-  const Time nulltime;
+  const Time null_time;
 
   Time now() {
     Time tim(Clock::now());

@@ -2,6 +2,8 @@
 #include "snackis/core/uid.hpp"
 
 namespace snackis {
+  const UId null_uid;
+
   UId::UId(bool init) {
     if (init) { uuid_generate_random(val); }
     else { uuid_clear(val); }

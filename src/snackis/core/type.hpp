@@ -14,15 +14,10 @@ namespace snackis {
     virtual void write_val(const Val &val, std::ostream &out) const = 0;
   };
 
-  struct NullType: BasicType {
-    NullType();
-    Val read_val(std::istream &in) const override;
-    void write_val(const Val &val, std::ostream &out) const override;
-  };
-
   template <typename ValT>
   struct Type: BasicType {
     Type(const str &name);
+    virtual bool is_null(const ValT &val) const = 0;
     virtual ValT from_val(const Val &in) const = 0;
     virtual Val to_val(const ValT &in) const = 0;
     Val read_val(std::istream &in) const override;
@@ -30,8 +25,6 @@ namespace snackis {
     virtual ValT read(std::istream &in) const = 0;
     virtual void write(const ValT &val, std::ostream &out) const = 0;
   };
-
-  extern const NullType null_type;
 
   template <typename ValT>
   Type<ValT>::Type(const str &name): BasicType(name) { }

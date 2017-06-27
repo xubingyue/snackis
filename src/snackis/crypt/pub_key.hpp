@@ -14,6 +14,9 @@ namespace crypt {
     PubKey(std::istream &in);
   };
 
+  extern const PubKey null_pub_key;
+
+  bool operator ==(const PubKey &x, const PubKey &y);
   bool operator <(const PubKey &x, const PubKey &y);
 }}
 
