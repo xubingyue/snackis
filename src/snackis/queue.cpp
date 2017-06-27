@@ -19,6 +19,14 @@ namespace snackis {
     //info(msg.queue_info)
   { }
 
+  QueueTask::QueueTask(const Queue &q, const Task &tsk):
+    Rec(q.ctx), id(tsk.id), queue_id(q.id), at(now())
+  { }
+
+  QueueTask::QueueTask(Ctx &ctx, const db::Rec<QueueTask> &rec): Rec(ctx) {
+    copy(*this, rec);
+  }
+
   opt<Queue> find_queue_id(Ctx &ctx, UId id) {
     db::Rec<Queue> rec;
     set(rec, ctx.db.queue_id, id);
@@ -36,7 +44,14 @@ namespace snackis {
     return *found;
   }
 
-  void add_task(Queue &q, const Task &tsk) {
-    log(q.ctx, "Adding task");
+  bool add_task(Queue &q, const Task &tsk) {
+    if (q.task_ids.insert(tsk.id).second) {
+      db::upsert(q.ctx.db.queues, q);
+      QueueTask qt(q, tsk);
+      db::insert(q.ctx.db.queue_tasks, qt);
+      return true;
+    }
+
+    return false;
   }
 }

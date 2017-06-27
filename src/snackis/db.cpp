@@ -120,11 +120,21 @@ namespace snackis {
     queue_name(    "name",     str_type,     &Queue::name),
     queue_info(    "info",     str_type,     &Queue::info),
     queue_peer_ids("peer_ids", uid_set_type, &Queue::peer_ids),
+    queue_task_ids("task_ids", uid_set_type, &Queue::task_ids),
     
     queues(ctx, "queues", {&queue_id},
-	   {&queue_owner_id, &queue_name, &queue_info, &queue_peer_ids}),
+	   {&queue_owner_id, &queue_name, &queue_info, &queue_peer_ids,
+	       &queue_task_ids}),
 
-    queues_sort(ctx, "queues_sort", {&queue_name, &queue_id}, {})
+    queues_sort(ctx, "queues_sort", {&queue_name, &queue_id}, {}),
+
+    queue_task_id(      "id",       uid_type,  &QueueTask::id),
+    queue_task_queue_id("queue_id", uid_type,  &QueueTask::queue_id),
+    queue_task_at(      "at",       time_type, &QueueTask::at),
+    
+    queue_tasks(ctx, "queue_tasks",
+		{&queue_task_queue_id, &queue_task_at, &queue_task_id},
+		{})
   {
     peers.indexes.insert(&peers_sort);
     inbox.indexes.insert(&inbox_sort);

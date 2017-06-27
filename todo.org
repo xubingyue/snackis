@@ -1,19 +1,25 @@
-* add todo tasks to queue
-** add QueueTask && queue_tasks
+* remove deadline
+** move done to name row in view
+* add task.queue_ids
+** update in add_task
+** add remove_task(queue, task)
 * add ProjectView peers
 ** add tabs, separate Peers page
 ** extract gui::Peers struct
 * add TaskView peers
 ** add tabs, separate Peers page
 * add task message
-** send along project info
 ** send to all peers when task is saved
 ** copy send(post) to task
+** include project info
 * add gui::TaskSearch
 ** project, queue, text & done
 *** match text against both name & info
 * add gui::QueueView
 ** add queue command
+* add task.done_at
+** update in table.on_update
+** display after checkbox in form if done
 * add project view peers
 * add gui::PeerSearch
 * add help command

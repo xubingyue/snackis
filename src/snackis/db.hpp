@@ -85,7 +85,13 @@ namespace snackis {
     db::Col<Queue, str>           queue_name;
     db::Col<Queue, str>           queue_info;
     db::Col<Queue, std::set<UId>> queue_peer_ids;
+    db::Col<Queue, std::set<UId>> queue_task_ids;
     db::Table<Queue> queues, queues_sort;
+
+    db::Col<QueueTask, UId>  queue_task_id;
+    db::Col<QueueTask, UId>  queue_task_queue_id;
+    db::Col<QueueTask, Time> queue_task_at;
+    db::Table<QueueTask> queue_tasks;
     
     Db(Ctx &ctx);
   };
