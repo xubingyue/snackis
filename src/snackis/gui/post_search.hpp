@@ -12,9 +12,11 @@ namespace snackis {
 namespace gui {
   struct PostSearch: View {
     GtkListStore *feed_store, *peers, *posts;
-    GtkWidget *feed_fld, *body, *min_time, *max_time, *peer, *find, *list,
+    GtkWidget *feed_fld, *body, *min_time, *max_time, *peer_fld, *find, *list,
       *close;
     opt<Feed> feed;
+    opt<Peer> peer;
+
     PostSearch(Ctx &ctx);
     void init() override;
   };

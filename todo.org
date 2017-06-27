@@ -1,8 +1,3 @@
-* copy feed view-buttons to project view
-** add '_Find Tasks' & 'New _Task' btns
-* copy feed view-buttons to task view
-* add task search project combo
-** copy post search feed
 * add task.queue_ids
 ** update in add_task
 * add task search queue combo

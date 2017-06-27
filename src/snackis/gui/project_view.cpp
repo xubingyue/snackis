@@ -2,19 +2,55 @@
 #include "snackis/ctx.hpp"
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/feed_view.hpp"
+#include "snackis/gui/post_view.hpp"
 #include "snackis/gui/project_view.hpp"
+#include "snackis/gui/task_search.hpp"
+#include "snackis/gui/task_view.hpp"
 
 namespace snackis {
 namespace gui {
   ProjectView::ProjectView(const Project &rec):
     RecView<Project>("Project", rec),
+    find_tasks_btn(gtk_button_new_with_mnemonic("_Find Tasks")),
+    new_task_btn(gtk_button_new_with_mnemonic("New _Task")),
+    post_btn(gtk_button_new_with_mnemonic("New _Post")),
     name_fld(gtk_entry_new()),
     active_fld(gtk_check_button_new_with_label("Active")),    
     info_fld(new_text_view()) { }
 
+  static void on_find_tasks(gpointer *_, ProjectView *v) {
+    TaskSearch *ts = new TaskSearch(v->ctx);
+    ts->project.emplace(v->rec);
+    push_view(*ts);
+  }
+
+  static void on_new_task(gpointer *_, ProjectView *v) {
+    Task tsk(v->ctx);
+    set_project(tsk, v->rec);
+    TaskView *tv = new TaskView(tsk);
+    push_view(*tv);
+  }
+
+  static void on_post(gpointer *_, ProjectView *v) {
+    Post post(v->ctx);
+    post.feed_id = v->rec.id;
+    PostView *pv = new PostView(post);
+    push_view(*pv);
+  }
+  
   void ProjectView::init() {
     GtkWidget *lbl;
 
+    GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    gtk_widget_set_margin_bottom(btns, 5);
+    gtk_container_add(GTK_CONTAINER(fields), btns);
+    g_signal_connect(find_tasks_btn, "clicked", G_CALLBACK(on_find_tasks), this);
+    gtk_container_add(GTK_CONTAINER(btns), find_tasks_btn);
+    g_signal_connect(new_task_btn, "clicked", G_CALLBACK(on_new_task), this);
+    gtk_container_add(GTK_CONTAINER(btns), new_task_btn);
+    g_signal_connect(post_btn, "clicked", G_CALLBACK(on_post), this);
+    gtk_container_add(GTK_CONTAINER(btns), post_btn);
+    
     lbl = gtk_label_new("Name");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_container_add(GTK_CONTAINER(fields), lbl);

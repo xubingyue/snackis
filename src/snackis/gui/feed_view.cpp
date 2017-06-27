@@ -144,7 +144,6 @@ namespace gui {
 
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_widget_set_margin_bottom(btns, 5);
-    gtk_widget_set_valign(btns, GTK_ALIGN_END);
     gtk_container_add(GTK_CONTAINER(fields), btns);
     g_signal_connect(find_posts_btn, "clicked", G_CALLBACK(on_find_posts), this);
     gtk_container_add(GTK_CONTAINER(btns), find_posts_btn);

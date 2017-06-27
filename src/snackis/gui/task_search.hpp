@@ -5,13 +5,17 @@
 #include <set>
 #include <vector>
 
+#include "snackis/project.hpp"
 #include "snackis/gui/view.hpp"
 
 namespace snackis {
 namespace gui {
   struct TaskSearch: View {
-    GtkListStore *peers, *tasks;
-    GtkWidget *text_fld, *done_fld, *peer_fld, *find_btn, *lst, *close_btn;
+    GtkListStore *project_store, *peers, *tasks;
+    GtkWidget *text_fld, *done_fld, *project_fld, *peer_fld, *find_btn, *lst, 
+      *close_btn;
+    opt<Project> project;
+    opt<Peer> peer;
     
     TaskSearch(Ctx &ctx);
     void init() override;

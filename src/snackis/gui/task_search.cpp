@@ -6,6 +6,7 @@
 
 namespace snackis {
 namespace gui {
+  enum ProjectCol {COL_PROJECT_PTR=0, COL_PROJECT_ID, COL_PROJECT_NAME};
   enum PeerCol {COL_PEER_PTR=0, COL_PEER_ID, COL_PEER_NAME};
   enum TaskCol {COL_TASK_PTR=0, COL_TASK_CREATED, COL_TASK_OWNER,
 		COL_TASK_PROJECT, COL_TASK_NAME, COL_TASK_INFO};
@@ -74,6 +75,36 @@ namespace gui {
     pop_view(*v);
   }
   
+  static void init_projects(TaskSearch &v) {
+    GtkTreeIter iter;
+    gtk_list_store_append(v.project_store, &iter);
+    gtk_list_store_set(v.project_store, &iter,
+		       COL_PROJECT_PTR, nullptr,
+		       COL_PROJECT_ID, "",
+		       COL_PROJECT_NAME, "",
+		       -1);
+
+    for(auto key = v.ctx.db.projects_sort.recs.begin();
+	key != v.ctx.db.projects_sort.recs.end();
+	key++) {
+      auto &rec(db::get(v.ctx.db.projects, *key));
+      Project prj(v.ctx, rec);
+      gtk_list_store_append(v.project_store, &iter);
+      gtk_list_store_set(v.project_store, &iter,
+			 COL_PROJECT_PTR, &rec,
+			 COL_PROJECT_ID, to_str(prj.id).c_str(),
+			 COL_PROJECT_NAME, prj.name.c_str(),
+			 -1);
+    }
+
+    if (v.project) {
+      gtk_combo_box_set_active_id(GTK_COMBO_BOX(v.project_fld),
+				  to_str(v.project->id).c_str());
+    } else {
+      gtk_combo_box_set_active(GTK_COMBO_BOX(v.project_fld), 0);
+    }    
+  }
+
   static void init_peers(TaskSearch &v) {
     GtkTreeIter iter;
     gtk_list_store_append(v.peers, &iter);
@@ -95,6 +126,13 @@ namespace gui {
 			 COL_PEER_NAME, peer.name.c_str(),
 			 -1);
     }
+
+    if (v.peer) {
+      gtk_combo_box_set_active_id(GTK_COMBO_BOX(v.peer_fld),
+				  to_str(v.peer->id).c_str());
+    } else {
+      gtk_combo_box_set_active(GTK_COMBO_BOX(v.peer_fld), 0);
+    }    
   }
 
   static void init_lst(TaskSearch &v) {
@@ -109,12 +147,15 @@ namespace gui {
   
   TaskSearch::TaskSearch(Ctx &ctx):
     View(ctx, "Task Search"),
+    project_store(gtk_list_store_new(3, G_TYPE_POINTER,
+				     G_TYPE_STRING, G_TYPE_STRING)),
     peers(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
     tasks(gtk_list_store_new(6, G_TYPE_POINTER,
 			     G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
 			     G_TYPE_STRING, G_TYPE_STRING)),
     text_fld(gtk_entry_new()),
     done_fld(gtk_check_button_new_with_label("Done")),
+    project_fld(new_combo_box(GTK_TREE_MODEL(project_store))),
     peer_fld(new_combo_box(GTK_TREE_MODEL(peers))),
     find_btn(gtk_button_new_with_mnemonic("_Find Tasks")),
     lst(gtk_tree_view_new_with_model(GTK_TREE_MODEL(tasks))),
@@ -135,6 +176,13 @@ namespace gui {
     gtk_widget_set_hexpand(text_fld, true);
     gtk_container_add(GTK_CONTAINER(text_box), text_fld);
     gtk_container_add(GTK_CONTAINER(text_box), done_fld);
+
+    init_projects(*this);
+    lbl = gtk_label_new("Project");
+    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
+    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    gtk_widget_set_hexpand(project_fld, true);
+    gtk_container_add(GTK_CONTAINER(frm), project_fld);
 
     init_peers(*this);
     lbl = gtk_label_new("Peer");

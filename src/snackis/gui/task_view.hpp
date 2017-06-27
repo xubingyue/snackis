@@ -12,7 +12,8 @@ namespace snackis {
 namespace gui {
   struct TaskView: RecView<Task> {
     GtkListStore *project_store;
-    GtkWidget *project_fld, *edit_project_btn, *name_fld, *done_fld, *info_fld;
+    GtkWidget *find_posts_btn, *post_btn, *project_fld, *edit_project_btn,
+      *name_fld, *done_fld, *info_fld;
     opt<Queue> queue;
     
     TaskView(const Task &rec);

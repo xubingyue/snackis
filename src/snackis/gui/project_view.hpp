@@ -10,7 +10,8 @@
 namespace snackis {
 namespace gui {
   struct ProjectView: RecView<Project> {
-    GtkWidget *name_fld, *active_fld, *info_fld;
+    GtkWidget *find_tasks_btn, *new_task_btn, *post_btn, *name_fld, *active_fld,
+      *info_fld;
     
     ProjectView(const Project &rec);
     void init() override;

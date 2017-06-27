@@ -17,7 +17,7 @@ namespace gui {
     
     auto feed_sel(get_sel_rec<Feed>(GTK_COMBO_BOX(v->feed_fld)));
     str body_sel(trim(gtk_entry_get_text(GTK_ENTRY(v->body))));
-    auto peer_sel(get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer)));
+    auto peer_sel(get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer_fld)));
     str min_time(trim(gtk_entry_get_text(GTK_ENTRY(v->min_time))));
     auto min_time_sel(parse_time("%Y-%m-%d %H:%M", min_time));
     
@@ -154,6 +154,13 @@ namespace gui {
 			 COL_PEER_NAME, peer.name.c_str(),
 			 -1);
     }
+
+    if (v.peer) {
+      gtk_combo_box_set_active_id(GTK_COMBO_BOX(v.peer_fld),
+				  to_str(v.peer->id).c_str());
+    } else {
+      gtk_combo_box_set_active(GTK_COMBO_BOX(v.peer_fld), 0);
+    }    
   }
 
   static void init_list(PostSearch &v) {
@@ -175,7 +182,7 @@ namespace gui {
     body(gtk_entry_new()),
     min_time(gtk_entry_new()),
     max_time(gtk_entry_new()),
-    peer(new_combo_box(GTK_TREE_MODEL(peers))),
+    peer_fld(new_combo_box(GTK_TREE_MODEL(peers))),
     find(gtk_button_new_with_mnemonic("_Find Posts")),
     list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(posts))),
     close(gtk_button_new_with_mnemonic("_Close Search"))
@@ -224,8 +231,8 @@ namespace gui {
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_grid_attach(GTK_GRID(post_box), lbl, 3, 0, 1, 1);
 
-    gtk_widget_set_hexpand(peer, true);
-    gtk_grid_attach(GTK_GRID(post_box), peer, 3, 1, 1, 1);
+    gtk_widget_set_hexpand(peer_fld, true);
+    gtk_grid_attach(GTK_GRID(post_box), peer_fld, 3, 1, 1, 1);
     
     gtk_widget_set_halign(find, GTK_ALIGN_END);
     g_signal_connect(find, "clicked", G_CALLBACK(on_find), this);
