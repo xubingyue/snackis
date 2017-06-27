@@ -54,6 +54,7 @@ namespace gui {
     GtkWidget *w(gtk_text_view_new());
     gtk_widget_set_hexpand(w, true);
     gtk_widget_set_vexpand(w, true);
+    gtk_text_view_set_accepts_tab(GTK_TEXT_VIEW(w), false);
     gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(w), GTK_WRAP_WORD);
     auto *scroll(gtk_scrolled_window_new(NULL, NULL));
     gtk_scrolled_window_set_overlay_scrolling(GTK_SCROLLED_WINDOW(scroll), false);
