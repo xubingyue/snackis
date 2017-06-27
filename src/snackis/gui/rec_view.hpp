@@ -38,7 +38,7 @@ namespace gui {
   
   template <typename RecT>
   RecView<RecT>::RecView(const str &lbl, const RecT &rec):
-    View(rec.ctx, lbl, to_str(rec.id)),
+    View(rec.ctx, lbl, to_str(rec.id).substr(0, 8)),
     rec(rec),
     fields(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5)),
     save_btn(gtk_button_new_with_mnemonic(fmt("_Save %0", lbl).c_str())),

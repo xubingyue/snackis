@@ -48,8 +48,12 @@ namespace gui {
 	if (post.by_id != peer_id) { continue; }
       }      
 
-      if (feed_sel && feed.id != *db::get(*feed_sel, ctx.db.feed_id)) {
-	continue;
+      if (feed_sel) {
+	if (feed.id != *db::get(*feed_sel, ctx.db.feed_id)) {
+	  continue;
+	}
+      } else {
+	if (!feed.visible) { continue; }
       }
 
       if (!body_sel.empty() && find_ci(post.body, body_sel) == str::npos) {
@@ -115,7 +119,7 @@ namespace gui {
       auto &rec(db::get(ctx.db.feeds, *key));
       Feed feed(ctx, rec);
       
-      if (feed.active || (v.feed && v.feed->id == feed.id)) {
+      if ((feed.visible && feed.active) || (v.feed && v.feed->id == feed.id)) {
 	gtk_list_store_append(v.feed_store, &iter);
 	gtk_list_store_set(v.feed_store, &iter,
 			   COL_FEED_PTR, &rec,

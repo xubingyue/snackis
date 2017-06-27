@@ -39,6 +39,7 @@ namespace snackis {
       msg.feed_id = feed.id;
       msg.feed_name = feed.name;
       msg.feed_info = feed.info;
+      msg.feed_visible = feed.visible;
       msg.post_id = post.id;
       msg.post_at = post.at;
       msg.post_body = post.body;

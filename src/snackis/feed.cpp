@@ -3,7 +3,12 @@
 
 namespace snackis {
   Feed::Feed(Ctx &ctx, UId id):
-    Rec(ctx), id(id), owner_id(whoami(ctx).id), created_at(now()), active(true)
+    Rec(ctx),
+    id(id),
+    owner_id(whoami(ctx).id),
+    created_at(now()),
+    active(true),
+    visible(true)
   { }
 
   Feed::Feed(Ctx &ctx, const db::Rec<Feed> &src): Rec(ctx) {
@@ -16,7 +21,8 @@ namespace snackis {
     owner_id(msg.from_id),
     created_at(now()),
     info(msg.feed_info),
-    active(true) {
+    active(true),
+    visible(msg.feed_visible) {
     db::Rec<Feed> rec;
     set(rec, ctx.db.feed_id, id);
     bool exists = load(ctx.db.feeds, rec) ? true : false;

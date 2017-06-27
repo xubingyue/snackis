@@ -50,12 +50,12 @@ namespace snackis {
 
       std::unique_lock<std::recursive_mutex> lock(ctx->mutex);
       if (!ctx->is_closing && !ctx->db.outbox.recs.empty()) {
-	//try {
-	Smtp smtp(*ctx);
-	send(smtp);
-	//} catch (const std::exception &e) {
-	//log(*ctx, fmt("Failed sending email: %0", e.what()));
-	//}
+	try {
+	  Smtp smtp(*ctx);
+	  send(smtp);
+	} catch (const std::exception &e) {
+	  log(*ctx, fmt("Failed sending email: %0", e.what()));
+	}
       }
     }
   }

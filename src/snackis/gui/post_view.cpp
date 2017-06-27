@@ -58,7 +58,7 @@ namespace gui {
       auto &rec(db::get(ctx.db.feeds, *key));
       Feed feed(ctx, rec);
       
-      if (feed.id == v.rec.feed_id || feed.active) {
+      if ((feed.active && feed.visible) || feed.id == v.rec.feed_id) {
 	GtkTreeIter iter;
 	gtk_list_store_append(v.feed_store, &iter);
 	gtk_list_store_set(v.feed_store, &iter,

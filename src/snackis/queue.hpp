@@ -13,7 +13,6 @@ namespace snackis {
   struct Queue: Rec {
     UId id, owner_id;
     str name, info;
-    std::set<UId> peer_ids;
     std::set<UId> task_ids;
     
     Queue(Ctx &ctx);

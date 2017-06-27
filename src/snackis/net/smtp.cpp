@@ -98,6 +98,7 @@ namespace snackis {
 			  "__SNACKIS__\r\n",
 			  msg.from, msg.to, msg.id, version_str()) +
 		      encode(msg));
+    
     smtp.data.assign(msg_str.begin(), msg_str.end());
 		  
     Stream resp_buf;

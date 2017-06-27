@@ -37,6 +37,7 @@ namespace snackis {
     db::Col<Feed, str>           feed_name;
     db::Col<Feed, str>           feed_info;
     db::Col<Feed, bool>          feed_active;
+    db::Col<Feed, bool>          feed_visible;
     db::Col<Feed, std::set<UId>> feed_peer_ids;
     db::Table<Feed> feeds, feeds_sort;
 
@@ -56,6 +57,7 @@ namespace snackis {
     db::Col<Msg, crypt::PubKey> msg_crypt_key;
     db::Col<Msg, UId>           msg_feed_id;
     db::Col<Msg, str>           msg_feed_name, msg_feed_info;
+    db::Col<Msg, bool>          msg_feed_visible;
     db::Col<Msg, UId>           msg_post_id;
     db::Col<Msg, Time>          msg_post_at;
     db::Col<Msg, str>           msg_post_body;
@@ -84,7 +86,6 @@ namespace snackis {
     db::Col<Queue, UId>           queue_owner_id;
     db::Col<Queue, str>           queue_name;
     db::Col<Queue, str>           queue_info;
-    db::Col<Queue, std::set<UId>> queue_peer_ids;
     db::Col<Queue, std::set<UId>> queue_task_ids;
     db::Table<Queue> queues, queues_sort;
 

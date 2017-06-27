@@ -15,7 +15,7 @@ namespace snackis {
     UId id, owner_id;
     Time created_at;
     str name, info;
-    bool active;
+    bool active, visible;
     std::set<UId> peer_ids;
     
     Feed(Ctx &ctx, UId id=UId(true));

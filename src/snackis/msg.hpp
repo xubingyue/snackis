@@ -20,6 +20,7 @@ namespace snackis {
     crypt::PubKey crypt_key;
     UId feed_id;
     str feed_name, feed_info;
+    bool feed_visible;
     UId post_id;
     Time post_at;
     str post_body;

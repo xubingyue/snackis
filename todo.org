@@ -1,15 +1,7 @@
-* add feed.hidden
-** default false
-** true for project & task feeds
-** exclude from feed search
-** exclude from post search
-** exclude from post view combo
-** disable saving in feed view
 * add task search queue combo
 ** switch iterators to queue_tasks if selected
 ** use task.queue_ids to check
 * send task messages
-** remove queue.peer_ids
 ** send to task peers on task save
 ** copy send(post)
 ** use queue_ids

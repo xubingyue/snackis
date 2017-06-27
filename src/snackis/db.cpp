@@ -38,11 +38,12 @@ namespace snackis {
     feed_name(      "name",       str_type,     &Feed::name),
     feed_info(      "into",       str_type,     &Feed::info),
     feed_active(    "active",     bool_type,    &Feed::active),
+    feed_visible(   "visible",    bool_type,    &Feed::visible),
     feed_peer_ids(  "peer_ids",   uid_set_type, &Feed::peer_ids),
     
     feeds(ctx, "feeds", {&feed_id},
 	  {&feed_owner_id, &feed_created_at, &feed_name, &feed_info, &feed_active,
-	      &feed_peer_ids}),
+	      &feed_visible, &feed_peer_ids}),
 
     feeds_sort(ctx, "feeds_sort", {&feed_created_at, &feed_id}, {}),
 		  
@@ -58,33 +59,34 @@ namespace snackis {
     posts_sort(ctx, "posts_sort", {&post_at, &post_id}, {}),
     feed_posts(ctx, "feed_posts", {&post_feed_id, &post_at, &post_id}, {}),
     
-    msg_id(        "id",         uid_type,            &Msg::id),
-    msg_type(      "type",       str_type,            &Msg::type),
-    msg_from(      "from",       str_type,            &Msg::from),
-    msg_to(        "to",         str_type,            &Msg::to),
-    msg_from_id(   "from_id",    uid_type,            &Msg::from_id),
-    msg_to_id(     "to_id",      uid_type,            &Msg::to_id),
-    msg_fetched_at("fetched_at", time_type,           &Msg::fetched_at),
-    msg_peer_name( "peer_name",  str_type,            &Msg::peer_name),
-    msg_crypt_key( "crypt_key",  crypt::pub_key_type, &Msg::crypt_key),
-    msg_feed_id(   "feed_id",    uid_type,            &Msg::feed_id),
-    msg_feed_name( "feed_name",  str_type,            &Msg::feed_name),
-    msg_feed_info( "feed_info",  str_type,            &Msg::feed_info),
-    msg_post_id(   "post_id",    uid_type,            &Msg::post_id),
-    msg_post_at(   "post_at",    time_type,           &Msg::post_at),
-    msg_post_body( "post_body",  str_type,            &Msg::post_body),
+    msg_id(          "id",           uid_type,            &Msg::id),
+    msg_type(        "type",         str_type,            &Msg::type),
+    msg_from(        "from",         str_type,            &Msg::from),
+    msg_to(          "to",           str_type,            &Msg::to),
+    msg_from_id(     "from_id",      uid_type,            &Msg::from_id),
+    msg_to_id(       "to_id",        uid_type,            &Msg::to_id),
+    msg_fetched_at(  "fetched_at",   time_type,           &Msg::fetched_at),
+    msg_peer_name(   "peer_name",    str_type,            &Msg::peer_name),
+    msg_crypt_key(   "crypt_key",    crypt::pub_key_type, &Msg::crypt_key),
+    msg_feed_id(     "feed_id",      uid_type,            &Msg::feed_id),
+    msg_feed_name(   "feed_name",    str_type,            &Msg::feed_name),
+    msg_feed_info(   "feed_info",    str_type,            &Msg::feed_info),
+    msg_feed_visible("feed_visible", bool_type,           &Msg::feed_visible),
+    msg_post_id(     "post_id",      uid_type,            &Msg::post_id),
+    msg_post_at(     "post_at",      time_type,           &Msg::post_at),
+    msg_post_body(   "post_body",    str_type,            &Msg::post_body),
     
     inbox(ctx, "inbox", {&msg_id},
 	  {&msg_type, &msg_fetched_at, &msg_peer_name, &msg_from, &msg_from_id,
 	      &msg_crypt_key, &msg_feed_id, &msg_feed_name, &msg_feed_info,
-	      &msg_post_id, &msg_post_at, &msg_post_body}),
+	      &msg_feed_visible, &msg_post_id, &msg_post_at, &msg_post_body}),
 
     inbox_sort(ctx, "inbox_sort", {&msg_fetched_at, &msg_id}, {}),
     
     outbox(ctx, "outbox", {&msg_id},
 	   {&msg_type, &msg_from, &msg_from_id, &msg_to, &msg_to_id, &msg_peer_name,
 	       &msg_crypt_key, &msg_feed_id, &msg_feed_name, &msg_feed_info,
-	       &msg_post_id, &msg_post_at, &msg_post_body}),
+	       &msg_feed_visible, &msg_post_id, &msg_post_at, &msg_post_body}),
 
     project_id(      "id",       uid_type,     &Project::id),
     project_owner_id("owner_id", uid_type,     &Project::owner_id),
@@ -119,12 +121,10 @@ namespace snackis {
     queue_owner_id("owner_id", uid_type,     &Queue::owner_id),
     queue_name(    "name",     str_type,     &Queue::name),
     queue_info(    "info",     str_type,     &Queue::info),
-    queue_peer_ids("peer_ids", uid_set_type, &Queue::peer_ids),
     queue_task_ids("task_ids", uid_set_type, &Queue::task_ids),
     
     queues(ctx, "queues", {&queue_id},
-	   {&queue_owner_id, &queue_name, &queue_info, &queue_peer_ids,
-	       &queue_task_ids}),
+	   {&queue_owner_id, &queue_name, &queue_info, &queue_task_ids}),
 
     queues_sort(ctx, "queues_sort", {&queue_name, &queue_id}, {}),
 
@@ -148,8 +148,9 @@ namespace snackis {
     projects.on_insert.push_back([&](auto rec) {
 	Project prj(ctx, rec);
 	Feed feed(ctx, prj.id);
-	feed.name = fmt("Project %0", prj.id);
+	feed.name = fmt("Project %0", to_str(prj.id).substr(0, 8));
 	feed.peer_ids = prj.peer_ids;
+	feed.visible = false;
 	db::upsert(ctx.db.feeds, feed);
       });
     
@@ -175,8 +176,9 @@ namespace snackis {
     tasks.on_insert.push_back([&](auto rec) {
 	Task tsk(ctx, rec);
 	Feed feed(ctx, tsk.id);
-	feed.name = fmt("Task %0", tsk.id);
+	feed.name = fmt("Task %0", to_str(tsk.id).substr(0, 8));
 	feed.peer_ids = tsk.peer_ids;
+	feed.visible = false;
 	db::upsert(ctx.db.feeds, feed);
       });
     

@@ -28,7 +28,6 @@ namespace gui {
     gtk_list_store_append(v->feed_peer_store, &iter);
     gtk_list_store_set(v->feed_peer_store, &iter,
 		       COL_PEER_PTR, rec,
-		       COL_PEER_ID, to_str(peer.id).c_str(),
 		       COL_PEER_NAME, peer.name.c_str(),
 		       -1);
     auto sel(gtk_tree_view_get_selection(GTK_TREE_VIEW(v->peer_lst)));
@@ -119,6 +118,12 @@ namespace gui {
   }
 
   static void on_post(gpointer *_, FeedView *v) {
+    {
+      db::Trans trans(v->ctx);
+      v->save();
+      db::commit(trans);
+    }
+    
     Post post(v->ctx);
     post.feed_id = v->rec.id;
     PostView *pv = new PostView(post);
@@ -128,7 +133,8 @@ namespace gui {
   FeedView::FeedView(const Feed &feed):
     RecView("Feed", feed),
     peer_store(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
-    feed_peer_store(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
+    feed_peer_store(gtk_list_store_new(3, G_TYPE_POINTER,
+				       G_TYPE_STRING, G_TYPE_STRING)),
     find_posts_btn(gtk_button_new_with_mnemonic("_Find Posts")),
     post_btn(gtk_button_new_with_mnemonic("New _Post")),
     name_fld(gtk_entry_new()),

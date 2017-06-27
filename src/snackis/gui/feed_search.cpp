@@ -24,6 +24,7 @@ namespace gui {
       auto &rec(db::get(ctx.db.feeds, *key));
       Feed feed(ctx, rec);
 
+      if (!feed.visible) { continue; }
       if (feed.active != active_sel) { continue; }
 
       if (peer_sel) {
