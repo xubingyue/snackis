@@ -148,7 +148,7 @@ namespace snackis {
     projects.on_insert.push_back([&](auto rec) {
 	Project prj(ctx, rec);
 	Feed feed(ctx, prj.id);
-	feed.name = fmt("Project %0", prj.name);
+	feed.name = fmt("Project %0", prj.id);
 	feed.peer_ids = prj.peer_ids;
 	db::upsert(ctx.db.feeds, feed);
       });
@@ -164,25 +164,18 @@ namespace snackis {
 	  feed_dirty = true;
 	}
 	
-	if (curr.peer_ids != prev.peer_ids) {		    
-	  auto ids(diff(prev.peer_ids, curr.peer_ids));
-	  patch(feed.peer_ids, ids);
+	if (curr.peer_ids != prev.peer_ids) {
+	  feed.peer_ids = curr.peer_ids;
 	  feed_dirty = true;
 	}
 	
-	if (curr.name != prev.name &&
-	    feed.name == fmt("Project %0", prev.name)) {
-	  feed.name = fmt("Project %0", curr.name);
-	  feed_dirty = true;
-	}
-
 	if (feed_dirty) { db::update(feeds, feed); }
       });
 
     tasks.on_insert.push_back([&](auto rec) {
 	Task tsk(ctx, rec);
 	Feed feed(ctx, tsk.id);
-	feed.name = fmt("Task %0", tsk.name);
+	feed.name = fmt("Task %0", tsk.id);
 	feed.peer_ids = tsk.peer_ids;
 	db::upsert(ctx.db.feeds, feed);
       });
@@ -197,14 +190,8 @@ namespace snackis {
 	  feed_dirty = true;
 	}
 	
-	if (curr.name != prev.name &&
-	    feed.name == fmt("Task %0", prev.name)) {
-	  feed.name = fmt("Task %0", curr.name);
-	  feed_dirty = true;
-	}
-	  
 	if (curr.peer_ids != prev.peer_ids) {		    
-	  patch(feed.peer_ids, diff(prev.peer_ids, curr.peer_ids));
+	  feed.peer_ids = curr.peer_ids;
 	  feed_dirty = true;
 	}
 
