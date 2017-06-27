@@ -13,6 +13,7 @@ namespace gui {
     GtkWidget *name_fld, *email_fld;
     
     PeerView(const Peer &peer);
+    void init() override;
     bool save() override;
   };
 }}

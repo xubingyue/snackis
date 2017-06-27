@@ -14,6 +14,7 @@ namespace gui {
     GtkWidget *text_fld, *done_fld, *peer_fld, *find_btn, *lst, *close_btn;
     
     TaskSearch(Ctx &ctx);
+    void init() override;
   };
 }}
 

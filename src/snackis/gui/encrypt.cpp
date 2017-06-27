@@ -137,7 +137,10 @@ namespace gui {
     target(gtk_entry_new()),
     encode(gtk_check_button_new_with_label("Encode")),
     save(gtk_button_new_with_mnemonic("_Save Encrypted File")),
-    cancel(gtk_button_new_with_mnemonic("_Cancel")) {
+    cancel(gtk_button_new_with_mnemonic("_Cancel"))
+  { }
+
+  void Encrypt::init() {
     GtkWidget *lbl;
 
     GtkWidget *frm(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));

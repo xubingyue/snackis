@@ -107,7 +107,10 @@ namespace gui {
     active(gtk_check_button_new_with_label("Active")),
     find(gtk_button_new_with_mnemonic("_Find Feeds")),
     list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(feeds))),
-    close(gtk_button_new_with_mnemonic("_Close Search")) {
+    close(gtk_button_new_with_mnemonic("_Close Search"))
+  { }
+
+  void FeedSearch::init() {
     GtkWidget *lbl;
 
     GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);

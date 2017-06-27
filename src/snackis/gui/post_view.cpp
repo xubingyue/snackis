@@ -114,7 +114,10 @@ namespace gui {
     feed_fld(new_combo_box(GTK_TREE_MODEL(feed_store))),
     edit_feed_btn(gtk_button_new_with_mnemonic("_Edit Feed")),
     body_fld(new_text_view()),
-    post_lst(gtk_tree_view_new_with_model(GTK_TREE_MODEL(post_store))) {
+    post_lst(gtk_tree_view_new_with_model(GTK_TREE_MODEL(post_store)))
+  { }
+
+  void PostView::init() {
     GtkWidget *lbl;
 
     init_feeds(*this);
@@ -134,7 +137,7 @@ namespace gui {
     gtk_widget_set_margin_top(lbl, 5);
     gtk_container_add(GTK_CONTAINER(fields), lbl);
     gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(body_fld));
-    set_str(GTK_TEXT_VIEW(body_fld), post.body);
+    set_str(GTK_TEXT_VIEW(body_fld), rec.body);
     
     init_posts(*this);
     gtk_widget_set_margin_top(post_lst, 5);

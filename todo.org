@@ -1,6 +1,5 @@
-* hide feed name in post search if feed is selected
-* hide peer if peer is selected
 * extract gui::add_column
+* add project name column to task search
 * copy feed view-buttons to project view
 ** add 'New _Task' btn
 * copy feed view-buttons to task view
@@ -46,3 +45,6 @@
 ** lock externally around loops
 ** only lock trans_mutex when accessing stack
 * hide stack views instead of removing/adding to container
+* hide post search columns
+** feed name if feed is selected
+** peer name if peer is selected

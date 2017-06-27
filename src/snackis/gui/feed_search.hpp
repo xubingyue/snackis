@@ -14,6 +14,7 @@ namespace gui {
     GtkWidget *name, *peer, *active, *find, *list, *close;
     
     FeedSearch(Ctx &ctx);
+    void init() override;
   };
 }}
 

@@ -148,7 +148,10 @@ namespace gui {
     msgs(gtk_list_store_new(3,
 			    G_TYPE_POINTER,
 			    G_TYPE_STRING, G_TYPE_STRING)),
-    list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(msgs))) {
+    list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(msgs)))
+  { }
+
+  void Inbox::init() {
     init_list(*this);
     gtk_box_pack_start(GTK_BOX(panel), list, true, true, 0);
 

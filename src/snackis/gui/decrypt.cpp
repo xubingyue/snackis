@@ -136,7 +136,10 @@ namespace gui {
     target(gtk_entry_new()),
     decode(gtk_check_button_new_with_label("Decode")),
     save(gtk_button_new_with_mnemonic("_Save Decrypted File")),
-    cancel(gtk_button_new_with_mnemonic("_Cancel")) {
+    cancel(gtk_button_new_with_mnemonic("_Cancel"))
+  { }
+
+  void Decrypt::init() {
     GtkWidget *lbl;
 
     GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);

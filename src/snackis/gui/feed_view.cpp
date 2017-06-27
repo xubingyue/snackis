@@ -142,7 +142,10 @@ namespace gui {
     info_fld(new_text_view()),
     peer_lst(gtk_tree_view_new_with_model(GTK_TREE_MODEL(feed_peer_store))),
     peer_fld(new_combo_box(GTK_TREE_MODEL(peer_store))),
-    add_peer_btn(gtk_button_new_with_mnemonic("_Add Peer")) {
+    add_peer_btn(gtk_button_new_with_mnemonic("_Add Peer"))
+  { }
+
+    void FeedView::init() {
     GtkWidget *lbl;
 
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
@@ -161,15 +164,15 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(fields), name_box);
     gtk_widget_set_hexpand(name_fld, true);
     gtk_container_add(GTK_CONTAINER(name_box), name_fld);    
-    gtk_entry_set_text(GTK_ENTRY(name_fld), feed.name.c_str());
+    gtk_entry_set_text(GTK_ENTRY(name_fld), rec.name.c_str());
     gtk_container_add(GTK_CONTAINER(name_box), active_fld);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active_fld), feed.active);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active_fld), rec.active);
 
     lbl = gtk_label_new("Info");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_container_add(GTK_CONTAINER(fields), lbl);
     gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(info_fld));
-    set_str(GTK_TEXT_VIEW(info_fld), feed.info);
+    set_str(GTK_TEXT_VIEW(info_fld), rec.info);
     
     init_peers(*this);
 

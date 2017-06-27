@@ -35,7 +35,7 @@ namespace gui {
       gtk_widget_grab_focus(v->max_time);
       return;
     }
-    
+
     for (auto key = ctx.db.posts_sort.recs.begin();
 	 key != ctx.db.posts_sort.recs.end();
 	 key++) {
@@ -130,7 +130,7 @@ namespace gui {
 				  to_str(v.feed->id).c_str());
     } else {
       gtk_combo_box_set_active(GTK_COMBO_BOX(v.feed_fld), 0);
-    }
+    }    
   }
 
   static void init_peers(PostSearch &v) {
@@ -197,7 +197,10 @@ namespace gui {
     peer(new_combo_box(GTK_TREE_MODEL(peers))),
     find(gtk_button_new_with_mnemonic("_Find Posts")),
     list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(posts))),
-    close(gtk_button_new_with_mnemonic("_Close Search")) {
+    close(gtk_button_new_with_mnemonic("_Close Search"))
+  { }
+
+  void PostSearch::init() {
     GtkWidget *lbl;
 
     GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);

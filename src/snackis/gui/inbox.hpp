@@ -13,6 +13,7 @@ namespace gui {
     GtkWidget *list, *accept, *reject, *close;
     db::Rec<Msg> *sel;
     Inbox(Ctx &ctx);
+    void init() override;
   };
 }}
 

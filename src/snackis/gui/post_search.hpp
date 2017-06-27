@@ -16,6 +16,7 @@ namespace gui {
       *close;
     opt<Feed> feed;
     PostSearch(Ctx &ctx);
+    void init() override;
   };
 }}
 

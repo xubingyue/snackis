@@ -12,7 +12,8 @@ namespace gui {
   struct ProjectView: RecView<Project> {
     GtkWidget *name_fld, *active_fld, *info_fld;
     
-    ProjectView(const Project &project);
+    ProjectView(const Project &rec);
+    void init() override;
     bool allow_save() const override;
     bool save() override;
   };

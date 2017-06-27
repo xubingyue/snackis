@@ -48,8 +48,8 @@ namespace gui {
     }
   }
 
-  TaskView::TaskView(const Task &task):
-    RecView("Task", task),
+  TaskView::TaskView(const Task &rec):
+    RecView("Task", rec),
     project_store(gtk_list_store_new(3, G_TYPE_POINTER,
 				     G_TYPE_STRING, G_TYPE_STRING)),
     project_fld(new_combo_box(GTK_TREE_MODEL(project_store))),
@@ -57,6 +57,9 @@ namespace gui {
     name_fld(gtk_entry_new()),
     done_fld(gtk_check_button_new_with_mnemonic("_Done")),
     info_fld(new_text_view()) {
+  }
+
+  void TaskView::init() {
     GtkWidget *lbl;
 
     init_projects(*this);
@@ -80,15 +83,15 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(fields), name_box);
     gtk_widget_set_hexpand(name_fld, true);
     gtk_container_add(GTK_CONTAINER(name_box), name_fld);
-    set_str(GTK_ENTRY(name_fld), task.name);
+    set_str(GTK_ENTRY(name_fld), rec.name);
     gtk_container_add(GTK_CONTAINER(name_box), done_fld);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(done_fld), task.done);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(done_fld), rec.done);
 
     lbl = gtk_label_new("Info");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_container_add(GTK_CONTAINER(fields), lbl);
     gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(info_fld));
-    set_str(GTK_TEXT_VIEW(info_fld), task.info);
+    set_str(GTK_TEXT_VIEW(info_fld), rec.info);
 
     focused = project_fld;
     refresh(*this);

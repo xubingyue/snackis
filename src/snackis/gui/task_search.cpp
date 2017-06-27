@@ -141,7 +141,10 @@ namespace gui {
     peer_fld(new_combo_box(GTK_TREE_MODEL(peers))),
     find_btn(gtk_button_new_with_mnemonic("_Find Tasks")),
     lst(gtk_tree_view_new_with_model(GTK_TREE_MODEL(tasks))),
-    close_btn(gtk_button_new_with_mnemonic("_Close Search")) {
+    close_btn(gtk_button_new_with_mnemonic("_Close Search"))
+  { }
+
+  void TaskSearch::init() {
     GtkWidget *lbl;
 
     GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);

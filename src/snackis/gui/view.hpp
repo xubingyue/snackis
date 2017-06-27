@@ -11,9 +11,11 @@ namespace gui {
     static std::stack<View *> stack;
     Ctx &ctx;
     GtkWidget *panel, *label, *info, *focused;
+    bool needs_init;
     
     View(Ctx &ctx, const str &lbl, const str &inf="");
     virtual ~View();
+    virtual void init()=0;
     GtkWidget *ptr() override;
   };
 

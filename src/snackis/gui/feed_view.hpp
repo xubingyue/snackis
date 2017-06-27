@@ -16,6 +16,7 @@ namespace gui {
       *peer_lst, *peer_fld, *add_peer_btn;
     
     FeedView(const Feed &feed);
+    void init() override;
     bool allow_save() const override;
     bool save() override;
   };
