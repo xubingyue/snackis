@@ -197,15 +197,10 @@ namespace gui {
       });
     
     rdr.cmds.emplace("todo", [&ctx](auto args) {
-	if (args.size() > 1) {
-	  log(ctx, "Invalid number of arguments, syntax: todo");
-	  return false;
-	}
-
 	if (args.empty()) {  
 	} else {
 	  Task task(ctx);
-	  task.name = args[0];
+	  task.name = join(args.begin(), args.end(), ' ');
 	  auto v(new TaskView(task));
 	  v->queue.emplace(todo_queue(ctx));
 	  push_view(*v);
@@ -214,7 +209,7 @@ namespace gui {
 	return true;
       });
   }
-
+  
   static void init_completion(Reader &rdr) {
     auto comp(gtk_entry_completion_new());
     gtk_entry_completion_set_text_column(comp, 0);

@@ -1,5 +1,4 @@
 * add task.queue_ids
-** update in add_task
 * add task search queue combo
 ** switch iterators to queue_tasks if selected
 ** use task.queue_ids to check
@@ -8,12 +7,10 @@
 ** copy send(post)
 ** use queue_ids
 ** include project info, done
-* add TaskView queues
 * add ProjectView peers
-** add tabs, separate Peers page
 ** extract gui::Peers struct
 * add TaskView peers
-** add tabs, separate Peers page
+* add TaskView queues
 * add gui::QueueView
 ** add queue command
 * add gui::ProjectSearch
@@ -24,9 +21,6 @@
 *** add info field
 **** display on syntax error
 ** list all cmds with info
-* add automagic inbox update
-** register for inserts on inbox table
-** insert first in model in ui thread
 * add backup command
 ** backup folder setting, default /backup
 ** run tar -z proc
@@ -38,6 +32,7 @@
 ** lock externally around loops
 ** only lock trans_mutex when accessing stack
 * hide stack views instead of removing/adding to container
-* hide post search columns
-** feed name if feed is selected
-** peer name if peer is selected
+* hide search columns for selection
+** post_search/feed
+** task_search/project
+

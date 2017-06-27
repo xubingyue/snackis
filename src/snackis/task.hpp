@@ -13,8 +13,9 @@ namespace snackis {
     UId id, project_id, owner_id;
     Time created_at;
     str name, info;
-    std::set<UId> peer_ids;
     bool done;
+    std::set<UId> peer_ids;
+    std::set<UId> queue_ids;
     
     Task(Ctx &ctx);
     Task(Ctx &ctx, const db::Rec<Task> &rec);   

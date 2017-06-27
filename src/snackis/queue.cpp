@@ -44,11 +44,17 @@ namespace snackis {
     return *found;
   }
 
-  bool add_task(Queue &q, const Task &tsk) {
+  bool add_task(Queue &q, Task &tsk) {
+    Ctx &ctx(q.ctx);
+    
     if (q.task_ids.insert(tsk.id).second) {
-      db::upsert(q.ctx.db.queues, q);
+      db::upsert(ctx.db.queues, q);
+
+      tsk.queue_ids.insert(q.id);
+      db::upsert(ctx.db.tasks, tsk);
+
       QueueTask qt(q, tsk);
-      db::insert(q.ctx.db.queue_tasks, qt);
+      db::insert(ctx.db.queue_tasks, qt);
       return true;
     }
 

@@ -31,7 +31,7 @@ namespace snackis {
   
   opt<Queue> find_queue_id(Ctx &ctx, UId id);
   Queue get_queue_id(Ctx &ctx, UId id);
-  bool add_task(Queue &q, const Task &tsk);
+  bool add_task(Queue &q, Task &tsk);
 }
 
 #endif
