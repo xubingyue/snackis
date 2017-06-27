@@ -4,7 +4,7 @@
 #include "snackis/core/time.hpp"
 
 namespace snackis {
-  const Time null_time;
+  const Time null_time, max_time(Time::max());
 
   Time now() {
     Time tim(Clock::now());
@@ -12,15 +12,12 @@ namespace snackis {
   }
 
   str fmt(const Time &tim, const str &spec) {
+    if (tim == null_time || tim == max_time) { return ""; }
     Stream buf;
-
-    if (tim != Time::max()) {
-      const time_t t = Clock::to_time_t(tim);
-      tm tm;
-      localtime_r(&t, &tm);
-      buf << std::put_time(localtime_r(&t, &tm), spec.c_str());
-    }
-    
+    const time_t t = Clock::to_time_t(tim);
+    tm tm;
+    localtime_r(&t, &tm);
+    buf << std::put_time(localtime_r(&t, &tm), spec.c_str());
     return buf.str();
   }
 
