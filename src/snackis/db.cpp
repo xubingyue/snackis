@@ -154,25 +154,28 @@ namespace snackis {
     
     projects.on_update.push_back([&](auto prev_rec, auto curr_rec) {
 	Project prev(ctx, prev_rec), curr(ctx, curr_rec);
-	opt<Feed> feed(find_feed_id(ctx, curr.id));
+	Feed feed(get_feed_id(ctx, curr.id));
 
-	if (feed) {
-	  bool feed_dirty(false);
-	  
-	  if (curr.peer_ids != prev.peer_ids) {		    
-	    auto ids(diff(prev.peer_ids, curr.peer_ids));
-	    patch(feed->peer_ids, ids);
-	    feed_dirty = true;
-	  }
+	bool feed_dirty(false);
 
-	  if (curr.name != prev.name &&
-	      feed->name == fmt("Project %0", prev.name)) {
-	    feed->name = fmt("Project %0", curr.name);
-	    feed_dirty = true;
-	  }
-
-	  if (feed_dirty) { db::update(feeds, *feed); }
+	if (curr.active != prev.active) {
+	  feed.active = curr.active;
+	  feed_dirty = true;
 	}
+	
+	if (curr.peer_ids != prev.peer_ids) {		    
+	  auto ids(diff(prev.peer_ids, curr.peer_ids));
+	  patch(feed.peer_ids, ids);
+	  feed_dirty = true;
+	}
+	
+	if (curr.name != prev.name &&
+	    feed.name == fmt("Project %0", prev.name)) {
+	  feed.name = fmt("Project %0", curr.name);
+	  feed_dirty = true;
+	}
+
+	if (feed_dirty) { db::update(feeds, feed); }
       });
 
     tasks.on_insert.push_back([&](auto rec) {
@@ -185,25 +188,26 @@ namespace snackis {
     
     tasks.on_update.push_back([&](auto prev_rec, auto curr_rec) {
 	Task prev(ctx, prev_rec), curr(ctx, curr_rec);
-	opt<Feed> feed(find_feed_id(ctx, curr.id));
-	
-	if (feed) {
-	  bool feed_dirty(false);
+	Feed feed(get_feed_id(ctx, curr.id));	
+	bool feed_dirty(false);
 
-	  if (feed && curr.name != prev.name &&
-	      feed->name == fmt("Task %0", prev.name)) {
-	    feed->name = fmt("Task %0", curr.name);
-	    feed_dirty = true;
-	  }
-
-	  
-	  if (curr.peer_ids != prev.peer_ids) {		    
-	    patch(feed->peer_ids, diff(prev.peer_ids, curr.peer_ids));
-	    feed_dirty = true;
-	  }
-
-	  if (feed_dirty) { db::update(feeds, *feed); }
+	if (curr.done != prev.done) {
+	  feed.active = !curr.done;
+	  feed_dirty = true;
 	}
+	
+	if (curr.name != prev.name &&
+	    feed.name == fmt("Task %0", prev.name)) {
+	  feed.name = fmt("Task %0", curr.name);
+	  feed_dirty = true;
+	}
+	  
+	if (curr.peer_ids != prev.peer_ids) {		    
+	  patch(feed.peer_ids, diff(prev.peer_ids, curr.peer_ids));
+	  feed_dirty = true;
+	}
+
+	if (feed_dirty) { db::update(feeds, feed); }
       });
   }
 }

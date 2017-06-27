@@ -7,7 +7,8 @@
 namespace snackis {
 namespace gui {
   enum PeerCol {COL_PEER_PTR=0, COL_PEER_ID, COL_PEER_NAME};
-  enum TaskCol {COL_TASK_PTR=0, COL_TASK_OWNER, COL_TASK_CREATED, COL_TASK_NAME};
+  enum TaskCol {COL_TASK_PTR=0, COL_TASK_OWNER, COL_TASK_CREATED, COL_TASK_NAME,
+		COL_TASK_INFO};
 
   static void on_find(gpointer *_, TaskSearch *v) {
     Ctx &ctx(v->ctx);
@@ -46,6 +47,7 @@ namespace gui {
 			 COL_TASK_CREATED,
 			 fmt(task.created_at, "%a %b %d, %H:%M").c_str(),
 			 COL_TASK_NAME, task.name.c_str(),
+			 COL_TASK_INFO, task.info.c_str(),
 			 -1);
       cnt++;
     }
@@ -116,14 +118,23 @@ namespace gui {
 							   nullptr));
     gtk_tree_view_column_set_expand(GTK_TREE_VIEW_COLUMN(name_col), true);
     gtk_tree_view_append_column(GTK_TREE_VIEW(v.lst), name_col);
+
+    rend = gtk_cell_renderer_text_new();
+    auto info_col(gtk_tree_view_column_new_with_attributes("",
+							   rend,
+							   "text", COL_TASK_INFO,
+							   nullptr));
+    gtk_tree_view_column_set_expand(GTK_TREE_VIEW_COLUMN(info_col), true);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(v.lst), info_col);
     g_signal_connect(v.lst, "row-activated", G_CALLBACK(on_edit), &v);
   }
   
   TaskSearch::TaskSearch(Ctx &ctx):
     View(ctx, "Task Search"),
     peers(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
-    tasks(gtk_list_store_new(4, G_TYPE_POINTER,
-			     G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING)),
+    tasks(gtk_list_store_new(5, G_TYPE_POINTER,
+			     G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
+			     G_TYPE_STRING)),
     text_fld(gtk_entry_new()),
     done_fld(gtk_check_button_new_with_label("Done")),
     peer_fld(new_combo_box(GTK_TREE_MODEL(peers))),
