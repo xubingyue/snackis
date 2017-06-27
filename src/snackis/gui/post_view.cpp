@@ -145,7 +145,7 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(fields), lbl);
 
     focused = feed_fld;
-    refresh(*this);
+    on_feed_sel(nullptr, this);
   }
 
   bool PostView::allow_save() const {

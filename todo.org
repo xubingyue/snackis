@@ -1,4 +1,3 @@
-* replace feed view history/posts with new post btn
 * replace feed name field in post search with combo
 ** only include active
 ** remove active check

@@ -11,9 +11,9 @@
 namespace snackis {
 namespace gui {
   struct FeedView: RecView<Feed> {
-    GtkListStore *peer_store, *feed_peer_store, *post_store;
+    GtkListStore *peer_store, *feed_peer_store;
     GtkWidget *name_fld, *active_fld, *info_fld, *peer_lst, *peer_fld,
-      *add_peer_btn, *post_lst, *post_fld;
+      *add_peer_btn, *post_btn;
     
     FeedView(const Feed &feed);
     bool allow_save() const override;

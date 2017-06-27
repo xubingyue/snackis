@@ -117,75 +117,24 @@ namespace gui {
     load_peers(v);
   }
 
-  static void on_edit_post(GtkTreeView *treeview,
-			   GtkTreePath *path,
-			   GtkTreeViewColumn *col,
-			   FeedView *v) {
-    Ctx &ctx(v->ctx);
-    auto post_rec(get_sel_rec<Post>(GTK_TREE_VIEW(v->post_lst)));
-    assert(post_rec);
-    Post post(ctx, *post_rec);
-    PostView *pv(new PostView(post));
+  static void on_post(gpointer *_, FeedView *v) {
+    Post post(v->ctx);
+    post.feed_id = v->rec.id;
+    PostView *pv = new PostView(post);
     push_view(*pv);
-  }
-  
-  static void load_posts(FeedView &v) {
-    Ctx &ctx(v.ctx);
-
-    for (auto rec: last_posts(v.rec, Time::max(), 7)) {
-      Post post(ctx, *rec);
-      Peer peer(get_peer_id(ctx, post.by_id));
-      
-      GtkTreeIter iter;
-      gtk_list_store_append(v.post_store, &iter);
-      const str by(fmt("%0\n%1",
-		       peer.name.c_str(),
-		       fmt(post.at, "%a %b %d, %H:%M:%S").c_str()));
-      
-      gtk_list_store_set(v.post_store, &iter,
-			 COL_POST_PTR, rec,
-			 COL_POST_BY, by.c_str(),
-			 COL_POST_BODY, post.body.c_str(),
-			 -1);
-    }
-  }
-
-  static void init_posts(FeedView &v) {
-    gtk_widget_set_hexpand(v.post_lst, true);
-    gtk_widget_set_vexpand(v.post_lst, true);
-    auto rend(gtk_cell_renderer_text_new());
-    auto by_col(gtk_tree_view_column_new_with_attributes("Post History",
-							 rend,
-							 "text", COL_POST_BY,
-							 nullptr));
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.post_lst), by_col);    
-
-    rend = gtk_cell_renderer_text_new();
-    auto body_col(gtk_tree_view_column_new_with_attributes("",
-							   rend,
-							   "text", COL_POST_BODY,
-							   nullptr));
-    gtk_tree_view_column_set_expand(GTK_TREE_VIEW_COLUMN(body_col), true);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.post_lst), body_col);    
-    g_signal_connect(v.post_lst, "row-activated", G_CALLBACK(on_edit_post), &v);
-    load_posts(v);
   }
   
   FeedView::FeedView(const Feed &feed):
     RecView("Feed", feed),
     peer_store(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
     feed_peer_store(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
-    post_store(gtk_list_store_new(3,
-				  G_TYPE_POINTER,
-				  G_TYPE_STRING, G_TYPE_STRING)),
     name_fld(gtk_entry_new()),
     active_fld(gtk_check_button_new_with_label("Active")),
     info_fld(new_text_view()),
     peer_lst(gtk_tree_view_new_with_model(GTK_TREE_MODEL(feed_peer_store))),
     peer_fld(new_combo_box(GTK_TREE_MODEL(peer_store))),
     add_peer_btn(gtk_button_new_with_mnemonic("_Add Peer")),
-    post_lst(gtk_tree_view_new_with_model(GTK_TREE_MODEL(post_store))),
-    post_fld(new_text_view()) {
+    post_btn(gtk_button_new_with_mnemonic("New _Post")) {
     GtkWidget *lbl;
 
     lbl = gtk_label_new("Name");
@@ -207,18 +156,13 @@ namespace gui {
     
     init_peers(*this);
 
-    init_posts(*this);
-    gtk_widget_set_margin_top(post_lst, 5);
-    gtk_container_add(GTK_CONTAINER(fields), post_lst);
-    lbl = gtk_label_new("Press Return or double-click to edit post");
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
+    GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    gtk_widget_set_margin_top(btns, 5);
+    gtk_widget_set_valign(btns, GTK_ALIGN_END);
+    gtk_container_add(GTK_CONTAINER(fields), btns);
+    g_signal_connect(post_btn, "clicked", G_CALLBACK(on_post), this);
+    gtk_container_add(GTK_CONTAINER(btns), post_btn);
 
-    lbl = gtk_label_new("New Post");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_widget_set_margin_top(lbl, 5);
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
-    gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(post_fld));
-    
     focused = name_fld;
   }
 
@@ -231,16 +175,6 @@ namespace gui {
     rec.info = get_str(GTK_TEXT_VIEW(info_fld));
     rec.active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(active_fld));
     db::upsert(ctx.db.feeds, rec);
-    const str post_body(get_str(GTK_TEXT_VIEW(post_fld)));
-
-    if (!post_body.empty()) {
-      Post post(ctx);
-      post.feed_id = rec.id;
-      post.body = post_body;
-      db::insert(ctx.db.posts, post);
-      send(post);
-    }
-
     return true;
   }
 
