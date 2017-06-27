@@ -120,7 +120,7 @@ namespace gui {
 
   static void on_find_posts(gpointer *_, FeedView *v) {
     PostSearch *ps = new PostSearch(v->ctx);
-    sel_feed(*ps, v->rec);
+    ps->feed.emplace(v->rec);
     push_view(*ps);
   }
 
