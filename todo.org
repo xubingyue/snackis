@@ -1,10 +1,5 @@
-* replace feed name field in post search with combo
-** only include active
-** remove active check
-
-* ---
 * add task search project combo
-** only active
+** copy post search feed
 * add task.queue_ids
 ** update in add_task
 * add task search queue combo
@@ -15,7 +10,6 @@
 ** copy send(post) to task
 ** use queue_ids
 ** include project info
-* ---
 * add TaskView queues
 * add ProjectView peers
 ** add tabs, separate Peers page
