@@ -7,7 +7,7 @@
 namespace snackis {
 namespace gui {
   enum PeerCol {COL_PEER_PTR=0, COL_PEER_ID, COL_PEER_NAME};
-  enum FeedCol {COL_FEED_PTR=0, COL_FEED_NAME};
+  enum FeedCol {COL_FEED_PTR=0, COL_FEED_CREATED, COL_FEED_OWNER, COL_FEED_NAME};
 
   static void on_find(gpointer *_, FeedSearch *v) {
     Ctx &ctx(v->ctx);
@@ -36,11 +36,16 @@ namespace gui {
 	continue;
       }
       
+      Peer own(get_peer_id(ctx, feed.owner_id));
+
       GtkTreeIter iter;
       gtk_list_store_append(v->feeds, &iter);
       gtk_list_store_set(v->feeds, &iter,
 			 COL_FEED_PTR, &rec,
-			 COL_FEED_NAME, db::get(rec, ctx.db.feed_name)->c_str(),
+			 COL_FEED_CREATED,
+			 fmt(feed.created_at, "%a %b %d, %H:%M").c_str(),
+			 COL_FEED_OWNER, own.name.c_str(),
+			 COL_FEED_NAME, feed.name.c_str(),
 			 -1);
       cnt++;
     }
@@ -89,19 +94,17 @@ namespace gui {
 
   static void init_list(FeedSearch &v) {
     gtk_widget_set_hexpand(v.list, true);
-    auto rend(gtk_cell_renderer_text_new());
-    auto name_col(gtk_tree_view_column_new_with_attributes("Results",
-							   rend,
-							   "text", COL_FEED_NAME,
-							   nullptr));
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.list), name_col);
+    add_col(GTK_TREE_VIEW(v.list), "Created", COL_FEED_CREATED);
+    add_col(GTK_TREE_VIEW(v.list), "Owner", COL_FEED_OWNER);
+    add_col(GTK_TREE_VIEW(v.list), "Name", COL_FEED_NAME, true);
     g_signal_connect(v.list, "row-activated", G_CALLBACK(on_edit), &v);
   }
   
   FeedSearch::FeedSearch(Ctx &ctx):
     View(ctx, "Feed Search"),
     peers(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
-    feeds(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
+    feeds(gtk_list_store_new(4, G_TYPE_POINTER,
+			     G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING)),
     name(gtk_entry_new()),
     peer(new_combo_box(GTK_TREE_MODEL(peers))),
     active(gtk_check_button_new_with_label("Active")),

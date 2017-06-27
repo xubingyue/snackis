@@ -76,15 +76,9 @@ namespace gui {
   
   static void init_peers(FeedView &v) {
     Ctx &ctx(v.ctx);
-
     gtk_widget_set_margin_top(v.peer_lst, 5);
     gtk_widget_set_hexpand(v.peer_lst, true);
-    auto rend(gtk_cell_renderer_text_new());
-    auto name_col(gtk_tree_view_column_new_with_attributes("Peers",
-							   rend,
-							   "text", COL_PEER_NAME,
-							   nullptr));
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.peer_lst), name_col);    
+    add_col(GTK_TREE_VIEW(v.peer_lst), "Peers", COL_PEER_NAME);
     g_signal_connect(v.peer_lst, "row-activated", G_CALLBACK(on_remove_peer), &v);
     
     for(auto key = ctx.db.peers_sort.recs.begin();

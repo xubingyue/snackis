@@ -50,6 +50,8 @@ namespace gui {
 
   GtkWidget *new_combo_box(GtkTreeModel *mod);
   GtkWidget *new_text_view();
+  GtkTreeViewColumn *add_col(GtkTreeView *w, const str &lbl, int idx,
+			     bool expand=false);
 }}
 
 #endif

@@ -64,4 +64,16 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(scroll), w);
     return w;
   }
+
+  GtkTreeViewColumn *add_col(GtkTreeView *w, const str &lbl, int idx, bool expand) {
+    auto rnd(gtk_cell_renderer_text_new());
+    auto col(gtk_tree_view_column_new_with_attributes(lbl.c_str(),
+						      rnd,
+						      "text", idx,
+						      nullptr));
+    if (expand) { gtk_tree_view_column_set_expand(col, true); }
+    gtk_tree_view_append_column(GTK_TREE_VIEW(w), col);
+    return col;
+  }
+
 }}

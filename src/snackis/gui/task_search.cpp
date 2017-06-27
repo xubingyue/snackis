@@ -7,8 +7,8 @@
 namespace snackis {
 namespace gui {
   enum PeerCol {COL_PEER_PTR=0, COL_PEER_ID, COL_PEER_NAME};
-  enum TaskCol {COL_TASK_PTR=0, COL_TASK_OWNER, COL_TASK_CREATED, COL_TASK_NAME,
-		COL_TASK_INFO};
+  enum TaskCol {COL_TASK_PTR=0, COL_TASK_CREATED, COL_TASK_OWNER,
+		COL_TASK_PROJECT, COL_TASK_NAME, COL_TASK_INFO};
 
   static void on_find(gpointer *_, TaskSearch *v) {
     Ctx &ctx(v->ctx);
@@ -23,32 +23,34 @@ namespace gui {
 	 key != ctx.db.tasks_sort.recs.end();
 	 key++) {
       auto &rec(db::get(ctx.db.tasks, *key));
-      Task task(ctx, rec);
+      Task tsk(ctx, rec);
 
-      if (task.done != done_sel) { continue; }
+      if (tsk.done != done_sel) { continue; }
 
       if (peer_sel) {
 	auto peer_id(*db::get(*peer_sel, ctx.db.peer_id));
-	if (task.owner_id != peer_id &&
-	    task.peer_ids.find(peer_id) == task.peer_ids.end()) { continue; }
+	if (tsk.owner_id != peer_id &&
+	    tsk.peer_ids.find(peer_id) == tsk.peer_ids.end()) { continue; }
       }      
 
       if (!text_sel.empty() &&
-	  find_ci(task.name, text_sel) == str::npos &&
-	  find_ci(task.info, text_sel) == str::npos) {
+	  find_ci(tsk.name, text_sel) == str::npos &&
+	  find_ci(tsk.info, text_sel) == str::npos) {
 	continue;
       }
-      
-      Peer owner(get_peer_id(ctx, task.owner_id));
+
+      Project prj(get_project_id(ctx, tsk.project_id));
+      Peer own(get_peer_id(ctx, tsk.owner_id));
       GtkTreeIter iter;
       gtk_list_store_append(v->tasks, &iter);
       gtk_list_store_set(v->tasks, &iter,
 			 COL_TASK_PTR, &rec,
-			 COL_TASK_OWNER, owner.name.c_str(),
 			 COL_TASK_CREATED,
-			 fmt(task.created_at, "%a %b %d, %H:%M").c_str(),
-			 COL_TASK_NAME, task.name.c_str(),
-			 COL_TASK_INFO, task.info.c_str(),
+			 fmt(tsk.created_at, "%a %b %d, %H:%M").c_str(),
+			 COL_TASK_OWNER, own.name.c_str(),
+			 COL_TASK_NAME, tsk.name.c_str(),
+			 COL_TASK_INFO, tsk.info.c_str(),
+			 COL_TASK_PROJECT, prj.name.c_str(),
 			 -1);
       cnt++;
     }
@@ -97,45 +99,20 @@ namespace gui {
 
   static void init_lst(TaskSearch &v) {
     gtk_widget_set_hexpand(v.lst, true);
-    auto rend(gtk_cell_renderer_text_new());
-    auto owner_col(gtk_tree_view_column_new_with_attributes("Results",
-							    rend,
-							    "text", COL_TASK_OWNER,
-							    nullptr));
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.lst), owner_col);
-
-    rend = gtk_cell_renderer_text_new();
-    auto created_col(gtk_tree_view_column_new_with_attributes("",
-							      rend,
-							      "text",
-							      COL_TASK_CREATED,
-							      nullptr));
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.lst), created_col);
-
-    rend = gtk_cell_renderer_text_new();
-    auto name_col(gtk_tree_view_column_new_with_attributes("",
-							   rend,
-							   "text", COL_TASK_NAME,
-							   nullptr));
-    gtk_tree_view_column_set_expand(GTK_TREE_VIEW_COLUMN(name_col), true);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.lst), name_col);
-
-    rend = gtk_cell_renderer_text_new();
-    auto info_col(gtk_tree_view_column_new_with_attributes("",
-							   rend,
-							   "text", COL_TASK_INFO,
-							   nullptr));
-    gtk_tree_view_column_set_expand(GTK_TREE_VIEW_COLUMN(info_col), true);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.lst), info_col);
+    add_col(GTK_TREE_VIEW(v.lst), "Created", COL_TASK_CREATED);
+    add_col(GTK_TREE_VIEW(v.lst), "Owner", COL_TASK_OWNER);
+    add_col(GTK_TREE_VIEW(v.lst), "Project", COL_TASK_PROJECT, true);
+    add_col(GTK_TREE_VIEW(v.lst), "Name", COL_TASK_NAME, true);
+    add_col(GTK_TREE_VIEW(v.lst), "Info", COL_TASK_INFO, true);
     g_signal_connect(v.lst, "row-activated", G_CALLBACK(on_edit), &v);
   }
   
   TaskSearch::TaskSearch(Ctx &ctx):
     View(ctx, "Task Search"),
     peers(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
-    tasks(gtk_list_store_new(5, G_TYPE_POINTER,
+    tasks(gtk_list_store_new(6, G_TYPE_POINTER,
 			     G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
-			     G_TYPE_STRING)),
+			     G_TYPE_STRING, G_TYPE_STRING)),
     text_fld(gtk_entry_new()),
     done_fld(gtk_check_button_new_with_label("Done")),
     peer_fld(new_combo_box(GTK_TREE_MODEL(peers))),

@@ -1,7 +1,5 @@
-* extract gui::add_column
-* add project name column to task search
 * copy feed view-buttons to project view
-** add 'New _Task' btn
+** add '_Find Tasks' & 'New _Task' btns
 * copy feed view-buttons to task view
 * add task search project combo
 ** copy post search feed

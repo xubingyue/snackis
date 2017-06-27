@@ -82,22 +82,8 @@ namespace gui {
   }
   
   static void init_list(Inbox &v) {
-    GtkCellRenderer *rend;
-
-    rend = gtk_cell_renderer_text_new();
-    auto from_col(gtk_tree_view_column_new_with_attributes("From",
-							   rend,
-							   "text", COL_FROM,
-							   nullptr));
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.list), from_col);
-  
-    rend = gtk_cell_renderer_text_new();
-    auto info_col(gtk_tree_view_column_new_with_attributes("Message",
-							   rend,
-							   "text", COL_INFO,
-							   nullptr));
-    gtk_tree_view_column_set_expand(GTK_TREE_VIEW_COLUMN(info_col), true);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.list), info_col);
+    add_col(GTK_TREE_VIEW(v.list), "From", COL_FROM);
+    add_col(GTK_TREE_VIEW(v.list), "Message", COL_INFO, true);
     Ctx &ctx(v.ctx);
     std::vector<UId> rem;
     

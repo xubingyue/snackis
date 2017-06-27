@@ -158,28 +158,9 @@ namespace gui {
 
   static void init_list(PostSearch &v) {
     gtk_widget_set_hexpand(v.list, true);
-    auto rend(gtk_cell_renderer_text_new());
-    auto col(gtk_tree_view_column_new_with_attributes("Results",
-						      rend,
-						      "text", COL_BY,
-						      nullptr));
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.list), col);
-
-    rend = gtk_cell_renderer_text_new();
-    col = gtk_tree_view_column_new_with_attributes("",
-						   rend,
-						   "text", COL_FEED,
-						   nullptr);
-    gtk_tree_view_column_set_expand(GTK_TREE_VIEW_COLUMN(col), true);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.list), col);
-
-    rend = gtk_cell_renderer_text_new();
-    col = gtk_tree_view_column_new_with_attributes("",
-						   rend,
-						   "text", COL_BODY,
-						   nullptr);
-    gtk_tree_view_column_set_expand(GTK_TREE_VIEW_COLUMN(col), true);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.list), col);
+    add_col(GTK_TREE_VIEW(v.list), "Posted", COL_BY);
+    add_col(GTK_TREE_VIEW(v.list), "Feed", COL_FEED, true);
+    add_col(GTK_TREE_VIEW(v.list), "Body", COL_BODY, true);
     g_signal_connect(v.list, "row-activated", G_CALLBACK(on_edit), &v);
   }
   

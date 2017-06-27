@@ -90,20 +90,8 @@ namespace gui {
   static void init_posts(PostView &v) {
     gtk_widget_set_hexpand(v.post_lst, true);
     gtk_widget_set_vexpand(v.post_lst, true);
-    auto rend(gtk_cell_renderer_text_new());
-    auto by_col(gtk_tree_view_column_new_with_attributes("Feed History",
-							 rend,
-							 "text", COL_POST_BY,
-							 nullptr));
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.post_lst), by_col);    
-
-    rend = gtk_cell_renderer_text_new();
-    auto body_col(gtk_tree_view_column_new_with_attributes("",
-							   rend,
-							   "text", COL_POST_BODY,
-							   nullptr));
-    gtk_tree_view_column_set_expand(GTK_TREE_VIEW_COLUMN(body_col), true);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(v.post_lst), body_col);
+    add_col(GTK_TREE_VIEW(v.post_lst), "Posted", COL_POST_BY);
+    add_col(GTK_TREE_VIEW(v.post_lst), "Body", COL_POST_BODY, true);
     g_signal_connect(v.post_lst, "row-activated", G_CALLBACK(on_edit_post), &v);
   }
   
@@ -140,7 +128,10 @@ namespace gui {
     set_str(GTK_TEXT_VIEW(body_fld), rec.body);
     
     init_posts(*this);
-    gtk_widget_set_margin_top(post_lst, 5);
+    lbl = gtk_label_new("Feed History");
+    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
+    gtk_widget_set_margin_top(lbl, 10);
+    gtk_container_add(GTK_CONTAINER(fields), lbl);
     gtk_container_add(GTK_CONTAINER(fields), post_lst);
     lbl = gtk_label_new("Press Return or double-click to edit post");
     gtk_container_add(GTK_CONTAINER(fields), lbl);
