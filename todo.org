@@ -1,9 +1,10 @@
+* extract gui::add_column
 * add 'Find Posts' button to feed view
 ** copy buttons to project view
-*** add 'New Task' btn
-*** add 'Search Tasks' btn
+*** add 'New _Task' btn
+*** add '_Find Tasks' btn
 ** copy buttons to task view
-*** add 'Copy Task' btn
+*** add '_Copy Task' btn
 * add task search project combo
 ** copy post search feed
 * add task.queue_ids
@@ -24,7 +25,7 @@
 ** add tabs, separate Peers page
 * add gui::QueueView
 ** add queue command
-* add project view peers
+* add gui::ProjectSearch
 * add gui::PeerSearch
 * add help command
 ** add Cmd struct
