@@ -1,7 +1,7 @@
 ![logo](images/logo.png?raw=true)
 
 # Snackis
-#### sugar-free co-creation
+#### distributed and secure co-creation
 
 ### Introduction
 Snackis is aiming for something that might be described as a post-modern enigma-device; a tool that covers most secure communication needs using any regular email-account as transport. Peers, encryption keys, messages and and settings are stored locally, encrypted using a master password. At present; Snackis supports key-exchange via invites/accepts, encryption/decryption of arbitrary data for specific peers and feeds/posts. Coming up next is signed receipts, scheduled events and more.
