@@ -55,9 +55,8 @@ namespace gui {
     project_fld(new_combo_box(GTK_TREE_MODEL(project_store))),
     edit_project_btn(gtk_button_new_with_mnemonic("_Edit Project")),
     name_fld(gtk_entry_new()),
-    info_fld(new_text_view()),
-    deadline_fld(gtk_entry_new()),
-    done_fld(gtk_check_button_new_with_mnemonic("_Done")){
+    done_fld(gtk_check_button_new_with_mnemonic("_Done")),
+    info_fld(new_text_view()) {
     GtkWidget *lbl;
 
     init_projects(*this);
@@ -77,29 +76,19 @@ namespace gui {
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_widget_set_margin_top(lbl, 5);
     gtk_container_add(GTK_CONTAINER(fields), lbl);
-    gtk_container_add(GTK_CONTAINER(fields), name_fld);
+    GtkWidget *name_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    gtk_container_add(GTK_CONTAINER(fields), name_box);
+    gtk_widget_set_hexpand(name_fld, true);
+    gtk_container_add(GTK_CONTAINER(name_box), name_fld);
     set_str(GTK_ENTRY(name_fld), task.name);
+    gtk_container_add(GTK_CONTAINER(name_box), done_fld);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(done_fld), task.done);
 
     lbl = gtk_label_new("Info");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_container_add(GTK_CONTAINER(fields), lbl);
     gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(info_fld));
     set_str(GTK_TEXT_VIEW(info_fld), task.info);
-
-    lbl = gtk_label_new("Deadline");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_widget_set_margin_top(lbl, 5);
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
-    GtkWidget *done_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    gtk_container_add(GTK_CONTAINER(fields), done_box);
-
-    gtk_entry_set_placeholder_text(GTK_ENTRY(deadline_fld),
-				   "yyyy-mm-dd");
-    gtk_container_add(GTK_CONTAINER(done_box), deadline_fld);
-    set_str(GTK_ENTRY(deadline_fld), fmt(task.deadline, "%Y-%m-%d"));
-    gtk_widget_set_halign(done_fld, GTK_ALIGN_END);
-    gtk_container_add(GTK_CONTAINER(done_box), done_fld);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(done_fld), task.done);
 
     focused = project_fld;
     refresh(*this);
@@ -116,16 +105,6 @@ namespace gui {
     set_project(rec, project);
     rec.name = get_str(GTK_ENTRY(name_fld));
     rec.info = get_str(GTK_TEXT_VIEW(info_fld));
-    auto deadline(parse_time("%Y-%m-%d",
-			     get_str(GTK_ENTRY(deadline_fld)),
-			     Time::max()));
-
-    if (!deadline) {
-      log(ctx, fmt("Invalid deadline: %0", get_str(GTK_ENTRY(deadline_fld))));
-      return false;
-    }
-    
-    rec.deadline = *deadline;
     rec.done = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(done_fld));
     db::upsert(ctx.db.tasks, rec);
 

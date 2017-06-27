@@ -10,7 +10,6 @@ namespace snackis {
     id(true),
     owner_id(whoami(ctx).id),
     created_at(now()),
-    deadline(Time::max()),
     done(false)
   { }
 

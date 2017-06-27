@@ -1,20 +1,21 @@
-* remove deadline
-** move done to name row in view
+* add gui::TaskSearch
+** project, queue, text & done
+*** match text against both name & info
 * add task.queue_ids
 ** update in add_task
 ** add remove_task(queue, task)
+* send task messages
+** send to all task peers and all queue peers when task is saved
+** copy send(post) to task
+** use queue_ids
+** include project info
+
+* ---
 * add ProjectView peers
 ** add tabs, separate Peers page
 ** extract gui::Peers struct
 * add TaskView peers
 ** add tabs, separate Peers page
-* add task message
-** send to all peers when task is saved
-** copy send(post) to task
-** include project info
-* add gui::TaskSearch
-** project, queue, text & done
-*** match text against both name & info
 * add gui::QueueView
 ** add queue command
 * add task.done_at

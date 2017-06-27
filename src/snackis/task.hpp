@@ -14,7 +14,6 @@ namespace snackis {
     Time created_at;
     str name, info;
     std::set<UId> peer_ids;
-    Time deadline;
     bool done;
     
     Task(Ctx &ctx);
