@@ -11,7 +11,7 @@ namespace gui {
     Console::LogLock lock(cns.log_mutex);
 
     for (const auto &msg: cns.out) {
-      auto buf(gtk_text_view_get_buffer(GTK_TEXT_VIEW(cns.text_view)));
+      auto buf(gtk_text_view_get_buffer(GTK_TEXT_VIEW(cns.view)));
       GtkTextIter start;
       gtk_text_buffer_get_start_iter(buf, &start);
       gtk_text_buffer_place_cursor(buf, &start);
@@ -34,7 +34,7 @@ namespace gui {
   }
 
   void clear(Console &cns) {
-    auto buf(gtk_text_view_get_buffer(GTK_TEXT_VIEW(cns.text_view)));
+    auto buf(gtk_text_view_get_buffer(GTK_TEXT_VIEW(cns.view)));
     GtkTextIter start, end;
     gtk_text_buffer_get_start_iter(buf, &start);
     gtk_text_buffer_get_end_iter(buf, &end);
@@ -42,21 +42,14 @@ namespace gui {
     log(cns, "Cleared console");
   }
 
-  Console::Console():
-    text_view(gtk_text_view_new()), scroll_view(gtk_scrolled_window_new(NULL, NULL)) {
-    add_style(text_view, "console");
-    gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), false);
-    gtk_text_view_set_monospace(GTK_TEXT_VIEW(text_view), true);
-    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_CHAR);
-    gtk_scrolled_window_set_overlay_scrolling(GTK_SCROLLED_WINDOW(scroll_view),
-					      false);
-    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll_view),
-				   GTK_POLICY_NEVER,
-				   GTK_POLICY_ALWAYS);
-    gtk_container_add(GTK_CONTAINER(scroll_view), text_view);
+  Console::Console(): view(new_text_view()) {
+    add_style(view, "console");
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(view), false);
+    gtk_text_view_set_monospace(GTK_TEXT_VIEW(view), true);
+    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(view), GTK_WRAP_CHAR);
   }
 
   GtkWidget *Console::ptr() {
-    return scroll_view;
+    return gtk_widget_get_parent(view);
   }
 }}

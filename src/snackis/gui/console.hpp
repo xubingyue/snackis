@@ -12,7 +12,7 @@ namespace snackis {
 namespace gui {
   struct Console: Widget {
     using LogLock = std::unique_lock<std::mutex>;
-    GtkWidget *text_view, *scroll_view;
+    GtkWidget *view;
     std::mutex log_mutex;
     std::vector<str> out;
     Console();
