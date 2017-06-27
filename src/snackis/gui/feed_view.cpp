@@ -128,14 +128,21 @@ namespace gui {
     RecView("Feed", feed),
     peer_store(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
     feed_peer_store(gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING)),
+    post_btn(gtk_button_new_with_mnemonic("New _Post")),
     name_fld(gtk_entry_new()),
     active_fld(gtk_check_button_new_with_label("Active")),
     info_fld(new_text_view()),
     peer_lst(gtk_tree_view_new_with_model(GTK_TREE_MODEL(feed_peer_store))),
     peer_fld(new_combo_box(GTK_TREE_MODEL(peer_store))),
-    add_peer_btn(gtk_button_new_with_mnemonic("_Add Peer")),
-    post_btn(gtk_button_new_with_mnemonic("New _Post")) {
+    add_peer_btn(gtk_button_new_with_mnemonic("_Add Peer")) {
     GtkWidget *lbl;
+
+    GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    gtk_widget_set_margin_bottom(btns, 5);
+    gtk_widget_set_valign(btns, GTK_ALIGN_END);
+    gtk_container_add(GTK_CONTAINER(fields), btns);
+    g_signal_connect(post_btn, "clicked", G_CALLBACK(on_post), this);
+    gtk_container_add(GTK_CONTAINER(btns), post_btn);
 
     lbl = gtk_label_new("Name");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
@@ -155,13 +162,6 @@ namespace gui {
     set_str(GTK_TEXT_VIEW(info_fld), feed.info);
     
     init_peers(*this);
-
-    GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    gtk_widget_set_margin_top(btns, 5);
-    gtk_widget_set_valign(btns, GTK_ALIGN_END);
-    gtk_container_add(GTK_CONTAINER(fields), btns);
-    g_signal_connect(post_btn, "clicked", G_CALLBACK(on_post), this);
-    gtk_container_add(GTK_CONTAINER(btns), post_btn);
 
     focused = name_fld;
   }

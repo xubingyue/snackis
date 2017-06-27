@@ -1,3 +1,9 @@
+* add 'Find Posts' button to feed view
+** copy buttons to project view
+*** add 'New Task' btn
+*** add 'Search Tasks' btn
+** copy buttons to task view
+*** add 'Copy Task' btn
 * add task search project combo
 ** copy post search feed
 * add task.queue_ids
