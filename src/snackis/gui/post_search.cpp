@@ -69,7 +69,7 @@ namespace gui {
       gtk_list_store_append(v->posts, &iter);
       const str by(fmt("%0\n%1",
 		       peer.name.c_str(),
-		       fmt(post.at, "%a %b %d, %H:%M:%S").c_str()));
+		       fmt(post.at, "%a %b %d, %H:%M").c_str()));
       gtk_list_store_set(v->posts, &iter,
 			 COL_PTR, &rec,
 			 COL_BY, by.c_str(),
