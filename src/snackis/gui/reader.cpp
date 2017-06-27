@@ -11,6 +11,7 @@
 #include "snackis/gui/post_view.hpp"
 #include "snackis/gui/project_view.hpp"
 #include "snackis/gui/reader.hpp"
+#include "snackis/gui/task_search.hpp"
 #include "snackis/gui/task_view.hpp"
 #include "snackis/gui/widget.hpp"
 
@@ -184,6 +185,17 @@ namespace gui {
 	return true;
       });
 
+    rdr.cmds.emplace("task-search", [&ctx](auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: task-search");
+	  return false;
+	}
+	
+	TaskSearch *v = new TaskSearch(ctx);
+	push_view(*v);
+	return true;
+      });
+    
     rdr.cmds.emplace("todo", [&ctx](auto args) {
 	if (args.size() > 1) {
 	  log(ctx, "Invalid number of arguments, syntax: todo");

@@ -1,6 +1,8 @@
-* add gui::TaskSearch
-** project, queue, text & done
-*** match text against both name & info
+* finish gui::TaskSearch
+** add project (only active) & queue combos
+* replace feed name field in post search with combo
+** only include active
+** remove active check
 * add task.queue_ids
 ** update in add_task
 ** add remove_task(queue, task)
@@ -9,8 +11,8 @@
 ** copy send(post) to task
 ** use queue_ids
 ** include project info
-
 * ---
+* add TaskView queues
 * add ProjectView peers
 ** add tabs, separate Peers page
 ** extract gui::Peers struct

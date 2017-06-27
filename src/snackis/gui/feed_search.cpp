@@ -130,11 +130,11 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(frm), peer);
     
     gtk_widget_set_halign(find, GTK_ALIGN_END);
+    gtk_widget_set_margin_top(find, 5);
     g_signal_connect(find, "clicked", G_CALLBACK(on_find), this);
     gtk_container_add(GTK_CONTAINER(frm), find);
 
     init_list(*this);
-    gtk_widget_set_margin_top(list, 5);
     gtk_box_pack_start(GTK_BOX(panel), list, true, true, 0);
     lbl = gtk_label_new("Press Return or double-click to edit feed");
     gtk_container_add(GTK_CONTAINER(panel), lbl);
