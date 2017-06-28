@@ -1,7 +1,4 @@
-* add task search queue combo
-** switch iterators to queue_tasks if selected
-** use task.queue_ids to check
-* open task search for todo queue if no args
+* improve task search layout
 * add post.peer_ids
 ** move sending from post view to on_insert/update
 ** send post to union(feed.peer_ids, post.peer_ids)

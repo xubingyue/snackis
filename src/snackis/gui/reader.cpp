@@ -197,12 +197,17 @@ namespace gui {
       });
     
     rdr.cmds.emplace("todo", [&ctx](auto args) {
-	if (args.empty()) {  
+	auto q(todo_queue(ctx));
+	
+	if (args.empty()) {
+	  auto v(new TaskSearch(ctx));
+	  v->queue.emplace(q);
+	  push_view(*v);
 	} else {
 	  Task task(ctx);
 	  task.name = join(args.begin(), args.end(), ' ');
 	  auto v(new TaskView(task));
-	  v->queue.emplace(todo_queue(ctx));
+	  v->queue.emplace(q);
 	  push_view(*v);
 	}
 	
