@@ -64,7 +64,7 @@ Type ```decrypt``` and press ```Return``` in the reader to open the decryption v
 Type ```invite foo@bar.com``` in the reader and press ```Return``` to create a new invite. Snackis will send an email containing your public encryption key to the specified address. When an invite is accepted/rejected, a reply is sent to inform the inviting peer. The easiest way to see how it works is to try with your own address.
 
 ### Messages
-All Snackis-messages look more or less the same to the outside world. Most of the actual data is appended in encrypted (except for invites) and encoded form below the ```__SNACKIS__```-marker.
+All Snackis-messages look more or less the same to the outside world, the actual data is appended in encrypted (except for invites) and encoded form below the ```__SNACKIS__```-marker.
 
 ![message example](images/message.png?raw=true)
 

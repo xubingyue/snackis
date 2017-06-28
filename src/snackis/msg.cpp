@@ -1,6 +1,8 @@
 #include "snackis/ctx.hpp"
 #include "snackis/msg.hpp"
 #include "snackis/snackis.hpp"
+#include "snackis/core/prim_type.hpp"
+#include "snackis/core/uid_type.hpp"
 
 namespace snackis {
   const str
@@ -24,79 +26,60 @@ namespace snackis {
 
   str encode(const Msg &msg) {
     Ctx &ctx(msg.ctx);
+    const bool encrypt(msg.type != Msg::INVITE &&
+		       msg.type != Msg::REJECT);
     
     Stream buf;
     db::Rec<Msg> rec;
     copy(ctx.db.inbox, rec, msg);
     write(ctx.db.inbox, rec, buf, nullopt);
-    const str data(buf.str());
-
-    if (msg.type == Msg::INVITE || msg.type == Msg::REJECT) {
-      return
-	fmt("%0\r\nf%1", PROTO_REV,
-	    bin_hex(reinterpret_cast<const unsigned char *>(data.c_str()),
-		    data.size()));
+    str data(buf.str());
+    
+    if (encrypt) {
+      Peer peer(get_peer_id(ctx, msg.to_id));
+      Data out(crypt::encrypt(*get_val(ctx.settings.crypt_key), peer.crypt_key,
+			      reinterpret_cast<const unsigned char *>(data.c_str()),
+			      data.size()));
+      data.assign(out.begin(), out.end());
     }
 
-    Peer peer(get_peer_id(ctx, msg.to_id));
-    Data out(crypt::encrypt(*get_val(ctx.settings.crypt_key), peer.crypt_key,
-			    reinterpret_cast<const unsigned char *>(data.c_str()),
-			    data.size()));
-
-    return fmt("%0\r\nt%1%2",
-	       PROTO_REV, msg.from_id, bin_hex(&out[0], out.size()));
+    buf.str("");
+    int64_type.write(PROTO_REV, buf);
+    bool_type.write(encrypt, buf);
+    if (encrypt) { uid_type.write(msg.from_id, buf); }
+    buf << data;
+    data = buf.str();
+    
+    return bin_hex(reinterpret_cast<const unsigned char *>(data.c_str()),
+		   data.size());
   }
 
   bool decode(Msg &msg, const str &in) {
-    auto i(in.find("\r\n"));
-    if (i == str::npos) { return false; }
-    auto proto_rev = to_int64(in.substr(0, i));
+    Ctx &ctx(msg.ctx);
+    Data data(hex_bin(in));
+    InStream in_buf(str(data.begin(), data.end()));
 
-    if (!proto_rev) {
-      log(msg.ctx, "Failed decoding protocol revision");
-      return false;
-    }
-    
-    if (*proto_rev != PROTO_REV) {
+    const int64_t proto_rev(int64_type.read(in_buf));
+
+    if (proto_rev != PROTO_REV) {
       log(msg.ctx, "Protocol revision mismatch");
       return false;
     }
     
-    i += 2;
-    bool encrypted(in[i] == 't');
+    const bool decrypt(bool_type.read(in_buf));
 
-    if (!encrypted && in[i] != 'f') {
-      log(msg.ctx, "Invalid message format");
-      return false;
-    }
-
-    i++;
-    
-    if (encrypted) {
-      auto id (parse_uid(in.substr(i, 36)));
-
-      if (!id) {
-	log(msg.ctx, "Invalid message format");
-	return false;
-      }
-      
-      msg.from_id = *id;
-      i += 36;
-    }
-
-    Ctx &ctx(msg.ctx);
-    Data dat(hex_bin(in.substr(i)));
-
-    if (encrypted) {
+    if (decrypt) {
+      msg.from_id = uid_type.read(in_buf);
       const Peer peer(get_peer_id(ctx, msg.from_id));
-      dat = crypt::decrypt(*get_val(ctx.settings.crypt_key), peer.crypt_key,
-			   &dat[0],
-			   dat.size());
+      data.erase(data.begin(), data.begin()+in_buf.tellg());
+      data = crypt::decrypt(*get_val(ctx.settings.crypt_key), peer.crypt_key,
+			    &data[0],
+			    data.size());
+      in_buf.str(str(data.begin(), data.end()));
     }
 
-    Stream buf(str(dat.begin(), dat.end()));
     db::Rec<Msg> rec;
-    read(ctx.db.inbox, buf, rec, nullopt);
+    read(ctx.db.inbox, in_buf, rec, nullopt);
     copy(ctx.db.inbox, msg, rec);
     return true;
   }
