@@ -21,7 +21,8 @@ namespace snackis {
     name(msg.feed_name),
     info(msg.feed_info),
     active(true),
-    visible(msg.feed_visible)
+    visible(msg.feed_visible),
+    peer_ids({msg.from_id})
   { }
 
   opt<Feed> find_feed_id(Ctx &ctx, UId id) {

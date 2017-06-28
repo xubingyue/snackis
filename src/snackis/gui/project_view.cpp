@@ -28,7 +28,7 @@ namespace gui {
 
   static void on_new_task(gpointer *_, ProjectView *v) {
     Task tsk(v->ctx);
-    tsk.project_id = v->rec.id;
+    set_project(tsk, v->rec);
     TaskView *tv = new TaskView(tsk);
     push_view(*tv);
   }
@@ -84,6 +84,10 @@ namespace gui {
     set_str(GTK_TEXT_VIEW(info_fld), rec.info);
     
     focused = name_fld;
+  }
+
+  bool ProjectView::allow_save() const {
+    return rec.owner_id == whoami(ctx).id;
   }
   
   bool ProjectView::save() {

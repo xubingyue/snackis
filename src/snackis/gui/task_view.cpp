@@ -128,12 +128,13 @@ namespace gui {
   }
 
   bool TaskView::allow_save() const {
-    return get_sel_rec<Project>(GTK_COMBO_BOX(project_fld));
+    return rec.owner_id == whoami(ctx).id &&
+      get_sel_rec<Project>(GTK_COMBO_BOX(project_fld));
   }
 
   bool TaskView::save() {
     Project prj(ctx, *get_sel_rec<Project>(GTK_COMBO_BOX(project_fld)));
-    rec.project_id = prj.id;
+    set_project(rec, prj);
     rec.name = get_str(GTK_ENTRY(name_fld));
     rec.info = get_str(GTK_TEXT_VIEW(info_fld));
     rec.done = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(done_fld));

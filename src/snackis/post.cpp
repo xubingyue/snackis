@@ -16,7 +16,8 @@ namespace snackis {
     feed_id(msg.feed_id), 
     at(msg.post_at), 
     by_id(msg.from_id),
-    body(msg.post_body)
+    body(msg.post_body),
+    peer_ids({msg.from_id})
   { }
 
   opt<Post> find_post_id(Ctx &ctx, UId id) {
@@ -26,23 +27,28 @@ namespace snackis {
     return Post(ctx, rec);
   }
 
-  void send(const Post &post) {
-    Ctx &ctx(post.ctx);
-    Feed feed(get_feed_id(ctx, post.feed_id));
+  void send(const Post &pst) {
+    Ctx &ctx(pst.ctx);
+    Feed fed(get_feed_id(ctx, pst.feed_id));
     
-    for (auto &pid: feed.peer_ids) {
-      Peer peer(get_peer_id(ctx, pid));
+    for (auto &pid: pst.peer_ids) {
+      Peer per(get_peer_id(ctx, pid));
       Msg msg(ctx, Msg::POST);
-      msg.to = peer.email;
-      msg.to_id = peer.id;
-      msg.feed_id = feed.id;
-      msg.feed_name = feed.name;
-      msg.feed_info = feed.info;
-      msg.feed_visible = feed.visible;
-      msg.post_id = post.id;
-      msg.post_at = post.at;
-      msg.post_body = post.body;
+      msg.to = per.email;
+      msg.to_id = per.id;
+      msg.feed_id = fed.id;
+      msg.feed_name = fed.name;
+      msg.feed_info = fed.info;
+      msg.feed_visible = fed.visible;
+      msg.post_id = pst.id;
+      msg.post_at = pst.at;
+      msg.post_body = pst.body;
       insert(ctx.db.outbox, msg);
     }
+  }
+
+  void set_feed(Post &pst, Feed &fed) {
+    pst.feed_id = fed.id;
+    pst.peer_ids = fed.peer_ids;
   }
 }

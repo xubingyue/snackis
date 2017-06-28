@@ -47,14 +47,15 @@ namespace snackis {
 
     feeds_sort(ctx, "feeds_sort", {&feed_created_at, &feed_id}, {}),
 		  
-    post_id(     "id",      uid_type,  &Post::id),
-    post_feed_id("feed_id", uid_type,  &Post::feed_id),
-    post_at(     "at",      time_type, &Post::at),
-    post_by_id(  "by_id",   uid_type,  &Post::by_id),
-    post_body(   "body",    str_type,  &Post::body),
+    post_id(      "id",       uid_type,     &Post::id),
+    post_feed_id( "feed_id",  uid_type,     &Post::feed_id),
+    post_at(      "at",       time_type,    &Post::at),
+    post_by_id(   "by_id",    uid_type,     &Post::by_id),
+    post_body(    "body",     str_type,     &Post::body),
+    post_peer_ids("peer_ids", uid_set_type, &Post::peer_ids),
 
     posts(ctx, "posts", {&post_id},
-	  {&post_feed_id, &post_at, &post_by_id, &post_body}),
+	  {&post_feed_id, &post_at, &post_by_id, &post_body, &post_peer_ids}),
 
     posts_sort(ctx, "posts_sort", {&post_at, &post_id}, {}),
     feed_posts(ctx, "feed_posts", {&post_feed_id, &post_at, &post_id}, {}),

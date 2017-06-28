@@ -57,4 +57,9 @@ namespace snackis {
     
     return feed;
   }
+
+  void set_project(Task &tsk, Project &prj) {
+    tsk.project_id = prj.id;
+    tsk.peer_ids = prj.peer_ids;
+  }
 }

@@ -1,29 +1,18 @@
-* add post.peer_ids
-** move sending from post view to on_insert/update
-** send post to union(feed.peer_ids, post.peer_ids)
-** add peer selection to post view
-*** add check-box col for feed peers
-*** add col headers Peer & Feed
-*** only allow remove of post peers
 * add REJECT_FEED msg
 ** send when rejecting feed
 ** remove feed peer
 * send task messages
-** send to task peers on task save
 ** copy send(post)
-** use queue_ids
-** include project active, info, & task done
-* add ProjectView peers
-** extract gui::Peers struct
-* add TaskView peers
+* move feed peers to separate tab
+** General / Peers
+* add project view peers
+** separate tab
 * add TaskView queues
 * add gui::QueueView
 ** add queue command
 * add gui::ProjectSearch
 ** extract SearchView
 * add gui::PeerSearch
-* add id field to search views
-** use find_ci to match ids
 * add help command
 ** add Cmd struct
 *** rename Cmd to Fn
@@ -41,7 +30,4 @@
 ** lock externally around loops
 ** only lock trans_mutex when accessing stack
 * hide stack views instead of removing/adding to container
-* hide search columns for selection
-** post_search/feed
-** task_search/project
 
