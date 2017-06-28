@@ -134,8 +134,8 @@ namespace gui {
   }
 
   bool TaskView::save() {
-    Project project(ctx, *get_sel_rec<Project>(GTK_COMBO_BOX(project_fld)));
-    set_project(rec, project);
+    Project prj(ctx, *get_sel_rec<Project>(GTK_COMBO_BOX(project_fld)));
+    rec.project_id = prj.id;
     rec.name = get_str(GTK_ENTRY(name_fld));
     rec.info = get_str(GTK_TEXT_VIEW(info_fld));
     rec.done = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(done_fld));

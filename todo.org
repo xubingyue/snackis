@@ -2,6 +2,12 @@
 ** switch iterators to queue_tasks if selected
 ** use task.queue_ids to check
 * open task search for todo queue if no args
+* add post.peer_ids
+** send post to union(feed.peer_ids, post.peer_ids)
+** add peer selection to post view
+*** add check-box col for feed peers
+*** add col headers Peer & Feed
+*** only allow remove of post peers
 * add REJECT_FEED msg
 ** send when rejecting feed
 ** remove feed peer

@@ -28,7 +28,7 @@ namespace gui {
 
   static void on_new_task(gpointer *_, ProjectView *v) {
     Task tsk(v->ctx);
-    set_project(tsk, v->rec);
+    tsk.project_id = v->rec.id;
     TaskView *tv = new TaskView(tsk);
     push_view(*tv);
   }

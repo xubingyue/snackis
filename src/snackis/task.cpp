@@ -42,11 +42,6 @@ namespace snackis {
     return *found;
   }
 
-  void set_project(Task &tsk, const Project &prj) {
-    tsk.project_id = prj.id;
-    tsk.peer_ids = prj.peer_ids;
-  }
-
   Feed get_feed(const Task &tsk) {
     Ctx &ctx(tsk.ctx);
     db::Rec<Feed> rec;

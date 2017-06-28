@@ -24,7 +24,6 @@ namespace snackis {
 
   opt<Task> find_task_id(Ctx &ctx, UId id);
   Task get_task_id(Ctx &ctx, UId id);
-  void set_project(Task &tsk, const Project &prj);
   Feed get_feed(const Task &tsk);
 }
 
