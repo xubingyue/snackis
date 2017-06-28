@@ -1,4 +1,3 @@
-* allow anyone to edit feeds, projects & tasks
 * add task search queue combo
 ** switch iterators to queue_tasks if selected
 ** use task.queue_ids to check

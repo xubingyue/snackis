@@ -128,9 +128,7 @@ namespace gui {
   }
 
   bool TaskView::allow_save() const {
-    return
-      rec.owner_id == whoami(ctx).id &&
-      get_sel_rec<Project>(GTK_COMBO_BOX(project_fld));
+    return get_sel_rec<Project>(GTK_COMBO_BOX(project_fld));
   }
 
   bool TaskView::save() {
