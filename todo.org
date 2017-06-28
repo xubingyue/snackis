@@ -1,4 +1,3 @@
-* improve task search layout
 * add post.peer_ids
 ** move sending from post view to on_insert/update
 ** send post to union(feed.peer_ids, post.peer_ids)

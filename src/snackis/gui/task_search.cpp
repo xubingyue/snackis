@@ -233,43 +233,50 @@ namespace gui {
   void TaskSearch::init() {
     GtkWidget *lbl;
 
-    GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+    GtkWidget *frm = gtk_grid_new();
+    gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
+    gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
+    
     gtk_box_pack_start(GTK_BOX(panel), frm, false, false, 0);
-
+    int row = 0;
+    
     lbl = gtk_label_new("Text");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 2, 1);
     GtkWidget *text_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
-    gtk_container_add(GTK_CONTAINER(frm), text_box);
+    gtk_grid_attach(GTK_GRID(frm), text_box, 0, row+1, 2, 1);
     gtk_widget_set_hexpand(text_fld, true);
     gtk_container_add(GTK_CONTAINER(text_box), text_fld);
     gtk_container_add(GTK_CONTAINER(text_box), done_fld);
 
+    row += 2;
     init_projects(*this);
     lbl = gtk_label_new("Project");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 1, 1);
     gtk_widget_set_hexpand(project_fld, true);
-    gtk_container_add(GTK_CONTAINER(frm), project_fld);
+    gtk_grid_attach(GTK_GRID(frm), project_fld, 0, row+1, 1, 1);
 
     init_queues(*this);
     lbl = gtk_label_new("Queue");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    gtk_grid_attach(GTK_GRID(frm), lbl, 1, row, 1, 1);
     gtk_widget_set_hexpand(queue_fld, true);
-    gtk_container_add(GTK_CONTAINER(frm), queue_fld);
+    gtk_grid_attach(GTK_GRID(frm), queue_fld, 1, row+1, 1, 1);
 
+    row += 2;
     init_peers(*this);
     lbl = gtk_label_new("Peer");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 1, 1);
     gtk_widget_set_hexpand(peer_fld, true);
-    gtk_container_add(GTK_CONTAINER(frm), peer_fld);
+    gtk_grid_attach(GTK_GRID(frm), peer_fld, 0, row+1, 1, 1);
 
+    row += 2;
     gtk_widget_set_halign(find_btn, GTK_ALIGN_END);
     gtk_widget_set_margin_top(find_btn, 5);
     g_signal_connect(find_btn, "clicked", G_CALLBACK(on_find), this);
-    gtk_container_add(GTK_CONTAINER(frm), find_btn);
+    gtk_grid_attach(GTK_GRID(frm), find_btn, 0, row, 2, 1);
 
     init_lst(*this);
     gtk_box_pack_start(GTK_BOX(panel), lst, true, true, 0);
