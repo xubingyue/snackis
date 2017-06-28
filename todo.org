@@ -4,6 +4,7 @@
 ** use task.queue_ids to check
 * open task search for todo queue if no args
 * add post.peer_ids
+** move sending from post view to on_insert/update
 ** send post to union(feed.peer_ids, post.peer_ids)
 ** add peer selection to post view
 *** add check-box col for feed peers
