@@ -53,9 +53,14 @@ GtkEntry:insensitive {
     background: #333333;
 }
 
+GtkEntry:selected {
+    background: #cccccc;
+    color: #000000;
+}
+
 GtkEntry:selected:focused {
-   background: #ffffff;
-   color: #000000;
+    background: #ffffff;
+    color: #000000;
 }
 
 GtkLabel {
@@ -90,6 +95,11 @@ GtkTextView {
 }
 
 GtkTextView .view {
+    background: #ffffff;
+    color: #000000;
+}
+
+GtkTextView .view:selected:focused {
     background: #ffffff;
     color: #000000;
 }
