@@ -48,6 +48,11 @@ GtkEntry {
     border-color: silver;
 }
 
+GtkEntry:insensitive {
+    border: none;
+    background: #333333;
+}
+
 GtkEntry:selected:focused {
    background: #ffffff;
    color: #000000;
