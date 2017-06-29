@@ -2,8 +2,8 @@
 #define SNACKIS_SET_TYPE_HPP
 
 #include <set>
+#include "snackis/core/int64_type.hpp"
 #include "snackis/core/stream.hpp"
-#include "snackis/core/type.hpp"
 
 namespace snackis {
   template <typename ValT>
@@ -46,8 +46,7 @@ namespace snackis {
 
   template <typename ValT>
   std::set<ValT> SetType<ValT>::read(std::istream &in) const {
-    int64_t len = -1;
-    in.read((char *)&len, sizeof len);
+    int64_t len(int64_type.read(in));
     std::set<ValT> out;
     for (size_t i = 0; i < len; i++) { out.insert(val_type.read(in)); }
     return out;
@@ -56,8 +55,7 @@ namespace snackis {
   template <typename ValT>
   void SetType<ValT>::write(const std::set<ValT> &in,
 			       std::ostream &out) const {
-    int64_t len = in.size();
-    out.write(reinterpret_cast<const char *>(&len), sizeof len);
+    int64_type.write(in.size(), out);
     for (const auto &v: in) { val_type.write(v, out); }
   }
 }

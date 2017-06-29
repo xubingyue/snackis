@@ -1,7 +1,8 @@
 #include "snackis/ctx.hpp"
 #include "snackis/msg.hpp"
 #include "snackis/snackis.hpp"
-#include "snackis/core/prim_type.hpp"
+#include "snackis/core/bool_type.hpp"
+#include "snackis/core/int64_type.hpp"
 #include "snackis/core/uid_type.hpp"
 
 namespace snackis {

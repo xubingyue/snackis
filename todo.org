@@ -1,6 +1,11 @@
+* switch int64 read/write
+** split prim_type again
+** conv to str
+** write size as uint8
+** search int64 and switch to using int64_type (str/set etc)
 * add msg_peer_ids
 ** send with post
-** add known peers locally in post constr
+** add known peers locally in post/feed constr
 * add REJECT_FEED msg
 ** send when rejecting feed
 ** remove feed peer

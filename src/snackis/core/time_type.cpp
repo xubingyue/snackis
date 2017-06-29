@@ -1,3 +1,4 @@
+#include "snackis/core/int64_type.hpp"
 #include "snackis/core/time_type.hpp"
 
 namespace snackis {
@@ -12,15 +13,13 @@ namespace snackis {
   Val TimeType::to_val(const Time &in) const { return in; }
 
   Time TimeType::read(std::istream &in) const {
-    int64_t ms = -1;
-    in.read((char *)&ms, sizeof ms);
+    int64_t ms(int64_type.read(in));
     return Time(std::chrono::milliseconds(ms));
   }
   
   void TimeType::write(const Time &val, std::ostream &out) const {
     auto epoch = val.time_since_epoch();
     auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(epoch);
-    const int64_t cnt = ms.count();
-    out.write((char *)&cnt, sizeof cnt);
+    int64_type.write(ms.count(), out);
   }
 }

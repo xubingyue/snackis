@@ -178,6 +178,10 @@ namespace gui {
     focused = name_fld;
   }
 
+  bool FeedView::allow_save() const {
+    return rec.owner_id == whoami(ctx).id;
+  }
+
   bool FeedView::save() {
     rec.name = gtk_entry_get_text(GTK_ENTRY(name_fld));
     rec.info = get_str(GTK_TEXT_VIEW(info_fld));

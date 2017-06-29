@@ -1,6 +1,6 @@
 #include "snackis/ctx.hpp"
 #include "snackis/settings.hpp"
-#include "snackis/core/prim_type.hpp"
+#include "snackis/core/int64_type.hpp"
 #include "snackis/core/str_type.hpp"
 #include "snackis/core/uid_type.hpp"
 #include "snackis/crypt/key_type.hpp"
