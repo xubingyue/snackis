@@ -113,8 +113,10 @@ namespace gui {
       } else if (msg.type == Msg::REJECT) {
 	gtk_list_store_set(v.msgs, &iter, COL_INFO, "Invite rejected", -1);
       } else if (msg.type == Msg::POST) {
-	gtk_list_store_set(v.msgs, &iter, COL_INFO,
-			   fmt("New feed: %0", msg.feed_name).c_str(),
+	gtk_list_store_set(v.msgs, &iter,
+			   COL_INFO,
+			   fmt("New feed: %0",
+			       *db::get(msg.feed, ctx.db.feed_name)).c_str(),
 			   -1);
       } else {
 	gtk_list_store_set(v.msgs, &iter, COL_INFO,

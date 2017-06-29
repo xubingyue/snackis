@@ -18,11 +18,6 @@ namespace snackis {
 
     Rec(Ctx &ctx);
   };
-
-  template <typename RecT>
-  void copy(RecT &dest, const db::Rec<RecT> &src) {
-    for (auto &f: src) { f.first->set(dest, f.second); }
-  }
 }
 
 #endif

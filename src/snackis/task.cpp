@@ -17,18 +17,8 @@ namespace snackis {
   }
 
   Task::Task(const Msg &msg):
-    IdRec(msg.ctx, null_uid),
-    //id(msg.task_id),
-    owner_id(msg.from_id),
-    created_at(now())
-    //name(msg.task_name),
-    //info(msg.task_info)
+    IdRec(msg.ctx, null_uid)
   {
-    peer_ids.insert(msg.from_id);
-
-    for (auto &id: msg.peer_ids) {
-      if (find_peer_id(ctx, id)) { peer_ids.insert(id); }
-    }
   }
 
   opt<Task> find_task_id(Ctx &ctx, UId id) {

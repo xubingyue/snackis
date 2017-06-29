@@ -15,19 +15,16 @@ namespace snackis {
   }
 
   Feed::Feed(const Msg &msg):
-    IdRec(msg.ctx, msg.feed_id),
-    owner_id(msg.from_id),
-    created_at(now()),
-    name(msg.feed_name),
-    info(msg.feed_info),
-    active(true),
-    visible(msg.feed_visible)
+    IdRec(msg.ctx, *db::get(msg.feed, msg.ctx.db.feed_id))
   {
-    peer_ids.insert(msg.from_id);
-
-    for (auto &id: msg.peer_ids) {
-      if (find_peer_id(ctx, id)) { peer_ids.insert(id); }
+    db::copy(*this, msg.feed);    
+    
+    for (auto i = peer_ids.begin(); i != peer_ids.end();) { 
+      if (find_peer_id(ctx, *i)) { i++; }
+      else { peer_ids.erase(i); }
     }
+
+    peer_ids.insert(msg.from_id);
   }
 
   opt<Feed> find_feed_id(Ctx &ctx, UId id) {

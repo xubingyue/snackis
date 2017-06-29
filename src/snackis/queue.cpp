@@ -12,11 +12,7 @@ namespace snackis {
   }
 
   Queue::Queue(const Msg &msg):
-    IdRec(msg.ctx, null_uid),
-    //id(msg.queue_id),
-    owner_id(msg.from_id)
-    //name(msg.queue_name),
-    //info(msg.queue_info)
+    IdRec(msg.ctx, null_uid)
   { }
 
   QueueTask::QueueTask(const Queue &q, const Task &tsk):

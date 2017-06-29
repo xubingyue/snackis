@@ -162,15 +162,19 @@ namespace snackis {
 	  invite_rejected(*msg);
 	  log(ctx, fmt("Invite to %0 was rejected", msg->from));
 	} else if (msg->type == Msg::POST) {
-	  opt<Feed> feed_found(find_feed_id(ctx, msg->feed_id));
+	  opt<Feed> feed_found(find_feed_id(ctx,
+					    *db::get(msg->feed, ctx.db.feed_id)));
 	  if (feed_found) {
-	    opt<Post> post_found(find_post_id(ctx, msg->post_id));
+	    opt<Post> post_found(find_post_id(ctx,
+					      *db::get(msg->post, ctx.db.post_id)));
 	    Peer peer(get_peer_id(ctx, msg->from_id));
 
 	    if (post_found) {
 	      if (peer.id == post_found->by_id) {
-		post_found->body = msg->post_body;
-		update(ctx.db.posts, *post_found);
+		db::copy(*feed_found, msg->feed);
+		db::update(ctx.db.feeds, *feed_found);
+		db::copy(*post_found, msg->post);
+		db::update(ctx.db.posts, *post_found);
 		log(ctx, fmt("Post updated in feed '%0' by %1:\n%2",
 			     feed_found->name,
 			     peer.name,
@@ -180,18 +184,20 @@ namespace snackis {
 			     msg->from));
 	      }
 	    } else {
+	      db::copy(*feed_found, msg->feed);
+	      db::update(ctx.db.feeds, *feed_found);
 	      Post post(*msg);
-	      insert(ctx.db.posts, post);
+	      db::insert(ctx.db.posts, post);
 	      log(ctx, fmt("New post in feed '%0' by %1:\n%2",
 			   feed_found->name,
 			   peer.name,
 			   post.body));
 	    }
 	  } else {
-	    insert(ctx.db.inbox, *msg);
+	    db::insert(ctx.db.inbox, *msg);
 	  }
 	} else {
-	  insert(ctx.db.inbox, *msg);
+	  db::insert(ctx.db.inbox, *msg);
 	}
       
 	delete_uid(imap, uid);

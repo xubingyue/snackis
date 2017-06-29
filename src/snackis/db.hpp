@@ -56,13 +56,8 @@ namespace snackis {
     db::Col<Msg, Time>          msg_fetched_at;
     db::Col<Msg, str>           msg_peer_name;
     db::Col<Msg, crypt::PubKey> msg_crypt_key;
-    db::Col<Msg, UId>           msg_feed_id;
-    db::Col<Msg, str>           msg_feed_name, msg_feed_info;
-    db::Col<Msg, bool>          msg_feed_visible;
-    db::Col<Msg, UId>           msg_post_id;
-    db::Col<Msg, Time>          msg_post_at;
-    db::Col<Msg, str>           msg_post_body;
-    db::Col<Msg, std::set<UId>> msg_peer_ids;
+    db::Col<Msg, db::Rec<Feed>> msg_feed;
+    db::Col<Msg, db::Rec<Post>> msg_post;
     db::Table<Msg> inbox, inbox_sort, outbox;
 
     db::Col<Project, UId>           project_id;
