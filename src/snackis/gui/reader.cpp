@@ -185,6 +185,16 @@ namespace gui {
 	return true;
       });
 
+    rdr.cmds.emplace("swap", [&ctx](auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: swap");
+	  return false;
+	}
+	
+	swap_views();
+	return true;
+      });
+
     rdr.cmds.emplace("task-search", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: task-search");
@@ -241,15 +251,15 @@ namespace gui {
     return std::make_pair(id, args);
   }
   
-  static opt<Reader::Cmd> find_cmd(Reader &rdr, const str &in) {
-    str _in(in);
+  static opt<Reader::Cmd> find_cmd(Reader &rdr, const str &_in) {
+    str in(_in);
     
-    if (_in == "") {
+    if (in.empty()) {
       if (!rdr.last_cmd) { return nullopt; }
-      _in = *rdr.last_cmd;
+      in = *rdr.last_cmd;
     }
 
-    auto parsed(parse_cmd(rdr, _in));
+    auto parsed(parse_cmd(rdr, in));
 
     auto found(rdr.cmds.find(parsed.first));
     if (found == rdr.cmds.end()) { return nullopt; }
@@ -269,7 +279,11 @@ namespace gui {
       }
       
       if (!(*cmd)(parsed.second)) { return false; }
-      rdr.last_cmd = in;
+      
+      if (!in.empty()) {
+	rdr.last_cmd = in;
+	gtk_entry_set_placeholder_text(GTK_ENTRY(rdr.entry), in.c_str());
+      }
     } catch (const std::exception &e) {
       log(ctx, fmt("Error while executing command '%0':\n%1", in, e.what()));
       return false;

@@ -5,7 +5,7 @@
 
 namespace snackis {
 namespace gui {
-  std::stack<View *> View::stack;
+  std::vector<View *> View::stack;
 
   View::View(Ctx &ctx, const str &lbl, const str &inf): 
     ctx(ctx),
@@ -37,40 +37,56 @@ namespace gui {
   GtkWidget *View::ptr() {
       return panel;
   }
-
+  
   void push_view(View &v) {
     if (v.needs_init) { v.init(); }
 	   
     if (!View::stack.empty()) {
-      View *prev(View::stack.top());
+      View *prev(View::stack.back());
       prev->focused = gtk_window_get_focus(GTK_WINDOW(window));
       g_object_ref(prev->panel);
       gtk_container_remove(GTK_CONTAINER(gui::panels), prev->panel);
     }
 
-    View::stack.push(&v);    
+    View::stack.push_back(&v);    
     gtk_container_add(GTK_CONTAINER(gui::panels), v.panel);  
     gtk_widget_show_all(v.ptr());
     gtk_widget_grab_focus(v.focused);
   }
 
   void pop_view(View &v) {
-    assert(View::stack.top() == &v);
-    View::stack.pop();
+    assert(View::stack.back() == &v);
+    View::stack.pop_back();
     g_object_ref(v.panel);
     gtk_container_remove(GTK_CONTAINER(gui::panels), v.panel);
     
     if (View::stack.empty()) {
       gtk_widget_grab_focus(reader->entry);
     } else {
-      auto next(View::stack.top());
+      auto next(View::stack.back());
       gtk_container_add(GTK_CONTAINER(gui::panels), next->panel);
-      gtk_widget_show_all(next->ptr());
+      gtk_widget_show_all(next->panel);
       if (next->focused) {
 	gtk_widget_grab_focus(next->focused);
       }
     }
 
     delete &v;
+  }
+
+  void swap_views() {
+    if (View::stack.size() > 1) {
+      View *prev(View::stack.back());
+      g_object_ref(prev->panel);
+      gtk_container_remove(GTK_CONTAINER(gui::panels), prev->panel);
+      View::stack.pop_back();
+      View *next(View::stack.back());
+      View::stack.pop_back();
+      View::stack.push_back(prev);
+      View::stack.push_back(next);
+      gtk_container_add(GTK_CONTAINER(gui::panels), next->panel);  
+      gtk_widget_show_all(next->panel);
+      gtk_widget_grab_focus(next->focused);
+    }
   }
 }}

@@ -10,9 +10,14 @@ static gboolean on_key(gpointer _, GdkEventKey *ev, gpointer __) {
   if (ev->keyval == GDK_KEY_Escape && gui::reader) {
     if (gtk_widget_has_focus(gui::reader->ptr())) {
       if (!gui::View::stack.empty()) {
-	gtk_widget_grab_focus(gui::View::stack.top()->focused);
+	gtk_widget_grab_focus(gui::View::stack.back()->focused);
       }
     } else {
+      if (!gui::View::stack.empty()) {
+	gui::View::stack.back()->focused =
+	  gtk_window_get_focus(GTK_WINDOW(gui::window));
+      }
+      
       gtk_widget_grab_focus(gui::reader->entry);
     }
     
