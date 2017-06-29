@@ -9,6 +9,7 @@ namespace snackis {
     IdRec(ctx),
     owner_id(whoami(ctx).id),
     created_at(now()),
+    changed_at(created_at),
     done(false)
   { }
 

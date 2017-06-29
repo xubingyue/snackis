@@ -10,8 +10,8 @@
 namespace snackis {
   struct Project: IdRec {
     UId owner_id;
-    str name;
-    str info;
+    Time created_at, changed_at;
+    str name, info;
     bool active;
     std::set<UId> peer_ids;
     

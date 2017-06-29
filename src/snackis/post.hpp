@@ -11,9 +11,8 @@ namespace snackis {
   struct Feed;
   
   struct Post: IdRec {
-    UId feed_id;
-    Time at;
-    UId by_id;
+    UId feed_id, owner_id;
+    Time created_at, changed_at;
     str body;
     std::set<UId> peer_ids;
 

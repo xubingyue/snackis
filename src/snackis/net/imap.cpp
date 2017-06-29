@@ -170,7 +170,7 @@ namespace snackis {
 	    Peer peer(get_peer_id(ctx, msg->from_id));
 
 	    if (post_found) {
-	      if (peer.id == post_found->by_id) {
+	      if (peer.id == post_found->owner_id) {
 		db::copy(*feed_found, msg->feed);
 		db::update(ctx.db.feeds, *feed_found);
 		db::copy(*post_found, msg->post);

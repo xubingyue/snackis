@@ -6,6 +6,7 @@ namespace snackis {
     IdRec(ctx, id),
     owner_id(whoami(ctx).id),
     created_at(now()),
+    changed_at(created_at),
     active(true),
     visible(true)
   { }
@@ -53,7 +54,7 @@ namespace snackis {
 
     db::Rec<Post> key;
     set(key, ctx.db.post_feed_id, feed.id);
-    set(key, ctx.db.post_at, end);
+    set(key, ctx.db.post_created_at, end);
     auto found(ctx.db.feed_posts.recs.lower_bound(key));
     if (found == ctx.db.feed_posts.recs.begin()) { return out; }
     found--;

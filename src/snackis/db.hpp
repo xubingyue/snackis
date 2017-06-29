@@ -33,18 +33,17 @@ namespace snackis {
 
     db::Col<Feed, UId>           feed_id;
     db::Col<Feed, UId>           feed_owner_id;
-    db::Col<Feed, Time>          feed_created_at;
+    db::Col<Feed, Time>          feed_created_at, feed_changed_at;
     db::Col<Feed, str>           feed_name;
     db::Col<Feed, str>           feed_info;
-    db::Col<Feed, bool>          feed_active;
-    db::Col<Feed, bool>          feed_visible;
+    db::Col<Feed, bool>          feed_active, feed_visible;
     db::Col<Feed, std::set<UId>> feed_peer_ids;
     db::Table<Feed> feeds, feeds_sort;
 
     db::Col<Post, UId>           post_id;
     db::Col<Post, UId>           post_feed_id;
-    db::Col<Post, Time>          post_at;
-    db::Col<Post, UId>           post_by_id;
+    db::Col<Post, UId>           post_owner_id;
+    db::Col<Post, Time>          post_created_at, post_changed_at;
     db::Col<Post, str>           post_body;
     db::Col<Post, std::set<UId>> post_peer_ids;
     db::Table<Post> posts, posts_sort, feed_posts;
@@ -62,6 +61,7 @@ namespace snackis {
 
     db::Col<Project, UId>           project_id;
     db::Col<Project, UId>           project_owner_id;
+    db::Col<Project, Time>          project_created_at, project_changed_at;
     db::Col<Project, str>           project_name;
     db::Col<Project, str>           project_info;
     db::Col<Project, bool>          project_active;
@@ -71,7 +71,7 @@ namespace snackis {
     db::Col<Task, UId>           task_id;
     db::Col<Task, UId>           task_project_id;
     db::Col<Task, UId>           task_owner_id;
-    db::Col<Task, Time>          task_created_at;
+    db::Col<Task, Time>          task_created_at, task_changed_at;
     db::Col<Task, str>           task_name;
     db::Col<Task, str>           task_info;
     db::Col<Task, bool>          task_done;
@@ -81,6 +81,7 @@ namespace snackis {
 
     db::Col<Queue, UId>           queue_id;
     db::Col<Queue, UId>           queue_owner_id;
+    db::Col<Queue, Time>          queue_created_at, queue_changed_at;
     db::Col<Queue, str>           queue_name;
     db::Col<Queue, str>           queue_info;
     db::Col<Queue, std::set<UId>> queue_task_ids;

@@ -45,7 +45,7 @@ namespace gui {
       
       if (peer_sel) {
 	auto peer_id(*db::get(*peer_sel, ctx.db.peer_id));
-	if (post.by_id != peer_id) { continue; }
+	if (post.owner_id != peer_id) { continue; }
       }      
 
       if (feed_sel) {
@@ -60,20 +60,20 @@ namespace gui {
 	continue;
       }
 
-      if (min_time_sel && post.at < *min_time_sel) {
+      if (min_time_sel && post.created_at < *min_time_sel) {
 	continue;
       }
 
-      if (max_time_sel && post.at > *max_time_sel) {
+      if (max_time_sel && post.created_at > *max_time_sel) {
 	continue;
       }
       
-      Peer peer(get_peer_id(ctx, post.by_id));
+      Peer peer(get_peer_id(ctx, post.owner_id));
       GtkTreeIter iter;
       gtk_list_store_append(v->posts, &iter);
       const str by(fmt("%0\n%1",
 		       peer.name.c_str(),
-		       fmt(post.at, "%a %b %d, %H:%M").c_str()));
+		       fmt(post.created_at, "%a %b %d, %H:%M").c_str()));
       gtk_list_store_set(v->posts, &iter,
 			 COL_PTR, &rec,
 			 COL_BY, by.c_str(),

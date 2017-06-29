@@ -11,7 +11,7 @@
 namespace snackis {
   struct Task: IdRec {
     UId project_id, owner_id;
-    Time created_at;
+    Time created_at, changed_at;
     str name, info;
     bool done;
     std::set<UId> peer_ids;

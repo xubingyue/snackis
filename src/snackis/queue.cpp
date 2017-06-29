@@ -4,7 +4,11 @@
 #include "snackis/queue.hpp"
 
 namespace snackis {
-  Queue::Queue(Ctx &ctx): IdRec(ctx), owner_id(whoami(ctx).id)
+  Queue::Queue(Ctx &ctx):
+    IdRec(ctx),
+    owner_id(whoami(ctx).id),
+    created_at(now()),
+    changed_at(created_at)
   { }
 
   Queue::Queue(Ctx &ctx, const db::Rec<Queue> &rec): IdRec(ctx, null_uid) {

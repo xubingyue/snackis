@@ -39,8 +39,8 @@ namespace db {
   struct Table: BasicTable, Schema<RecT> {
     using CmpRec = func<bool (const Rec<RecT> &, const Rec<RecT> &)>;
     using Cols = std::initializer_list<const BasicCol<RecT> *>;
-    using OnInsert = func<void (const Rec<RecT> &)>;
-    using OnUpdate = func<void (const Rec<RecT> &, const Rec<RecT> &)>;
+    using OnInsert = func<void (Rec<RecT> &)>;
+    using OnUpdate = func<void (const Rec<RecT> &, Rec<RecT> &)>;
       
     const Schema<RecT> key;
     RecType<RecT> rec_type;
@@ -140,10 +140,11 @@ namespace db {
 	insert(*idx, irec);
       }
     }
-    
-    for (auto e: tbl.on_insert) { e(rec); }
-    tbl.recs.insert(rec);
-    log_change(get_trans(tbl.ctx), new Insert<RecT>(tbl, rec));
+
+    db::Rec<RecT> trec(rec);
+    for (auto e: tbl.on_insert) { e(trec); }
+    tbl.recs.insert(trec);
+    log_change(get_trans(tbl.ctx), new Insert<RecT>(tbl, trec));
     return true;
   }
 
@@ -171,10 +172,11 @@ namespace db {
       }
     }
     
-    for (auto e: tbl.on_update) { e(*found, rec); }
-    log_change(get_trans(tbl.ctx), new Update<RecT>(tbl, rec, *found));
+    db::Rec<RecT> trec(rec);
+    for (auto e: tbl.on_update) { e(*found, trec); }
+    log_change(get_trans(tbl.ctx), new Update<RecT>(tbl, trec, *found));
     tbl.recs.erase(found);
-    tbl.recs.insert(rec);
+    tbl.recs.insert(trec);
     return true;
   }
 

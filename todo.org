@@ -1,5 +1,7 @@
 * send task messages
 ** copy send(post)
+** add support to inbox like feeds
+** add support to imap like posts
 * add REJECT_FEED msg
 ** send when rejecting feed
 ** remove feed peer

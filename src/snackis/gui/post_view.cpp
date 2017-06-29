@@ -16,15 +16,15 @@ namespace gui {
     if (!feed_rec) { return false; }
     Feed feed(ctx, *feed_rec);
     
-    for (auto rec: last_posts(feed, v.rec.at, 7)) {
+    for (auto rec: last_posts(feed, v.rec.created_at, 7)) {
       Post post(ctx, *rec);
-      Peer peer(get_peer_id(ctx, post.by_id));
+      Peer peer(get_peer_id(ctx, post.owner_id));
       
       GtkTreeIter iter;
       gtk_list_store_append(v.post_store, &iter);
       const str by(fmt("%0\n%1",
 		       peer.name.c_str(),
-		       fmt(post.at, "%a %b %d, %H:%M").c_str()));
+		       fmt(post.created_at, "%a %b %d, %H:%M").c_str()));
       
       gtk_list_store_set(v.post_store, &iter,
 			 COL_POST_PTR, rec,
@@ -142,7 +142,7 @@ namespace gui {
 
   bool PostView::allow_save() const {
     return
-      rec.by_id == whoami(ctx).id &&
+      rec.owner_id == whoami(ctx).id &&
       get_sel_rec<Feed>(GTK_COMBO_BOX(feed_fld));
   }
 

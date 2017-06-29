@@ -5,7 +5,11 @@
 
 namespace snackis {
   Project::Project(Ctx &ctx):
-    IdRec(ctx), owner_id(whoami(ctx).id), active(true)
+    IdRec(ctx),
+    owner_id(whoami(ctx).id),
+    created_at(now()),
+    changed_at(created_at),
+    active(true)
   { }
 
   Project::Project(Ctx &ctx, const db::Rec<Project> &rec): IdRec(ctx, null_uid) {

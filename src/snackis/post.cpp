@@ -4,7 +4,11 @@
 #include "snackis/post.hpp"
 
 namespace snackis {
-  Post::Post(Ctx &ctx): IdRec(ctx), at(now()), by_id(whoami(ctx).id)
+  Post::Post(Ctx &ctx):
+    IdRec(ctx),
+    owner_id(whoami(ctx).id),
+    created_at(now()),
+    changed_at(created_at)
   { }
 
   Post::Post(Ctx &ctx, const db::Rec<Post> &rec): IdRec(ctx, null_uid) {

@@ -12,6 +12,7 @@ namespace snackis {
   
   struct Queue: IdRec {
     UId owner_id;
+    Time created_at, changed_at;
     str name, info;
     std::set<UId> task_ids;
     

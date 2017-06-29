@@ -41,7 +41,6 @@ namespace gui {
       db::insert(ctx.db.feeds, feed);
       Post post(msg);
       db::insert(ctx.db.posts, post);
-      Peer peer(get_peer_id(ctx, post.by_id));
       auto fv(new FeedView(feed));
       push_view(*fv);
     } else {
