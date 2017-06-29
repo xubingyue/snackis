@@ -22,9 +22,7 @@ namespace gui {
 
     Ctx &ctx(v->ctx);
     
-    if (reader) {
-      gtk_widget_hide(left_panel);
-    } else {
+    if (!reader) {
       open(ctx);
       reader.emplace(ctx);
       gtk_box_pack_start(GTK_BOX(left_panel), reader->ptr(), false, false, 5);

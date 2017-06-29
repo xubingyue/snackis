@@ -61,7 +61,7 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
   gtk_container_add(GTK_CONTAINER(gui::panels), gui::left_panel);
   gui::console.emplace();  
   ctx->log = [](const str &msg) { gui::log(*gui::console, msg); };
-  gtk_box_pack_start(GTK_BOX(gui::left_panel), gui::console->ptr(), true, true, 0);
+  gtk_container_add(GTK_CONTAINER(gui::left_panel), gui::console->ptr());
   
   gui::Login *login = new gui::Login(*ctx);
   gui::push_view(*login);
