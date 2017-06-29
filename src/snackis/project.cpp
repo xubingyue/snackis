@@ -51,10 +51,12 @@ namespace snackis {
     Feed feed(ctx, rec);
 
     if (!db::load(ctx.db.feeds, feed)) {
+      db::Trans trans(ctx);
       feed.name = fmt("Project %0", id_str(prj));
       feed.visible = false;
       feed.peer_ids = prj.peer_ids;
       db::insert(ctx.db.feeds, feed);
+      db::commit(trans);
     }
     
     return feed;
