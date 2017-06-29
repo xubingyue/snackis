@@ -6,9 +6,9 @@
 #include "snackis/crypt/error.hpp"
 
 namespace snackis {
-  const int VERSION[3] = {0, 7, 6};
-  const int64_t DB_REV = 2;
-  const int64_t PROTO_REV = 3;
+  const int VERSION[3] = {0, 7, 7};
+  const int64_t DB_REV = 3;
+  const int64_t PROTO_REV = 4;
   
   void init() {
     if (sodium_init() == -1) {

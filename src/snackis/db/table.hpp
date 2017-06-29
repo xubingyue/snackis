@@ -7,6 +7,7 @@
 #include "snackis/core/data.hpp"
 #include "snackis/core/fmt.hpp"
 #include "snackis/core/func.hpp"
+#include "snackis/core/int64_type.hpp"
 #include "snackis/core/opt.hpp"
 #include "snackis/core/str_type.hpp"
 #include "snackis/core/type.hpp"
@@ -25,8 +26,7 @@ namespace db {
 
   template <typename RecT>
   struct RecType: public Type<Rec<RecT>> {
-    Table<RecT> &table;
-    
+    Table<RecT> &table;    
     RecType(Table<RecT> &tbl);
     bool is_null(const Rec<RecT> &val) const override;
     Rec<RecT> from_val(const Val &in) const override;
@@ -211,19 +211,16 @@ namespace db {
 	    Rec<RecT> &rec,
 	    opt<crypt::Secret> sec) {
     if (sec) {
-      int64_t size = -1;
-      in.read((char *)&size, sizeof size);
-      Data edata;
-      edata.resize(size);
+      int64_t size(int64_type.read(in));
+      Data edata(size);
       in.read((char *)&edata[0], size);
       const Data ddata(decrypt(*sec, (unsigned char *)&edata[0], size));
       Stream buf(str(ddata.begin(), ddata.end()));
       read(tbl, buf, rec, nullopt);
     } else {
-      int32_t cnt = -1;
-      in.read((char *)&cnt, sizeof cnt);
+      int64_t cnt(int64_type.read(in));
 
-      for (int32_t i=0; i<cnt; i++) {
+      for (int64_t i=0; i<cnt; i++) {
 	const str cname(str_type.read(in));
 	auto found(tbl.col_lookup.find(cname));
 	if (found == tbl.col_lookup.end()) {
@@ -246,18 +243,17 @@ namespace db {
 	write(tbl, rec, buf, nullopt);
 	str data(buf.str());
 	const Data edata(encrypt(*sec, (unsigned char *)data.c_str(), data.size()));
-	const int64_t size = edata.size();
-	out.write((char *)&size, sizeof size);
-	out.write((char *)&edata[0], size);
+	int64_type.write(edata.size(), out);
+	out.write((char *)&edata[0], edata.size());
     } else {
-      int32_t cnt(0);
+      int64_t cnt(0);
 
       for (auto c: tbl.cols) {
 	auto found = rec.find(c);
 	if (found != rec.end()) { cnt++; }
       }
 
-      out.write((const char *)&cnt, sizeof cnt);
+      int64_type.write(cnt, out);
     
       for (auto c: tbl.cols) {
 	auto found = rec.find(c);
@@ -272,17 +268,16 @@ namespace db {
 
   template <typename RecT>
   void write(Table<RecT> &tbl, const Rec<RecT> &rec, TableOp _op) {
-    int8_t op(_op);
+    uint8_t op(_op);
     tbl.file.write(reinterpret_cast<const char *>(&op), sizeof op);
     write(tbl, rec, tbl.file, tbl.ctx.secret);
     dirty_file(tbl.ctx, tbl.file);
   }
 
   template <typename RecT>
-  void slurp(Table<RecT> &tbl, std::istream &in) {
-    int8_t op(-1);
-    
+  void slurp(Table<RecT> &tbl, std::istream &in) {    
     while (true) {
+      uint8_t op;
       in.read(reinterpret_cast<char *>(&op), sizeof op);
 
       if (in.eof()) {
