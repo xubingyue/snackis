@@ -23,7 +23,13 @@ namespace snackis {
     created_at(now())
     //name(msg.task_name),
     //info(msg.task_info)
-  { }
+  {
+    peer_ids.insert(msg.from_id);
+
+    for (auto &id: msg.peer_ids) {
+      if (find_peer_id(ctx, id)) { peer_ids.insert(id); }
+    }
+  }
 
   opt<Task> find_task_id(Ctx &ctx, UId id) {
     db::Rec<Task> rec;

@@ -77,18 +77,21 @@ namespace snackis {
     msg_post_id(     "post_id",      uid_type,            &Msg::post_id),
     msg_post_at(     "post_at",      time_type,           &Msg::post_at),
     msg_post_body(   "post_body",    str_type,            &Msg::post_body),
+    msg_peer_ids(    "peer_ids",     uid_set_type,        &Msg::peer_ids),
     
     inbox(ctx, "inbox", {&msg_id},
 	  {&msg_type, &msg_fetched_at, &msg_peer_name, &msg_from, &msg_from_id,
 	      &msg_crypt_key, &msg_feed_id, &msg_feed_name, &msg_feed_info,
-	      &msg_feed_visible, &msg_post_id, &msg_post_at, &msg_post_body}),
+	      &msg_feed_visible, &msg_post_id, &msg_post_at, &msg_post_body,
+	      &msg_peer_ids}),
 
     inbox_sort(ctx, "inbox_sort", {&msg_fetched_at, &msg_id}, {}),
     
     outbox(ctx, "outbox", {&msg_id},
 	   {&msg_type, &msg_from, &msg_from_id, &msg_to, &msg_to_id, &msg_peer_name,
 	       &msg_crypt_key, &msg_feed_id, &msg_feed_name, &msg_feed_info,
-	       &msg_feed_visible, &msg_post_id, &msg_post_at, &msg_post_body}),
+	       &msg_feed_visible, &msg_post_id, &msg_post_at, &msg_post_body,
+	       &msg_peer_ids}),
 
     project_id(      "id",       uid_type,     &Project::id),
     project_owner_id("owner_id", uid_type,     &Project::owner_id),

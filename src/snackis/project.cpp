@@ -19,7 +19,13 @@ namespace snackis {
     //name(msg.project_name),
     //info(msg.project_info),
     active(true)
-  { }
+  {
+    peer_ids.insert(msg.from_id);
+
+    for (auto &id: msg.peer_ids) {
+      if (find_peer_id(ctx, id)) { peer_ids.insert(id); }
+    }
+  }
 
   opt<Project> find_project_id(Ctx &ctx, UId id) {
     db::Rec<Project> rec;

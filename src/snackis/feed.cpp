@@ -21,9 +21,14 @@ namespace snackis {
     name(msg.feed_name),
     info(msg.feed_info),
     active(true),
-    visible(msg.feed_visible),
-    peer_ids({msg.from_id})
-  { }
+    visible(msg.feed_visible)
+  {
+    peer_ids.insert(msg.from_id);
+
+    for (auto &id: msg.peer_ids) {
+      if (find_peer_id(ctx, id)) { peer_ids.insert(id); }
+    }
+  }
 
   opt<Feed> find_feed_id(Ctx &ctx, UId id) {
     db::Rec<Feed> rec;

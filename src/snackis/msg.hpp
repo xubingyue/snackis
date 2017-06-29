@@ -23,7 +23,8 @@ namespace snackis {
     UId post_id;
     Time post_at;
     str post_body;
-    
+    std::set<UId> peer_ids;
+
     Msg(Ctx &ctx, const str &type);
     Msg(Ctx &ctx, const db::Rec<Msg> &src);
   };

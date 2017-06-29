@@ -62,6 +62,7 @@ namespace snackis {
     db::Col<Msg, UId>           msg_post_id;
     db::Col<Msg, Time>          msg_post_at;
     db::Col<Msg, str>           msg_post_body;
+    db::Col<Msg, std::set<UId>> msg_peer_ids;
     db::Table<Msg> inbox, inbox_sort, outbox;
 
     db::Col<Project, UId>           project_id;

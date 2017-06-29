@@ -16,9 +16,14 @@ namespace snackis {
     feed_id(msg.feed_id), 
     at(msg.post_at), 
     by_id(msg.from_id),
-    body(msg.post_body),
-    peer_ids({msg.from_id})
-  { }
+    body(msg.post_body)
+  {
+    peer_ids.insert(msg.from_id);
+    
+    for (auto &id: msg.peer_ids) {
+      if (find_peer_id(ctx, id)) { peer_ids.insert(id); }
+    }
+  }
 
   opt<Post> find_post_id(Ctx &ctx, UId id) {
     db::Rec<Post> rec;
@@ -43,6 +48,7 @@ namespace snackis {
       msg.post_id = pst.id;
       msg.post_at = pst.at;
       msg.post_body = pst.body;
+      msg.peer_ids = pst.peer_ids;
       insert(ctx.db.outbox, msg);
     }
   }
