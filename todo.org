@@ -1,8 +1,8 @@
+* send task messages
+** copy send(post)
 * add REJECT_FEED msg
 ** send when rejecting feed
 ** remove feed peer
-* send task messages
-** copy send(post)
 * move feed peers to separate tab
 ** General / Peers
 * add project view peers
