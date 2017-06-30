@@ -18,8 +18,10 @@ namespace snackis {
   }
 
   Task::Task(const Msg &msg):
-    IdRec(msg.ctx, null_uid)
+    IdRec(msg.ctx, *db::get(msg.task, msg.ctx.db.task_id))
   {
+    db::copy(*this, msg.task);    
+    peer_ids.insert(msg.from_id);
   }
 
   opt<Task> find_task_id(Ctx &ctx, UId id) {

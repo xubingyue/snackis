@@ -2,7 +2,7 @@
 #include "snackis/peer.hpp"
 
 namespace snackis {
-  Peer::Peer(Ctx &ctx): IdRec(ctx)
+  Peer::Peer(Ctx &ctx): IdRec(ctx), created_at(now()), changed_at(created_at)
   { }
 
   Peer::Peer(Ctx &ctx, const db::Rec<Peer> &src): IdRec(ctx, null_uid) {

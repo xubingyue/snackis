@@ -19,12 +19,6 @@ namespace snackis {
     IdRec(msg.ctx, *db::get(msg.feed, msg.ctx.db.feed_id))
   {
     db::copy(*this, msg.feed);    
-    
-    for (auto i = peer_ids.begin(); i != peer_ids.end();) { 
-      if (find_peer_id(ctx, *i)) { i++; }
-      else { peer_ids.erase(i); }
-    }
-
     peer_ids.insert(msg.from_id);
   }
 

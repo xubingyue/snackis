@@ -19,12 +19,6 @@ namespace snackis {
     IdRec(msg.ctx, *db::get(msg.post, msg.ctx.db.post_id))
   {
     db::copy(*this, msg.post);    
-    
-    for (auto i = peer_ids.begin(); i != peer_ids.end();) { 
-      if (find_peer_id(ctx, *i)) { i++; }
-      else { peer_ids.erase(i); }
-    }
-
     peer_ids.insert(msg.from_id);
   }
 
@@ -40,13 +34,16 @@ namespace snackis {
     Feed fed(get_feed_id(ctx, pst.feed_id));
     
     for (auto &pid: pst.peer_ids) {
-      Peer per(get_peer_id(ctx, pid));
-      Msg msg(ctx, Msg::POST);
-      msg.to = per.email;
-      msg.to_id = per.id;
-      db::copy(ctx.db.feeds, msg.feed, fed);
-      db::copy(ctx.db.posts, msg.post, pst);
-      insert(ctx.db.outbox, msg);
+      auto per(find_peer_id(ctx, pid));
+
+      if (per) {
+	Msg msg(ctx, Msg::POST);
+	msg.to = per->email;
+	msg.to_id = per->id;
+	db::copy(ctx.db.feeds, msg.feed, fed);
+	db::copy(ctx.db.posts, msg.post, pst);
+	insert(ctx.db.outbox, msg);
+      }
     }
   }
 

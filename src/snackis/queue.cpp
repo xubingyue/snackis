@@ -16,8 +16,11 @@ namespace snackis {
   }
 
   Queue::Queue(const Msg &msg):
-    IdRec(msg.ctx, null_uid)
-  { }
+    IdRec(msg.ctx, *db::get(msg.queue, msg.ctx.db.queue_id))
+  {
+    db::copy(*this, msg.queue);    
+    peer_ids.insert(msg.from_id);
+  }
 
   QueueTask::QueueTask(const Queue &q, const Task &tsk):
     Rec(q.ctx), id(tsk.id), queue_id(q.id), at(now())

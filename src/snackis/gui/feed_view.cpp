@@ -62,14 +62,16 @@ namespace gui {
     for (const auto &peer_id: v.rec.peer_ids) {
       db::Rec<Peer> key;
       db::set(key, ctx.db.peer_id, peer_id);
-      const db::Rec<Peer> &rec(db::get(ctx.db.peers, key));
+      const db::Rec<Peer> *rec(db::find(ctx.db.peers, key));
       
-      GtkTreeIter iter;
-      gtk_list_store_append(v.feed_peer_store, &iter);
-      gtk_list_store_set(v.feed_peer_store, &iter,
-			 COL_PEER_PTR, &rec,
-			 COL_PEER_NAME, db::get(rec, ctx.db.peer_name)->c_str(),
-			 -1);
+      if (rec) {
+	GtkTreeIter iter;
+	gtk_list_store_append(v.feed_peer_store, &iter);
+	gtk_list_store_set(v.feed_peer_store, &iter,
+			   COL_PEER_PTR, rec,
+			   COL_PEER_NAME, db::get(*rec, ctx.db.peer_name)->c_str(),
+			   -1);
+      }
     }
   }
   

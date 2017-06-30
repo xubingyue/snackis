@@ -24,12 +24,15 @@ namespace snackis {
 	    {&invite_to}, {&invite_posted_at}),
     
     peer_id(        "id",         uid_type,            &Peer::id),
+    peer_created_at("created_at", time_type,           &Peer::created_at),
+    peer_changed_at("changed_at", time_type,           &Peer::changed_at),
     peer_name(      "name",       str_type,            &Peer::name),
     peer_email(     "email",      str_type,            &Peer::email),
     peer_crypt_key( "crypt_key",  crypt::pub_key_type, &Peer::crypt_key),
 
     peers(ctx, "peers", {&peer_id},
-	  {&peer_name, &peer_email, &peer_crypt_key}),
+	  {&peer_created_at, &peer_changed_at, &peer_name, &peer_email,
+	      &peer_crypt_key}),
 
     peers_sort(ctx, "peers_sort", {&peer_name, &peer_id}, {}),
     
@@ -75,16 +78,21 @@ namespace snackis {
     msg_crypt_key( "crypt_key",  crypt::pub_key_type, &Msg::crypt_key),
     msg_feed(      "feed",       feeds.rec_type,      &Msg::feed),
     msg_post(      "post",       posts.rec_type,      &Msg::post),
+    msg_project(   "project",    projects.rec_type,   &Msg::project),
+    msg_task(      "task",       tasks.rec_type,      &Msg::task),
+    msg_queue(     "queue",      queues.rec_type,     &Msg::queue),
     
     inbox(ctx, "inbox", {&msg_id},
 	  {&msg_type, &msg_fetched_at, &msg_peer_name, &msg_from, &msg_from_id,
-	      &msg_crypt_key, &msg_feed, &msg_post}),
+	      &msg_crypt_key, &msg_feed, &msg_post, &msg_project, &msg_task,
+	      &msg_queue}),
 
     inbox_sort(ctx, "inbox_sort", {&msg_fetched_at, &msg_id}, {}),
     
     outbox(ctx, "outbox", {&msg_id},
 	   {&msg_type, &msg_from, &msg_from_id, &msg_to, &msg_to_id, &msg_peer_name,
-	       &msg_crypt_key, &msg_feed, &msg_post}),
+	       &msg_crypt_key, &msg_feed, &msg_post, &msg_project, &msg_task,
+	       &msg_queue}),
 
     project_id(        "id",         uid_type,     &Project::id),
     project_owner_id(  "owner_id",   uid_type,     &Project::owner_id),
@@ -124,11 +132,12 @@ namespace snackis {
     queue_changed_at("changed_at", time_type,    &Queue::changed_at),
     queue_name(      "name",       str_type,     &Queue::name),
     queue_info(      "info",       str_type,     &Queue::info),
+    queue_peer_ids(  "peer_ids",   uid_set_type, &Queue::peer_ids),
     queue_task_ids(  "task_ids",   uid_set_type, &Queue::task_ids),
     
     queues(ctx, "queues", {&queue_id},
 	   {&queue_owner_id, &queue_created_at, &queue_changed_at, &queue_name,
-	       &queue_info, &queue_task_ids}),
+	       &queue_info, &queue_peer_ids, &queue_task_ids}),
 
     queues_sort(ctx, "queues_sort", {&queue_name, &queue_id}, {}),
 
@@ -149,16 +158,16 @@ namespace snackis {
     tasks.indexes.insert(&tasks_sort);
     queues.indexes.insert(&queues_sort);
 
+    peers.on_update.push_back([&](auto prev_rec, auto curr_rec) {
+	db::set(curr_rec, peer_changed_at, now());
+      });
+
     feeds.on_update.push_back([&](auto prev_rec, auto curr_rec) {
 	db::set(curr_rec, feed_changed_at, now());
       });
 
     posts.on_update.push_back([&](auto prev_rec, auto curr_rec) {
 	db::set(curr_rec, post_changed_at, now());
-      });
-
-    queues.on_update.push_back([&](auto prev_rec, auto curr_rec) {
-	db::set(curr_rec, queue_changed_at, now());
       });
 
     projects.on_update.push_back([&](auto prev_rec, auto curr_rec) {
@@ -189,6 +198,10 @@ namespace snackis {
 	}
 
 	db::set(curr_rec, task_changed_at, now());
+      });
+
+    queues.on_update.push_back([&](auto prev_rec, auto curr_rec) {
+	db::set(curr_rec, queue_changed_at, now());
       });
   }
 }

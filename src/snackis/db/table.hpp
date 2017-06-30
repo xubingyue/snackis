@@ -109,6 +109,13 @@ namespace db {
   }
 
   template <typename RecT>
+  const Rec<RecT> *find(Table<RecT> &tbl, const Rec<RecT> &key) {
+    auto found = tbl.recs.find(key);
+    if (found == tbl.recs.end()) { return nullptr; }
+    return &*found;
+  }
+
+  template <typename RecT>
   const Rec<RecT> &get(Table<RecT> &tbl, const Rec<RecT> &key) {
     auto found = tbl.recs.find(key);
 

@@ -17,8 +17,11 @@ namespace snackis {
   }
 
   Project::Project(const Msg &msg):
-    IdRec(msg.ctx, null_uid)
-  { }
+    IdRec(msg.ctx, *db::get(msg.project, msg.ctx.db.project_id))
+  {
+    db::copy(*this, msg.project);    
+    peer_ids.insert(msg.from_id);
+  }
 
   opt<Project> find_project_id(Ctx &ctx, UId id) {
     db::Rec<Project> rec;

@@ -2,6 +2,9 @@
 #define SNACKIS_MSG_HPP
 
 #include "snackis/id_rec.hpp"
+#include "snackis/project.hpp"
+#include "snackis/task.hpp"
+#include "snackis/queue.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/core/time.hpp"
 #include "snackis/core/uid.hpp"
@@ -19,6 +22,9 @@ namespace snackis {
     crypt::PubKey crypt_key;
     db::Rec<Feed> feed;
     db::Rec<Post> post;
+    db::Rec<Project> project;
+    db::Rec<Task> task;
+    db::Rec<Queue> queue;
 
     Msg(Ctx &ctx, const str &type);
     Msg(Ctx &ctx, const db::Rec<Msg> &src);

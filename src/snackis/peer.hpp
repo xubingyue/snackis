@@ -11,6 +11,7 @@
 
 namespace snackis {
   struct Peer: IdRec {
+    Time created_at, changed_at;
     str name, email;
     crypt::PubKey crypt_key;
     
