@@ -2,14 +2,9 @@
 ** copy send(post)
 ** add support to inbox like feeds
 ** add support to imap like posts
-* move feed peers to separate tab
-** General / Peers
 * add project view peers
-** separate tab
 * add task view queues
-** separate tab
 * add QueueView
-** General/Peers tabs
 ** add queue command
 * add ProjectSearch
 ** extract SearchView
