@@ -1,3 +1,9 @@
+* add ProjectSearch
+** extract SearchView
+* replace combos with search-integration
+** add SearchView.on_activate event
+** add set_hint(SearchView)
+** add and reopen automagically for post peers
 * send task messages
 ** copy send(post)
 ** add support to inbox like feeds
@@ -6,8 +12,8 @@
 * add task view queues
 * add QueueView
 ** add queue command
-* add ProjectSearch
-** extract SearchView
 * add QueueSearch
 * add PeerSearch
+* switch Imap/Smtp to one trans per msg
+** pick first and process
 * add shared library
