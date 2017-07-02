@@ -6,8 +6,8 @@
 #include <vector>
 
 #include "snackis/feed.hpp"
-#include "snackis/gui/search_view.hpp"
 #include "snackis/gui/peer_select.hpp"
+#include "snackis/gui/search_view.hpp"
 
 namespace snackis {
 namespace gui {

@@ -7,7 +7,6 @@
 namespace snackis {
 namespace gui {
   enum FeedCol {COL_FEED_PTR=0, COL_FEED_ID, COL_FEED_NAME};
-  enum PeerCol {COL_PEER_PTR=0, COL_PEER_ID, COL_PEER_NAME};
   enum PostCol {COL_PTR=0, COL_BY, COL_FEED, COL_BODY};
 
   static void on_find(gpointer *_, PostSearch *v) {
@@ -17,7 +16,7 @@ namespace gui {
     
     auto feed_sel(get_sel_rec<Feed>(GTK_COMBO_BOX(v->feed_fld)));
     str body_sel(trim(gtk_entry_get_text(GTK_ENTRY(v->body))));
-    auto peer_sel(get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer_fld)));
+    auto peer_sel(v->peer_fld.selected);
     str min_time(trim(gtk_entry_get_text(GTK_ENTRY(v->min_time))));
     auto min_time_sel(parse_time("%Y-%m-%d %H:%M", min_time));
     
@@ -137,36 +136,6 @@ namespace gui {
     }    
   }
 
-  static void init_peers(PostSearch &v) {
-    GtkTreeIter iter;
-    gtk_list_store_append(v.peers, &iter);
-    gtk_list_store_set(v.peers, &iter,
-		       COL_PEER_PTR, nullptr,
-		       COL_PEER_ID, "",
-		       COL_PEER_NAME, "",
-		       -1);
-
-    for(auto key = v.ctx.db.peers_sort.recs.begin();
-	key != v.ctx.db.peers_sort.recs.end();
-	key++) {
-      auto &rec(db::get(v.ctx.db.peers, *key));
-      Peer peer(v.ctx, rec);
-      gtk_list_store_append(v.peers, &iter);
-      gtk_list_store_set(v.peers, &iter,
-			 COL_PEER_PTR, &rec,
-			 COL_PEER_ID, to_str(peer.id).c_str(),
-			 COL_PEER_NAME, peer.name.c_str(),
-			 -1);
-    }
-
-    if (v.peer) {
-      gtk_combo_box_set_active_id(GTK_COMBO_BOX(v.peer_fld),
-				  to_str(v.peer->id).c_str());
-    } else {
-      gtk_combo_box_set_active(GTK_COMBO_BOX(v.peer_fld), 0);
-    }    
-  }
-
   static void init_list(PostSearch &v) {
     gtk_widget_set_hexpand(v.list, true);
     add_col(GTK_TREE_VIEW(v.list), "Posted", COL_BY);
@@ -178,18 +147,17 @@ namespace gui {
   PostSearch::PostSearch(Ctx &ctx):
     View(ctx, "Post Search"),
     feed_store(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
-    peers(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
     posts(gtk_list_store_new(4,
 			     G_TYPE_POINTER,
 			     G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING)),
-    feed_fld(new_combo_box(GTK_TREE_MODEL(feed_store))),
     body(gtk_entry_new()),
     min_time(gtk_entry_new()),
     max_time(gtk_entry_new()),
-    peer_fld(new_combo_box(GTK_TREE_MODEL(peers))),
+    feed_fld(new_combo_box(GTK_TREE_MODEL(feed_store))),
     find(gtk_button_new_with_mnemonic("_Find Posts")),
     list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(posts))),
-    close(gtk_button_new_with_mnemonic("_Close Search"))
+    close(gtk_button_new_with_mnemonic("_Close Search")),
+    peer_fld(ctx)
   { }
 
   void PostSearch::init() {
@@ -198,45 +166,41 @@ namespace gui {
     GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
     gtk_box_pack_start(GTK_BOX(panel), frm, false, false, 0);
 
+    GtkWidget *post_box(gtk_grid_new());
+    gtk_grid_set_row_spacing(GTK_GRID(post_box), 5);
+    gtk_grid_set_column_spacing(GTK_GRID(post_box), 5);
+    gtk_container_add(GTK_CONTAINER(frm), post_box);
+
+    lbl = gtk_label_new("Body");
+    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
+    gtk_grid_attach(GTK_GRID(post_box), lbl, 0, 0, 1, 1);
+    gtk_widget_set_hexpand(body, true);
+    gtk_grid_attach(GTK_GRID(post_box), body, 0, 1, 1, 1);
+
+    lbl = gtk_label_new("Posted");
+    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
+    gtk_grid_attach(GTK_GRID(post_box), lbl, 1, 0, 3, 1);
+    gtk_entry_set_placeholder_text(GTK_ENTRY(min_time),
+				   "yyyy-mm-dd hh:mm");
+    gtk_grid_attach(GTK_GRID(post_box), min_time, 1, 1, 1, 1);
+    gtk_entry_set_text(GTK_ENTRY(min_time),
+		       fmt(now() - std::chrono::hours(7), "%Y-%m-%d %H:%M").c_str());
+    gtk_grid_attach(GTK_GRID(post_box), gtk_label_new("-"), 2, 1, 1, 1);
+    gtk_entry_set_placeholder_text(GTK_ENTRY(max_time),
+				   "yyyy-mm-dd hh:mm");
+    gtk_grid_attach(GTK_GRID(post_box), max_time, 3, 1, 1, 1);
+
     init_feeds(*this);
     lbl = gtk_label_new("Feed");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_container_add(GTK_CONTAINER(frm), lbl);
     gtk_widget_set_hexpand(feed_fld, true);
     gtk_container_add(GTK_CONTAINER(frm), feed_fld);
-
-    lbl = gtk_label_new("Body");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(frm), lbl);
-    gtk_widget_set_hexpand(body, true);
-    gtk_container_add(GTK_CONTAINER(frm), body);
-
-    init_peers(*this);
-
-    GtkWidget *post_box(gtk_grid_new());
-    gtk_grid_set_row_spacing(GTK_GRID(post_box), 5);
-    gtk_grid_set_column_spacing(GTK_GRID(post_box), 5);
-    gtk_container_add(GTK_CONTAINER(frm), post_box);
-
-    lbl = gtk_label_new("Posted");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(post_box), lbl, 0, 0, 3, 1);
-    gtk_entry_set_placeholder_text(GTK_ENTRY(min_time),
-				   "yyyy-mm-dd hh:mm");
-    gtk_grid_attach(GTK_GRID(post_box), min_time, 0, 1, 1, 1);
-    gtk_entry_set_text(GTK_ENTRY(min_time),
-		       fmt(now() - std::chrono::hours(7), "%Y-%m-%d %H:%M").c_str());
-    gtk_grid_attach(GTK_GRID(post_box), gtk_label_new("-"), 1, 1, 1, 1);
-    gtk_entry_set_placeholder_text(GTK_ENTRY(max_time),
-				   "yyyy-mm-dd hh:mm");
-    gtk_grid_attach(GTK_GRID(post_box), max_time, 2, 1, 1, 1);
-
+    
     lbl = gtk_label_new("By");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(post_box), lbl, 3, 0, 1, 1);
-
-    gtk_widget_set_hexpand(peer_fld, true);
-    gtk_grid_attach(GTK_GRID(post_box), peer_fld, 3, 1, 1, 1);
+    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    gtk_container_add(GTK_CONTAINER(frm), peer_fld.ptr());
     
     gtk_widget_set_halign(find, GTK_ALIGN_END);
     g_signal_connect(find, "clicked", G_CALLBACK(on_find), this);

@@ -6,16 +6,17 @@
 #include <vector>
 
 #include "snackis/feed.hpp"
+#include "snackis/gui/peer_select.hpp"
 #include "snackis/gui/view.hpp"
+
 
 namespace snackis {
 namespace gui {
   struct PostSearch: View {
     GtkListStore *feed_store, *peers, *posts;
-    GtkWidget *feed_fld, *body, *min_time, *max_time, *peer_fld, *find, *list,
-      *close;
+    GtkWidget *body, *min_time, *max_time, *feed_fld, *find, *list, *close;
+    PeerSelect peer_fld;
     opt<Feed> feed;
-    opt<Peer> peer;
 
     PostSearch(Ctx &ctx);
     void init() override;
