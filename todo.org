@@ -1,14 +1,11 @@
-* finish peer search
-** add id field next to name
-*** separate box
-*** match with find_ci
-** commit
 * replace combos with search-integration
 ** add SearchView.on_activate event
 ** add and reopen automagically for post peers
 ** extract PeerSelect widget with
 *** id/name_fld & select btn
 * convert search forms
+** feed, post, task
+** add id fields
 * send task messages
 ** copy send(post)
 ** add support to inbox like feeds
@@ -19,7 +16,6 @@
 * add QueueView
 ** add queue command
 * add QueueSearch
-* add PeerSearch
 * switch Imap/Smtp to one trans per msg
 ** pick first and process
-* add shared library
+
