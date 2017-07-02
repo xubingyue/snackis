@@ -8,7 +8,7 @@ namespace snackis {
 namespace gui {
   struct PeerSelect: Widget {
     Ctx &ctx;
-    GtkWidget *box, *id_fld, *name_fld, *select_btn, *clear_btn;
+    GtkWidget *box, *id_fld, *name_fld, *search_btn, *clear_btn;
     const db::Rec<Peer> *selected;
     
     PeerSelect(Ctx &ctx);

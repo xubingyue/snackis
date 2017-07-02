@@ -3,7 +3,7 @@
 
 namespace snackis {
 namespace gui {
-  static void on_select(gpointer *_, PeerSelect *v) {
+  static void on_search(gpointer *_, PeerSelect *v) {
     PeerSearch *ps = new PeerSearch(v->ctx);
     
     ps->on_activate = [v, ps](auto &rec) {
@@ -29,7 +29,7 @@ namespace gui {
     box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5)),
     id_fld(gtk_entry_new()),
     name_fld(gtk_entry_new()),
-    select_btn(gtk_button_new_with_mnemonic("Select")),
+    search_btn(gtk_button_new_with_mnemonic("Search")),
     clear_btn(gtk_button_new_with_mnemonic("Clear")),
     selected(nullptr)
   {
@@ -38,8 +38,8 @@ namespace gui {
     gtk_widget_set_sensitive(name_fld, false);
     gtk_widget_set_hexpand(name_fld, true);
     gtk_container_add(GTK_CONTAINER(box), name_fld);
-    g_signal_connect(select_btn, "clicked", G_CALLBACK(on_select), this);
-    gtk_container_add(GTK_CONTAINER(box), select_btn);
+    g_signal_connect(search_btn, "clicked", G_CALLBACK(on_search), this);
+    gtk_container_add(GTK_CONTAINER(box), search_btn);
     gtk_widget_set_sensitive(clear_btn, false);
     g_signal_connect(clear_btn, "clicked", G_CALLBACK(on_clear), this);
     gtk_container_add(GTK_CONTAINER(box), clear_btn);
