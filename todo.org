@@ -1,13 +1,19 @@
-* add ProjectSearch
-** extract SearchView
+* finish peer search
+** add id field next to name
+*** separate box
+*** match with find_ci
+** commit
 * replace combos with search-integration
 ** add SearchView.on_activate event
-** add set_hint(SearchView)
 ** add and reopen automagically for post peers
+** extract PeerSelect widget with
+*** id/name_fld & select btn
+* convert search forms
 * send task messages
 ** copy send(post)
 ** add support to inbox like feeds
 ** add support to imap like posts
+* add ProjectSearch
 * add project view peers
 * add task view queues
 * add QueueView

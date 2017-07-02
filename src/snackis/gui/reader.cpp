@@ -7,6 +7,7 @@
 #include "snackis/gui/feed_view.hpp"
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/inbox.hpp"
+#include "snackis/gui/peer_search.hpp"
 #include "snackis/gui/post_search.hpp"
 #include "snackis/gui/post_view.hpp"
 #include "snackis/gui/project_view.hpp"
@@ -122,6 +123,17 @@ namespace gui {
 	}
 	gtk_widget_hide(left_panel);
 	Login *v = new Login(ctx);
+	push_view(*v);
+	return true;
+      });
+
+    rdr.cmds.emplace("peer-search", [&ctx](auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: peer-search");
+	  return false;
+	}
+	
+	PeerSearch *v = new PeerSearch(ctx);
 	push_view(*v);
 	return true;
       });
