@@ -16,7 +16,6 @@ namespace gui {
     PeerSearch(Ctx &ctx);
     void init() override;
     void find() override;
-    void activate(const db::Rec<Peer> &rec) override;
   };
 }}
 

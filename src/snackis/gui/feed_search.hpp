@@ -6,13 +6,14 @@
 #include <vector>
 
 #include "snackis/gui/view.hpp"
+#include "snackis/gui/peer_select.hpp"
 
 namespace snackis {
 namespace gui {
   struct FeedSearch: View {
-    GtkListStore *peers, *feeds;
-    GtkWidget *name, *peer, *active, *find, *list, *close;
-    
+    GtkListStore *feeds;
+    GtkWidget *name, *active, *find, *list, *close;
+    PeerSelect peer_fld;
     FeedSearch(Ctx &ctx);
     void init() override;
   };

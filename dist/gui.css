@@ -51,6 +51,7 @@ GtkEntry {
 GtkEntry:insensitive {
     border: none;
     background: #333333;
+    padding: 0px;
 }
 
 GtkEntry:selected {

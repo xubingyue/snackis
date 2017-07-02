@@ -8,12 +8,20 @@ namespace snackis {
 namespace gui {
   enum PeerCol {COL_PEER_PTR=0, COL_PEER_ID, COL_PEER_NAME, COL_PEER_EMAIL};
 
+  static void edit(const PeerSearch &v, const db::Rec<Peer> &rec) {
+    Peer peer(v.ctx, rec);
+    PeerView *fv(new PeerView(peer));
+    push_view(*fv);
+  }  
+
   PeerSearch::PeerSearch(Ctx &ctx):
-    SearchView<Peer>(ctx, "Peer", gtk_list_store_new(4,
-						     G_TYPE_POINTER,
-						     G_TYPE_STRING,
-						     G_TYPE_STRING,
-						     G_TYPE_STRING)),
+    SearchView<Peer>(ctx, "Peer",
+		     gtk_list_store_new(4,
+					G_TYPE_POINTER,
+					G_TYPE_STRING,
+					G_TYPE_STRING,
+					G_TYPE_STRING),
+		     [this](auto &rec) { edit(*this, rec); }),
     id_fld(gtk_entry_new()),
     name_fld(gtk_entry_new()),
     email_fld(gtk_entry_new())
@@ -89,10 +97,4 @@ namespace gui {
 
     gtk_widget_grab_focus(cnt ? list : id_fld);
   }
-
-  void PeerSearch::activate(const db::Rec<Peer> &rec) {
-    Peer peer(ctx, rec);
-    PeerView *fv(new PeerView(peer));
-    push_view(*fv);
-  }  
 }}

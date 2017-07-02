@@ -5,19 +5,23 @@
 #include <set>
 #include <vector>
 
+#include "snackis/core/error.hpp"
+#include "snackis/core/func.hpp"
+#include "snackis/gui/gui.hpp"
 #include "snackis/gui/view.hpp"
 
 namespace snackis {
 namespace gui {
   template <typename RecT>
   struct SearchView: View {
+    using OnActivate = func<void (const db::Rec<RecT> &)>;
     GtkListStore *store;
     GtkWidget *fields, *find_btn, *list, *cancel_btn;
+    OnActivate on_activate;
     
-    SearchView(Ctx &ctx, const str &lbl, GtkListStore *store);
+    SearchView(Ctx &ctx, const str &lbl, GtkListStore *store, OnActivate act);
     virtual void init() override;
     virtual void find()=0;
-    virtual void activate(const db::Rec<RecT> &rec)=0;
   };
 
   template <typename RecT>
@@ -34,7 +38,7 @@ namespace gui {
 		      SearchView<RecT> *v) {
     auto rec(get_sel_rec<RecT>(GTK_TREE_VIEW(v->list)));
     CHECK(rec != nullptr, _);
-    v->activate(*rec);
+    v->on_activate(*rec);
   }
   
   template <typename RecT>
@@ -43,13 +47,17 @@ namespace gui {
   }
   
   template <typename RecT>
-  SearchView<RecT>::SearchView(Ctx &ctx, const str &lbl, GtkListStore *store):
+  SearchView<RecT>::SearchView(Ctx &ctx,
+			       const str &lbl,
+			       GtkListStore *store,
+			       OnActivate act):
     View(ctx, fmt("%0 Search", lbl)),
     store(store),
     fields(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5)),
     find_btn(gtk_button_new_with_mnemonic(fmt("_Find %0s", lbl).c_str())),
     list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(store))),
-    cancel_btn(gtk_button_new_with_mnemonic("_Cancel"))
+    cancel_btn(gtk_button_new_with_mnemonic("_Cancel")),
+    on_activate(act)
   { }
 
   template <typename RecT>

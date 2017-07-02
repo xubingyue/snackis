@@ -15,7 +15,7 @@ namespace gui {
     size_t cnt(0);
     
     str name_sel(trim(gtk_entry_get_text(GTK_ENTRY(v->name))));
-    auto peer_sel(get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer)));
+    auto &peer_sel(v->peer_fld.selected);
     bool active_sel(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->active)));
     
     for (auto key = ctx.db.feeds_sort.recs.begin();
@@ -29,8 +29,7 @@ namespace gui {
 
       if (peer_sel) {
 	auto peer_id(*db::get(*peer_sel, ctx.db.peer_id));
-	if (feed.owner_id != peer_id &&
-	    feed.peer_ids.find(peer_id) == feed.peer_ids.end()) { continue; }
+	if (feed.owner_id != peer_id) { continue; }
       }      
 
       if (!name_sel.empty() && find_ci(feed.name, name_sel) == str::npos) {
@@ -51,7 +50,7 @@ namespace gui {
       cnt++;
     }
 
-    gtk_widget_grab_focus(cnt ? v->list : v->peer);
+    gtk_widget_grab_focus(cnt ? v->list : v->name_fld.ptr());
   }
 
   static void on_edit(GtkTreeView *treeview,
@@ -70,29 +69,6 @@ namespace gui {
     pop_view(*v);
   }
   
-  static void init_peers(FeedSearch &v) {
-    GtkTreeIter iter;
-    gtk_list_store_append(v.peers, &iter);
-    gtk_list_store_set(v.peers, &iter,
-		       COL_PEER_PTR, nullptr,
-		       COL_PEER_ID, "",
-		       COL_PEER_NAME, "",
-		       -1);
-
-    for(auto key = v.ctx.db.peers_sort.recs.begin();
-	key != v.ctx.db.peers_sort.recs.end();
-	key++) {
-      auto &rec(db::get(v.ctx.db.peers, *key));
-      Peer peer(v.ctx, rec);
-      gtk_list_store_append(v.peers, &iter);
-      gtk_list_store_set(v.peers, &iter,
-			 COL_PEER_PTR, &rec,
-			 COL_PEER_ID, to_str(peer.id).c_str(),
-			 COL_PEER_NAME, peer.name.c_str(),
-			 -1);
-    }
-  }
-
   static void init_list(FeedSearch &v) {
     gtk_widget_set_hexpand(v.list, true);
     add_col(GTK_TREE_VIEW(v.list), "Created", COL_FEED_CREATED);
@@ -103,15 +79,14 @@ namespace gui {
   
   FeedSearch::FeedSearch(Ctx &ctx):
     View(ctx, "Feed Search"),
-    peers(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
     feeds(gtk_list_store_new(4, G_TYPE_POINTER,
 			     G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING)),
     name(gtk_entry_new()),
-    peer(new_combo_box(GTK_TREE_MODEL(peers))),
     active(gtk_check_button_new_with_label("Active")),
     find(gtk_button_new_with_mnemonic("_Find Feeds")),
     list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(feeds))),
-    close(gtk_button_new_with_mnemonic("_Close Search"))
+    close(gtk_button_new_with_mnemonic("_Close Search")),
+    peer_fld(ctx)
   { }
 
   void FeedSearch::init() {
@@ -130,12 +105,10 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(name_box), active);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active), true);
 
-    init_peers(*this);
     lbl = gtk_label_new("Peer");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_container_add(GTK_CONTAINER(frm), lbl);
-    gtk_widget_set_hexpand(peer, true);
-    gtk_container_add(GTK_CONTAINER(frm), peer);
+    gtk_container_add(GTK_CONTAINER(frm), peer_fld.ptr());
     
     gtk_widget_set_halign(find, GTK_ALIGN_END);
     gtk_widget_set_margin_top(find, 5);
