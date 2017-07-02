@@ -1,11 +1,16 @@
 * convert feed search to search view
 ** add id field
+* convert feed peer list to launch peer search like peer select
+** only 'add peer'-button
 * convert post search to peer select
 * convert post search to search view
 ** add id field
 * convert task search to search view
 ** add id field
-* convert feed peer list to peer select
+* add FeedSelect
+** use in feed search & post view
+* add ProjectSelect
+** use in task view & task search
 * send task messages
 ** copy send(post)
 ** add support to inbox like feeds
