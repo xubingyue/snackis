@@ -8,8 +8,8 @@ namespace snackis {
 namespace gui {
   enum PeerCol {COL_PTR=0, COL_ID, COL_NAME, COL_EMAIL};
 
-  static void edit(const PeerSearch &v, const db::Rec<Peer> &rec) {
-    Peer peer(v.ctx, rec);
+  static void edit(Ctx &ctx, const db::Rec<Peer> &rec) {
+    Peer peer(ctx, rec);
     PeerView *fv(new PeerView(peer));
     push_view(*fv);
   }  
@@ -21,7 +21,7 @@ namespace gui {
 					G_TYPE_STRING,
 					G_TYPE_STRING,
 					G_TYPE_STRING),
-		     [this](auto &rec) { edit(*this, rec); }),
+		     [&ctx](auto &rec) { edit(ctx, rec); }),
     id_fld(gtk_entry_new()),
     name_fld(gtk_entry_new()),
     email_fld(gtk_entry_new())

@@ -66,7 +66,7 @@ namespace gui {
     gtk_box_pack_start(GTK_BOX(panel), fields, false, false, 0);
 
     gtk_widget_set_halign(find_btn, GTK_ALIGN_END);
-    gtk_widget_set_margin_top(find_btn, 5);
+    gtk_widget_set_margin_top(find_btn, 10);
     g_signal_connect(find_btn, "clicked", G_CALLBACK(on_search_find<RecT>), this);
     gtk_container_add(GTK_CONTAINER(panel), find_btn);
 

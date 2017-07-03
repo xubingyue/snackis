@@ -8,8 +8,8 @@ namespace snackis {
 namespace gui {
   enum FeedCol {COL_PTR=0, COL_ID, COL_CREATED, COL_OWNER, COL_NAME};
 
-  static void edit(const FeedSearch &v, const db::Rec<Feed> &rec) {
-    Feed feed(v.ctx, rec);
+  static void edit(Ctx &ctx, const db::Rec<Feed> &rec) {
+    Feed feed(ctx, rec);
     FeedView *fv(new FeedView(feed));
     push_view(*fv);
   }
@@ -23,7 +23,7 @@ namespace gui {
 					G_TYPE_STRING,
 					G_TYPE_STRING,
 					G_TYPE_STRING),
-		     [this](auto &rec) { edit(*this, rec); }),
+		     [&ctx](auto &rec) { edit(ctx, rec); }),
     id_fld(gtk_entry_new()),
     name_fld(gtk_entry_new()),
     active_fld(gtk_check_button_new_with_label("Active")),

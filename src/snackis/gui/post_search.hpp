@@ -5,21 +5,21 @@
 #include <set>
 #include <vector>
 
-#include "snackis/feed.hpp"
+#include "snackis/post.hpp"
 #include "snackis/gui/peer_select.hpp"
-#include "snackis/gui/view.hpp"
-
+#include "snackis/gui/search_view.hpp"
 
 namespace snackis {
 namespace gui {
-  struct PostSearch: View {
-    GtkListStore *feed_store, *peers, *posts;
-    GtkWidget *body, *min_time, *max_time, *feed_fld, *find, *list, *close;
+  struct PostSearch: SearchView<Post> {
+    GtkListStore *feed_store, *peers;
+    GtkWidget *id_fld, *body_fld, *min_time_fld, *max_time_fld, *feed_fld;
     PeerSelect peer_fld;
     opt<Feed> feed;
 
     PostSearch(Ctx &ctx);
     void init() override;
+    void find() override;    
   };
 }}
 
