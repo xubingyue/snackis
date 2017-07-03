@@ -41,12 +41,11 @@ namespace gui {
       if (tsk.project_id != id) { return nullopt; }
     }
 
-    auto peer_sel(get_sel_rec<Peer>(GTK_COMBO_BOX(v.peer_fld)));
+    auto peer_sel(v.peer_fld.selected);
 
     if (peer_sel) {
-      auto peer_id(*db::get(*peer_sel, ctx.db.peer_id));
-      if (tsk.owner_id != peer_id &&
-	  tsk.peer_ids.find(peer_id) == tsk.peer_ids.end()) { return nullopt; }
+      if (tsk.owner_id != peer_sel->id &&
+	  tsk.peer_ids.find(peer_sel->id) == tsk.peer_ids.end()) { return nullopt; }
     }      
 
     Project prj(get_project_id(ctx, tsk.project_id));
@@ -127,36 +126,6 @@ namespace gui {
     }    
   }
 
-  static void init_peers(TaskSearch &v) {
-    GtkTreeIter iter;
-    gtk_list_store_append(v.peers, &iter);
-    gtk_list_store_set(v.peers, &iter,
-		       COL_PEER_PTR, nullptr,
-		       COL_PEER_ID, "",
-		       COL_PEER_NAME, "",
-		       -1);
-
-    for(auto key = v.ctx.db.peers_sort.recs.begin();
-	key != v.ctx.db.peers_sort.recs.end();
-	key++) {
-      auto &rec(db::get(v.ctx.db.peers, *key));
-      Peer peer(v.ctx, rec);
-      gtk_list_store_append(v.peers, &iter);
-      gtk_list_store_set(v.peers, &iter,
-			 COL_PEER_PTR, &rec,
-			 COL_PEER_ID, to_str(peer.id).c_str(),
-			 COL_PEER_NAME, peer.name.c_str(),
-			 -1);
-    }
-
-    if (v.peer) {
-      gtk_combo_box_set_active_id(GTK_COMBO_BOX(v.peer_fld),
-				  to_str(v.peer->id).c_str());
-    } else {
-      gtk_combo_box_set_active(GTK_COMBO_BOX(v.peer_fld), 0);
-    }    
-  }
-
   static void edit(Ctx &ctx, const db::Rec<Task> &rec) {
     Task task(ctx, rec);
     TaskView *fv(new TaskView(task));
@@ -180,15 +149,12 @@ namespace gui {
     queue_store(gtk_list_store_new(3, G_TYPE_POINTER,
 				   G_TYPE_STRING,
 				   G_TYPE_STRING)),
-    peers(gtk_list_store_new(3, G_TYPE_POINTER,
-			     G_TYPE_STRING,
-			     G_TYPE_STRING)),
     id_fld(gtk_entry_new()),
     text_fld(gtk_entry_new()),
     done_fld(gtk_check_button_new_with_label("Done")),
     project_fld(new_combo_box(GTK_TREE_MODEL(project_store))),
     queue_fld(new_combo_box(GTK_TREE_MODEL(queue_store))),
-    peer_fld(new_combo_box(GTK_TREE_MODEL(peers)))
+    peer_fld(ctx)
   { }
 
   void TaskSearch::init() {
@@ -233,12 +199,10 @@ namespace gui {
     gtk_grid_attach(GTK_GRID(frm), queue_fld, 1, row+1, 1, 1);
 
     row += 2;
-    init_peers(*this);
     lbl = gtk_label_new("Peer");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 1, 1);
-    gtk_widget_set_hexpand(peer_fld, true);
-    gtk_grid_attach(GTK_GRID(frm), peer_fld, 0, row+1, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 2, 1);
+    gtk_grid_attach(GTK_GRID(frm), peer_fld.ptr(), 0, row+1, 2, 1);
 
     add_col(GTK_TREE_VIEW(list), "Id", COL_TASK_ID);
     add_col(GTK_TREE_VIEW(list), "Created", COL_TASK_CREATED);

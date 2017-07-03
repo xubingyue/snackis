@@ -1,6 +1,3 @@
-* convert task search to search view
-** add id col/field
-* replace peer_fld in task search
 * add FeedSelect like peer
 ** use in post search & view
 * add ProjectSelect
