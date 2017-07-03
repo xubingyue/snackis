@@ -20,7 +20,7 @@ namespace gui {
 
   static void on_clear(gpointer *_, PeerSelect *v) {
     v->selected = nullopt;
-    gtk_entry_set_text(GTK_ENTRY(v->id_fld), "");
+    gtk_entry_set_text(GTK_ENTRY(v->id_fld), "n/a");
     gtk_entry_set_text(GTK_ENTRY(v->name_fld), "");
   }
 
@@ -33,6 +33,7 @@ namespace gui {
     clear_btn(gtk_button_new_with_mnemonic("Clear"))
   {
     gtk_widget_set_sensitive(id_fld, false);
+    gtk_entry_set_text(GTK_ENTRY(id_fld), "n/a");
     gtk_container_add(GTK_CONTAINER(box), id_fld);
     gtk_widget_set_sensitive(name_fld, false);
     gtk_widget_set_hexpand(name_fld, true);
