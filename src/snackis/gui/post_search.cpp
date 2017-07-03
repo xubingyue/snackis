@@ -43,8 +43,7 @@ namespace gui {
       Feed feed(get_feed_id(ctx, post.feed_id));
       
       if (peer_sel) {
-	auto peer_id(*db::get(*peer_sel, ctx.db.peer_id));
-	if (post.owner_id != peer_id) { continue; }
+	if (post.owner_id != peer_sel->id) { continue; }
       }      
 
       if (feed_sel) {

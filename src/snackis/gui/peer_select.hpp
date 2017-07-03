@@ -9,7 +9,7 @@ namespace gui {
   struct PeerSelect: Widget {
     Ctx &ctx;
     GtkWidget *box, *id_fld, *name_fld, *search_btn, *clear_btn;
-    const db::Rec<Peer> *selected;
+    opt<Peer> selected;
     
     PeerSelect(Ctx &ctx);
     GtkWidget *ptr() override;

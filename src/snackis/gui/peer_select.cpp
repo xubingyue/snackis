@@ -7,8 +7,8 @@ namespace gui {
     PeerSearch *ps = new PeerSearch(v->ctx);
     
     ps->on_activate = [v, ps](auto &rec) {
-      v->selected = &rec;
       Peer peer(v->ctx, rec);
+      v->selected.emplace(peer);
       gtk_entry_set_text(GTK_ENTRY(v->id_fld), id_str(peer).c_str());
       gtk_entry_set_text(GTK_ENTRY(v->name_fld), peer.name.c_str());
       gtk_widget_set_sensitive(v->clear_btn, true);
@@ -19,7 +19,7 @@ namespace gui {
   }
 
   static void on_clear(gpointer *_, PeerSelect *v) {
-    v->selected = nullptr;
+    v->selected = nullopt;
     gtk_entry_set_text(GTK_ENTRY(v->id_fld), "");
     gtk_entry_set_text(GTK_ENTRY(v->name_fld), "");
   }
@@ -30,8 +30,7 @@ namespace gui {
     id_fld(gtk_entry_new()),
     name_fld(gtk_entry_new()),
     search_btn(gtk_button_new_with_mnemonic("Search")),
-    clear_btn(gtk_button_new_with_mnemonic("Clear")),
-    selected(nullptr)
+    clear_btn(gtk_button_new_with_mnemonic("Clear"))
   {
     gtk_widget_set_sensitive(id_fld, false);
     gtk_container_add(GTK_CONTAINER(box), id_fld);
