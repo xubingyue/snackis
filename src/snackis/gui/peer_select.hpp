@@ -14,6 +14,8 @@ namespace gui {
     PeerSelect(Ctx &ctx);
     GtkWidget *ptr() override;
   };
+
+  void select(PeerSelect &v, const opt<Peer> &peer);
 }}
 
 #endif
