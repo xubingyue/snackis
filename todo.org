@@ -1,7 +1,7 @@
-* add FeedSelect like peer
-** use in post search & view
 * convert task search to search view
 ** add id col/field
+* add FeedSelect like peer
+** use in post search & view
 * add ProjectSelect
 ** use in task view & task search
 * send task messages

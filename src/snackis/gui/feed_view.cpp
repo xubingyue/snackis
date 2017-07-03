@@ -8,7 +8,7 @@
 
 namespace snackis {
 namespace gui {
-  enum PeerCol {COL_PEER_PTR=0, COL_PEER_ID, COL_PEER_NAME};
+  enum PeerCol {COL_PEER_PTR=0, COL_PEER_ID, COL_PEER_NAME, COL_PEER_EMAIL};
   enum PostCol {COL_POST_PTR=0, COL_POST_BY, COL_POST_BODY};
   
   static void on_add_peer(gpointer *_, FeedView *v) {
@@ -25,6 +25,7 @@ namespace gui {
 			   COL_PEER_PTR, &rec,
 			   COL_PEER_ID, id_str(peer).c_str(),
 			   COL_PEER_NAME, peer.name.c_str(),
+			   COL_PEER_EMAIL, peer.email.c_str(),
 			   -1);
 	auto sel(gtk_tree_view_get_selection(GTK_TREE_VIEW(v->peer_lst)));
 	gtk_tree_selection_select_iter(sel, &iter);
@@ -69,6 +70,7 @@ namespace gui {
 			   COL_PEER_PTR, rec,
 			   COL_PEER_ID, id_str(peer).c_str(),
 			   COL_PEER_NAME, peer.name.c_str(),
+			   COL_PEER_EMAIL, peer.email.c_str(),
 			   -1);
       }
     }
@@ -82,6 +84,7 @@ namespace gui {
     gtk_widget_set_vexpand(v.peer_lst, true);
     add_col(GTK_TREE_VIEW(v.peer_lst), "Peers", COL_PEER_ID);
     add_col(GTK_TREE_VIEW(v.peer_lst), "", COL_PEER_NAME, true);
+    add_col(GTK_TREE_VIEW(v.peer_lst), "", COL_PEER_EMAIL, true);
     g_signal_connect(v.peer_lst, "row-activated", G_CALLBACK(on_remove_peer), &v);    
     gtk_container_add(GTK_CONTAINER(peer_box), v.peer_lst);
     gtk_widget_set_valign(v.add_peer_btn, GTK_ALIGN_END);
@@ -113,8 +116,8 @@ namespace gui {
   
   FeedView::FeedView(const Feed &feed):
     RecView("Feed", feed),
-    peer_store(gtk_list_store_new(3, G_TYPE_POINTER,
-				       G_TYPE_STRING, G_TYPE_STRING)),
+    peer_store(gtk_list_store_new(4, G_TYPE_POINTER,
+				  G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING)),
     find_posts_btn(gtk_button_new_with_mnemonic("_Find Posts")),
     post_btn(gtk_button_new_with_mnemonic("New _Post")),
     name_fld(gtk_entry_new()),
