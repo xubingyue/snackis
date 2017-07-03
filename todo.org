@@ -1,8 +1,9 @@
-* add FeedSelect like peer
-** use in post search & view
+* convert post search to use feed select
+* convert post view to use feed select
 * add ProjectSelect
 ** use in task view & task search
 * add QueueSelect
+** use in task search
 * send task messages
 ** copy send(post)
 ** add support to inbox like feeds

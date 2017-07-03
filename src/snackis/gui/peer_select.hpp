@@ -2,20 +2,14 @@
 #define SNACKIS_GUI_PEER_SELECT_HPP
 
 #include "snackis/peer.hpp"
-#include "snackis/gui/widget.hpp"
+#include "snackis/gui/rec_select.hpp"
 
 namespace snackis {
 namespace gui {
-  struct PeerSelect: Widget {
-    Ctx &ctx;
-    GtkWidget *box, *id_fld, *name_fld, *search_btn, *clear_btn;
-    opt<Peer> selected;
-    
+  struct PeerSelect: RecSelect<Peer> {
     PeerSelect(Ctx &ctx);
-    GtkWidget *ptr() override;
+    SearchView<Peer> *search() const override;
   };
-
-  void select(PeerSelect &v, const opt<Peer> &peer);
 }}
 
 #endif
