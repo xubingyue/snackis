@@ -105,7 +105,9 @@ namespace gui {
     
     for (const auto &id: w.ids) {
       db::Rec<RecT> key;
-      db::set(key, *tbl.key.cols.first(), id);
+      db::set(key,
+	      *dynamic_cast<const db::Col<RecT, UId> *>(tbl.key.cols.front()),
+	      id);
       auto rec(db::find(tbl, key));
       
       if (rec) {
