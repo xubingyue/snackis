@@ -18,7 +18,8 @@ namespace gui {
     post_btn(gtk_button_new_with_mnemonic("New _Post")),
     name_fld(gtk_entry_new()),
     active_fld(gtk_check_button_new_with_label("Active")),    
-    info_fld(new_text_view()) { }
+    info_fld(new_text_view()),
+    peer_list(ctx, "Peer", this->rec.peer_ids) { }
 
   static void on_find_tasks(gpointer *_, ProjectView *v) {
     TaskSearch *ts = new TaskSearch(v->ctx);
@@ -83,6 +84,9 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(info_fld));
     set_str(GTK_TEXT_VIEW(info_fld), rec.info);
     
+    gtk_widget_set_margin_top(peer_list.ptr(), 5);
+    gtk_container_add(GTK_CONTAINER(fields), peer_list.ptr());
+
     focused = name_fld;
   }
 

@@ -1,5 +1,7 @@
+* convert feed view to use peer list like project view
 * convert post search to use feed select
 * convert post view to use feed select
+* add ProjectSearch
 * add ProjectSelect
 ** use in task view & task search
 * add QueueSelect
@@ -8,7 +10,6 @@
 ** copy send(post)
 ** add support to inbox like feeds
 ** add support to imap like posts
-* add ProjectSearch
 * add project view peers
 * add task view queues
 * add QueueView
