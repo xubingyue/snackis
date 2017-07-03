@@ -1,4 +1,3 @@
-* fix width of search id fields
 * convert post view to feed select
 * add ProjectSearch
 * add ProjectSelect
@@ -8,11 +7,11 @@
 * add QueueSearch
 * add QueueSelect
 ** use in task search
+* add QueueList / task view queues
 * send task messages
 ** copy send(post)
 ** add support to inbox like feeds
 ** add support to imap like posts
-* add task view queues
 * switch Imap/Smtp to one trans per msg
 ** pick first and process
 
