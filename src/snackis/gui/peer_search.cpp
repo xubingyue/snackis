@@ -22,7 +22,7 @@ namespace gui {
 					G_TYPE_STRING,
 					G_TYPE_STRING),
 		     [&ctx](auto &rec) { edit(ctx, rec); }),
-    id_fld(gtk_entry_new()),
+    id_fld(new_id_field()),
     name_fld(gtk_entry_new()),
     email_fld(gtk_entry_new())
   { }

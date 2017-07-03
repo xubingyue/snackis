@@ -51,7 +51,7 @@ namespace gui {
   RecSelect<RecT>::RecSelect(Ctx &ctx):
     ctx(ctx),
     box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5)),
-    id_fld(gtk_entry_new()),
+    id_fld(new_id_field()),
     name_fld(gtk_entry_new()),
     search_btn(gtk_button_new_with_mnemonic("Search")),
     clear_btn(gtk_button_new_with_mnemonic("Clear"))

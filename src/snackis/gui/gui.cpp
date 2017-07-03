@@ -38,6 +38,14 @@ namespace gui {
     return iter;
   }
 
+  GtkWidget *new_id_field() {
+    GtkWidget *w(gtk_entry_new());
+    gtk_entry_set_max_length(GTK_ENTRY(w), ID_LEN);
+    gtk_entry_set_width_chars(GTK_ENTRY(w), ID_LEN);
+    gtk_entry_set_max_width_chars(GTK_ENTRY(w), ID_LEN);
+    return w;
+  }
+
   GtkWidget *new_combo_box(GtkTreeModel *mod) {
     GtkWidget *w(gtk_combo_box_new_with_model(mod));
     gtk_combo_box_set_id_column(GTK_COMBO_BOX(w), 1);

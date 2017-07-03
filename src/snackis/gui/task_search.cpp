@@ -149,7 +149,7 @@ namespace gui {
     queue_store(gtk_list_store_new(3, G_TYPE_POINTER,
 				   G_TYPE_STRING,
 				   G_TYPE_STRING)),
-    id_fld(gtk_entry_new()),
+    id_fld(new_id_field()),
     text_fld(gtk_entry_new()),
     done_fld(gtk_check_button_new_with_label("Done")),
     project_fld(new_combo_box(GTK_TREE_MODEL(project_store))),

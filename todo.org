@@ -1,4 +1,5 @@
-* convert post view to use feed select
+* fix width of search id fields
+* convert post view to feed select
 * add ProjectSearch
 * add ProjectSelect
 ** use in task view & task search

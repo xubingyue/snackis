@@ -12,6 +12,8 @@
 
 namespace snackis {
 namespace gui {
+  const int ID_LEN(8);
+  
   extern GtkWidget *window, *panels, *main_panel, *left_panel;
   
   extern opt<Console> console;
@@ -48,8 +50,10 @@ namespace gui {
     return get_sel_rec<RecT>(w, *iter);
   }
 
+  GtkWidget *new_id_field();
   GtkWidget *new_combo_box(GtkTreeModel *mod);
   GtkWidget *new_text_view();
+  
   GtkTreeViewColumn *add_col(GtkTreeView *w, const str &lbl, int idx,
 			     bool expand=false);
 }}
