@@ -60,7 +60,7 @@ namespace gui {
     add_col(GTK_TREE_VIEW(list), "Id", COL_ID);
     add_col(GTK_TREE_VIEW(list), "Created", COL_CREATED);
     add_col(GTK_TREE_VIEW(list), "Owner", COL_OWNER);
-    add_col(GTK_TREE_VIEW(list), "Name", COL_NAME, true);
+    add_col(GTK_TREE_VIEW(list), "Name", COL_NAME);
 
     focused = id_fld;
   }

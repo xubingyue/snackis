@@ -6,20 +6,21 @@
 #include <vector>
 
 #include "snackis/project.hpp"
-#include "snackis/gui/view.hpp"
+#include "snackis/task.hpp"
+#include "snackis/gui/search_view.hpp"
 
 namespace snackis {
 namespace gui {
-  struct TaskSearch: View {
-    GtkListStore *project_store, *queue_store, *peers, *tasks;
-    GtkWidget *text_fld, *done_fld, *project_fld, *queue_fld, *peer_fld, *find_btn,
-      *lst, *close_btn;
+  struct TaskSearch: SearchView<Task> {
+    GtkListStore *project_store, *queue_store, *peers;
+    GtkWidget *text_fld, *done_fld, *project_fld, *queue_fld, *peer_fld;
     opt<Project> project;
     opt<Queue> queue;
     opt<Peer> peer;
     
     TaskSearch(Ctx &ctx);
     void init() override;
+    void find() override;    
   };
 }}
 

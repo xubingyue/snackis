@@ -9,7 +9,7 @@ namespace gui {
   enum ProjectCol {COL_PROJECT_PTR=0, COL_PROJECT_ID, COL_PROJECT_NAME};
   enum QueueCol {COL_QUEUE_PTR=0, COL_QUEUE_ID, COL_QUEUE_NAME};
   enum PeerCol {COL_PEER_PTR=0, COL_PEER_ID, COL_PEER_NAME};
-  enum TaskCol {COL_TASK_PTR=0, COL_TASK_CREATED, COL_TASK_OWNER,
+  enum TaskCol {COL_TASK_PTR=0, COL_TASK_ID, COL_TASK_CREATED, COL_TASK_OWNER,
 		COL_TASK_PROJECT, COL_TASK_NAME, COL_TASK_INFO};
 
   static opt<Task> add_task(TaskSearch &v, const db::Rec<Task> &rec) {
@@ -46,9 +46,10 @@ namespace gui {
     Project prj(get_project_id(ctx, tsk.project_id));
     Peer own(get_peer_id(ctx, tsk.owner_id));
     GtkTreeIter iter;
-    gtk_list_store_append(v.tasks, &iter);
-    gtk_list_store_set(v.tasks, &iter,
+    gtk_list_store_append(v.store, &iter);
+    gtk_list_store_set(v.store, &iter,
 		       COL_TASK_PTR, &rec,
+		       COL_TASK_ID, id_str(tsk).c_str(),
 		       COL_TASK_CREATED,
 		       fmt(tsk.created_at, "%a %b %d, %H:%M").c_str(),
 		       COL_TASK_OWNER, own.name.c_str(),
@@ -59,57 +60,7 @@ namespace gui {
 
     return tsk;
   }
-  
-  static void on_find(gpointer *_, TaskSearch *v) {
-    Ctx &ctx(v->ctx);
-    gtk_list_store_clear(v->tasks);
-    auto queue_sel(get_sel_rec<Queue>(GTK_COMBO_BOX(v->queue_fld)));
-    size_t cnt(0);    
     
-    if (queue_sel) {
-      Queue q(ctx, *queue_sel);
-      db::Rec<QueueTask> key;
-      db::set(key, ctx.db.queue_task_queue_id, q.id);
-      for (auto i = ctx.db.queue_tasks.recs.lower_bound(key);
-	   i != ctx.db.queue_tasks.recs.end() &&
-	     *db::get(*i, ctx.db.queue_task_queue_id) == q.id;
-	   i++) {
-	db::Rec<Task> rec_key;
-	db::set(rec_key, ctx.db.task_id, *db::get(*i, ctx.db.queue_task_id));
-	auto &rec(db::get(ctx.db.tasks, rec_key));
-	add_task(*v, rec);
-	cnt++;
-      }
-    } else {
-    
-      for (auto i = ctx.db.tasks_sort.recs.begin();
-	   i != ctx.db.tasks_sort.recs.end();
-	   i++) {
-	auto &rec(db::get(ctx.db.tasks, *i));
-	auto tsk(add_task(*v, rec));
-	cnt++;
-      }
-    }
-    
-    gtk_widget_grab_focus(cnt ? v->lst : v->peer_fld);
-  }
-
-  static void on_edit(GtkTreeView *treeview,
-		      GtkTreePath *path,
-		      GtkTreeViewColumn *col,
-		      TaskSearch *v) {
-    Ctx &ctx(v->ctx);
-    auto rec(get_sel_rec<Task>(GTK_TREE_VIEW(v->lst)));
-    CHECK(rec ? true : false, _);
-    Task task(ctx, *rec);
-    TaskView *fv(new TaskView(task));
-    push_view(*fv);
-  }
-  
-  static void on_close(gpointer *_, TaskSearch *v) {
-    pop_view(*v);
-  }
-  
   static void init_projects(TaskSearch &v) {
     GtkTreeIter iter;
     gtk_list_store_append(v.project_store, &iter);
@@ -200,44 +151,47 @@ namespace gui {
     }    
   }
 
-  static void init_lst(TaskSearch &v) {
-    gtk_widget_set_hexpand(v.lst, true);
-    add_col(GTK_TREE_VIEW(v.lst), "Created", COL_TASK_CREATED);
-    add_col(GTK_TREE_VIEW(v.lst), "Owner", COL_TASK_OWNER);
-    add_col(GTK_TREE_VIEW(v.lst), "Project", COL_TASK_PROJECT, true);
-    add_col(GTK_TREE_VIEW(v.lst), "Name", COL_TASK_NAME, true);
-    add_col(GTK_TREE_VIEW(v.lst), "Info", COL_TASK_INFO, true);
-    g_signal_connect(v.lst, "row-activated", G_CALLBACK(on_edit), &v);
+  static void edit(Ctx &ctx, const db::Rec<Task> &rec) {
+    Task task(ctx, rec);
+    TaskView *fv(new TaskView(task));
+    push_view(*fv);
   }
-  
+
   TaskSearch::TaskSearch(Ctx &ctx):
-    View(ctx, "Task Search"),
+    SearchView<Task>(ctx,
+		     "Task",
+		     gtk_list_store_new(7, G_TYPE_POINTER,
+					G_TYPE_STRING,
+					G_TYPE_STRING,
+					G_TYPE_STRING,
+					G_TYPE_STRING,
+					G_TYPE_STRING,
+					G_TYPE_STRING),
+		     [&ctx](auto &rec) { edit(ctx, rec); }),
     project_store(gtk_list_store_new(3, G_TYPE_POINTER,
-				     G_TYPE_STRING, G_TYPE_STRING)),
+				     G_TYPE_STRING,
+				     G_TYPE_STRING)),
     queue_store(gtk_list_store_new(3, G_TYPE_POINTER,
-				   G_TYPE_STRING, G_TYPE_STRING)),
-    peers(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
-    tasks(gtk_list_store_new(6, G_TYPE_POINTER,
-			     G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
-			     G_TYPE_STRING, G_TYPE_STRING)),
+				   G_TYPE_STRING,
+				   G_TYPE_STRING)),
+    peers(gtk_list_store_new(3, G_TYPE_POINTER,
+			     G_TYPE_STRING,
+			     G_TYPE_STRING)),
     text_fld(gtk_entry_new()),
     done_fld(gtk_check_button_new_with_label("Done")),
     project_fld(new_combo_box(GTK_TREE_MODEL(project_store))),
     queue_fld(new_combo_box(GTK_TREE_MODEL(queue_store))),
-    peer_fld(new_combo_box(GTK_TREE_MODEL(peers))),
-    find_btn(gtk_button_new_with_mnemonic("_Find Tasks")),
-    lst(gtk_tree_view_new_with_model(GTK_TREE_MODEL(tasks))),
-    close_btn(gtk_button_new_with_mnemonic("_Close Search"))
+    peer_fld(new_combo_box(GTK_TREE_MODEL(peers)))
   { }
 
   void TaskSearch::init() {
+    SearchView<Task>::init();
     GtkWidget *lbl;
 
     GtkWidget *frm = gtk_grid_new();
     gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
     gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
-    
-    gtk_box_pack_start(GTK_BOX(panel), frm, false, false, 0);
+    gtk_box_pack_start(GTK_BOX(fields), frm, false, false, 0);
     int row = 0;
     
     lbl = gtk_label_new("Text");
@@ -272,25 +226,44 @@ namespace gui {
     gtk_widget_set_hexpand(peer_fld, true);
     gtk_grid_attach(GTK_GRID(frm), peer_fld, 0, row+1, 1, 1);
 
-    row += 2;
-    gtk_widget_set_halign(find_btn, GTK_ALIGN_END);
-    gtk_widget_set_margin_top(find_btn, 5);
-    g_signal_connect(find_btn, "clicked", G_CALLBACK(on_find), this);
-    gtk_grid_attach(GTK_GRID(frm), find_btn, 0, row, 2, 1);
-
-    init_lst(*this);
-    gtk_box_pack_start(GTK_BOX(panel), lst, true, true, 0);
-    lbl = gtk_label_new("Press Return or double-click to edit task");
-    gtk_container_add(GTK_CONTAINER(panel), lbl);
-
-    GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    gtk_widget_set_halign(btns, GTK_ALIGN_END);
-    gtk_widget_set_valign(btns, GTK_ALIGN_END);
-    gtk_widget_set_margin_top(btns, 10);
-    gtk_container_add(GTK_CONTAINER(panel), btns);
-        
-    g_signal_connect(close_btn, "clicked", G_CALLBACK(on_close), this);
-    gtk_container_add(GTK_CONTAINER(btns), close_btn);
+    add_col(GTK_TREE_VIEW(list), "Id", COL_TASK_ID);
+    add_col(GTK_TREE_VIEW(list), "Created", COL_TASK_CREATED);
+    add_col(GTK_TREE_VIEW(list), "Owner", COL_TASK_OWNER);
+    add_col(GTK_TREE_VIEW(list), "Project", COL_TASK_PROJECT);
+    add_col(GTK_TREE_VIEW(list), "Name", COL_TASK_NAME);
+    add_col(GTK_TREE_VIEW(list), "Info", COL_TASK_INFO);
     focused = text_fld;
+  }
+
+  void TaskSearch::find() {
+    auto queue_sel(get_sel_rec<Queue>(GTK_COMBO_BOX(queue_fld)));
+    size_t cnt(0);    
+    
+    if (queue_sel) {
+      Queue q(ctx, *queue_sel);
+      db::Rec<QueueTask> key;
+      db::set(key, ctx.db.queue_task_queue_id, q.id);
+      for (auto i = ctx.db.queue_tasks.recs.lower_bound(key);
+	   i != ctx.db.queue_tasks.recs.end() &&
+	     *db::get(*i, ctx.db.queue_task_queue_id) == q.id;
+	   i++) {
+	db::Rec<Task> rec_key;
+	db::set(rec_key, ctx.db.task_id, *db::get(*i, ctx.db.queue_task_id));
+	auto &rec(db::get(ctx.db.tasks, rec_key));
+	add_task(*this, rec);
+	cnt++;
+      }
+    } else {
+    
+      for (auto i = ctx.db.tasks_sort.recs.begin();
+	   i != ctx.db.tasks_sort.recs.end();
+	   i++) {
+	auto &rec(db::get(ctx.db.tasks, *i));
+	auto tsk(add_task(*this, rec));
+	cnt++;
+      }
+    }
+    
+    gtk_widget_grab_focus(cnt ? list : text_fld);
   }
 }}

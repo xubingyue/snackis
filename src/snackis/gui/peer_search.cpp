@@ -53,9 +53,9 @@ namespace gui {
     gtk_widget_set_hexpand(email_fld, true);
     gtk_container_add(GTK_CONTAINER(fields), email_fld);
 
-    add_col(GTK_TREE_VIEW(list), "Id", COL_ID, false);
-    add_col(GTK_TREE_VIEW(list), "Name", COL_NAME, true);
-    add_col(GTK_TREE_VIEW(list), "Email", COL_EMAIL, true);
+    add_col(GTK_TREE_VIEW(list), "Id", COL_ID);
+    add_col(GTK_TREE_VIEW(list), "Name", COL_NAME);
+    add_col(GTK_TREE_VIEW(list), "Email", COL_EMAIL);
 
     focused = id_fld;
   }

@@ -91,7 +91,7 @@ namespace gui {
     gtk_widget_set_hexpand(v.post_lst, true);
     gtk_widget_set_vexpand(v.post_lst, true);
     add_col(GTK_TREE_VIEW(v.post_lst), "Posted", COL_POST_BY);
-    add_col(GTK_TREE_VIEW(v.post_lst), "Body", COL_POST_BODY, true);
+    add_col(GTK_TREE_VIEW(v.post_lst), "Body", COL_POST_BODY);
     g_signal_connect(v.post_lst, "row-activated", G_CALLBACK(on_edit_post), &v);
   }
   

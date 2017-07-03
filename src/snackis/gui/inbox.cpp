@@ -82,7 +82,7 @@ namespace gui {
   
   static void init_list(Inbox &v) {
     add_col(GTK_TREE_VIEW(v.list), "From", COL_FROM);
-    add_col(GTK_TREE_VIEW(v.list), "Message", COL_INFO, true);
+    add_col(GTK_TREE_VIEW(v.list), "Message", COL_INFO);
     Ctx &ctx(v.ctx);
     std::vector<UId> rem;
     

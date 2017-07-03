@@ -83,8 +83,8 @@ namespace gui {
     gtk_widget_set_hexpand(v.peer_lst, true);
     gtk_widget_set_vexpand(v.peer_lst, true);
     add_col(GTK_TREE_VIEW(v.peer_lst), "Peers", COL_PEER_ID);
-    add_col(GTK_TREE_VIEW(v.peer_lst), "", COL_PEER_NAME, true);
-    add_col(GTK_TREE_VIEW(v.peer_lst), "", COL_PEER_EMAIL, true);
+    add_col(GTK_TREE_VIEW(v.peer_lst), "", COL_PEER_NAME);
+    add_col(GTK_TREE_VIEW(v.peer_lst), "", COL_PEER_EMAIL);
     g_signal_connect(v.peer_lst, "row-activated", G_CALLBACK(on_remove_peer), &v);    
     gtk_container_add(GTK_CONTAINER(peer_box), v.peer_lst);
     gtk_widget_set_valign(v.add_peer_btn, GTK_ALIGN_END);

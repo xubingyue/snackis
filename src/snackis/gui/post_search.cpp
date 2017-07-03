@@ -53,14 +53,15 @@ namespace gui {
   PostSearch::PostSearch(Ctx &ctx):
     SearchView<Post>(ctx,
 		     "Post",
-		     gtk_list_store_new(5,
-					G_TYPE_POINTER,
+		     gtk_list_store_new(5, G_TYPE_POINTER,
 					G_TYPE_STRING,
 					G_TYPE_STRING,
 					G_TYPE_STRING,
 					G_TYPE_STRING),
 		     [&ctx](auto &rec) { edit(ctx, rec); }),
-    feed_store(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
+    feed_store(gtk_list_store_new(3, G_TYPE_POINTER,
+				  G_TYPE_STRING,
+				  G_TYPE_STRING)),
     id_fld(gtk_entry_new()),
     body_fld(gtk_entry_new()),
     min_time_fld(gtk_entry_new()),
@@ -122,8 +123,8 @@ namespace gui {
     
     add_col(GTK_TREE_VIEW(list), "Id", COL_ID);
     add_col(GTK_TREE_VIEW(list), "Posted", COL_BY);
-    add_col(GTK_TREE_VIEW(list), "Feed", COL_FEED, true);
-    add_col(GTK_TREE_VIEW(list), "Body", COL_BODY, true);
+    add_col(GTK_TREE_VIEW(list), "Feed", COL_FEED);
+    add_col(GTK_TREE_VIEW(list), "Body", COL_BODY);
 
     focused = id_fld;
   }
