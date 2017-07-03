@@ -6,44 +6,8 @@
 
 namespace snackis {
 namespace gui {
-  enum FeedCol {COL_FEED_PTR=0, COL_FEED_ID, COL_FEED_NAME};
   enum PostCol {COL_PTR=0, COL_ID, COL_BY, COL_FEED, COL_BODY};
   
-  static void init_feeds(PostSearch &v) {
-    Ctx &ctx(v.ctx);
-    
-    GtkTreeIter iter;
-    gtk_list_store_append(v.feed_store, &iter);
-    gtk_list_store_set(v.feed_store, &iter,
-		       COL_FEED_PTR, nullptr,
-		       COL_FEED_ID, "",
-		       COL_FEED_NAME, "",
-		       -1);
-
-    for(auto key = ctx.db.feeds_sort.recs.begin();
-	key != ctx.db.feeds_sort.recs.end();
-	key++) {
-      auto &rec(db::get(ctx.db.feeds, *key));
-      Feed feed(ctx, rec);
-      
-      if ((feed.visible && feed.active) || (v.feed && v.feed->id == feed.id)) {
-	gtk_list_store_append(v.feed_store, &iter);
-	gtk_list_store_set(v.feed_store, &iter,
-			   COL_FEED_PTR, &rec,
-			   COL_FEED_ID, to_str(feed.id).c_str(),
-			   COL_FEED_NAME, feed.name.c_str(),
-			   -1);
-      }
-    }
-
-    if (v.feed) {
-      gtk_combo_box_set_active_id(GTK_COMBO_BOX(v.feed_fld),
-				  to_str(v.feed->id).c_str());
-    } else {
-      gtk_combo_box_set_active(GTK_COMBO_BOX(v.feed_fld), 0);
-    }    
-  }
-
   static void edit(Ctx &ctx, const db::Rec<Post> &rec) {
     Post post(ctx, rec);    
     PostView *fv(new PostView(post));
@@ -59,14 +23,11 @@ namespace gui {
 					G_TYPE_STRING,
 					G_TYPE_STRING),
 		     [&ctx](auto &rec) { edit(ctx, rec); }),
-    feed_store(gtk_list_store_new(3, G_TYPE_POINTER,
-				  G_TYPE_STRING,
-				  G_TYPE_STRING)),
     id_fld(gtk_entry_new()),
     body_fld(gtk_entry_new()),
     min_time_fld(gtk_entry_new()),
     max_time_fld(gtk_entry_new()),
-    feed_fld(new_combo_box(GTK_TREE_MODEL(feed_store))),
+    feed_fld(ctx),
     peer_fld(ctx)
   { }
 
@@ -109,12 +70,10 @@ namespace gui {
     gtk_widget_set_hexpand(body_fld, true);
     gtk_container_add(GTK_CONTAINER(fields), body_fld);
 
-    init_feeds(*this);
     lbl = gtk_label_new("Feed");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_container_add(GTK_CONTAINER(fields), lbl);
-    gtk_widget_set_hexpand(feed_fld, true);
-    gtk_container_add(GTK_CONTAINER(fields), feed_fld);
+    gtk_container_add(GTK_CONTAINER(fields), feed_fld.ptr());
     
     lbl = gtk_label_new("By");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
@@ -134,7 +93,7 @@ namespace gui {
     
     str id_sel(trim(gtk_entry_get_text(GTK_ENTRY(id_fld))));
     str body_sel(trim(gtk_entry_get_text(GTK_ENTRY(body_fld))));
-    auto feed_sel(get_sel_rec<Feed>(GTK_COMBO_BOX(feed_fld)));
+    auto feed_sel(feed_fld.selected);
     auto peer_sel(peer_fld.selected);
     str min_time_str(trim(gtk_entry_get_text(GTK_ENTRY(min_time_fld))));
     auto min_time_sel(parse_time("%Y-%m-%d %H:%M", min_time_str));
@@ -169,18 +128,16 @@ namespace gui {
 	continue;
       }
 
-      if (min_time_sel && post.created_at < *min_time_sel) {
+      if (!min_time_str.empty() && post.created_at < *min_time_sel) {
 	continue;
       }
 
-      if (max_time_sel && post.created_at > *max_time_sel) {
+      if (!max_time_str.empty() && post.created_at > *max_time_sel) {
 	continue;
       }
       
       if (feed_sel) {
-	if (feed.id != *db::get(*feed_sel, ctx.db.feed_id)) {
-	  continue;
-	}
+	if (post.feed_id != feed_sel->id) { continue; }
       } else {
 	if (!feed.visible) { continue; }
       }

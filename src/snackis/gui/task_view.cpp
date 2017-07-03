@@ -65,7 +65,7 @@ namespace gui {
 
   static void on_find_posts(gpointer *_, TaskView *v) {
     PostSearch *ps = new PostSearch(v->ctx);
-    ps->feed.emplace(get_feed(v->rec));
+    select<Feed>(ps->feed_fld, get_feed_id(v->ctx, v->rec.id));
     push_view(*ps);
   }
 

@@ -1,4 +1,3 @@
-* convert post search to use feed select
 * convert post view to use feed select
 * add ProjectSearch
 * add ProjectSelect

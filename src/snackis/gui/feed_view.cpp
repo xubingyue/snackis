@@ -10,7 +10,7 @@ namespace snackis {
 namespace gui {
   static void on_find_posts(gpointer *_, FeedView *v) {
     PostSearch *ps = new PostSearch(v->ctx);
-    ps->feed.emplace(v->rec);
+    select<Feed>(ps->feed_fld, v->rec);
     push_view(*ps);
   }
 
