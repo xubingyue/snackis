@@ -16,6 +16,20 @@ namespace gui {
     Ctx &ctx(v.ctx);
     Task tsk(ctx, rec);
 
+    str id_sel(trim(gtk_entry_get_text(GTK_ENTRY(v.id_fld))));
+
+    if (!id_sel.empty() && find_ci(id_str(tsk), id_sel) == str::npos) {
+      return nullopt;
+    }
+
+    str text_sel(trim(gtk_entry_get_text(GTK_ENTRY(v.text_fld))));
+
+    if (!text_sel.empty() &&
+	find_ci(tsk.name, text_sel) == str::npos &&
+	find_ci(tsk.info, text_sel) == str::npos) {
+      return nullopt;
+    }
+
     bool done_sel(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v.done_fld)));
 
     if (tsk.done != done_sel) { return nullopt; }
@@ -34,14 +48,6 @@ namespace gui {
       if (tsk.owner_id != peer_id &&
 	  tsk.peer_ids.find(peer_id) == tsk.peer_ids.end()) { return nullopt; }
     }      
-
-    str text_sel(trim(gtk_entry_get_text(GTK_ENTRY(v.text_fld))));
-
-    if (!text_sel.empty() &&
-	find_ci(tsk.name, text_sel) == str::npos &&
-	find_ci(tsk.info, text_sel) == str::npos) {
-      return nullopt;
-    }
 
     Project prj(get_project_id(ctx, tsk.project_id));
     Peer own(get_peer_id(ctx, tsk.owner_id));
@@ -177,6 +183,7 @@ namespace gui {
     peers(gtk_list_store_new(3, G_TYPE_POINTER,
 			     G_TYPE_STRING,
 			     G_TYPE_STRING)),
+    id_fld(gtk_entry_new()),
     text_fld(gtk_entry_new()),
     done_fld(gtk_check_button_new_with_label("Done")),
     project_fld(new_combo_box(GTK_TREE_MODEL(project_store))),
@@ -188,22 +195,29 @@ namespace gui {
     SearchView<Task>::init();
     GtkWidget *lbl;
 
+    GtkWidget *top_box = gtk_grid_new();
+    gtk_grid_set_row_spacing(GTK_GRID(top_box), 5);
+    gtk_grid_set_column_spacing(GTK_GRID(top_box), 5);
+    gtk_container_add(GTK_CONTAINER(fields), top_box);
+    
+    lbl = gtk_label_new("Id");
+    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
+    gtk_grid_attach(GTK_GRID(top_box), lbl, 0, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(top_box), id_fld, 0, 1, 1, 1);
+
+    lbl = gtk_label_new("Text");
+    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
+    gtk_grid_attach(GTK_GRID(top_box), lbl, 1, 0, 1, 1);
+    gtk_widget_set_hexpand(text_fld, true);
+    gtk_grid_attach(GTK_GRID(top_box), text_fld, 1, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(top_box), done_fld, 2, 1, 1, 1);
+
     GtkWidget *frm = gtk_grid_new();
     gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
     gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
-    gtk_box_pack_start(GTK_BOX(fields), frm, false, false, 0);
-    int row = 0;
-    
-    lbl = gtk_label_new("Text");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 2, 1);
-    GtkWidget *text_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
-    gtk_grid_attach(GTK_GRID(frm), text_box, 0, row+1, 2, 1);
-    gtk_widget_set_hexpand(text_fld, true);
-    gtk_container_add(GTK_CONTAINER(text_box), text_fld);
-    gtk_container_add(GTK_CONTAINER(text_box), done_fld);
+    gtk_container_add(GTK_CONTAINER(fields), frm);
 
-    row += 2;
+    int row = 0;
     init_projects(*this);
     lbl = gtk_label_new("Project");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);

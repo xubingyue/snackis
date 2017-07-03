@@ -13,7 +13,7 @@ namespace snackis {
 namespace gui {
   struct TaskSearch: SearchView<Task> {
     GtkListStore *project_store, *queue_store, *peers;
-    GtkWidget *text_fld, *done_fld, *project_fld, *queue_fld, *peer_fld;
+    GtkWidget *id_fld, *text_fld, *done_fld, *project_fld, *queue_fld, *peer_fld;
     opt<Project> project;
     opt<Queue> queue;
     opt<Peer> peer;
