@@ -4,8 +4,17 @@
 
 namespace snackis {
 namespace gui {
-  enum PeerCol {COL_PEER_PTR=0, COL_PEER_ID, COL_PEER_NAME};
+  static void refresh(Decrypt &v) {
+    auto peer_sel(v.peer_fld.selected);
+    auto source_sel(str(gtk_entry_get_text(GTK_ENTRY(v.source))));
+    auto target_sel(str(gtk_entry_get_text(GTK_ENTRY(v.target))));
     
+    gtk_widget_set_sensitive(v.save_btn,
+			     v.peer_fld.selected &&
+			     !source_sel.empty() &&
+			     !target_sel.empty());
+  }
+
   static void on_source(gpointer *_, Decrypt *v) {
     Ctx &ctx(v->ctx);
     GtkWidget *dlg(gtk_file_chooser_dialog_new("Select Source File",
@@ -22,6 +31,7 @@ namespace gui {
       char *dir = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dlg));
       gtk_entry_set_text(GTK_ENTRY(v->source), dir);
       g_free(dir);
+      refresh(*v);
     }
 
     gtk_widget_destroy(dlg);
@@ -45,6 +55,7 @@ namespace gui {
       char *dir = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dlg));
       gtk_entry_set_text(GTK_ENTRY(v->target), dir);
       g_free(dir);
+      refresh(*v);
     }
 
     gtk_widget_destroy(dlg);
@@ -117,8 +128,8 @@ namespace gui {
     source(gtk_entry_new()),
     target(gtk_entry_new()),
     decode(gtk_check_button_new_with_label("Decode")),
-    save(gtk_button_new_with_mnemonic("_Save Decrypted File")),
-    cancel(gtk_button_new_with_mnemonic("_Cancel")),
+    save_btn(gtk_button_new_with_mnemonic("_Save Decrypted File")),
+    cancel_btn(gtk_button_new_with_mnemonic("_Cancel")),
     peer_fld(ctx)
   {
     GtkWidget *lbl;
@@ -129,6 +140,7 @@ namespace gui {
     lbl = gtk_label_new("Peer");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_container_add(GTK_CONTAINER(frm), lbl);
+    peer_fld.on_change.emplace([this]() { refresh(*this); });
     gtk_container_add(GTK_CONTAINER(frm), peer_fld.ptr());
     
     gtk_container_add(GTK_CONTAINER(frm), init_source(*this));
@@ -144,11 +156,12 @@ namespace gui {
     gtk_widget_set_valign(btns, GTK_ALIGN_END);
     gtk_container_add(GTK_CONTAINER(panel), btns);
         
-    g_signal_connect(save, "clicked", G_CALLBACK(on_save), this);
-    gtk_container_add(GTK_CONTAINER(btns), save);
+    g_signal_connect(save_btn, "clicked", G_CALLBACK(on_save), this);
+    gtk_container_add(GTK_CONTAINER(btns), save_btn);
 
-    g_signal_connect(cancel, "clicked", G_CALLBACK(on_cancel), this);
-    gtk_container_add(GTK_CONTAINER(btns), cancel);
+    g_signal_connect(cancel_btn, "clicked", G_CALLBACK(on_cancel), this);
+    gtk_container_add(GTK_CONTAINER(btns), cancel_btn);
     focused = peer_fld.ptr();
+    refresh(*this);    
   }
 }}

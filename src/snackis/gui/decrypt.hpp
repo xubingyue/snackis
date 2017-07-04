@@ -10,8 +10,9 @@
 namespace snackis {
 namespace gui {
   struct Decrypt: View {
-    GtkWidget *source, *target, *decode, *save, *cancel;
+    GtkWidget *source, *target, *decode, *save_btn, *cancel_btn;
     PeerSelect peer_fld;
+    
     Decrypt(Ctx &ctx);
   };
 }}
