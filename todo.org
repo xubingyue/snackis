@@ -4,6 +4,10 @@
 * switch decrypt to peer select
 ** disable save if src, dest or peer is missing
 ** handle exceptions during decryption
+
+* ---
+* change feed search name to text
+** search name & info
 * add ProjectSearch
 * add ProjectSelect
 ** use in task view & task search

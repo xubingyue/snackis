@@ -14,8 +14,8 @@ namespace gui {
   struct FeedSearch: SearchView<Feed> {
     GtkWidget *id_fld, *name_fld, *active_fld;
     PeerSelect peer_fld;
+
     FeedSearch(Ctx &ctx);
-    void init() override;
     void find() override;    
   };
 }}

@@ -17,7 +17,6 @@ namespace gui {
     opt<Queue> queue;
     
     TaskView(const Task &rec);
-    void init() override;
     bool allow_save() const override;
     bool save() override;
   };

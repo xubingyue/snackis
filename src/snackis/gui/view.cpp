@@ -12,8 +12,7 @@ namespace gui {
     panel(gtk_box_new(GTK_ORIENTATION_VERTICAL, 0)),
     label(gtk_label_new(lbl.c_str())),
     info(gtk_label_new(inf.c_str())),
-    focused(panel),
-    needs_init(true) { 
+    focused(panel) { 
     add_style(panel, "view");
     gtk_widget_set_margin_start(panel, 5);
     gtk_widget_set_margin_end(panel, 5);
@@ -39,8 +38,6 @@ namespace gui {
   }
   
   void push_view(View &v) {
-    if (v.needs_init) { v.init(); }
-	   
     if (!View::stack.empty()) {
       View *prev(View::stack.back());
       prev->focused = gtk_window_get_focus(GTK_WINDOW(window));

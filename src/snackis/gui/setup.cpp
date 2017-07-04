@@ -359,9 +359,7 @@ namespace gui {
     smtp_poll(gtk_entry_new()),
     save(gtk_button_new_with_mnemonic("_Save Setup")),
     cancel(gtk_button_new_with_mnemonic("_Cancel"))
-  { }
-
-  void Setup::init() {
+  {
     GtkWidget *tabs = gtk_notebook_new();
     gtk_widget_set_vexpand(tabs, true);
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs),

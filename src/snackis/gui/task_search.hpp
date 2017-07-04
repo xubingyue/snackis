@@ -20,7 +20,6 @@ namespace gui {
     opt<Queue> queue;
     
     TaskSearch(Ctx &ctx);
-    void init() override;
     void find() override;    
   };
 }}

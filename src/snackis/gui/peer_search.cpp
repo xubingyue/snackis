@@ -25,10 +25,7 @@ namespace gui {
     id_fld(new_id_field()),
     name_fld(gtk_entry_new()),
     email_fld(gtk_entry_new())
-  { }
-
-  void PeerSearch::init() {
-    SearchView<Peer>::init();
+  {
     GtkWidget *lbl;
 
     auto name_box(gtk_grid_new());
@@ -59,7 +56,7 @@ namespace gui {
 
     focused = id_fld;
   }
-  
+
   void PeerSearch::find() {
     size_t cnt(0);    
     str id_sel(trim(gtk_entry_get_text(GTK_ENTRY(id_fld))));

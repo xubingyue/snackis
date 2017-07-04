@@ -16,7 +16,6 @@ namespace gui {
     FeedSelect feed_fld;
     
     PostView(const Post &post);
-    void init() override;
     bool allow_save() const override;
     bool save() override;
   };

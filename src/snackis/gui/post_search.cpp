@@ -29,10 +29,7 @@ namespace gui {
     max_time_fld(gtk_entry_new()),
     feed_fld(ctx),
     peer_fld(ctx)
-  { }
-
-  void PostSearch::init() {
-    SearchView<Post>::init();
+  {
     GtkWidget *lbl;
 
     GtkWidget *top_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));

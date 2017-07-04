@@ -36,10 +36,6 @@ namespace gui {
     info_fld(new_text_view()),
     peer_lst(ctx, "Peer", this->rec.peer_ids)
   {
-    load(peer_lst);
-  }
-
-  void FeedView::init() {
     GtkWidget *lbl;
 
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
@@ -69,7 +65,9 @@ namespace gui {
 
     gtk_widget_set_margin_top(peer_lst.ptr(), 5);
     gtk_container_add(GTK_CONTAINER(fields), peer_lst.ptr());
+
     focused = name_fld;
+    load(peer_lst);
     refresh(*this);
   }
 

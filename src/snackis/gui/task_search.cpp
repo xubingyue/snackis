@@ -154,10 +154,7 @@ namespace gui {
     project_fld(new_combo_box(GTK_TREE_MODEL(project_store))),
     queue_fld(new_combo_box(GTK_TREE_MODEL(queue_store))),
     peer_fld(ctx)
-  { }
-
-  void TaskSearch::init() {
-    SearchView<Task>::init();
+  {
     GtkWidget *lbl;
 
     GtkWidget *top_box = gtk_grid_new();

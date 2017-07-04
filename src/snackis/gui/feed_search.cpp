@@ -28,10 +28,7 @@ namespace gui {
     name_fld(gtk_entry_new()),
     active_fld(gtk_check_button_new_with_label("Active")),
     peer_fld(ctx)
-  { }
-
-  void FeedSearch::init() {
-    SearchView<Feed>::init();
+  {
     GtkWidget *lbl;
 
     auto name_box(gtk_grid_new());

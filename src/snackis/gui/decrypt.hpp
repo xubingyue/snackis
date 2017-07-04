@@ -13,7 +13,6 @@ namespace gui {
     GtkWidget *peer, *source, *target, *decode, *save, *cancel;
     
     Decrypt(Ctx &ctx);
-    void init() override;
   };
 }}
 

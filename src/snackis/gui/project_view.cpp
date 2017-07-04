@@ -10,20 +10,6 @@
 
 namespace snackis {
 namespace gui {
-  ProjectView::ProjectView(const Project &rec):
-    RecView<Project>("Project", rec),
-    find_tasks_btn(gtk_button_new_with_mnemonic("_Find Tasks")),
-    new_task_btn(gtk_button_new_with_mnemonic("New _Task")),
-    find_posts_btn(gtk_button_new_with_mnemonic("Find Posts")),
-    post_btn(gtk_button_new_with_mnemonic("New _Post")),
-    name_fld(gtk_entry_new()),
-    active_fld(gtk_check_button_new_with_label("Active")),    
-    info_fld(new_text_view()),
-    peer_lst(ctx, "Peer", this->rec.peer_ids)
-  {
-    load(peer_lst);
-  }
-
   static void on_find_tasks(gpointer *_, ProjectView *v) {
     TaskSearch *ts = new TaskSearch(v->ctx);
     ts->project.emplace(v->rec);
@@ -54,8 +40,18 @@ namespace gui {
 
     db::commit(trans);
   }
-  
-  void ProjectView::init() {
+
+  ProjectView::ProjectView(const Project &rec):
+    RecView<Project>("Project", rec),
+    find_tasks_btn(gtk_button_new_with_mnemonic("_Find Tasks")),
+    new_task_btn(gtk_button_new_with_mnemonic("New _Task")),
+    find_posts_btn(gtk_button_new_with_mnemonic("Find Posts")),
+    post_btn(gtk_button_new_with_mnemonic("New _Post")),
+    name_fld(gtk_entry_new()),
+    active_fld(gtk_check_button_new_with_label("Active")),    
+    info_fld(new_text_view()),
+    peer_lst(ctx, "Peer", this->rec.peer_ids)
+  {
     GtkWidget *lbl;
 
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
@@ -90,6 +86,7 @@ namespace gui {
     gtk_widget_set_margin_top(peer_lst.ptr(), 5);
     gtk_container_add(GTK_CONTAINER(fields), peer_lst.ptr());
 
+    load(peer_lst);
     focused = name_fld;
   }
 

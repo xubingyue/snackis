@@ -50,19 +50,6 @@ namespace gui {
     }
   }
 
-  TaskView::TaskView(const Task &rec):
-    RecView("Task", rec),
-    project_store(gtk_list_store_new(3, G_TYPE_POINTER,
-				     G_TYPE_STRING, G_TYPE_STRING)),
-    find_posts_btn(gtk_button_new_with_mnemonic("_Find Posts")),
-    post_btn(gtk_button_new_with_mnemonic("New _Post")),
-    project_fld(new_combo_box(GTK_TREE_MODEL(project_store))),
-    edit_project_btn(gtk_button_new_with_mnemonic("_Edit Project")),
-    name_fld(gtk_entry_new()),
-    done_fld(gtk_check_button_new_with_mnemonic("_Done")),
-    info_fld(new_text_view()) {
-  }
-
   static void on_find_posts(gpointer *_, TaskView *v) {
     PostSearch *ps = new PostSearch(v->ctx);
     select<Feed>(ps->feed_fld, get_feed_id(v->ctx, v->rec.id));
@@ -80,8 +67,19 @@ namespace gui {
 
     db::commit(trans);
   }
-  
-  void TaskView::init() {
+
+  TaskView::TaskView(const Task &rec):
+    RecView("Task", rec),
+    project_store(gtk_list_store_new(3, G_TYPE_POINTER,
+				     G_TYPE_STRING, G_TYPE_STRING)),
+    find_posts_btn(gtk_button_new_with_mnemonic("_Find Posts")),
+    post_btn(gtk_button_new_with_mnemonic("New _Post")),
+    project_fld(new_combo_box(GTK_TREE_MODEL(project_store))),
+    edit_project_btn(gtk_button_new_with_mnemonic("_Edit Project")),
+    name_fld(gtk_entry_new()),
+    done_fld(gtk_check_button_new_with_mnemonic("_Done")),
+    info_fld(new_text_view())
+  {
     GtkWidget *lbl;
 
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);

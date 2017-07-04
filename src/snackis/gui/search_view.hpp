@@ -19,8 +19,7 @@ namespace gui {
     GtkWidget *fields, *find_btn, *list, *cancel_btn;
     OnActivate on_activate;
     
-    SearchView(Ctx &ctx, const str &lbl, GtkListStore *store, OnActivate act);
-    virtual void init() override;
+    SearchView(Ctx &ctx, const str &type, GtkListStore *store, OnActivate act);
     virtual void find()=0;
   };
 
@@ -48,20 +47,17 @@ namespace gui {
   
   template <typename RecT>
   SearchView<RecT>::SearchView(Ctx &ctx,
-			       const str &lbl,
+			       const str &type,
 			       GtkListStore *store,
 			       OnActivate act):
-    View(ctx, fmt("%0 Search", lbl)),
+    View(ctx, fmt("%0 Search", type)),
     store(store),
     fields(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5)),
-    find_btn(gtk_button_new_with_mnemonic(fmt("_Find %0s", lbl).c_str())),
+    find_btn(gtk_button_new_with_mnemonic(fmt("_Find %0s", type).c_str())),
     list(new_tree_view(GTK_TREE_MODEL(store))),
     cancel_btn(gtk_button_new_with_mnemonic("_Cancel")),
     on_activate(act)
-  { }
-
-  template <typename RecT>
-  void SearchView<RecT>::init() {
+  {
     GtkWidget *lbl;
     gtk_box_pack_start(GTK_BOX(panel), fields, false, false, 0);
     
@@ -75,7 +71,8 @@ namespace gui {
 		     G_CALLBACK(on_search_activate<RecT>),
 		     this);
     gtk_container_add(GTK_CONTAINER(panel), gtk_widget_get_parent(list));
-    lbl = gtk_label_new("Press Return or double-click to select");
+    lbl = gtk_label_new(fmt("Press Return or double-click to select %0",
+			    type).c_str());
     gtk_container_add(GTK_CONTAINER(panel), lbl);
 
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);

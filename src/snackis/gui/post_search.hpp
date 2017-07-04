@@ -18,7 +18,6 @@ namespace gui {
     PeerSelect peer_fld;
 
     PostSearch(Ctx &ctx);
-    void init() override;
     void find() override;    
   };
 }}

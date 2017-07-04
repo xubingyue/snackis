@@ -57,18 +57,24 @@ namespace gui {
 
   static void on_save(gpointer *_, Decrypt *v) {
     Ctx &ctx(v->ctx);
-    const str
-      in_path(gtk_entry_get_text(GTK_ENTRY(v->source))),
-      out_path(gtk_entry_get_text(GTK_ENTRY(v->target)));
-	    
-    log(ctx, fmt("Decrypting '%0' to '%1'...", in_path, out_path));
-    Peer peer(ctx, *get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer)));
-    
-    decrypt(peer,
-	    in_path, out_path,
-	    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->decode)));
-    
-    log(v->ctx, "Finished decrypting");
+
+    try {
+      const str
+	in_path(gtk_entry_get_text(GTK_ENTRY(v->source))),
+	out_path(gtk_entry_get_text(GTK_ENTRY(v->target)));
+      
+      log(ctx, fmt("Decrypting '%0' to '%1'...", in_path, out_path));
+      Peer peer(ctx, *get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer)));
+      
+      decrypt(peer,
+	      in_path, out_path,
+	      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->decode)));
+      
+      log(v->ctx, "Finished decrypting");
+    } catch (std::exception &e) {
+       log(v->ctx, fmt("Decryption failed: %0", e.what()));
+   }
+
     pop_view(*v);
   }
 
@@ -137,9 +143,7 @@ namespace gui {
     decode(gtk_check_button_new_with_label("Decode")),
     save(gtk_button_new_with_mnemonic("_Save Decrypted File")),
     cancel(gtk_button_new_with_mnemonic("_Cancel"))
-  { }
-
-  void Decrypt::init() {
+  {
     GtkWidget *lbl;
 
     GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);

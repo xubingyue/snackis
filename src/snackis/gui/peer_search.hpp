@@ -14,7 +14,6 @@ namespace gui {
     GtkWidget *id_fld, *name_fld, *email_fld;
     
     PeerSearch(Ctx &ctx);
-    void init() override;
     void find() override;
   };
 }}

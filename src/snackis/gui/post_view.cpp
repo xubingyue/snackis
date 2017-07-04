@@ -68,15 +68,6 @@ namespace gui {
     post_lst(new_tree_view(GTK_TREE_MODEL(post_store))),
     feed_fld(ctx)
   {
-    feed_fld.on_change.emplace([this]() {
-	load_posts(*this);
-	auto sel(feed_fld.selected ? true : false);
-	gtk_widget_set_sensitive(edit_feed_btn, sel);
-	refresh(*this);
-      });
-  }
-
-  void PostView::init() {
     GtkWidget *lbl;
 
     lbl = gtk_label_new("Feed");
@@ -84,6 +75,14 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(fields), lbl);
     GtkWidget *feed_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_container_add(GTK_CONTAINER(fields), feed_box);
+
+    feed_fld.on_change.emplace([this]() {
+	load_posts(*this);
+	auto sel(feed_fld.selected ? true : false);
+	gtk_widget_set_sensitive(edit_feed_btn, sel);
+	refresh(*this);
+      });
+
     gtk_container_add(GTK_CONTAINER(feed_box), feed_fld.ptr());
     g_signal_connect(edit_feed_btn, "clicked", G_CALLBACK(on_edit_feed), this);
     gtk_widget_set_sensitive(edit_feed_btn, false);

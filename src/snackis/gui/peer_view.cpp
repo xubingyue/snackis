@@ -7,9 +7,7 @@ namespace gui {
     RecView<Peer>("Peer", peer),
     name_fld(gtk_entry_new()),
     email_fld(gtk_entry_new())
-  { }
-
-  void PeerView::init() {
+  {
     GtkWidget *lbl;
 
     lbl = gtk_label_new("Name");

@@ -136,9 +136,7 @@ namespace gui {
 			    G_TYPE_POINTER,
 			    G_TYPE_STRING, G_TYPE_STRING)),
     list(new_tree_view(GTK_TREE_MODEL(msgs)))
-  { }
-
-  void Inbox::init() {
+  {
     init_list(*this);
     gtk_container_add(GTK_CONTAINER(panel), gtk_widget_get_parent(list));
 

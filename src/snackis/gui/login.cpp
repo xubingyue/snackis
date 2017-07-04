@@ -38,9 +38,7 @@ namespace gui {
     View(ctx, "Login"),
     pass(gtk_entry_new()),
     repeat(nullptr)
-  { }
-
-  void Login::init() {
+  {
     GtkWidget *lbl;
 
     GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
