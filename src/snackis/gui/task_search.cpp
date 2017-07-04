@@ -59,7 +59,6 @@ namespace gui {
 		       fmt(tsk.created_at, "%a %b %d, %H:%M").c_str(),
 		       COL_TASK_OWNER, own.name.c_str(),
 		       COL_TASK_NAME, tsk.name.c_str(),
-		       COL_TASK_INFO, tsk.info.c_str(),
 		       COL_TASK_PROJECT, prj.name.c_str(),
 		       -1);
 
@@ -209,7 +208,6 @@ namespace gui {
     add_col(GTK_TREE_VIEW(list), "Owner", COL_TASK_OWNER);
     add_col(GTK_TREE_VIEW(list), "Project", COL_TASK_PROJECT);
     add_col(GTK_TREE_VIEW(list), "Name", COL_TASK_NAME);
-    add_col(GTK_TREE_VIEW(list), "Info", COL_TASK_INFO);
     focused = text_fld;
   }
 

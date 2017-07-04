@@ -55,7 +55,7 @@ namespace gui {
 
     add_col(GTK_TREE_VIEW(list), "Id", COL_ID);
     add_col(GTK_TREE_VIEW(list), "Name", COL_NAME);
-    add_col(GTK_TREE_VIEW(list), "Email", COL_EMAIL);
+    add_col(GTK_TREE_VIEW(list), "Email", COL_EMAIL, true);
 
     focused = id_fld;
   }
