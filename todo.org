@@ -11,6 +11,6 @@
 ** copy send(post)
 ** add support to inbox like feeds
 ** add support to imap like posts
+* add reader tab-completion
 * switch Imap/Smtp to one trans per msg
 ** pick first and process
-
