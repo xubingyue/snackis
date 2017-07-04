@@ -4,14 +4,14 @@
 #include <vector>
 #include <mutex>
 
+#include "snackis/gui/peer_select.hpp"
 #include "snackis/gui/view.hpp"
 
 namespace snackis {
 namespace gui {
   struct Encrypt: View {
-    GtkListStore *peers;
-    GtkWidget *peer, *source, *target, *encode, *save, *cancel;
-    
+    GtkWidget *source, *target, *encode, *save, *cancel;
+    PeerSelect peer_fld;
     Encrypt(Ctx &ctx);
   };
 }}

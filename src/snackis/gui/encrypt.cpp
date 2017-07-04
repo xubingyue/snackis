@@ -64,9 +64,8 @@ namespace gui {
 	out_path(gtk_entry_get_text(GTK_ENTRY(v->target)));
       
       log(ctx, fmt("Encrypting from '%0' to '%1'...", in_path, out_path));
-      Peer peer(ctx, *get_sel_rec<Peer>(GTK_COMBO_BOX(v->peer)));
       
-      encrypt(peer,
+      encrypt(*v->peer_fld.selected,
 	      in_path, out_path,
 	      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->encode)));
       
@@ -76,27 +75,6 @@ namespace gui {
     }
 
     pop_view(*v);
-  }
-
-  void init_peers(Encrypt &v) {
-    Ctx &ctx(v.ctx);
-    
-    for(auto key = ctx.db.peers_sort.recs.begin();
-	key != ctx.db.peers_sort.recs.end();
-	key++) {
-      auto &rec(db::get(ctx.db.peers, *key));
-      Peer peer(ctx, rec);
-      
-      GtkTreeIter iter;
-      gtk_list_store_append(v.peers, &iter);
-      gtk_list_store_set(v.peers, &iter,
-			 COL_PEER_PTR, &rec,
-			 COL_PEER_ID, to_str(peer.id).c_str(),
-			 COL_PEER_NAME, peer.name.c_str(),
-			 -1);
-    }
-    
-    gtk_combo_box_set_active(GTK_COMBO_BOX(v.peer), 0);
   }
 
   static GtkWidget *init_source(Encrypt &v) {
@@ -137,13 +115,12 @@ namespace gui {
 
   Encrypt::Encrypt(Ctx &ctx):
     View(ctx, "Encrypt"),
-    peers(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
-    peer(new_combo_box(GTK_TREE_MODEL(peers))),
     source(gtk_entry_new()),
     target(gtk_entry_new()),
     encode(gtk_check_button_new_with_label("Encode")),
     save(gtk_button_new_with_mnemonic("_Save Encrypted File")),
-    cancel(gtk_button_new_with_mnemonic("_Cancel"))
+    cancel(gtk_button_new_with_mnemonic("_Cancel")),
+    peer_fld(ctx)
   {
     GtkWidget *lbl;
 
@@ -153,9 +130,7 @@ namespace gui {
     lbl = gtk_label_new("Peer");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_container_add(GTK_CONTAINER(frm), lbl);
-    gtk_widget_set_hexpand(peer, true);
-    gtk_container_add(GTK_CONTAINER(frm), peer);
-    init_peers(*this);
+    gtk_container_add(GTK_CONTAINER(frm), peer_fld.ptr());
     
     gtk_container_add(GTK_CONTAINER(frm), init_source(*this));
     gtk_container_add(GTK_CONTAINER(frm), init_target(*this));
@@ -174,6 +149,6 @@ namespace gui {
 
     g_signal_connect(cancel, "clicked", G_CALLBACK(on_cancel), this);
     gtk_container_add(GTK_CONTAINER(btns), cancel);    
-    focused = peer;
+    focused = peer_fld.ptr();
   }
 }}
