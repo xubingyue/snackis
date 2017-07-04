@@ -11,7 +11,7 @@ namespace gui {
     Ctx &ctx;
     GtkListStore *store;
     GtkWidget *box, *list, *add_btn;
-    std::set<UId> ids;
+    std::set<UId> &ids;
     
     RecList(Ctx &ctx, const str &lbl, std::set<UId> &ids);
     GtkWidget *ptr() override;
