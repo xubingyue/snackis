@@ -116,8 +116,8 @@ namespace gui {
       return;
     }
 
-    for (auto key = ctx.db.posts_sort.recs.begin();
-	 key != ctx.db.posts_sort.recs.end();
+    for (auto key = ctx.db.posts_sort.recs.rbegin();
+	 key != ctx.db.posts_sort.recs.rend();
 	 key++) {
       auto &rec(db::get(ctx.db.posts, *key));
       Post post(ctx, rec);

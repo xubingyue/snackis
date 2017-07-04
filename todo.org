@@ -3,7 +3,6 @@
 ** change call sites to add parent
 * skip self when importing msgs 
 ** feed/post/project/task/queue
-* ---new dist
 * switch encrypt to peer select
 ** disable save if src, dest or peer is missing
 * switch decrypt to peer select

@@ -15,7 +15,7 @@ namespace gui {
     auto feed(v.feed_fld.selected);
     if (!feed) { return false; }
     
-    for (auto rec: last_posts(*feed, v.rec.created_at, 7)) {
+    for (auto rec: last_posts(*feed, v.rec.created_at, 30)) {
       Post post(ctx, *rec);
       Peer peer(get_peer_id(ctx, post.owner_id));
       
@@ -65,7 +65,7 @@ namespace gui {
     post_store(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
     edit_feed_btn(gtk_button_new_with_mnemonic("_Edit Feed")),
     body_fld(new_text_view()),
-    post_lst(gtk_tree_view_new_with_model(GTK_TREE_MODEL(post_store))),
+    post_lst(new_tree_view(GTK_TREE_MODEL(post_store))),
     feed_fld(ctx)
   {
     feed_fld.on_change.emplace([this]() {
@@ -98,7 +98,7 @@ namespace gui {
     
     init_posts(*this);
     gtk_widget_set_margin_top(post_lst, 10);
-    gtk_container_add(GTK_CONTAINER(fields), post_lst);
+    gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(post_lst));
     lbl = gtk_label_new("Press Return or double-click to edit post");
     gtk_container_add(GTK_CONTAINER(fields), lbl);
 

@@ -75,19 +75,16 @@ namespace gui {
 			     G_TYPE_STRING,
 			     G_TYPE_STRING)),
     box(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5)),
-    list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(store))),
+    list(new_tree_view(GTK_TREE_MODEL(store))),
     add_btn(gtk_button_new_with_label(fmt("Add %0", lbl).c_str())),
     ids(ids)
   {
     auto list_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
     gtk_container_add(GTK_CONTAINER(box), list_box);
-    
-    gtk_widget_set_hexpand(list, true);
-    gtk_widget_set_vexpand(list, true);
     add_col(GTK_TREE_VIEW(list), fmt("%0s", lbl), COL_REC_ID);
     add_col(GTK_TREE_VIEW(list), "", COL_REC_NAME);
     g_signal_connect(list, "row-activated", G_CALLBACK(on_remove_rec<RecT>), this);
-    gtk_container_add(GTK_CONTAINER(list_box), list);
+    gtk_container_add(GTK_CONTAINER(list_box), gtk_widget_get_parent(list));
     gtk_widget_set_valign(add_btn, GTK_ALIGN_END);
     g_signal_connect(add_btn, "clicked", G_CALLBACK(on_add_rec<RecT>), this);
     gtk_container_add(GTK_CONTAINER(list_box), add_btn);

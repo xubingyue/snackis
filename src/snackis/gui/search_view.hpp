@@ -55,7 +55,7 @@ namespace gui {
     store(store),
     fields(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5)),
     find_btn(gtk_button_new_with_mnemonic(fmt("_Find %0s", lbl).c_str())),
-    list(gtk_tree_view_new_with_model(GTK_TREE_MODEL(store))),
+    list(new_tree_view(GTK_TREE_MODEL(store))),
     cancel_btn(gtk_button_new_with_mnemonic("_Cancel")),
     on_activate(act)
   { }
@@ -74,7 +74,7 @@ namespace gui {
 		     "row-activated",
 		     G_CALLBACK(on_search_activate<RecT>),
 		     this);
-    gtk_container_add(GTK_CONTAINER(panel), list);
+    gtk_container_add(GTK_CONTAINER(panel), gtk_widget_get_parent(list));
     lbl = gtk_label_new("Press Return or double-click to select");
     gtk_container_add(GTK_CONTAINER(panel), lbl);
 

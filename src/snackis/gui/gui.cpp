@@ -72,6 +72,19 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(scroll), w);
     return w;
   }
+
+  GtkWidget *new_tree_view(GtkTreeModel *mod) {
+    GtkWidget *w(gtk_tree_view_new_with_model(mod));
+    gtk_widget_set_hexpand(w, true);
+    gtk_widget_set_vexpand(w, true);
+    auto *scroll(gtk_scrolled_window_new(NULL, NULL));
+    gtk_scrolled_window_set_overlay_scrolling(GTK_SCROLLED_WINDOW(scroll), false);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
+				   GTK_POLICY_NEVER,
+				   GTK_POLICY_ALWAYS);
+    gtk_container_add(GTK_CONTAINER(scroll), w);
+    return w;
+  }
   
   GtkTreeViewColumn *add_col(GtkTreeView *w, const str &lbl, int idx, bool ellips) {
     auto rnd(gtk_cell_renderer_text_new());

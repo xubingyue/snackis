@@ -53,7 +53,8 @@ namespace gui {
   GtkWidget *new_id_field();
   GtkWidget *new_combo_box(GtkTreeModel *mod);
   GtkWidget *new_text_view();
-  
+  GtkWidget *new_tree_view(GtkTreeModel *mod);
+
   GtkTreeViewColumn *add_col(GtkTreeView *w, const str &lbl, int idx,
 			     bool ellips=false);
 }}
