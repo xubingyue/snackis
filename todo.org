@@ -1,7 +1,9 @@
 * switch encrypt to peer select
 ** disable save if src, dest or peer is missing
+** handle exceptions during encryption
 * switch decrypt to peer select
 ** disable save if src, dest or peer is missing
+** handle exceptions during decryption
 * add ProjectSearch
 * add ProjectSelect
 ** use in task view & task search
