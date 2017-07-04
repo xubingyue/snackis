@@ -25,28 +25,28 @@ namespace gui {
 					G_TYPE_STRING),
 		     [&ctx](auto &rec) { edit(ctx, rec); }),
     id_fld(new_id_field()),
-    name_fld(gtk_entry_new()),
+    text_fld(gtk_entry_new()),
     active_fld(gtk_check_button_new_with_label("Active")),
     peer_fld(ctx)
   {
     GtkWidget *lbl;
 
-    auto name_box(gtk_grid_new());
-    gtk_grid_set_row_spacing(GTK_GRID(name_box), 5);
-    gtk_grid_set_column_spacing(GTK_GRID(name_box), 5);
-    gtk_container_add(GTK_CONTAINER(fields), name_box);
+    auto text_box(gtk_grid_new());
+    gtk_grid_set_row_spacing(GTK_GRID(text_box), 5);
+    gtk_grid_set_column_spacing(GTK_GRID(text_box), 5);
+    gtk_container_add(GTK_CONTAINER(fields), text_box);
 
     lbl = gtk_label_new("Id");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(name_box), lbl, 0, 0, 1, 1);
-    gtk_grid_attach(GTK_GRID(name_box), id_fld, 0, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(text_box), lbl, 0, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(text_box), id_fld, 0, 1, 1, 1);
     
-    lbl = gtk_label_new("Name");
+    lbl = gtk_label_new("Text");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(name_box), lbl, 1, 0, 1, 1);
-    gtk_widget_set_hexpand(name_fld, true);
-    gtk_grid_attach(GTK_GRID(name_box), name_fld, 1, 1, 1, 1);
-    gtk_grid_attach(GTK_GRID(name_box), active_fld, 2, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(text_box), lbl, 1, 0, 1, 1);
+    gtk_widget_set_hexpand(text_fld, true);
+    gtk_grid_attach(GTK_GRID(text_box), text_fld, 1, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(text_box), active_fld, 2, 1, 1, 1);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active_fld), true);
 
     lbl = gtk_label_new("Peer");
@@ -66,7 +66,7 @@ namespace gui {
     size_t cnt(0);
     
     str id_sel(trim(gtk_entry_get_text(GTK_ENTRY(id_fld))));
-    str name_sel(trim(gtk_entry_get_text(GTK_ENTRY(name_fld))));
+    str text_sel(trim(gtk_entry_get_text(GTK_ENTRY(text_fld))));
     auto &peer_sel(peer_fld.selected);
     bool active_sel(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(active_fld)));
     
@@ -88,7 +88,9 @@ namespace gui {
 	continue;
       }
 
-      if (!name_sel.empty() && find_ci(feed.name, name_sel) == str::npos) {
+      if (!text_sel.empty() &&
+	  find_ci(feed.name, text_sel) == str::npos &&
+	  find_ci(feed.info, text_sel) == str::npos) {
 	continue;
       }
       

@@ -1,5 +1,3 @@
-* change feed search name to text
-** search name & info
 * add ProjectSearch
 * add ProjectSelect
 ** use in task view & task search
