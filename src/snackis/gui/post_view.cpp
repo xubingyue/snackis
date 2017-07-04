@@ -6,17 +6,16 @@
 
 namespace snackis {
 namespace gui {
-  enum FeedCol {COL_FEED_PTR=0, COL_FEED_ID, COL_FEED_NAME};
   enum PostCol {COL_POST_PTR=0, COL_POST_BY, COL_POST_BODY};
     
   static bool load_posts(PostView &v) {
     Ctx &ctx(v.ctx);
     gtk_list_store_clear(v.post_store);
-    auto feed_rec(get_sel_rec<Feed>(GTK_COMBO_BOX(v.feed_fld)));
-    if (!feed_rec) { return false; }
-    Feed feed(ctx, *feed_rec);
+
+    auto feed(v.feed_fld.selected);
+    if (!feed) { return false; }
     
-    for (auto rec: last_posts(feed, v.rec.created_at, 7)) {
+    for (auto rec: last_posts(*feed, v.rec.created_at, 7)) {
       Post post(ctx, *rec);
       Peer peer(get_peer_id(ctx, post.owner_id));
       
@@ -36,45 +35,11 @@ namespace gui {
     return true;
   }
 
-  static void on_feed_sel(gpointer *_, PostView *v) {
-    load_posts(*v);
-    auto sel(get_sel_rec<Feed>(GTK_COMBO_BOX(v->feed_fld)) ? true : false);
-    gtk_widget_set_sensitive(v->edit_feed_btn, sel);
-    refresh(*v);
-  }
-
   static void on_edit_feed(gpointer *_, PostView *v) {
-    Feed feed(v->ctx, *get_sel_rec<Feed>(GTK_COMBO_BOX(v->feed_fld)));
-    FeedView *fv(new FeedView(feed));
+    FeedView *fv(new FeedView(*v->feed_fld.selected));
     push_view(*fv);
   }
   
-  static void init_feeds(PostView &v) {
-    Ctx &ctx(v.ctx);
-
-    for(auto key = ctx.db.feeds_sort.recs.begin();
-	key != ctx.db.feeds_sort.recs.end();
-	key++) {
-      auto &rec(db::get(ctx.db.feeds, *key));
-      Feed feed(ctx, rec);
-      
-      if ((feed.active && feed.visible) || feed.id == v.rec.feed_id) {
-	GtkTreeIter iter;
-	gtk_list_store_append(v.feed_store, &iter);
-	gtk_list_store_set(v.feed_store, &iter,
-			   COL_FEED_PTR, &rec,
-			   COL_FEED_ID, to_str(feed.id).c_str(),
-			   COL_FEED_NAME, feed.name.c_str(),
-			   -1);
-      }
-    }
-    
-    if (!gtk_combo_box_set_active_id(GTK_COMBO_BOX(v.feed_fld),
-				     to_str(v.rec.feed_id).c_str())) {
-      gtk_combo_box_set_active(GTK_COMBO_BOX(v.feed_fld), 0);
-    }
-  }
-
   static void on_edit_post(GtkTreeView *treeview,
 			   GtkTreePath *path,
 			   GtkTreeViewColumn *col,
@@ -90,34 +55,38 @@ namespace gui {
   static void init_posts(PostView &v) {
     gtk_widget_set_hexpand(v.post_lst, true);
     gtk_widget_set_vexpand(v.post_lst, true);
-    add_col(GTK_TREE_VIEW(v.post_lst), "Posted", COL_POST_BY);
-    add_col(GTK_TREE_VIEW(v.post_lst), "Body", COL_POST_BODY);
+    add_col(GTK_TREE_VIEW(v.post_lst), "Feed History", COL_POST_BY);
+    add_col(GTK_TREE_VIEW(v.post_lst), "", COL_POST_BODY, true);
     g_signal_connect(v.post_lst, "row-activated", G_CALLBACK(on_edit_post), &v);
   }
-  
+
   PostView::PostView(const Post &post):
     RecView("Post", post),
-    feed_store(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
     post_store(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
-    feed_fld(new_combo_box(GTK_TREE_MODEL(feed_store))),
     edit_feed_btn(gtk_button_new_with_mnemonic("_Edit Feed")),
     body_fld(new_text_view()),
-    post_lst(gtk_tree_view_new_with_model(GTK_TREE_MODEL(post_store)))
-  { }
+    post_lst(gtk_tree_view_new_with_model(GTK_TREE_MODEL(post_store))),
+    feed_fld(ctx)
+  {
+    feed_fld.on_change.emplace([this]() {
+	load_posts(*this);
+	auto sel(feed_fld.selected ? true : false);
+	gtk_widget_set_sensitive(edit_feed_btn, sel);
+	refresh(*this);
+      });
+  }
 
   void PostView::init() {
     GtkWidget *lbl;
 
-    init_feeds(*this);
     lbl = gtk_label_new("Feed");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_container_add(GTK_CONTAINER(fields), lbl);
     GtkWidget *feed_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_container_add(GTK_CONTAINER(fields), feed_box);
-    gtk_widget_set_hexpand(feed_fld, true);
-    g_signal_connect(feed_fld, "changed", G_CALLBACK(on_feed_sel), this);
-    gtk_container_add(GTK_CONTAINER(feed_box), feed_fld);
+    gtk_container_add(GTK_CONTAINER(feed_box), feed_fld.ptr());
     g_signal_connect(edit_feed_btn, "clicked", G_CALLBACK(on_edit_feed), this);
+    gtk_widget_set_sensitive(edit_feed_btn, false);
     gtk_container_add(GTK_CONTAINER(feed_box), edit_feed_btn);
     
     lbl = gtk_label_new("Body");
@@ -128,27 +97,26 @@ namespace gui {
     set_str(GTK_TEXT_VIEW(body_fld), rec.body);
     
     init_posts(*this);
-    lbl = gtk_label_new("Feed History");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_widget_set_margin_top(lbl, 10);
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
+    gtk_widget_set_margin_top(post_lst, 10);
     gtk_container_add(GTK_CONTAINER(fields), post_lst);
     lbl = gtk_label_new("Press Return or double-click to edit post");
     gtk_container_add(GTK_CONTAINER(fields), lbl);
 
-    focused = feed_fld;
-    on_feed_sel(nullptr, this);
+    if (rec.feed_id == null_uid) {
+      refresh(*this);
+    } else {
+      select<Feed>(feed_fld, get_feed_id(ctx, rec.feed_id));
+    }
+
+    focused = feed_fld.ptr();
   }
 
   bool PostView::allow_save() const {
-    return
-      rec.owner_id == whoami(ctx).id &&
-      get_sel_rec<Feed>(GTK_COMBO_BOX(feed_fld));
+    return rec.owner_id == whoami(ctx).id && feed_fld.selected;
   }
 
   bool PostView::save() {
-    Feed feed(ctx, *get_sel_rec<Feed>(GTK_COMBO_BOX(feed_fld)));
-    set_feed(rec, feed);
+    set_feed(rec, *feed_fld.selected);
     rec.body = get_str(GTK_TEXT_VIEW(body_fld));
     db::upsert(ctx.db.posts, rec);
     send(rec);

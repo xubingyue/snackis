@@ -60,7 +60,8 @@ namespace gui {
 				   "yyyy-mm-dd hh:mm");
     gtk_grid_attach(GTK_GRID(post_box), min_time_fld, 0, 1, 1, 1);
     gtk_entry_set_text(GTK_ENTRY(min_time_fld),
-		       fmt(now() - std::chrono::hours(7), "%Y-%m-%d %H:%M").c_str());
+		       fmt(now() - std::chrono::hours(7*24),
+			   "%Y-%m-%d %H:%M").c_str());
     gtk_grid_attach(GTK_GRID(post_box), gtk_label_new("-"), 1, 1, 1, 1);
     gtk_entry_set_placeholder_text(GTK_ENTRY(max_time_fld),
 				   "yyyy-mm-dd hh:mm");
@@ -85,7 +86,7 @@ namespace gui {
     add_col(GTK_TREE_VIEW(list), "Id", COL_ID);
     add_col(GTK_TREE_VIEW(list), "Posted", COL_BY);
     add_col(GTK_TREE_VIEW(list), "Feed", COL_FEED);
-    add_col(GTK_TREE_VIEW(list), "Body", COL_BODY);
+    add_col(GTK_TREE_VIEW(list), "Body", COL_BODY, true);
 
     focused = id_fld;
   }

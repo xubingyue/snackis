@@ -55,7 +55,7 @@ namespace gui {
   GtkWidget *new_text_view();
   
   GtkTreeViewColumn *add_col(GtkTreeView *w, const str &lbl, int idx,
-			     bool expand=false);
+			     bool ellips=false);
 }}
 
 #endif

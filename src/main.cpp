@@ -42,6 +42,7 @@ static void load_style() {
 static void on_activate(GtkApplication *app, gpointer user_data) {
   load_style();
   gui::window = gtk_application_window_new(app);
+  
   gtk_window_set_icon_from_file(GTK_WINDOW(gui::window), "snackis.ico", nullptr);
  
   g_signal_connect(G_OBJECT(gui::window),

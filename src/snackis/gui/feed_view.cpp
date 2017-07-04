@@ -70,6 +70,7 @@ namespace gui {
     gtk_widget_set_margin_top(peer_lst.ptr(), 5);
     gtk_container_add(GTK_CONTAINER(fields), peer_lst.ptr());
     focused = name_fld;
+    refresh(*this);
   }
 
   bool FeedView::allow_save() const {

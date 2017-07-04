@@ -5,13 +5,15 @@
 #include <mutex>
 
 #include "snackis/post.hpp"
+#include "snackis/gui/feed_select.hpp"
 #include "snackis/gui/rec_view.hpp"
 
 namespace snackis {
 namespace gui {
   struct PostView: RecView<Post> {
-    GtkListStore *feed_store, *post_store;
-    GtkWidget *feed_fld, *edit_feed_btn, *body_fld, *post_lst;
+    GtkListStore *post_store;
+    GtkWidget *edit_feed_btn, *body_fld, *post_lst;
+    FeedSelect feed_fld;
     
     PostView(const Post &post);
     void init() override;

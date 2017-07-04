@@ -7,9 +7,11 @@ namespace snackis {
 namespace gui {
   template <typename RecT>
   struct RecSelect: Widget {
+    using OnChange = func<void ()>;
     Ctx &ctx;
     GtkWidget *box, *id_fld, *name_fld, *search_btn, *clear_btn;
     opt<RecT> selected;
+    opt<OnChange> on_change;
     
     RecSelect(Ctx &ctx);
     GtkWidget *ptr() override;
@@ -18,15 +20,19 @@ namespace gui {
 
   template <typename RecT>
   void select(RecSelect<RecT> &v, const opt<RecT> &rec) {
-    if (rec) {
+    if (rec && (!v.selected || rec->id != v.selected->id)) {
       gtk_entry_set_text(GTK_ENTRY(v.id_fld), id_str(*rec).c_str());
       gtk_entry_set_text(GTK_ENTRY(v.name_fld), rec->name.c_str());
       gtk_widget_set_sensitive(v.clear_btn, true);
       v.selected.emplace(*rec);
-    } else {
+      if (v.on_change) { (*v.on_change)(); }
+    }
+
+    if (!rec && v.selected) {
       gtk_entry_set_text(GTK_ENTRY(v.id_fld), "n/a");
       gtk_entry_set_text(GTK_ENTRY(v.name_fld), "");
       v.selected.reset();
+      if (v.on_change) { (*v.on_change)(); }
     }
   }
 
@@ -73,4 +79,4 @@ namespace gui {
   GtkWidget *RecSelect<RecT>::ptr() { return box; }
 }}
 
-#endif
+#endif 
