@@ -14,8 +14,9 @@ namespace snackis {
   str fmt(const Time &tim, const str &spec) {
     if (tim == null_time || tim == max_time) { return ""; }
     Stream buf;
-    const time_t t = Clock::to_time_t(tim);
+    auto t(Clock::to_time_t(tim));
     tm tm;
+    memset(&tm, 0, sizeof(tm));
     localtime_r(&t, &tm);
     buf << std::put_time(localtime_r(&t, &tm), spec.c_str());
     return buf.str();
@@ -25,8 +26,14 @@ namespace snackis {
     if (in.empty()) { return empty; }
     InStream buf(in);
     tm tm;
+    memset(&tm, 0, sizeof(tm));
     buf >> std::get_time(&tm, spec.c_str());
     if (buf.fail()) { return nullopt; }
     return Clock::from_time_t(mktime(&tm));
+  }
+
+  template <>
+  str fmt_arg(const Time &arg) {
+    return fmt(arg, "%Y-%m-%d %H:%M");
   }
 }

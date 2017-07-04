@@ -2,6 +2,7 @@
 #define SNACKIS_TIME_HPP
 
 #include <chrono>
+#include "snackis/core/fmt.hpp"
 #include "snackis/core/str.hpp"
 
 namespace snackis {
@@ -13,6 +14,9 @@ namespace snackis {
   Time now();
   str fmt(const Time &time, const str &spec);
   opt<Time> parse_time(const str &spec, const str &in, opt<Time> empty=nullopt);
+
+  template <>
+  str fmt_arg(const Time &arg);
 };
 
 #endif
