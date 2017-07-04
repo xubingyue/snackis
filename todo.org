@@ -1,8 +1,3 @@
-* add vertical scroll around tree views
-** add new_tree_view()
-** change call sites to add parent
-* skip self when importing msgs 
-** feed/post/project/task/queue
 * switch encrypt to peer select
 ** disable save if src, dest or peer is missing
 * switch decrypt to peer select

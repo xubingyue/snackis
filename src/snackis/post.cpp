@@ -18,7 +18,8 @@ namespace snackis {
   Post::Post(const Msg &msg):
     IdRec(msg.ctx, *db::get(msg.post, msg.ctx.db.post_id))
   {
-    db::copy(*this, msg.post);    
+    db::copy(*this, msg.post);
+    peer_ids.erase(whoami(ctx).id);
     peer_ids.insert(msg.from_id);
   }
 

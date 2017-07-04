@@ -20,6 +20,7 @@ namespace snackis {
     IdRec(msg.ctx, *db::get(msg.project, msg.ctx.db.project_id))
   {
     db::copy(*this, msg.project);    
+    peer_ids.erase(whoami(ctx).id);
     peer_ids.insert(msg.from_id);
   }
 
