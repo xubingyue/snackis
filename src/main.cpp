@@ -9,9 +9,8 @@ using namespace snackis;
 static gboolean on_key(gpointer _, GdkEventKey *ev, gpointer __) {
   if (ev->keyval == GDK_KEY_Escape && gui::reader) {
     if (gtk_widget_has_focus(gui::reader->ptr())) {
-      if (!gui::View::stack.empty()) {
-	gtk_widget_grab_focus(gui::View::stack.back()->focused);
-      }
+      auto w(gui::View::stack.back()->focused);
+      if (w) { gtk_widget_grab_focus(w); }
     } else {
       gui::View::stack.back()->focused =
 	gtk_window_get_focus(GTK_WINDOW(gui::window));
