@@ -19,9 +19,13 @@ namespace snackis {
   Project::Project(const Msg &msg):
     IdRec(msg.ctx, *db::get(msg.project, msg.ctx.db.project_id))
   {
-    db::copy(*this, msg.project);    
-    peer_ids.erase(whoami(ctx).id);
-    peer_ids.insert(msg.from_id);
+    copy(*this, msg);
+  }
+
+  void copy(Project &dst, const Msg &src) {
+    db::copy(dst, src.project);    
+    dst.peer_ids.insert(src.from_id);    
+    dst.peer_ids.erase(whoami(src.ctx).id);
   }
 
   opt<Project> find_project_id(Ctx &ctx, UId id) {

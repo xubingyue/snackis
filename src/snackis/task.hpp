@@ -22,10 +22,12 @@ namespace snackis {
     Task(const Msg &msg);
   };
 
+  void copy(Task &dst, const Msg &src);
   opt<Task> find_task_id(Ctx &ctx, UId id);
   Task get_task_id(Ctx &ctx, UId id);
   Feed get_feed(const Task &tsk);
-  void set_project(Task &task, Project &project);
+  void set_project(Task &tsk, Project &project);
+  void send(const Task &tsk);
 }
 
 #endif

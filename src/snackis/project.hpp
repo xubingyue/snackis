@@ -23,6 +23,7 @@ namespace snackis {
     Project(const Msg &msg);
   };
 
+  void copy(Project &dst, const Msg &src);
   opt<Project> find_project_id(Ctx &ctx, UId id);
   Project get_project_id(Ctx &ctx, UId id);
   Feed get_feed(const Project &prj);

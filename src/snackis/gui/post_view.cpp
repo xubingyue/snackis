@@ -98,7 +98,7 @@ namespace gui {
     init_posts(*this);
     gtk_widget_set_margin_top(post_lst, 10);
     gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(post_lst));
-    lbl = gtk_label_new("Press Return or double-click to edit post");
+    lbl = gtk_label_new("Press Return or double-click to edit Post");
     gtk_container_add(GTK_CONTAINER(fields), lbl);
 
     if (rec.feed_id == null_uid) {

@@ -20,11 +20,15 @@ namespace snackis {
   Task::Task(const Msg &msg):
     IdRec(msg.ctx, *db::get(msg.task, msg.ctx.db.task_id))
   {
-    db::copy(*this, msg.task);    
-    peer_ids.erase(whoami(ctx).id);
-    peer_ids.insert(msg.from_id);
+    copy(*this, msg);
   }
 
+  void copy(Task &dst, const Msg &src) {
+    db::copy(dst, src.task);    
+    dst.peer_ids.insert(src.from_id);    
+    dst.peer_ids.erase(whoami(src.ctx).id);
+  }
+  
   opt<Task> find_task_id(Ctx &ctx, UId id) {
     db::Rec<Task> rec;
     set(rec, ctx.db.task_id, id);
@@ -63,5 +67,23 @@ namespace snackis {
   void set_project(Task &tsk, Project &prj) {
     tsk.project_id = prj.id;
     tsk.peer_ids = prj.peer_ids;
+  }
+
+  void send(const Task &tsk) {
+    Ctx &ctx(tsk.ctx);
+    Project prj(get_project_id(ctx, tsk.project_id));
+    
+    for (auto &pid: tsk.peer_ids) {
+      auto pr(find_peer_id(ctx, pid));
+
+      if (pr) {
+	Msg msg(ctx, Msg::TASK);
+	msg.to = pr->email;
+	msg.to_id = pr->id;
+	db::copy(ctx.db.projects, msg.project, prj);
+	db::copy(ctx.db.tasks, msg.task, tsk);
+	insert(ctx.db.outbox, msg);
+      }
+    }
   }
 }

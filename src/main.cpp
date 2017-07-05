@@ -46,6 +46,7 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
 		   "key_press_event",
 		   G_CALLBACK(on_key),
 		   nullptr);
+  
   gui::add_style(gui::window, "window");
   gtk_window_set_title(GTK_WINDOW(gui::window),
 		       fmt("Snackis v%0", version_str()).c_str());

@@ -4,6 +4,7 @@
 #include "snackis/gui/inbox.hpp"
 #include "snackis/gui/reader.hpp"
 #include "snackis/gui/peer_view.hpp"
+#include "snackis/gui/project_view.hpp"
 
 namespace snackis {
 namespace gui {
@@ -28,21 +29,39 @@ namespace gui {
     Msg msg(ctx, msg_rec);
 
     if (msg.type == Msg::INVITE) {
-      Peer peer(accept_invite(msg));
+      Peer pr(accept_invite(msg));
       log(ctx, fmt("Invite accepted: %0", msg.from));
-      auto pv(new PeerView(peer));
+      auto pv(new PeerView(pr));
       push_view(*pv);
     } else if (msg.type == Msg::ACCEPT) {
-      Peer peer(invite_accepted(msg));
-      auto pv(new PeerView(peer));
+      Peer pr(invite_accepted(msg));
+      auto pv(new PeerView(pr));
       push_view(*pv);
     } else if (msg.type == Msg::POST) {
-      Feed feed(msg);
-      db::insert(ctx.db.feeds, feed);
-      Post post(msg);
-      db::insert(ctx.db.posts, post);
-      auto fv(new FeedView(feed));
+      Feed fd(msg);
+      db::insert(ctx.db.feeds, fd);
+      Post ps(msg);
+      db::insert(ctx.db.posts, ps);
+      auto fv(new FeedView(fd));
       push_view(*fv);
+
+      auto pr(get_peer_id(ctx, msg.from_id));
+      log(ctx, fmt("New post %0 by %1:\n%2",
+		   id_str(ps),
+		   pr.name,
+		   ps.body));
+    } else if (msg.type == Msg::TASK) {
+      Project prj(msg);
+      db::insert(ctx.db.projects, prj);
+      Task tsk(msg);
+      db::insert(ctx.db.tasks, tsk);
+      auto pv(new ProjectView(prj));
+      push_view(*pv);
+      
+      log(ctx, fmt("New task %0:\n%1\n%2",
+		   id_str(tsk),
+		   tsk.name,
+		   tsk.info));
     } else {
 	log(ctx, fmt("Invalid message type: %0", msg.type));
     }
@@ -64,7 +83,9 @@ namespace gui {
     if (msg.type == Msg::INVITE) {
 	reject_invite(msg);
 	log(ctx, fmt("Invite rejected: %0", msg.from));
-    } else if (msg.type == Msg::ACCEPT || msg.type == Msg::POST) {
+    } else if (msg.type == Msg::ACCEPT ||
+	       msg.type == Msg::POST ||
+	       msg.type == Msg::TASK) {
       // Nothing to do here
     } else {
 	log(ctx, fmt("Invalid message type: %0", msg.type));
@@ -114,8 +135,16 @@ namespace gui {
       } else if (msg.type == Msg::POST) {
 	gtk_list_store_set(v.msgs, &iter,
 			   COL_INFO,
-			   fmt("New feed: %0",
-			       *db::get(msg.feed, ctx.db.feed_name)).c_str(),
+			   fmt("New feed:\n%0\n%1",
+			       *db::get(msg.feed, ctx.db.feed_name),
+			       *db::get(msg.feed, ctx.db.feed_info)).c_str(),
+			   -1);
+      } else if (msg.type == Msg::TASK) {
+	gtk_list_store_set(v.msgs, &iter,
+			   COL_INFO,
+			   fmt("New project:\n%0\n%1",
+			       *db::get(msg.project, ctx.db.project_name),
+			       *db::get(msg.project, ctx.db.project_info)).c_str(),
 			   -1);
       } else {
 	gtk_list_store_set(v.msgs, &iter, COL_INFO,

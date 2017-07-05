@@ -106,6 +106,83 @@ namespace snackis {
     return msg;
   }
 
+  static void handle_post_msg(Imap &imap, const Msg &msg) {
+    Ctx &ctx(imap.ctx);
+    opt<Feed> fd_fnd(find_feed_id(ctx, *db::get(msg.feed, ctx.db.feed_id)));
+    
+    if (fd_fnd) {
+      opt<Post> pst_fnd(find_post_id(ctx, *db::get(msg.post, ctx.db.post_id)));
+      Peer pr(get_peer_id(ctx, msg.from_id));
+	
+      if (pst_fnd) {
+	if (pr.id == pst_fnd->owner_id) {
+	  copy(*fd_fnd, msg);
+	  db::update(ctx.db.feeds, *fd_fnd);
+	    
+	  copy(*pst_fnd, msg);
+	  db::update(ctx.db.posts, *pst_fnd);
+	    
+	  log(ctx, fmt("Post %0 updated by %1:\n%2",
+		       id_str(*pst_fnd),
+		       pr.name,
+		       pst_fnd->body));
+	} else {
+	  log(ctx, fmt("Skipping unautorized post update from %0", msg.from));
+	}
+      } else {
+	copy(*fd_fnd, msg);
+	db::update(ctx.db.feeds, *fd_fnd);
+	  
+	Post pst(msg);
+	db::insert(ctx.db.posts, pst);
+	  
+	log(ctx, fmt("New post %0 by %1:\n%2",
+		     id_str(pst),
+		     pr.name,
+		     pst.body));
+      }
+    } else {
+      db::insert(ctx.db.inbox, msg);
+    }
+  }
+
+  static void handle_task_msg(Imap &imap, const Msg &msg) {
+    Ctx &ctx(imap.ctx);
+    auto prj_fnd(find_project_id(ctx, *db::get(msg.project, ctx.db.project_id)));
+    
+    if (prj_fnd) {
+      opt<Task> tsk_fnd(find_task_id(ctx, *db::get(msg.task, ctx.db.task_id)));
+      Peer pr(get_peer_id(ctx, msg.from_id));
+	
+      if (tsk_fnd) {
+	if (pr.id == tsk_fnd->owner_id) {
+	  copy(*prj_fnd, msg);
+	  db::update(ctx.db.projects, *prj_fnd);
+	    
+	  copy(*tsk_fnd, msg);
+	  db::update(ctx.db.tasks, *tsk_fnd);
+	    
+	  log(ctx, fmt("Task %0 updated", id_str(*tsk_fnd)));
+	} else {
+	  log(ctx, fmt("Unautorized task update from %0", msg.from));
+	}
+      } else {
+	copy(*prj_fnd, msg);
+	db::update(ctx.db.projects, *prj_fnd);
+	  
+	Task tsk(msg);
+	db::insert(ctx.db.tasks, tsk);
+	  
+	log(ctx, fmt("New task %0:\n%1\n%2",
+		     id_str(tsk),
+		     tsk.name,
+		     tsk.info));
+      }
+    } else {
+      db::insert(ctx.db.inbox, msg);
+    }
+  }
+  
   static void handle_msg(Imap &imap, const Msg &msg) {
     Ctx &ctx(imap.ctx);
 
@@ -123,44 +200,9 @@ namespace snackis {
       invite_rejected(msg);
       log(ctx, fmt("Invite to %0 was rejected", msg.from));
     } else if (msg.type == Msg::POST) {
-      opt<Feed> feed_found(find_feed_id(ctx,
-					*db::get(msg.feed, ctx.db.feed_id)));
-      if (feed_found) {
-	opt<Post> post_found(find_post_id(ctx,
-					  *db::get(msg.post, ctx.db.post_id)));
-	Peer peer(get_peer_id(ctx, msg.from_id));
-	
-	if (post_found) {
-	  if (peer.id == post_found->owner_id) {
-	    copy(*feed_found, msg);
-	    db::update(ctx.db.feeds, *feed_found);
-	    
-	    copy(*post_found, msg);
-	    db::update(ctx.db.posts, *post_found);
-	    
-	    log(ctx, fmt("Post updated in feed '%0' by %1:\n%2",
-			 id_str(*feed_found),
-			 peer.name,
-			 post_found->body));
-	  } else {
-	    log(ctx, fmt("Skipping unautorized post update from %0",
-			 msg.from));
-	  }
-	} else {
-	  copy(*feed_found, msg);
-	  db::update(ctx.db.feeds, *feed_found);
-	  
-	  Post post(msg);
-	  db::insert(ctx.db.posts, post);
-	  
-	  log(ctx, fmt("New post in feed '%0' by %1:\n%2",
-		       id_str(*feed_found),
-		       peer.name,
-		       post.body));
-	}
-      } else {
-	db::insert(ctx.db.inbox, msg);
-      }
+      handle_post_msg(imap, msg);
+    } else if (msg.type == Msg::TASK) {
+      handle_task_msg(imap, msg);
     } else {
       db::insert(ctx.db.inbox, msg);
     }

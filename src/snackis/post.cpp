@@ -36,26 +36,26 @@ namespace snackis {
     return Post(ctx, rec);
   }
 
+  void set_feed(Post &pst, Feed &fd) {
+    pst.feed_id = fd.id;
+    pst.peer_ids = fd.peer_ids;
+  }
+
   void send(const Post &pst) {
     Ctx &ctx(pst.ctx);
-    Feed fed(get_feed_id(ctx, pst.feed_id));
+    Feed fd(get_feed_id(ctx, pst.feed_id));
     
     for (auto &pid: pst.peer_ids) {
-      auto per(find_peer_id(ctx, pid));
+      auto pr(find_peer_id(ctx, pid));
 
-      if (per) {
+      if (pr) {
 	Msg msg(ctx, Msg::POST);
-	msg.to = per->email;
-	msg.to_id = per->id;
-	db::copy(ctx.db.feeds, msg.feed, fed);
+	msg.to = pr->email;
+	msg.to_id = pr->id;
+	db::copy(ctx.db.feeds, msg.feed, fd);
 	db::copy(ctx.db.posts, msg.post, pst);
 	insert(ctx.db.outbox, msg);
       }
     }
-  }
-
-  void set_feed(Post &pst, Feed &fed) {
-    pst.feed_id = fed.id;
-    pst.peer_ids = fed.peer_ids;
   }
 }
