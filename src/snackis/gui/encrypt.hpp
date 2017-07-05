@@ -1,9 +1,6 @@
 #ifndef SNACKIS_GUI_ENCRYPT_HPP
 #define SNACKIS_GUI_ENCRYPT_HPP
 
-#include <vector>
-#include <mutex>
-
 #include "snackis/gui/peer_select.hpp"
 #include "snackis/gui/view.hpp"
 

@@ -48,20 +48,21 @@ namespace snackis {
     return *found;
   }
 
-  bool add_task(Queue &q, Task &tsk) {
+  Feed get_feed(const Queue &q) {
     Ctx &ctx(q.ctx);
-    
-    if (q.task_ids.insert(tsk.id).second) {
-      db::upsert(ctx.db.queues, q);
+    db::Rec<Feed> rec;
+    db::set(rec, ctx.db.feed_id, q.id);
+    Feed feed(ctx, rec);
 
-      tsk.queue_ids.insert(q.id);
-      db::upsert(ctx.db.tasks, tsk);
-
-      QueueTask qt(q, tsk);
-      db::insert(ctx.db.queue_tasks, qt);
-      return true;
+    if (!db::load(ctx.db.feeds, feed)) {
+      db::Trans trans(ctx);
+      feed.name = fmt("Queue %0", id_str(q));
+      feed.visible = false;
+      feed.peer_ids = q.peer_ids;
+      db::insert(ctx.db.feeds, feed);
+      db::commit(trans);
     }
-
-    return false;
+    
+    return feed;
   }
 }

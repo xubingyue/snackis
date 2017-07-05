@@ -1,10 +1,6 @@
 #ifndef SNACKIS_GUI_SEARCH_VIEW_HPP
 #define SNACKIS_GUI_SEARCH_VIEW_HPP
 
-#include <mutex>
-#include <set>
-#include <vector>
-
 #include "snackis/core/error.hpp"
 #include "snackis/core/func.hpp"
 #include "snackis/gui/gui.hpp"

@@ -52,7 +52,7 @@ namespace gui {
 
   static void on_find_posts(gpointer *_, TaskView *v) {
     PostSearch *ps = new PostSearch(v->ctx);
-    select<Feed>(ps->feed_fld, get_feed_id(v->ctx, v->rec.id));
+    select<Feed>(ps->feed_fld, get_feed(v->rec));
     push_view(*ps);
   }
 
@@ -78,7 +78,8 @@ namespace gui {
     edit_project_btn(gtk_button_new_with_mnemonic("_Edit Project")),
     name_fld(gtk_entry_new()),
     done_fld(gtk_check_button_new_with_mnemonic("_Done")),
-    info_fld(new_text_view())
+    info_fld(new_text_view()),
+    queue_lst(ctx, "Queue", this->rec.queue_ids)    
   {
     GtkWidget *lbl;
 
@@ -121,6 +122,10 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(info_fld));
     set_str(GTK_TEXT_VIEW(info_fld), rec.info);
 
+    load(queue_lst);
+    gtk_widget_set_margin_top(queue_lst.ptr(), 5);
+    gtk_container_add(GTK_CONTAINER(fields), queue_lst.ptr());
+    
     focused = project_fld;
     refresh(*this);
   }
@@ -137,8 +142,6 @@ namespace gui {
     rec.info = get_str(GTK_TEXT_VIEW(info_fld));
     rec.done = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(done_fld));
     db::upsert(ctx.db.tasks, rec);
-
-    if (queue) { add_task(*queue, rec); }
     return true;
   }
 }}

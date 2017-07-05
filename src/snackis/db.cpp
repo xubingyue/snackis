@@ -133,11 +133,10 @@ namespace snackis {
     queue_name(      "name",       str_type,     &Queue::name),
     queue_info(      "info",       str_type,     &Queue::info),
     queue_peer_ids(  "peer_ids",   uid_set_type, &Queue::peer_ids),
-    queue_task_ids(  "task_ids",   uid_set_type, &Queue::task_ids),
     
     queues(ctx, "queues", {&queue_id},
 	   {&queue_owner_id, &queue_created_at, &queue_changed_at, &queue_name,
-	       &queue_info, &queue_peer_ids, &queue_task_ids}),
+	       &queue_info, &queue_peer_ids}),
 
     queues_sort(ctx, "queues_sort", {&queue_name, &queue_id}, {}),
 
@@ -158,19 +157,19 @@ namespace snackis {
     tasks.indexes.insert(&tasks_sort);
     queues.indexes.insert(&queues_sort);
 
-    peers.on_update.push_back([&](auto prev_rec, auto curr_rec) {
+    peers.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
 	db::set(curr_rec, peer_changed_at, now());
       });
 
-    feeds.on_update.push_back([&](auto prev_rec, auto curr_rec) {
+    feeds.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
 	db::set(curr_rec, feed_changed_at, now());
       });
 
-    posts.on_update.push_back([&](auto prev_rec, auto curr_rec) {
+    posts.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
 	db::set(curr_rec, post_changed_at, now());
       });
 
-    projects.on_update.push_back([&](auto prev_rec, auto curr_rec) {
+    projects.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
 	Project prev(ctx, prev_rec), curr(ctx, curr_rec);
 
 	if (curr.peer_ids != prev.peer_ids) {
@@ -185,7 +184,16 @@ namespace snackis {
 	db::set(curr_rec, project_changed_at, now());
       });
 
-    tasks.on_update.push_back([&](auto prev_rec, auto curr_rec) {
+    tasks.on_insert.push_back([&](auto &rec) {
+	Task tsk(ctx, rec);
+	
+	for (auto &id: tsk.queue_ids) {
+	  auto q(find_queue_id(ctx, id));
+	  if (q) { db::insert(ctx.db.queue_tasks, QueueTask(*q, tsk)); }
+	}
+      });
+      
+    tasks.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
 	Task prev(ctx, prev_rec), curr(ctx, curr_rec);
 
 	if (curr.peer_ids != prev.peer_ids) {		    	
@@ -198,9 +206,31 @@ namespace snackis {
 	}
 
 	db::set(curr_rec, task_changed_at, now());
+	auto queues(diff(prev.queue_ids, curr.queue_ids));
+	
+	for (auto &id: queues.first) {
+	  auto q(find_queue_id(ctx, id));
+	  if (q) { db::insert(ctx.db.queue_tasks, QueueTask(*q, prev)); }
+	}
+
+	for (auto &id: queues.first) {
+	  auto q(find_queue_id(ctx, id));
+	  if (q) { db::erase(ctx.db.queue_tasks, QueueTask(*q, prev)); }
+	}
       });
 
-    queues.on_update.push_back([&](auto prev_rec, auto curr_rec) {
+    queues.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
+	Queue prev(ctx, prev_rec), curr(ctx, curr_rec);
+
+	if (curr.peer_ids != prev.peer_ids) {		    	
+	  auto feed(find_feed_id(ctx, curr.id));
+
+	  if (feed) {
+	    feed->peer_ids = curr.peer_ids;
+	    db::update(feeds, *feed);
+	  }
+	}
+
 	db::set(curr_rec, queue_changed_at, now());
       });
   }

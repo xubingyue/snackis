@@ -1,9 +1,6 @@
 #ifndef SNACKIS_GUI_REC_VIEW_HPP
 #define SNACKIS_GUI_REC_VIEW_HPP
 
-#include <mutex>
-#include <vector>
-
 #include "snackis/rec.hpp"
 #include "snackis/gui/view.hpp"
 

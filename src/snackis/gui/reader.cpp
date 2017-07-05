@@ -11,6 +11,8 @@
 #include "snackis/gui/post_search.hpp"
 #include "snackis/gui/post_view.hpp"
 #include "snackis/gui/project_view.hpp"
+#include "snackis/gui/queue_search.hpp"
+#include "snackis/gui/queue_view.hpp"
 #include "snackis/gui/reader.hpp"
 #include "snackis/gui/task_search.hpp"
 #include "snackis/gui/task_view.hpp"
@@ -170,6 +172,28 @@ namespace gui {
 	push_view(*v);
 	return true;
       });
+
+    rdr.cmds.emplace("queue", [&ctx](auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: queue");
+	  return false;
+	}
+	
+	QueueView *v = new QueueView(Queue(ctx));
+	push_view(*v);
+	return true;
+      });
+
+    rdr.cmds.emplace("queue-search", [&ctx](auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: queue-search");
+	  return false;
+	}
+	
+	QueueSearch *v = new QueueSearch(ctx);
+	push_view(*v);
+	return true;
+      });
     
     rdr.cmds.emplace("send", [&ctx](auto args) {
 	if (!args.empty()) {
@@ -223,13 +247,13 @@ namespace gui {
 	
 	if (args.empty()) {
 	  auto v(new TaskSearch(ctx));
-	  v->queue.emplace(q);
+	  select<Queue>(v->queue_fld, q);
 	  push_view(*v);
 	} else {
 	  Task task(ctx);
+	  task.queue_ids.insert(q.id);
 	  task.name = join(args.begin(), args.end(), ' ');
 	  auto v(new TaskView(task));
-	  v->queue.emplace(q);
 	  push_view(*v);
 	}
 	

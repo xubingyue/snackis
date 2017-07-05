@@ -1,9 +1,6 @@
 #ifndef SNACKIS_GUI_SETUP_HPP
 #define SNACKIS_GUI_SETUP_HPP
 
-#include <vector>
-#include <mutex>
-
 #include "snackis/gui/view.hpp"
 
 namespace snackis {

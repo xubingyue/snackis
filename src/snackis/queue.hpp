@@ -8,13 +8,15 @@
 #include "snackis/core/uid.hpp"
 
 namespace snackis {
+  struct Feed;
+  struct Msg;
   struct Task;
   
   struct Queue: IdRec {
     UId owner_id;
     Time created_at, changed_at;
     str name, info;
-    std::set<UId> peer_ids, task_ids;
+    std::set<UId> peer_ids;
     
     Queue(Ctx &ctx);
     Queue(Ctx &ctx, const db::Rec<Queue> &rec);   
@@ -32,6 +34,7 @@ namespace snackis {
   opt<Queue> find_queue_id(Ctx &ctx, UId id);
   Queue get_queue_id(Ctx &ctx, UId id);
   bool add_task(Queue &q, Task &tsk);
+  Feed get_feed(const Queue &q);
 }
 
 #endif

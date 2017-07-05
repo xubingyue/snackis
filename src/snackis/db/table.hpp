@@ -230,12 +230,11 @@ namespace db {
       for (int64_t i=0; i<cnt; i++) {
 	const str cname(str_type.read(in));
 	auto found(tbl.col_lookup.find(cname));
-	if (found == tbl.col_lookup.end()) {
-	  ERROR(Db, fmt("Column not found: %0/%1", tbl.name, cname));
-	}
 	
-	auto c = found->second;
-	rec[c] = c->read(in);
+	if (found != tbl.col_lookup.end()) {
+	  auto c = found->second;
+	  rec[c] = c->read(in);
+	}
       }
     }
   }

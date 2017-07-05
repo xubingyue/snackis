@@ -89,8 +89,8 @@ namespace gui {
     g_signal_connect(add_btn, "clicked", G_CALLBACK(on_add_rec<RecT>), this);
     gtk_container_add(GTK_CONTAINER(list_box), add_btn);
     gtk_container_add(GTK_CONTAINER(box),
-		      gtk_label_new(fmt("Press Return or double-click to remove %0",
-					lbl).c_str()));
+		      gtk_label_new(fmt("Press Return or double-click "
+					"to remove selected %0", lbl).c_str()));
   }
 
   template <typename RecT>

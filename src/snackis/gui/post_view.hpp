@@ -1,9 +1,6 @@
 #ifndef SNACKIS_GUI_POST_VIEW_HPP
 #define SNACKIS_GUI_POST_VIEW_HPP
 
-#include <vector>
-#include <mutex>
-
 #include "snackis/post.hpp"
 #include "snackis/gui/feed_select.hpp"
 #include "snackis/gui/rec_view.hpp"

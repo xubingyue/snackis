@@ -1,10 +1,6 @@
 #ifndef SNACKIS_GUI_POST_SEARCH_HPP
 #define SNACKIS_GUI_POST_SEARCH_HPP
 
-#include <mutex>
-#include <set>
-#include <vector>
-
 #include "snackis/post.hpp"
 #include "snackis/gui/feed_select.hpp"
 #include "snackis/gui/peer_select.hpp"

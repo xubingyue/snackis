@@ -4,21 +4,21 @@
 #include "snackis/gui/feed_view.hpp"
 #include "snackis/gui/post_search.hpp"
 #include "snackis/gui/post_view.hpp"
-#include "snackis/gui/project_view.hpp"
+#include "snackis/gui/queue_view.hpp"
 #include "snackis/gui/task_search.hpp"
 #include "snackis/gui/task_view.hpp"
 
 namespace snackis {
 namespace gui {
-  static void on_find_tasks(gpointer *_, ProjectView *v) {
+  static void on_find_tasks(gpointer *_, QueueView *v) {
     TaskSearch *ts = new TaskSearch(v->ctx);
-    ts->project.emplace(v->rec);
+    select<Queue>(ts->queue_fld, v->rec);
     push_view(*ts);
   }
 
-  static void on_new_task(gpointer *_, ProjectView *v) {
+  static void on_new_task(gpointer *_, QueueView *v) {
     Task tsk(v->ctx);
-    set_project(tsk, v->rec);
+    tsk.queue_ids.insert(v->rec.id);
     TaskView *tv = new TaskView(tsk);
     push_view(*tv);
   }
@@ -29,7 +29,7 @@ namespace gui {
     push_view(*ps);
   }
 
-  static void on_post(gpointer *_, ProjectView *v) {
+  static void on_post(gpointer *_, QueueView *v) {
     db::Trans trans(v->ctx);
     v->save();
     
@@ -41,14 +41,13 @@ namespace gui {
     db::commit(trans);
   }
 
-  ProjectView::ProjectView(const Project &rec):
-    RecView<Project>("Project", rec),
+  QueueView::QueueView(const Queue &rec):
+    RecView<Queue>("Queue", rec),
     find_tasks_btn(gtk_button_new_with_mnemonic("_Find Tasks")),
     new_task_btn(gtk_button_new_with_mnemonic("New _Task")),
     find_posts_btn(gtk_button_new_with_mnemonic("Find Posts")),
     post_btn(gtk_button_new_with_mnemonic("New _Post")),
     name_fld(gtk_entry_new()),
-    active_fld(gtk_check_button_new_with_label("Active")),    
     info_fld(new_text_view()),
     peer_lst(ctx, "Peer", this->rec.peer_ids)
   {
@@ -69,13 +68,9 @@ namespace gui {
     lbl = gtk_label_new("Name");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_container_add(GTK_CONTAINER(fields), lbl);
-    GtkWidget *name_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    gtk_container_add(GTK_CONTAINER(fields), name_box);
     gtk_widget_set_hexpand(name_fld, true);    
-    gtk_container_add(GTK_CONTAINER(name_box), name_fld);
+    gtk_container_add(GTK_CONTAINER(fields), name_fld);
     gtk_entry_set_text(GTK_ENTRY(name_fld), rec.name.c_str());
-    gtk_container_add(GTK_CONTAINER(name_box), active_fld);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active_fld), rec.active);
     
     lbl = gtk_label_new("Info");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
@@ -83,21 +78,21 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(info_fld));
     set_str(GTK_TEXT_VIEW(info_fld), rec.info);
     
-    load(peer_lst);
     gtk_widget_set_margin_top(peer_lst.ptr(), 5);
     gtk_container_add(GTK_CONTAINER(fields), peer_lst.ptr());
-    
+
+    load(peer_lst);
     focused = name_fld;
   }
 
-  bool ProjectView::allow_save() const {
+  bool QueueView::allow_save() const {
     return rec.owner_id == whoami(ctx).id;
   }
   
-  bool ProjectView::save() {
+  bool QueueView::save() {
     rec.name = gtk_entry_get_text(GTK_ENTRY(name_fld));
     rec.info = get_str(GTK_TEXT_VIEW(info_fld));
-    db::upsert(ctx.db.projects, rec);
+    db::upsert(ctx.db.queues, rec);
     return true;
   }
 }}

@@ -7,8 +7,6 @@
 namespace snackis {
 namespace gui {
   enum ProjectCol {COL_PROJECT_PTR=0, COL_PROJECT_ID, COL_PROJECT_NAME};
-  enum QueueCol {COL_QUEUE_PTR=0, COL_QUEUE_ID, COL_QUEUE_NAME};
-  enum PeerCol {COL_PEER_PTR=0, COL_PEER_ID, COL_PEER_NAME};
   enum TaskCol {COL_TASK_PTR=0, COL_TASK_ID, COL_TASK_CREATED, COL_TASK_OWNER,
 		COL_TASK_PROJECT, COL_TASK_NAME, COL_TASK_INFO};
 
@@ -95,36 +93,6 @@ namespace gui {
     }    
   }
 
-  static void init_queues(TaskSearch &v) {
-    GtkTreeIter iter;
-    gtk_list_store_append(v.queue_store, &iter);
-    gtk_list_store_set(v.queue_store, &iter,
-		       COL_QUEUE_PTR, nullptr,
-		       COL_QUEUE_ID, "",
-		       COL_QUEUE_NAME, "",
-		       -1);
-
-    for(auto key = v.ctx.db.queues_sort.recs.begin();
-	key != v.ctx.db.queues_sort.recs.end();
-	key++) {
-      auto &rec(db::get(v.ctx.db.queues, *key));
-      Queue q(v.ctx, rec);
-      gtk_list_store_append(v.queue_store, &iter);
-      gtk_list_store_set(v.queue_store, &iter,
-			 COL_QUEUE_PTR, &rec,
-			 COL_QUEUE_ID, to_str(q.id).c_str(),
-			 COL_QUEUE_NAME, q.name.c_str(),
-			 -1);
-    }
-
-    if (v.queue) {
-      gtk_combo_box_set_active_id(GTK_COMBO_BOX(v.queue_fld),
-				  to_str(v.queue->id).c_str());
-    } else {
-      gtk_combo_box_set_active(GTK_COMBO_BOX(v.queue_fld), 0);
-    }    
-  }
-
   static void edit(Ctx &ctx, const db::Rec<Task> &rec) {
     Task task(ctx, rec);
     TaskView *fv(new TaskView(task));
@@ -145,14 +113,11 @@ namespace gui {
     project_store(gtk_list_store_new(3, G_TYPE_POINTER,
 				     G_TYPE_STRING,
 				     G_TYPE_STRING)),
-    queue_store(gtk_list_store_new(3, G_TYPE_POINTER,
-				   G_TYPE_STRING,
-				   G_TYPE_STRING)),
     id_fld(new_id_field()),
     text_fld(gtk_entry_new()),
     done_fld(gtk_check_button_new_with_label("Done")),
     project_fld(new_combo_box(GTK_TREE_MODEL(project_store))),
-    queue_fld(new_combo_box(GTK_TREE_MODEL(queue_store))),
+    queue_fld(ctx),
     peer_fld(ctx)
   {
     GtkWidget *lbl;
@@ -174,31 +139,22 @@ namespace gui {
     gtk_grid_attach(GTK_GRID(top_box), text_fld, 1, 1, 1, 1);
     gtk_grid_attach(GTK_GRID(top_box), done_fld, 2, 1, 1, 1);
 
-    GtkWidget *frm = gtk_grid_new();
-    gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
-    gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
-    gtk_container_add(GTK_CONTAINER(fields), frm);
-
-    int row = 0;
     init_projects(*this);
     lbl = gtk_label_new("Project");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 1, 1);
+    gtk_container_add(GTK_CONTAINER(fields), lbl);
     gtk_widget_set_hexpand(project_fld, true);
-    gtk_grid_attach(GTK_GRID(frm), project_fld, 0, row+1, 1, 1);
+    gtk_container_add(GTK_CONTAINER(fields), project_fld);
 
-    init_queues(*this);
     lbl = gtk_label_new("Queue");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(frm), lbl, 1, row, 1, 1);
-    gtk_widget_set_hexpand(queue_fld, true);
-    gtk_grid_attach(GTK_GRID(frm), queue_fld, 1, row+1, 1, 1);
+    gtk_container_add(GTK_CONTAINER(fields), lbl);
+    gtk_container_add(GTK_CONTAINER(fields), queue_fld.ptr());
 
-    row += 2;
     lbl = gtk_label_new("Peer");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 2, 1);
-    gtk_grid_attach(GTK_GRID(frm), peer_fld.ptr(), 0, row+1, 2, 1);
+    gtk_container_add(GTK_CONTAINER(fields), lbl);
+    gtk_container_add(GTK_CONTAINER(fields), peer_fld.ptr());
 
     add_col(GTK_TREE_VIEW(list), "Id", COL_TASK_ID);
     add_col(GTK_TREE_VIEW(list), "Created", COL_TASK_CREATED);
@@ -209,16 +165,15 @@ namespace gui {
   }
 
   void TaskSearch::find() {
-    auto queue_sel(get_sel_rec<Queue>(GTK_COMBO_BOX(queue_fld)));
+    auto queue_sel(queue_fld.selected);
     size_t cnt(0);    
     
     if (queue_sel) {
-      Queue q(ctx, *queue_sel);
       db::Rec<QueueTask> key;
-      db::set(key, ctx.db.queue_task_queue_id, q.id);
+      db::set(key, ctx.db.queue_task_queue_id, queue_sel->id);
       for (auto i = ctx.db.queue_tasks.recs.lower_bound(key);
 	   i != ctx.db.queue_tasks.recs.end() &&
-	     *db::get(*i, ctx.db.queue_task_queue_id) == q.id;
+	     *db::get(*i, ctx.db.queue_task_queue_id) == queue_sel->id;
 	   i++) {
 	db::Rec<Task> rec_key;
 	db::set(rec_key, ctx.db.task_id, *db::get(*i, ctx.db.queue_task_id));
