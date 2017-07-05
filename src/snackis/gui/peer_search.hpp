@@ -7,7 +7,7 @@
 namespace snackis {
 namespace gui {
   struct PeerSearch: SearchView<Peer> {
-    GtkWidget *id_fld, *name_fld, *email_fld;
+    GtkWidget *id_fld, *text_fld;
     
     PeerSearch(Ctx &ctx);
     void find() override;

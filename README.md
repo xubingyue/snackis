@@ -63,6 +63,11 @@ Type ```decrypt``` and press ```Return``` in the reader to open the decryption v
 ### Invites
 Type ```invite foo@bar.com``` in the reader and press ```Return``` to create a new invite. Snackis will send an email containing your public encryption key to the specified address. When an invite is accepted/rejected, a reply is sent to inform the inviting peer. The easiest way to see how it works is to try with your own address.
 
+### Peers
+Type ```peer-search``` in the reader and press ```Return``` to search Peers locally. Peers are sorted by name.
+
+![peer search example](images/peer_search.png?raw=true)
+
 ### Messages
 All Snackis-messages look more or less the same to the outside world, the actual data is appended in encrypted (except for invites and rejects) and encoded form below the ```__SNACKIS__```-marker.
 
@@ -123,9 +128,14 @@ Type ```task-search``` in the reader and press ```Return``` to search tasks. Tas
 ![task search example](images/task_search.png?raw=true)
 
 ### Queues
-Queues are sets of tasks that may be shared among a set of peers. Any member may add tasks to a queue, but only the owner is allowed to modify the queue details. Type ```queue``` in the reader and press ```Return``` to create a new queue. A default queue named ```Todo``` is automatically created; type ```todo my task name``` to create a new Todo-task named "my task name", or just ```todo``` to search.
+Queues are sets of tasks that may be shared among a set of peers. Any member may add tasks to a queue, but only the owner is allowed to modify the queue details. Type ```queue``` in the reader and press ```Return``` to create a new queue. Each task has its own feed that members may post to. A default queue named ```Todo``` is automatically created; type ```todo my task name``` to create a new Todo-task named "my task name", or just ```todo``` to search.
 
 ![queue example](images/queue.png?raw=true)
+
+#### Searching
+Type ```queue-search``` in the reader and press ```Return``` to search queues. Queues are sorted by name.
+
+![queue search example](images/queue_search.png?raw=true)
 
 ### Algorithms
 Snackis delegates anything concerning encryption to [libsodium](https://github.com/jedisct1/libsodium). The IETF-variant of ```ChaCha20-Poly1305``` is used to encrypt the master password and database, while ```XSalsa20```/```X25519``` with ```Poly1305 MAC```-authentication is used for everything else. The master password is hashed using ```Scrypt```, and encrypted using the hash as key for future validation.
