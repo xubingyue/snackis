@@ -128,7 +128,7 @@ Type ```task-search``` in the reader and press ```Return``` to search tasks. Tas
 ![task search example](images/task_search.png?raw=true)
 
 ### Queues
-Queues are sets of tasks that may be shared among a set of peers. Any member may add tasks to a queue, but only the owner is allowed to modify the queue details. Type ```queue``` in the reader and press ```Return``` to create a new queue. Each task has its own feed that members may post to. A default queue named ```Todo``` is automatically created; type ```todo my task name``` to create a new Todo-task named "my task name", or just ```todo``` to search.
+Queues are sets of tasks that may be shared among a set of peers. Any member may add tasks to a queue, but only the owner is allowed to modify the queue details. Each queue has its own feed that members may post to. Type ```queue``` in the reader and press ```Return``` to create a new queue. A default queue named ```Todo``` is automatically created; type ```todo my task name``` to create a new Todo-task named "my task name", or just ```todo``` to search.
 
 ![queue example](images/queue.png?raw=true)
 
