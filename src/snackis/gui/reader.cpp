@@ -243,6 +243,17 @@ namespace gui {
 	return true;
       });
 
+    rdr.cmds.emplace("task", [&ctx](auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: task");
+	  return false;
+	}
+	
+	TaskView *v = new TaskView(Task(ctx));
+	push_view(*v);
+	return true;
+      });
+
     rdr.cmds.emplace("task-search", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: task-search");
