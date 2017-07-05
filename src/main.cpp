@@ -13,10 +13,8 @@ static gboolean on_key(gpointer _, GdkEventKey *ev, gpointer __) {
 	gtk_widget_grab_focus(gui::View::stack.back()->focused);
       }
     } else {
-      if (!gui::View::stack.empty()) {
-	gui::View::stack.back()->focused =
-	  gtk_window_get_focus(GTK_WINDOW(gui::window));
-      }
+      gui::View::stack.back()->focused =
+	gtk_window_get_focus(GTK_WINDOW(gui::window));
       
       gtk_widget_grab_focus(gui::reader->entry);
     }
