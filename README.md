@@ -102,6 +102,31 @@ Type ```post-search``` in the reader and press ```Return``` to search posts. By 
 
 ![post search example](images/post_search.png?raw=true)
 
+### Projects
+Projects are sets of tasks that may be shared among a set of peers. Any member may add tasks to a project, but only the owner is allowed to modify the project details. Each task has its own feed that members may post to. Type ```project``` in the reader and press ```Return``` to create a new project.
+
+![project example](images/project.png?raw=true)
+
+#### Searching
+Type ```project-search``` in the reader and press ```Return``` to search projects. Projects are sorted by name.
+
+![project search example](images/project_search.png?raw=true)
+
+### Tasks
+A Task belongs to a project and changes are automatically propagated to all project members. Tasks are owned by the creating peer, who alone is allowed to modify the task. Each task has its own feed that members may post to. Type ```task``` in the reader and press ```Return``` to create a new task.
+
+![task example](images/task.png?raw=true)
+
+#### Searching
+Type ```task-search``` in the reader and press ```Return``` to search tasks. Tasks are sorted by time of creation.
+
+![task search example](images/task_search.png?raw=true)
+
+### Queues
+Queues are sets of tasks that may be shared among a set of peers. Any member may add tasks to a queue, but only the owner is allowed to modify the queue details. Type ```queue``` in the reader and press ```Return``` to create a new queue. A default queue named ```Todo``` is automatically created; type ```todo my task name``` to create a new Todo-task named "my task name", or just ```todo``` to search.
+
+![queue example](images/queue.png?raw=true)
+
 ### Algorithms
 Snackis delegates anything concerning encryption to [libsodium](https://github.com/jedisct1/libsodium). The IETF-variant of ```ChaCha20-Poly1305``` is used to encrypt the master password and database, while ```XSalsa20```/```X25519``` with ```Poly1305 MAC```-authentication is used for everything else. The master password is hashed using ```Scrypt```, and encrypted using the hash as key for future validation.
 

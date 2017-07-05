@@ -161,7 +161,7 @@ namespace gui {
 
     g_signal_connect(cancel_btn, "clicked", G_CALLBACK(on_cancel), this);
     gtk_container_add(GTK_CONTAINER(btns), cancel_btn);
-    focused = peer_fld.ptr();
+    focused = peer_fld.search_btn;
     refresh(*this);    
   }
 }}

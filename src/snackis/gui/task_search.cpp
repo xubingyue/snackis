@@ -36,9 +36,7 @@ namespace gui {
 
     auto peer_sel(v.peer_fld.selected);
 
-    if (peer_sel &&
-	tsk.owner_id != peer_sel->id &&
-	tsk.peer_ids.find(peer_sel->id) == tsk.peer_ids.end()) { return nullopt; }
+    if (peer_sel && tsk.owner_id != peer_sel->id) { return nullopt; }
 
     Project prj(get_project_id(ctx, tsk.project_id));
     Peer own(get_peer_id(ctx, tsk.owner_id));

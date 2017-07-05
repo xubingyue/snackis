@@ -95,7 +95,7 @@ namespace gui {
     gtk_widget_set_margin_top(queue_lst.ptr(), 5);
     gtk_container_add(GTK_CONTAINER(fields), queue_lst.ptr());
     
-    focused = project_fld.ptr();
+    focused = project_fld.search_btn;
     refresh(*this);
   }
 

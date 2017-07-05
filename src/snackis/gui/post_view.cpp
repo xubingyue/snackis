@@ -107,7 +107,7 @@ namespace gui {
       select<Feed>(feed_fld, get_feed_id(ctx, rec.feed_id));
     }
 
-    focused = feed_fld.ptr();
+    focused = feed_fld.search_btn;
   }
 
   bool PostView::allow_save() const {
