@@ -21,6 +21,7 @@ namespace snackis {
     Post(const Msg &msg);
   };
 
+  void copy(Post &dst, const Msg &src);
   opt<Post> find_post_id(Ctx &ctx, UId id);
   void send(const Post &post);
   void set_feed(Post &pst, Feed &fed);

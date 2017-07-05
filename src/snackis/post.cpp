@@ -23,6 +23,12 @@ namespace snackis {
     peer_ids.insert(msg.from_id);
   }
 
+  void copy(Post &dst, const Msg &src) {
+    db::copy(dst, src.post);    
+    dst.peer_ids.insert(src.from_id);    
+    dst.peer_ids.erase(whoami(src.ctx).id);
+  }
+
   opt<Post> find_post_id(Ctx &ctx, UId id) {
     db::Rec<Post> rec;
     set(rec, ctx.db.post_id, id);

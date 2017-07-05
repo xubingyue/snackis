@@ -14,13 +14,17 @@ namespace snackis {
   Feed::Feed(Ctx &ctx, const db::Rec<Feed> &src): IdRec(ctx, null_uid) {
     copy(*this, src);
   }
-
+  
   Feed::Feed(const Msg &msg):
     IdRec(msg.ctx, *db::get(msg.feed, msg.ctx.db.feed_id))
   {
-    db::copy(*this, msg.feed);    
-    peer_ids.erase(whoami(ctx).id);
-    peer_ids.insert(msg.from_id);
+    copy(*this, msg);
+  }
+
+  void copy(Feed &dst, const Msg &src) {
+    db::copy(dst, src.feed);    
+    dst.peer_ids.insert(src.from_id);    
+    dst.peer_ids.erase(whoami(src.ctx).id);
   }
 
   opt<Feed> find_feed_id(Ctx &ctx, UId id) {

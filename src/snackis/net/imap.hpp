@@ -17,7 +17,6 @@ namespace snackis {
 
   struct Imap {
     Ctx &ctx;
-    db::Trans trans;
     CURL *client;
     
     Imap(Ctx &ctx);

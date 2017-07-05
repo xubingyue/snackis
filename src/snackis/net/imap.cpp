@@ -19,7 +19,7 @@ namespace snackis {
     return size * nmemb;  
   }
 
-  Imap::Imap(Ctx &ctx): ctx(ctx), trans(ctx), client(curl_easy_init()) {
+  Imap::Imap(Ctx &ctx): ctx(ctx), client(curl_easy_init()) {
     if (!client) { ERROR(Imap, "Failed initializing client"); }
     curl_easy_setopt(client, 
 		     CURLOPT_USERNAME, 
@@ -105,6 +105,66 @@ namespace snackis {
     if (i == str::npos || !decode(msg, body.substr(i))) { return nullopt; }
     return msg;
   }
+
+  static void handle_msg(Imap &imap, const Msg &msg) {
+    Ctx &ctx(imap.ctx);
+
+    if (msg.type == Msg::ACCEPT || msg.type == Msg::REJECT) {
+      db::Rec<Invite> inv;
+      set(inv, ctx.db.invite_to, msg.from);
+      
+      if (!load(ctx.db.invites, inv)) {
+	log(ctx, fmt("Missing invite: %0", msg.from));
+	return;
+      }
+    }
+    
+    if (msg.type == Msg::REJECT) {
+      invite_rejected(msg);
+      log(ctx, fmt("Invite to %0 was rejected", msg.from));
+    } else if (msg.type == Msg::POST) {
+      opt<Feed> feed_found(find_feed_id(ctx,
+					*db::get(msg.feed, ctx.db.feed_id)));
+      if (feed_found) {
+	opt<Post> post_found(find_post_id(ctx,
+					  *db::get(msg.post, ctx.db.post_id)));
+	Peer peer(get_peer_id(ctx, msg.from_id));
+	
+	if (post_found) {
+	  if (peer.id == post_found->owner_id) {
+	    copy(*feed_found, msg);
+	    db::update(ctx.db.feeds, *feed_found);
+	    
+	    copy(*post_found, msg);
+	    db::update(ctx.db.posts, *post_found);
+	    
+	    log(ctx, fmt("Post updated in feed '%0' by %1:\n%2",
+			 id_str(*feed_found),
+			 peer.name,
+			 post_found->body));
+	  } else {
+	    log(ctx, fmt("Skipping unautorized post update from %0",
+			 msg.from));
+	  }
+	} else {
+	  copy(*feed_found, msg);
+	  db::update(ctx.db.feeds, *feed_found);
+	  
+	  Post post(msg);
+	  db::insert(ctx.db.posts, post);
+	  
+	  log(ctx, fmt("New post in feed '%0' by %1:\n%2",
+		       id_str(*feed_found),
+		       peer.name,
+		       post.body));
+	}
+      } else {
+	db::insert(ctx.db.inbox, msg);
+      }
+    } else {
+      db::insert(ctx.db.inbox, msg);
+    }
+  }
   
   void fetch(struct Imap &imap) {
     TRACE("Fetching email");
@@ -137,71 +197,21 @@ namespace snackis {
     int msg_cnt = 0;
     
     for (auto tok = std::next(tokens.begin(), 2); tok != tokens.end(); tok++) {
+      db::Trans trans(ctx);
+      
       try {
 	const str uid(*tok);
 	opt<Msg> msg = fetch_uid(imap, uid);
-
-	if (!msg) {
-	  log(ctx, "Failed decoding message");
-	  delete_uid(imap, uid);
-	  continue;
-	}
-
-	if (msg->type == Msg::ACCEPT || msg->type == Msg::REJECT) {
-	  db::Rec<Invite> inv;
-	  set(inv, ctx.db.invite_to, msg->from);
 	
-	  if (!load(ctx.db.invites, inv)) {
-	    log(ctx, fmt("Missing invite: %0", msg->from));
-	    delete_uid(imap, uid);	  
-	    continue;
-	  }
-	}
-      
-	if (msg->type == Msg::REJECT) {
-	  invite_rejected(*msg);
-	  log(ctx, fmt("Invite to %0 was rejected", msg->from));
-	} else if (msg->type == Msg::POST) {
-	  opt<Feed> feed_found(find_feed_id(ctx,
-					    *db::get(msg->feed, ctx.db.feed_id)));
-	  if (feed_found) {
-	    opt<Post> post_found(find_post_id(ctx,
-					      *db::get(msg->post, ctx.db.post_id)));
-	    Peer peer(get_peer_id(ctx, msg->from_id));
-
-	    if (post_found) {
-	      if (peer.id == post_found->owner_id) {
-		db::copy(*feed_found, msg->feed);
-		db::update(ctx.db.feeds, *feed_found);
-		db::copy(*post_found, msg->post);
-		db::update(ctx.db.posts, *post_found);
-		log(ctx, fmt("Post updated in feed '%0' by %1:\n%2",
-			     feed_found->name,
-			     peer.name,
-			     post_found->body));
-	      } else {
-		log(ctx, fmt("Skipping unautorized post update from %0",
-			     msg->from));
-	      }
-	    } else {
-	      db::copy(*feed_found, msg->feed);
-	      db::update(ctx.db.feeds, *feed_found);
-	      Post post(*msg);
-	      db::insert(ctx.db.posts, post);
-	      log(ctx, fmt("New post in feed '%0' by %1:\n%2",
-			   feed_found->name,
-			   peer.name,
-			   post.body));
-	    }
-	  } else {
-	    db::insert(ctx.db.inbox, *msg);
-	  }
+	if (msg) {
+	  handle_msg(imap, *msg);
+	  msg_cnt++;
 	} else {
-	  db::insert(ctx.db.inbox, *msg);
+	  log(ctx, "Failed decoding message");
 	}
-      
+
 	delete_uid(imap, uid);
-	msg_cnt++;
+	db::commit(trans);
       } catch (const std::exception &e) {
 	log(ctx, fmt("Error while processing message: %0", e.what()));
       }
@@ -211,7 +221,6 @@ namespace snackis {
       expunge(imap);
     }
 
-    db::commit(imap.trans);
     log(ctx, fmt("Finished fetching %0 messages", msg_cnt));
   }
 }
