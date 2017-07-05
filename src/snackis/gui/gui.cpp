@@ -2,12 +2,11 @@
 
 namespace snackis {
 namespace gui {
-  GtkWidget *window, *panels, *main_panel, *left_panel;
+  GtkWidget *window, *panels, *main_panel, *left_panel, *right_panel;
 
-  opt<Login> login;
   opt<Console> console;
   opt<Reader> reader;
-  opt<Setup> setup;
+  opt<RootView> root_view;
 
   str get_str(GtkEntry *w) {
     return gtk_entry_get_text(w);

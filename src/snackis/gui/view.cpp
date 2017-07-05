@@ -42,11 +42,11 @@ namespace gui {
       View *prev(View::stack.back());
       prev->focused = gtk_window_get_focus(GTK_WINDOW(window));
       g_object_ref(prev->panel);
-      gtk_container_remove(GTK_CONTAINER(gui::panels), prev->panel);
+      gtk_container_remove(GTK_CONTAINER(panels), prev->panel);
     }
 
     View::stack.push_back(&v);    
-    gtk_container_add(GTK_CONTAINER(gui::panels), v.panel);  
+    gtk_container_add(GTK_CONTAINER(panels), v.panel);  
     gtk_widget_show_all(v.ptr());
     gtk_widget_grab_focus(v.focused);
   }
@@ -55,33 +55,30 @@ namespace gui {
     assert(View::stack.back() == &v);
     View::stack.pop_back();
     g_object_ref(v.panel);
-    gtk_container_remove(GTK_CONTAINER(gui::panels), v.panel);
-    
-    if (View::stack.empty()) {
-      gtk_widget_grab_focus(reader->entry);
-    } else {
-      auto next(View::stack.back());
-      gtk_container_add(GTK_CONTAINER(gui::panels), next->panel);
-      gtk_widget_show_all(next->panel);
-      if (next->focused) {
-	gtk_widget_grab_focus(next->focused);
-      }
-    }
-
+    gtk_container_remove(GTK_CONTAINER(panels), v.panel);
     delete &v;
+    
+    auto next(View::stack.back());
+    gtk_container_add(GTK_CONTAINER(panels), next->panel);
+    gtk_widget_show_all(next->panel);
+    if (View::stack.size() == 1) {
+      gtk_widget_grab_focus(reader->entry);
+    } else if (next->focused) {
+      gtk_widget_grab_focus(next->focused);
+    }
   }
 
   void swap_views() {
-    if (View::stack.size() > 1) {
+    if (View::stack.size() > 2) {
       View *prev(View::stack.back());
       g_object_ref(prev->panel);
-      gtk_container_remove(GTK_CONTAINER(gui::panels), prev->panel);
+      gtk_container_remove(GTK_CONTAINER(panels), prev->panel);
       View::stack.pop_back();
       View *next(View::stack.back());
       View::stack.pop_back();
       View::stack.push_back(prev);
       View::stack.push_back(next);
-      gtk_container_add(GTK_CONTAINER(gui::panels), next->panel);  
+      gtk_container_add(GTK_CONTAINER(panels), next->panel);  
       gtk_widget_show_all(next->panel);
       gtk_widget_grab_focus(next->focused);
     }

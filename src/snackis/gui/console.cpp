@@ -46,7 +46,6 @@ namespace gui {
     add_style(view, "console");
     gtk_text_view_set_editable(GTK_TEXT_VIEW(view), false);
     gtk_text_view_set_monospace(GTK_TEXT_VIEW(view), true);
-    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(view), GTK_WRAP_CHAR);
   }
 
   GtkWidget *Console::ptr() {

@@ -8,6 +8,7 @@
 #include "snackis/gui/console.hpp"
 #include "snackis/gui/login.hpp"
 #include "snackis/gui/reader.hpp"
+#include "snackis/gui/root_view.hpp"
 #include "snackis/gui/setup.hpp"
 
 namespace snackis {
@@ -18,6 +19,7 @@ namespace gui {
   
   extern opt<Console> console;
   extern opt<Reader> reader;
+  extern opt<RootView> root_view;
 
   str get_str(GtkEntry *w);
   str get_str(GtkTextView *w);
