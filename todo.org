@@ -1,7 +1,3 @@
-* add ProjectSearch
-** copy queue
-* add ProjectSelect
-** use in task view & task search
 * send task messages
 ** copy send(post)
 ** add support to inbox like feeds

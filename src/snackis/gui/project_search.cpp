@@ -1,21 +1,21 @@
 #include <cassert>
 #include "snackis/ctx.hpp"
 #include "snackis/gui/gui.hpp"
-#include "snackis/gui/queue_search.hpp"
-#include "snackis/gui/queue_view.hpp"
+#include "snackis/gui/project_search.hpp"
+#include "snackis/gui/project_view.hpp"
 
 namespace snackis {
 namespace gui {
-  enum QueueCol {COL_PTR=0, COL_ID, COL_CREATED, COL_OWNER, COL_NAME};
+  enum ProjectCol {COL_PTR=0, COL_ID, COL_CREATED, COL_OWNER, COL_NAME};
 
-  static void edit(Ctx &ctx, const db::Rec<Queue> &rec) {
-    QueueView *fv(new QueueView(Queue(ctx, rec)));
+  static void edit(Ctx &ctx, const db::Rec<Project> &rec) {
+    ProjectView *fv(new ProjectView(Project(ctx, rec)));
     push_view(*fv);
   }
   
-  QueueSearch::QueueSearch(Ctx &ctx):
-    SearchView<Queue>(ctx,
-		     "Queue",
+  ProjectSearch::ProjectSearch(Ctx &ctx):
+    SearchView<Project>(ctx,
+		     "Project",
 		     gtk_list_store_new(5,
 					G_TYPE_POINTER,
 					G_TYPE_STRING,
@@ -58,46 +58,46 @@ namespace gui {
     focused = id_fld;
   }
 
-  void QueueSearch::find() {
+  void ProjectSearch::find() {
     size_t cnt(0);
     
     str id_sel(trim(gtk_entry_get_text(GTK_ENTRY(id_fld))));
     str text_sel(trim(gtk_entry_get_text(GTK_ENTRY(text_fld))));
     auto &peer_sel(peer_fld.selected);
     
-    for (auto key = ctx.db.queues_sort.recs.begin();
-	 key != ctx.db.queues_sort.recs.end();
+    for (auto key = ctx.db.projects_sort.recs.begin();
+	 key != ctx.db.projects_sort.recs.end();
 	 key++) {
-      auto &rec(db::get(ctx.db.queues, *key));
-      Queue queue(ctx, rec);
+      auto &rec(db::get(ctx.db.projects, *key));
+      Project project(ctx, rec);
 
-      if (!id_sel.empty() && find_ci(id_str(queue), id_sel) == str::npos) {
+      if (!id_sel.empty() && find_ci(id_str(project), id_sel) == str::npos) {
 	continue;
       }
 
       if (!text_sel.empty() &&
-	  find_ci(queue.name, text_sel) == str::npos &&
-	  find_ci(queue.info, text_sel) == str::npos) {
+	  find_ci(project.name, text_sel) == str::npos &&
+	  find_ci(project.info, text_sel) == str::npos) {
 	continue;
       }
 
       if (peer_sel &&
-	  queue.owner_id != peer_sel->id &&
-	  queue.peer_ids.find(peer_sel->id) == queue.peer_ids.end()) {
+	  project.owner_id != peer_sel->id &&
+	  project.peer_ids.find(peer_sel->id) == project.peer_ids.end()) {
 	continue;
       }
       
-      Peer own(get_peer_id(ctx, queue.owner_id));
+      Peer own(get_peer_id(ctx, project.owner_id));
 
       GtkTreeIter iter;
       gtk_list_store_append(store, &iter);
       gtk_list_store_set(store, &iter,
 			 COL_PTR, &rec,
-			 COL_ID, id_str(queue).c_str(),
+			 COL_ID, id_str(project).c_str(),
 			 COL_CREATED,
-			 fmt(queue.created_at, "%a %b %d, %H:%M").c_str(),
+			 fmt(project.created_at, "%a %b %d, %H:%M").c_str(),
 			 COL_OWNER, own.name.c_str(),
-			 COL_NAME, queue.name.c_str(),
+			 COL_NAME, project.name.c_str(),
 			 -1);
       cnt++;
     }

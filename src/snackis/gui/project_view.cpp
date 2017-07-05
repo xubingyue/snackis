@@ -12,7 +12,7 @@ namespace snackis {
 namespace gui {
   static void on_find_tasks(gpointer *_, ProjectView *v) {
     TaskSearch *ts = new TaskSearch(v->ctx);
-    ts->project.emplace(v->rec);
+    select<Project>(ts->project_fld, v->rec);
     push_view(*ts);
   }
 

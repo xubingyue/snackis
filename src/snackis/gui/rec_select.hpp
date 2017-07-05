@@ -28,10 +28,11 @@ namespace gui {
       if (v.on_change) { (*v.on_change)(); }
     }
 
-    if (!rec && v.selected) {
+    if (!rec) {
       gtk_entry_set_text(GTK_ENTRY(v.id_fld), "n/a");
       gtk_entry_set_text(GTK_ENTRY(v.name_fld), "");
       v.selected.reset();
+      gtk_widget_set_sensitive(v.clear_btn, false);
       if (v.on_change) { (*v.on_change)(); }
     }
   }

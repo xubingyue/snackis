@@ -8,6 +8,9 @@
 #include "snackis/core/uid.hpp"
 
 namespace snackis {
+  struct Feed;
+  struct Msg;
+  
   struct Project: IdRec {
     UId owner_id;
     Time created_at, changed_at;

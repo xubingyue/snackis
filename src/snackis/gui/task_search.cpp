@@ -6,7 +6,6 @@
 
 namespace snackis {
 namespace gui {
-  enum ProjectCol {COL_PROJECT_PTR=0, COL_PROJECT_ID, COL_PROJECT_NAME};
   enum TaskCol {COL_TASK_PTR=0, COL_TASK_ID, COL_TASK_CREATED, COL_TASK_OWNER,
 		COL_TASK_PROJECT, COL_TASK_NAME, COL_TASK_INFO};
 
@@ -32,19 +31,14 @@ namespace gui {
 
     if (tsk.done != done_sel) { return nullopt; }
 
-    auto project_sel(get_sel_rec<Project>(GTK_COMBO_BOX(v.project_fld)));
-
-    if (project_sel) {
-      auto id (*db::get(*project_sel, ctx.db.project_id));
-      if (tsk.project_id != id) { return nullopt; }
-    }
+    auto project_sel(v.project_fld.selected);
+    if (project_sel && tsk.project_id != project_sel->id) { return nullopt; }
 
     auto peer_sel(v.peer_fld.selected);
 
-    if (peer_sel) {
-      if (tsk.owner_id != peer_sel->id &&
-	  tsk.peer_ids.find(peer_sel->id) == tsk.peer_ids.end()) { return nullopt; }
-    }      
+    if (peer_sel &&
+	tsk.owner_id != peer_sel->id &&
+	tsk.peer_ids.find(peer_sel->id) == tsk.peer_ids.end()) { return nullopt; }
 
     Project prj(get_project_id(ctx, tsk.project_id));
     Peer own(get_peer_id(ctx, tsk.owner_id));
@@ -63,36 +57,6 @@ namespace gui {
     return tsk;
   }
     
-  static void init_projects(TaskSearch &v) {
-    GtkTreeIter iter;
-    gtk_list_store_append(v.project_store, &iter);
-    gtk_list_store_set(v.project_store, &iter,
-		       COL_PROJECT_PTR, nullptr,
-		       COL_PROJECT_ID, "",
-		       COL_PROJECT_NAME, "",
-		       -1);
-
-    for(auto key = v.ctx.db.projects_sort.recs.begin();
-	key != v.ctx.db.projects_sort.recs.end();
-	key++) {
-      auto &rec(db::get(v.ctx.db.projects, *key));
-      Project prj(v.ctx, rec);
-      gtk_list_store_append(v.project_store, &iter);
-      gtk_list_store_set(v.project_store, &iter,
-			 COL_PROJECT_PTR, &rec,
-			 COL_PROJECT_ID, to_str(prj.id).c_str(),
-			 COL_PROJECT_NAME, prj.name.c_str(),
-			 -1);
-    }
-
-    if (v.project) {
-      gtk_combo_box_set_active_id(GTK_COMBO_BOX(v.project_fld),
-				  to_str(v.project->id).c_str());
-    } else {
-      gtk_combo_box_set_active(GTK_COMBO_BOX(v.project_fld), 0);
-    }    
-  }
-
   static void edit(Ctx &ctx, const db::Rec<Task> &rec) {
     Task task(ctx, rec);
     TaskView *fv(new TaskView(task));
@@ -110,13 +74,10 @@ namespace gui {
 					G_TYPE_STRING,
 					G_TYPE_STRING),
 		     [&ctx](auto &rec) { edit(ctx, rec); }),
-    project_store(gtk_list_store_new(3, G_TYPE_POINTER,
-				     G_TYPE_STRING,
-				     G_TYPE_STRING)),
     id_fld(new_id_field()),
     text_fld(gtk_entry_new()),
     done_fld(gtk_check_button_new_with_label("Done")),
-    project_fld(new_combo_box(GTK_TREE_MODEL(project_store))),
+    project_fld(ctx),
     queue_fld(ctx),
     peer_fld(ctx)
   {
@@ -139,12 +100,10 @@ namespace gui {
     gtk_grid_attach(GTK_GRID(top_box), text_fld, 1, 1, 1, 1);
     gtk_grid_attach(GTK_GRID(top_box), done_fld, 2, 1, 1, 1);
 
-    init_projects(*this);
     lbl = gtk_label_new("Project");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_container_add(GTK_CONTAINER(fields), lbl);
-    gtk_widget_set_hexpand(project_fld, true);
-    gtk_container_add(GTK_CONTAINER(fields), project_fld);
+    gtk_container_add(GTK_CONTAINER(fields), project_fld.ptr());
 
     lbl = gtk_label_new("Queue");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);

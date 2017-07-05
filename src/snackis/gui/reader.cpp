@@ -10,6 +10,7 @@
 #include "snackis/gui/peer_search.hpp"
 #include "snackis/gui/post_search.hpp"
 #include "snackis/gui/post_view.hpp"
+#include "snackis/gui/project_search.hpp"
 #include "snackis/gui/project_view.hpp"
 #include "snackis/gui/queue_search.hpp"
 #include "snackis/gui/queue_view.hpp"
@@ -173,6 +174,17 @@ namespace gui {
 	return true;
       });
 
+    rdr.cmds.emplace("project-search", [&ctx](auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: project-search");
+	  return false;
+	}
+	
+	ProjectSearch *v = new ProjectSearch(ctx);
+	push_view(*v);
+	return true;
+      });
+    
     rdr.cmds.emplace("queue", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: queue");

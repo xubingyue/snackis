@@ -3,6 +3,7 @@
 
 #include "snackis/queue.hpp"
 #include "snackis/task.hpp"
+#include "snackis/gui/project_select.hpp"
 #include "snackis/gui/queue_list.hpp"
 #include "snackis/gui/rec_view.hpp"
 
@@ -10,8 +11,9 @@ namespace snackis {
 namespace gui {
   struct TaskView: RecView<Task> {
     GtkListStore *project_store;
-    GtkWidget *find_posts_btn, *post_btn, *project_fld, *edit_project_btn,
+    GtkWidget *find_posts_btn, *post_btn, *edit_project_btn,
       *name_fld, *done_fld, *info_fld;
+    ProjectSelect project_fld;
     QueueList queue_lst;
     
     TaskView(const Task &rec);
