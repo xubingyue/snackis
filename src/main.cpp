@@ -67,6 +67,10 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
   ctx->log = [](const str &msg) { gui::log(*gui::console, msg); };
   gtk_container_add(GTK_CONTAINER(gui::left_panel), gui::console->ptr());
 
+  error_handler = [ctx](auto &errors) {
+    for (auto e: errors) { log(*ctx, e->what); }
+  };
+  
   gui::root_view.emplace(*ctx);
   gui::push_view(*gui::root_view);
 

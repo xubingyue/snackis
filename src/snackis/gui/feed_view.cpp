@@ -15,16 +15,17 @@ namespace gui {
   }
 
   static void on_post(gpointer *_, FeedView *v) {
-    {
-      db::Trans trans(v->ctx);
-      v->save();
+    db::Trans trans(v->ctx);
+    TRY(try_save);
+    v->save();
+
+    if (try_save.errors.empty()) {
       db::commit(trans);
+      Post post(v->ctx);
+      post.feed_id = v->rec.id;
+      PostView *pv = new PostView(post);
+      push_view(*pv);
     }
-    
-    Post post(v->ctx);
-    post.feed_id = v->rec.id;
-    PostView *pv = new PostView(post);
-    push_view(*pv);
   }
   
   FeedView::FeedView(const Feed &feed):

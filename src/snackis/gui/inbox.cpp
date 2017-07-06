@@ -25,6 +25,7 @@ namespace gui {
     TRACE("Inbox accept");
     Ctx &ctx(v->ctx);
     db::Trans trans(ctx);
+    TRY(try_accept);
     auto iter(*get_sel_iter(GTK_TREE_VIEW(v->list)));
     auto &msg_rec(*get_sel_rec<Msg>(GTK_TREE_VIEW(v->list), iter));
     Msg msg(ctx, msg_rec);
@@ -65,16 +66,20 @@ namespace gui {
 	log(ctx, fmt("Invalid message type: %0", msg.type));
     }
 
-    db::erase(ctx.db.inbox, msg_rec);
-    db::commit(trans);
-    gtk_list_store_remove(v->msgs, &iter);    
-    sel_changed(*v);
+    if (try_accept.errors.empty()) {
+      db::erase(ctx.db.inbox, msg_rec);
+      db::commit(trans);
+      gtk_list_store_remove(v->msgs, &iter);    
+      sel_changed(*v);
+    }
   }
 
   static void on_reject(gpointer *_, Inbox *v) {
     TRACE("Inbox reject");
     Ctx &ctx(v->ctx);
     db::Trans trans(ctx);
+    TRY(try_reject);
+    
     auto iter(*get_sel_iter(GTK_TREE_VIEW(v->list)));
     auto &msg_rec(*get_sel_rec<Msg>(GTK_TREE_VIEW(v->list), iter));
     Msg msg(ctx, msg_rec);
@@ -91,10 +96,12 @@ namespace gui {
 	log(ctx, fmt("Invalid message type: %0", msg.type));
     }
 
-    db::erase(ctx.db.inbox, msg_rec);
-    db::commit(trans);
-    gtk_list_store_remove(v->msgs, &iter);
-    sel_changed(*v);
+    if (try_reject.errors.empty()) {
+      db::erase(ctx.db.inbox, msg_rec);
+      db::commit(trans);
+      gtk_list_store_remove(v->msgs, &iter);
+      sel_changed(*v);
+    }
   }
   
   static void on_select(gpointer *_, Inbox *v) {

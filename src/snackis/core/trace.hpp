@@ -9,11 +9,11 @@
 namespace snackis {
   struct Trace {
     const str msg;
-    const char *file;
+    const str file;
     const int line;
 
-    Trace(const str &msg, const char *file, int line);
-    ~Trace();
+    Trace(const str &msg, const str &file, int line);
+    virtual ~Trace();
   };
 
   str stack_trace();

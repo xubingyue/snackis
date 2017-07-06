@@ -6,7 +6,12 @@
 
 namespace snackis {
   static void fetch_loop(Ctx *ctx) {
+    error_handler = [ctx](auto &errors) {
+      for (auto e: errors) { log(*ctx, e->what); }
+    };
+
     while (!ctx->is_closing) {
+      TRY(try_imap);
       std::unique_lock<std::mutex> lock(ctx->loop_mutex);
       int64_t poll(0);
       
@@ -22,18 +27,19 @@ namespace snackis {
       }
 
       if (!ctx->is_closing) {
-	try {
-	  Imap imap(*ctx);
-	  fetch(imap);
-	} catch (const std::exception &e) {
-	  log(*ctx, fmt("Failed fetching email: %0", e.what()));
-	}
+	Imap imap(*ctx);
+	fetch(imap);
       }
     }
   }
 
   static void send_loop(Ctx *ctx) {
+    error_handler = [ctx](auto &errors) {
+      for (auto e: errors) { log(*ctx, e->what); }
+    };
+
     while (!ctx->is_closing) {
+      TRY(try_smtp);
       std::unique_lock<std::mutex> send_lock(ctx->loop_mutex);
       int64_t poll(0);
       
@@ -50,12 +56,8 @@ namespace snackis {
 
       std::unique_lock<std::recursive_mutex> lock(ctx->mutex);
       if (!ctx->is_closing && !ctx->db.outbox.recs.empty()) {
-	try {
-	  Smtp smtp(*ctx);
-	  send(smtp);
-	} catch (const std::exception &e) {
-	  log(*ctx, fmt("Failed sending email: %0", e.what()));
-	}
+	Smtp smtp(*ctx);
+	send(smtp);
       }
     }
   }
@@ -80,11 +82,13 @@ namespace snackis {
   
   void open(Ctx &ctx) {
     TRACE("Opening Snackis context");
+    db::Trans trans(ctx);
+    TRY(try_open);
+    
     open(dynamic_cast<db::Ctx &>(ctx));
     create_path(*get_val(ctx.settings.load_folder));
     create_path(*get_val(ctx.settings.save_folder));
     slurp(ctx);
-    db::Trans trans(ctx);
     opt<UId> me_id = get_val(ctx.settings.whoami);
     
     if (me_id) {
@@ -104,7 +108,7 @@ namespace snackis {
     }
     
     db::upsert(ctx.db.peers, ctx.whoami);
-    db::commit(trans);
+    if (try_open.errors.empty()) { db::commit(trans); }
     ctx.fetcher.emplace(fetch_loop, &ctx);
     ctx.sender.emplace(send_loop, &ctx);
   }
@@ -124,12 +128,17 @@ namespace snackis {
 
     if (!id) {
       db::Trans trans(ctx);
+      TRY(try_create);
       Queue queue(ctx);
       queue.name = "Todo";
       set_val(ctx.settings.todo_queue, queue.id);
       db::insert(ctx.db.queues, queue);
-      db::commit(trans);
-      log(ctx, "Initialized Todo queue");
+
+      if (try_create.errors.empty()) {
+	db::commit(trans);
+	log(ctx, "Initialized Todo queue");
+      }
+      
       return queue;
     }
     

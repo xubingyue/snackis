@@ -31,14 +31,16 @@ namespace gui {
 
   static void on_post(gpointer *_, ProjectView *v) {
     db::Trans trans(v->ctx);
+    TRY(try_save);
     v->save();
     
-    Post post(v->ctx);
-    post.feed_id = get_feed(v->rec).id;
-    PostView *pv = new PostView(post);
-    push_view(*pv);
-
-    db::commit(trans);
+    if (try_save.errors.empty()) {
+      db::commit(trans);
+      Post post(v->ctx);
+      post.feed_id = get_feed(v->rec).id;
+      PostView *pv = new PostView(post);
+      push_view(*pv);
+    }
   }
 
   ProjectView::ProjectView(const Project &rec):

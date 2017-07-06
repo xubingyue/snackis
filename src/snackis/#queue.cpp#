@@ -64,7 +64,7 @@ namespace snackis {
       feed.name = fmt("Queue %0", id_str(q));
       feed.visible = false;
       feed.peer_ids = q.peer_ids;
-      db::insert(ctx.db.feeds, feed);
+      db::inspert(ctx.db.feeds, feed);
       if (try_create.errors.empty()) { db::commit(trans); }
     }
     

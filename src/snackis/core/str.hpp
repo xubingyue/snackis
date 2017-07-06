@@ -26,7 +26,7 @@ namespace snackis {
   }
 
   size_t find_ci(const str &stack, const str& needle);
-  opt<int64_t> to_int64(const str &in);
+  int64_t to_int64(const str &in);
 
   template <typename T>
   str to_str(const T &in) {

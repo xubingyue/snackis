@@ -34,14 +34,11 @@ namespace snackis {
 			 *get_val(ctx.settings.imap_port)).c_str());
     curl_easy_setopt(client, CURLOPT_WRITEFUNCTION, on_read);
     //curl_easy_setopt(client, CURLOPT_VERBOSE, 1L);
-    
-    log(ctx, "Connecting to Imap...");
 
-    try {
-      noop(*this);
-    } catch (const ImapError &e) {
-      ERROR(Imap, fmt("Failed connecting: %0", e.what()));
-    }
+    log(ctx, "Connecting to Imap...");
+    
+    TRY(try_connect);
+    noop(*this);
   }
 
   Imap::~Imap() { curl_easy_cleanup(client); }
@@ -247,10 +244,11 @@ namespace snackis {
 
     int msg_cnt = 0;
     
-    for (auto tok = std::next(tokens.begin(), 2); tok != tokens.end(); tok++) {
-      db::Trans trans(ctx);
-      
-      try {
+    if (tokens.size() > 2) {
+      for (auto tok = std::next(tokens.begin(), 2); tok != tokens.end(); tok++) {
+	db::Trans trans(ctx);
+	TRY(try_msg);
+	
 	const str uid(*tok);
 	opt<Msg> msg = fetch_uid(imap, uid);
 	
@@ -260,15 +258,13 @@ namespace snackis {
 	} else {
 	  log(ctx, "Failed decoding message");
 	}
-
-	delete_uid(imap, uid);
-	db::commit(trans);
-      } catch (const std::exception &e) {
-	log(ctx, fmt("Error while processing message: %0", e.what()));
+	
+	if (try_msg.errors.empty()) {
+	  delete_uid(imap, uid);
+	  db::commit(trans);
+	}
       }
-    }
 
-    if (tokens.size() > 2) {
       expunge(imap);
     }
 

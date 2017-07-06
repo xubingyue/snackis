@@ -49,12 +49,9 @@ namespace snackis {
     //curl_easy_setopt(client, CURLOPT_VERBOSE, 1L);
     
     log(ctx, "Connecting to Smtp...");
-
-    try {
-      noop(*this);
-    } catch (const SmtpError &e) {
-      ERROR(Smtp, fmt("Failed connecting: %0", e.what()));
-    }
+    
+    TRY(try_connect);
+    noop(*this);
   }
 
   Smtp::~Smtp() { curl_easy_cleanup(client); }

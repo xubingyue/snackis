@@ -69,23 +69,21 @@ namespace gui {
   static void on_save(gpointer *_, Decrypt *v) {
     Ctx &ctx(v->ctx);
 
-    try {
-      const str
-	in_path(gtk_entry_get_text(GTK_ENTRY(v->source))),
-	out_path(gtk_entry_get_text(GTK_ENTRY(v->target)));
-      
-      log(ctx, fmt("Decrypting '%0' to '%1'...", in_path, out_path));
-      
-      decrypt(*v->peer_fld.selected,
-	      in_path, out_path,
-	      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->decode)));
-      
-      log(v->ctx, "Finished decrypting");
-    } catch (std::exception &e) {
-       log(v->ctx, fmt("Decryption failed: %0", e.what()));
-   }
+    const str
+      in_path(gtk_entry_get_text(GTK_ENTRY(v->source))),
+      out_path(gtk_entry_get_text(GTK_ENTRY(v->target)));
+    
+    log(ctx, fmt("Decrypting '%0' to '%1'...", in_path, out_path));
 
-    pop_view(*v);
+    TRY(try_decrypt);
+    decrypt(*v->peer_fld.selected,
+	    in_path, out_path,
+	    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->decode)));
+    
+    if (try_decrypt.errors.empty()) {
+      log(v->ctx, "Finished decrypting");
+      pop_view(*v);
+    }
   }
 
   static GtkWidget *init_source(Decrypt &v) {

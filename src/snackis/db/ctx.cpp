@@ -83,11 +83,9 @@ namespace db {
     file.close();
 
     Data ddata;
-    try {
-      ddata = crypt::decrypt(secret, &edata[0], edata.size());
-    } catch (const CryptError &e) {
-      return false;
-    }
+    TRY(try_login);
+    ddata = crypt::decrypt(secret, &edata[0], edata.size());
+    if (!try_login.errors.empty()) { return false; }
     
     if (str(ddata.begin(), ddata.end()) != pass) { return false; }
     ctx.secret = secret;

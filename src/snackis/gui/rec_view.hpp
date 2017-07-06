@@ -24,9 +24,10 @@ namespace gui {
   template <typename RecT>
   void on_save_rec(gpointer *_, RecView<RecT> *v) {
     Ctx &ctx(v->ctx);
+    TRY(try_save);
     db::Trans trans(ctx);
 
-    if (v->save()) {
+    if (v->save() && try_save.errors.empty()) {
       db::commit(trans);
       log(ctx, fmt("Saved %0", gtk_label_get_text(GTK_LABEL(v->label))));
       pop_view(*v);

@@ -21,6 +21,7 @@ namespace gui {
 
   template <typename RecT>
   void on_search_find(gpointer *_, SearchView<RecT> *v) {
+    TRY(try_find);
     gtk_list_store_clear(v->store);
     v->find();
     gtk_widget_show(v->list);
@@ -31,6 +32,7 @@ namespace gui {
 		      GtkTreePath *path,
 		      GtkTreeViewColumn *col,
 		      SearchView<RecT> *v) {
+    TRY(try_activate);
     auto rec(get_sel_rec<RecT>(GTK_TREE_VIEW(v->list)));
     CHECK(rec != nullptr, _);
     v->on_activate(*rec);

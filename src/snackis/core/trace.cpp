@@ -5,10 +5,11 @@
 #include "snackis/core/trace.hpp"
 
 namespace snackis {
-  thread_local std::vector<const Trace *> stack;
+  static thread_local std::vector<const Trace *> stack;
   
-  Trace::Trace(const str &msg, const char *file, int line):
-    msg(msg), file(file), line(line) {
+  Trace::Trace(const str &msg, const str &file, int line):
+    msg(msg), file(file), line(line)
+  {
     stack.push_back(this);
   }
 

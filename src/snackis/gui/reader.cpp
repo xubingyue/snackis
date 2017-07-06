@@ -111,9 +111,11 @@ namespace gui {
 	}
 	
 	db::Trans trans(ctx);
+	TRY(try_invite);
 	Invite inv(ctx, args[0]);
 	load(ctx.db.invites, inv);
-	send(inv);	
+	send(inv);
+	if (!try_invite.errors.empty()) { return false; }
 	log(ctx, fmt("Saved new invite: %0", inv.to));
 	db::commit(trans);
 	return true;
@@ -327,28 +329,24 @@ namespace gui {
 
   static bool exec_cmd(Reader &rdr, const str &in) {
     Ctx &ctx(rdr.ctx);
+    TRY(try_exec);
 
-    try {
-      auto parsed(parse_cmd(rdr, in));
-      auto cmd(find_cmd(rdr, parsed.first));
+    auto parsed(parse_cmd(rdr, in));
+    auto cmd(find_cmd(rdr, parsed.first));
       
-      if (!cmd){
-	log(ctx, fmt("Unknown command: '%0'", in));
-	return false;
-      }
-      
-      if (!(*cmd)(parsed.second)) { return false; }
-      
-      if (!in.empty()) {
-	rdr.last_cmd = in;
-	gtk_entry_set_placeholder_text(GTK_ENTRY(rdr.entry), in.c_str());
-      }
-    } catch (const std::exception &e) {
-      log(ctx, fmt("Error while executing command '%0':\n%1", in, e.what()));
+    if (!cmd){
+      log(ctx, fmt("Unknown command: '%0'", in));
       return false;
     }
+      
+    if (!(*cmd)(parsed.second)) { return false; }
+      
+    if (!in.empty()) {
+      rdr.last_cmd = in;
+      gtk_entry_set_placeholder_text(GTK_ENTRY(rdr.entry), in.c_str());
+    }
     
-    return true;
+    return try_exec.errors.empty();
   }
 
   static void on_activate(GtkWidget *_, Reader *rdr) {

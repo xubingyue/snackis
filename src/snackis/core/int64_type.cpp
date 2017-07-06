@@ -21,10 +21,7 @@ namespace snackis {
     std::vector<char> data(len);
     in.read(&data[0], len);
     const str str_val(data.begin(), data.end());
-    auto out(to_int64(str_val));
-    if (!out) { ERROR(Core, "Failed reading int64-value"); }
-    return *out;
-    
+    return to_int64(str_val);    
   }
   
   void Int64Type::write(const int64_t &val, std::ostream &out) const {

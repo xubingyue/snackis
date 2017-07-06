@@ -60,7 +60,7 @@ namespace gui {
     if (!port) {
       log(ctx, fmt("Invalid Imap port: %0", port_str));
     } else {
-      set_val(ctx.settings.imap_port, *port);
+      set_val(ctx.settings.imap_port, port);
     }
 
     set_val(ctx.settings.imap_user,
@@ -69,13 +69,7 @@ namespace gui {
 	    str(gtk_entry_get_text(GTK_ENTRY(v.imap_pass))));
 
     const str poll_str(gtk_entry_get_text(GTK_ENTRY(v.imap_poll)));
-    auto poll(to_int64(poll_str));
-    
-    if (!poll) {
-      log(ctx, fmt("Invalid Imap poll: %0", poll_str));
-    } else {
-      set_val(ctx.settings.imap_poll, *poll);
-    }
+    set_val(ctx.settings.imap_poll, to_int64(poll_str));
   }
 
   static void copy_smtp(Setup &v) {
@@ -89,7 +83,7 @@ namespace gui {
     if (!port) {
       log(ctx, fmt("Invalid Smtp port: %0", port_str));
     } else {
-      set_val(ctx.settings.smtp_port, *port);
+      set_val(ctx.settings.smtp_port, port);
     }
 
     set_val(ctx.settings.smtp_user,
@@ -98,19 +92,14 @@ namespace gui {
 	    str(gtk_entry_get_text(GTK_ENTRY(v.smtp_pass))));
 
     const str poll_str(gtk_entry_get_text(GTK_ENTRY(v.smtp_poll)));
-    auto poll(to_int64(poll_str));
-    
-    if (!poll) {
-      log(ctx, fmt("Invalid Smtp poll: %0", poll_str));
-    } else {
-      set_val(ctx.settings.smtp_poll, *poll);
-    }
+    set_val(ctx.settings.smtp_poll, to_int64(poll_str));
   }
 
   static void on_save(gpointer *_, Setup *v) {
     Ctx &ctx(v->ctx);
-    
     db::Trans trans(ctx);
+    TRY(try_save);
+    
     Peer &me(whoami(ctx));
     me.name = gtk_entry_get_text(GTK_ENTRY(v->name));
     me.email = gtk_entry_get_text(GTK_ENTRY(v->email));
@@ -131,9 +120,11 @@ namespace gui {
       ctx.send_cond.notify_one();
     }
 
-    db::commit(trans);
-    log(v->ctx, "Saved setup");
-    pop_view(*v);
+    if (try_save.errors.empty()) {
+      db::commit(trans);
+      log(v->ctx, "Saved setup");
+      pop_view(*v);
+    }
   }
   
   static void on_imap(gpointer *_, Setup *v) {
@@ -141,12 +132,9 @@ namespace gui {
     db::Trans trans(v->ctx);
     copy_imap(*v);
 
-    try {
-      Imap imap(ctx);
-      log(ctx, "Imap Ok");
-    } catch (const ImapError &e) {
-      log(ctx, e.what());
-    }
+    TRY(try_imap);
+    Imap imap(ctx);
+    if (try_imap.errors.empty()) { log(ctx, "Imap Ok"); }
   }
 
   static void on_smtp(gpointer *_, Setup *v) {
@@ -154,12 +142,9 @@ namespace gui {
     db::Trans trans(v->ctx);
     copy_smtp(*v);
 
-    try {
-      Smtp smtp(ctx);
-      log(ctx, "Smtp Ok");
-    } catch (const SmtpError &e) {
-      log(ctx, e.what());
-    }
+    TRY(try_smtp);
+    Smtp smtp(ctx);
+    if (try_smtp.errors.empty()) { log(ctx, "Smtp Ok"); }
   }
 
   static GtkWidget *init_load_folder(Setup &v) {

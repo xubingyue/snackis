@@ -29,12 +29,8 @@ namespace snackis {
     return (found == stack.end()) ? str::npos : found - stack.begin();
   }
   
-  opt<int64_t> to_int64(const str &in) {
-    try {
-      return std::stoll(in);
-    } catch (const std::exception &e) {
-      return nullopt;
-    }
+  int64_t to_int64(const str &in) {
+    return strtoll(in.c_str(), nullptr, 10);
   }
 
   str bin_hex(const unsigned char *in, size_t len) {

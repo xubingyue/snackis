@@ -68,24 +68,22 @@ namespace gui {
 
   static void on_save(gpointer *_, Encrypt *v) {
     Ctx &ctx(v->ctx);
+    
+    const str
+      in_path(gtk_entry_get_text(GTK_ENTRY(v->source))),
+      out_path(gtk_entry_get_text(GTK_ENTRY(v->target)));
+    
+    log(ctx, fmt("Encrypting from '%0' to '%1'...", in_path, out_path));
 
-    try {
-      const str
-	in_path(gtk_entry_get_text(GTK_ENTRY(v->source))),
-	out_path(gtk_entry_get_text(GTK_ENTRY(v->target)));
-      
-      log(ctx, fmt("Encrypting from '%0' to '%1'...", in_path, out_path));
-      
-      encrypt(*v->peer_fld.selected,
-	      in_path, out_path,
-	      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->encode)));
-      
+    TRY(try_encrypt);
+    encrypt(*v->peer_fld.selected,
+	    in_path, out_path,
+	    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->encode)));
+    
+    if (try_encrypt.errors.empty()) {
       log(v->ctx, "Finished encrypting");
-    } catch (const std::exception &e) {
-      log(v->ctx, fmt("Encryption failed: %0", e.what()));
+      pop_view(*v);
     }
-
-    pop_view(*v);
   }
 
   static GtkWidget *init_source(Encrypt &v) {
