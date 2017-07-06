@@ -1,3 +1,4 @@
+#include <cctype>
 #include "snackis/ctx.hpp"
 #include "snackis/invite.hpp"
 #include "snackis/core/fmt.hpp"
@@ -21,6 +22,38 @@
 
 namespace snackis {
 namespace gui {
+  static gboolean on_key(gpointer _, GdkEventKey *ev, Reader *rdr) {
+    if (ev->keyval == GDK_KEY_BackSpace) { return false; }
+    const str in(gtk_entry_get_text(GTK_ENTRY(rdr->entry)));
+    if (in.empty()) { return true; }
+    auto fnd(rdr->cmds.lower_bound(in));
+    if (fnd == rdr->cmds.end()) { return true; }
+    const str fnd_str(fnd->first);
+    if (fnd_str.find(in) == str::npos) { return true; }
+    size_t i(fnd_str.size());
+      
+    while (fnd != rdr->cmds.end() && fnd->first.find(in) != str::npos) {
+      const str nxt_str(fnd->first);
+      size_t j(0);
+      
+      while (j < fnd_str.size() && j < nxt_str.size()) {
+	if (fnd_str[j] != nxt_str[j]) { break; }
+	j++;
+      }
+      
+      i = std::min(i, j);
+      fnd++;
+    }
+      
+    if (i > in.size()) {
+      gtk_entry_set_text(GTK_ENTRY(rdr->entry), fnd_str.substr(0, i).c_str());
+      gtk_editable_set_position(GTK_EDITABLE(rdr->entry), i);
+      return true;
+    }
+      
+    return false;
+  }
+  
   static void init_cmds(Reader &rdr) {
     Ctx &ctx(rdr.ctx);
 
@@ -363,6 +396,11 @@ namespace gui {
     gtk_widget_set_margin_start(entry, 5);
     gtk_widget_set_margin_end(entry, 5);
     g_signal_connect(entry, "activate", G_CALLBACK(on_activate), this);
+
+    g_signal_connect(G_OBJECT(entry),
+		     "key_release_event",
+		     G_CALLBACK(on_key),
+		     this);
   }
   
   GtkWidget *Reader::ptr() {
