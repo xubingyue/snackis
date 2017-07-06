@@ -213,7 +213,7 @@ namespace snackis {
 	  if (q) { db::insert(ctx.db.queue_tasks, QueueTask(*q, prev)); }
 	}
 
-	for (auto &id: queues.first) {
+	for (auto &id: queues.second) {
 	  auto q(find_queue_id(ctx, id));
 	  if (q) { db::erase(ctx.db.queue_tasks, QueueTask(*q, prev)); }
 	}

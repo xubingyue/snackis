@@ -40,8 +40,8 @@ namespace gui {
   GtkWidget *new_id_field() {
     GtkWidget *w(gtk_entry_new());
     gtk_entry_set_max_length(GTK_ENTRY(w), ID_LEN);
-    gtk_entry_set_width_chars(GTK_ENTRY(w), ID_LEN);
-    gtk_entry_set_max_width_chars(GTK_ENTRY(w), ID_LEN);
+    gtk_entry_set_width_chars(GTK_ENTRY(w), ID_LEN+1);
+    gtk_entry_set_max_width_chars(GTK_ENTRY(w), ID_LEN+1);
     return w;
   }
 
