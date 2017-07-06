@@ -56,7 +56,7 @@ namespace gui {
 	return true;
       });
 
-    rdr.cmds.emplace("feed", [&ctx](auto args) {
+    rdr.cmds.emplace("feed-new", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: feed");
 	  return false;
@@ -141,7 +141,7 @@ namespace gui {
 	return true;
       });
     
-    rdr.cmds.emplace("post", [&ctx](auto args) {
+    rdr.cmds.emplace("post-new", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: post");
 	  return false;
@@ -163,7 +163,7 @@ namespace gui {
 	return true;
       });
 
-    rdr.cmds.emplace("project", [&ctx](auto args) {
+    rdr.cmds.emplace("project-new", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: project");
 	  return false;
@@ -185,7 +185,7 @@ namespace gui {
 	return true;
       });
     
-    rdr.cmds.emplace("queue", [&ctx](auto args) {
+    rdr.cmds.emplace("queue-new", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: queue");
 	  return false;
@@ -243,7 +243,7 @@ namespace gui {
 	return true;
       });
 
-    rdr.cmds.emplace("task", [&ctx](auto args) {
+    rdr.cmds.emplace("task-new", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: task");
 	  return false;
