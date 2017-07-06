@@ -1,3 +1,8 @@
+* move handle_msg from imap to msg
+** change to return true if handled automatically
+** add process_inbox()
+*** call handle_msg for each and delete if handled
+*** call from reader before inbox
 * add reader tab-completion
 * switch Smtp to one trans per msg
 ** pick first and process
