@@ -8,7 +8,7 @@
 namespace snackis {
   const str
   Msg::INVITE("invite"), Msg::ACCEPT("accept"), Msg::REJECT("reject"),
-    Msg::POST("post"), Msg::TASK("task");
+    Msg::POST("post"), Msg::TASK("task"), Msg::QUEUE("queue");
 
   Msg::Msg(Ctx &ctx, const str &type): IdRec(ctx), type(type) {
     Peer &me(whoami(ctx));

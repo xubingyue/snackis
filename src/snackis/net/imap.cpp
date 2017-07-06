@@ -182,7 +182,25 @@ namespace snackis {
       db::insert(ctx.db.inbox, msg);
     }
   }
-  
+
+  static void handle_queue_msg(Imap &imap, const Msg &msg) {
+    Ctx &ctx(imap.ctx);
+    opt<Queue> q_fnd(find_queue_id(ctx, *db::get(msg.queue, ctx.db.queue_id)));
+    Peer pr(get_peer_id(ctx, msg.from_id));
+	
+    if (q_fnd) {
+      if (pr.id == q_fnd->owner_id) {
+	copy(*q_fnd, msg);
+	db::update(ctx.db.queues, *q_fnd);
+	log(ctx, fmt("Queue %0 updated", id_str(*q_fnd)));
+      } else {
+	log(ctx, fmt("Unautorized queue update from %0", msg.from));
+      }
+    } else {
+      db::insert(ctx.db.inbox, msg);
+    }
+  }
+
   static void handle_msg(Imap &imap, const Msg &msg) {
     Ctx &ctx(imap.ctx);
 
@@ -203,6 +221,8 @@ namespace snackis {
       handle_post_msg(imap, msg);
     } else if (msg.type == Msg::TASK) {
       handle_task_msg(imap, msg);
+    } else if (msg.type == Msg::QUEUE) {
+      handle_queue_msg(imap, msg);
     } else {
       db::insert(ctx.db.inbox, msg);
     }

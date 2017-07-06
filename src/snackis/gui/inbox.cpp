@@ -5,6 +5,7 @@
 #include "snackis/gui/reader.hpp"
 #include "snackis/gui/peer_view.hpp"
 #include "snackis/gui/project_view.hpp"
+#include "snackis/gui/queue_view.hpp"
 
 namespace snackis {
 namespace gui {
@@ -44,12 +45,8 @@ namespace gui {
       db::insert(ctx.db.posts, ps);
       auto fv(new FeedView(fd));
       push_view(*fv);
-
       auto pr(get_peer_id(ctx, msg.from_id));
-      log(ctx, fmt("New post %0 by %1:\n%2",
-		   id_str(ps),
-		   pr.name,
-		   ps.body));
+      log(ctx, fmt("New post %0 by %1:\n%2", id_str(ps), pr.name, ps.body));
     } else if (msg.type == Msg::TASK) {
       Project prj(msg);
       db::insert(ctx.db.projects, prj);
@@ -57,11 +54,13 @@ namespace gui {
       db::insert(ctx.db.tasks, tsk);
       auto pv(new ProjectView(prj));
       push_view(*pv);
-      
-      log(ctx, fmt("New task %0:\n%1\n%2",
-		   id_str(tsk),
-		   tsk.name,
-		   tsk.info));
+      log(ctx, fmt("New task %0:\n%1\n%2", id_str(tsk), tsk.name, tsk.info));
+    } else if (msg.type == Msg::QUEUE) {
+      Queue q(msg);
+      db::insert(ctx.db.queues, q);
+      auto qv(new QueueView(q));
+      push_view(*qv);
+      log(ctx, fmt("New queue %0:\n%1\n%2", id_str(q), q.name, q.info));
     } else {
 	log(ctx, fmt("Invalid message type: %0", msg.type));
     }
@@ -85,7 +84,8 @@ namespace gui {
 	log(ctx, fmt("Invite rejected: %0", msg.from));
     } else if (msg.type == Msg::ACCEPT ||
 	       msg.type == Msg::POST ||
-	       msg.type == Msg::TASK) {
+	       msg.type == Msg::TASK ||
+	       msg.type == Msg::QUEUE) {
       // Nothing to do here
     } else {
 	log(ctx, fmt("Invalid message type: %0", msg.type));
@@ -143,6 +143,13 @@ namespace gui {
 	gtk_list_store_set(v.msgs, &iter,
 			   COL_INFO,
 			   fmt("New project:\n%0\n%1",
+			       *db::get(msg.project, ctx.db.project_name),
+			       *db::get(msg.project, ctx.db.project_info)).c_str(),
+			   -1);
+      } else if (msg.type == Msg::QUEUE) {
+	gtk_list_store_set(v.msgs, &iter,
+			   COL_INFO,
+			   fmt("New queue:\n%0\n%1",
 			       *db::get(msg.project, ctx.db.project_name),
 			       *db::get(msg.project, ctx.db.project_info)).c_str(),
 			   -1);

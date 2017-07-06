@@ -31,10 +31,12 @@ namespace snackis {
     QueueTask(Ctx &ctx, const db::Rec<QueueTask> &rec);   
   };
   
+  void copy(Queue &dst, const Msg &src);
   opt<Queue> find_queue_id(Ctx &ctx, UId id);
   Queue get_queue_id(Ctx &ctx, UId id);
   bool add_task(Queue &q, Task &tsk);
   Feed get_feed(const Queue &q);
+  void send(const Queue &q);
 }
 
 #endif

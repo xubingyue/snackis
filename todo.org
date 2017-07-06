@@ -1,7 +1,3 @@
-* send queue messages
-** copy send(task)
-** add imap support
-** add inbox support
 * add reader tab-completion
 * switch Smtp to one trans per msg
 ** pick first and process
