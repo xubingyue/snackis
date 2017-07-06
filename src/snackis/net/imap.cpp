@@ -113,38 +113,25 @@ namespace snackis {
     if (fd_fnd) {
       opt<Post> ps_fnd(find_post_id(ctx, *db::get(msg.post, ctx.db.post_id)));
       Peer pr(get_peer_id(ctx, msg.from_id));
-	
-      if (ps_fnd) {
-	if (fd_fnd->owner_id == pr.id) {
-	  copy(*fd_fnd, msg);
-	  db::update(ctx.db.feeds, *fd_fnd);
-	}
 
-	
+      if (fd_fnd->owner_id == pr.id) {
+	copy(*fd_fnd, msg);
+	db::update(ctx.db.feeds, *fd_fnd);
+      }
+
+      if (ps_fnd) {
 	if (ps_fnd->owner_id == pr.id) {
 	  copy(*ps_fnd, msg);
 	  db::update(ctx.db.posts, *ps_fnd);
-	    
 	  log(ctx, fmt("Post %0 updated by %1:\n%2",
-		       id_str(*ps_fnd),
-		       pr.name,
-		       ps_fnd->body));
+		       id_str(*ps_fnd), pr.name, ps_fnd->body));
 	} else {
-	  log(ctx, fmt("Skipping unautorized post update from %0", msg.from));
+	  log(ctx, fmt("Unautorized post update from %0", msg.from));
 	}
       } else {
-	if (fd_fnd->owner_id == pr.id) {
-	  copy(*fd_fnd, msg);
-	  db::update(ctx.db.feeds, *fd_fnd);
-	}
-	
 	Post ps(msg);
 	db::insert(ctx.db.posts, ps);
-	  
-	log(ctx, fmt("New post %0 by %1:\n%2",
-		     id_str(ps),
-		     pr.name,
-		     ps.body));
+	log(ctx, fmt("New post %0 by %1:\n%2", id_str(ps), pr.name, ps.body));
       }
     } else {
       db::insert(ctx.db.inbox, msg);
@@ -158,30 +145,23 @@ namespace snackis {
     if (prj_fnd) {
       opt<Task> tsk_fnd(find_task_id(ctx, *db::get(msg.task, ctx.db.task_id)));
       Peer pr(get_peer_id(ctx, msg.from_id));
-	
-      if (tsk_fnd) {
-	if (prj_fnd->owner_id == pr.id) {
-	  copy(*prj_fnd, msg);
-	  db::update(ctx.db.projects, *prj_fnd);
-	}
 
+      if (prj_fnd->owner_id == pr.id) {
+	copy(*prj_fnd, msg);
+	db::update(ctx.db.projects, *prj_fnd);
+      }
+
+      if (tsk_fnd) {
 	if (tsk_fnd->owner_id == pr.id) {
 	  copy(*tsk_fnd, msg);
 	  db::update(ctx.db.tasks, *tsk_fnd);
-	  
 	  log(ctx, fmt("Task %0 updated", id_str(*tsk_fnd)));
 	} else {
 	  log(ctx, fmt("Unautorized task update from %0", msg.from));
 	}
       } else {
-	if (prj_fnd->owner_id == pr.id) {
-	  copy(*prj_fnd, msg);
-	  db::update(ctx.db.projects, *prj_fnd);
-	}
-	  
 	Task tsk(msg);
-	db::insert(ctx.db.tasks, tsk);
-	  
+	db::insert(ctx.db.tasks, tsk);	
 	log(ctx, fmt("New task %0:\n%1\n%2",
 		     id_str(tsk),
 		     tsk.name,
