@@ -1,3 +1,5 @@
+* add feed quick search
+** extract search(SearchView)
 * move handle-logic from imap to inbox
 ** show everything in inbox
 *** open form and allow accept/reject of changes
@@ -5,8 +7,6 @@
 ** modify send-functions to send to owner_id if != whoami
 *** replaces if in task/post views
 ** check peer membership
-** propagate post to local peers except sender
-*** only if owner of post or owner of feed
 * add project/task tags like feed/post
 ** replaces queues
 ** tag tasks with todo instead

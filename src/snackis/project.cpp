@@ -26,11 +26,20 @@ namespace snackis {
 
   void copy(Project &dst, const Msg &src) {
     Ctx &ctx(src.ctx);
-    ctx.db.project_id.copy(dst, src.project);
-    ctx.db.project_owner_id.copy(dst, src.project);
-    ctx.db.project_name.copy(dst, src.project);
-    ctx.db.project_info.copy(dst, src.project);
-    ctx.db.project_active.copy(dst, src.project);
+    const Project prj(get_project_id(ctx, *db::get(src.project, ctx.db.project_id)));
+
+    dst.id = prj.id;
+    dst.owner_id = prj.owner_id;
+    dst.name = prj.name;
+    dst.info = prj.info;
+    dst.active = prj.active;
+    
+    auto my_pid(whoami(ctx).id);
+    std::copy_if(prj.peer_ids.begin(), prj.peer_ids.end(),
+		 std::inserter(dst.peer_ids, dst.peer_ids.end()),
+		 [&ctx, &my_pid](auto &pid) {
+		   return find_peer_id(ctx, pid) && pid != my_pid;
+		 });
     dst.peer_ids.insert(src.from_id);
   }
 

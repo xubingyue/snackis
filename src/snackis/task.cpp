@@ -29,12 +29,21 @@ namespace snackis {
 
   void copy(Task &dst, const Msg &src) {
     Ctx &ctx(src.ctx);
-    ctx.db.task_id.copy(dst, src.task);
-    ctx.db.task_project_id.copy(dst, src.task);
-    ctx.db.task_owner_id.copy(dst, src.task);
-    ctx.db.task_name.copy(dst, src.task);
-    ctx.db.task_info.copy(dst, src.task);
-    ctx.db.task_done.copy(dst, src.task);
+    const Task tsk(get_task_id(ctx, *db::get(src.task, ctx.db.task_id)));
+
+    dst.id = tsk.id;
+    dst.project_id = tsk.project_id;
+    dst.owner_id = tsk.owner_id;
+    dst.name = tsk.name;
+    dst.info = tsk.info;
+    dst.done = tsk.done;
+
+    auto my_pid(whoami(ctx).id);
+    std::copy_if(tsk.peer_ids.begin(), tsk.peer_ids.end(),
+		 std::inserter(dst.peer_ids, dst.peer_ids.end()),
+		 [&ctx, &my_pid](auto &pid) {
+		   return find_peer_id(ctx, pid) && pid != my_pid;
+		 });
     dst.peer_ids.insert(src.from_id);
   }
   

@@ -27,11 +27,20 @@ namespace snackis {
 
   void copy(Post &dst, const Msg &src) {
     Ctx &ctx(src.ctx);
-    ctx.db.post_id.copy(dst, src.post);
-    ctx.db.post_feed_id.copy(dst, src.post);
-    ctx.db.post_owner_id.copy(dst, src.post);
-    ctx.db.post_body.copy(dst, src.post);
-    ctx.db.post_tags.copy(dst, src.post);
+    Post ps(get_post_id(ctx, *db::get(src.post, ctx.db.post_id)));
+
+    dst.id = ps.id;
+    dst.feed_id = ps.feed_id;
+    dst.owner_id = ps.owner_id;
+    dst.body = ps.body;
+    dst.tags = ps.tags;
+
+    auto my_pid(whoami(ctx).id);
+    std::copy_if(ps.peer_ids.begin(), ps.peer_ids.end(),
+		 std::inserter(dst.peer_ids, dst.peer_ids.end()),
+		 [&ctx, &my_pid](auto &pid) {
+		   return find_peer_id(ctx, pid) && pid != my_pid;
+		 });
     dst.peer_ids.insert(src.from_id);    
   }
 
@@ -40,6 +49,16 @@ namespace snackis {
     set(rec, ctx.db.post_id, id);
     if (!load(ctx.db.posts, rec)) { return nullopt; }
     return Post(ctx, rec);
+  }
+
+  Post get_post_id(Ctx &ctx, UId id) {
+    auto found(find_post_id(ctx, id));
+    
+    if (!found) {
+      ERROR(Db, fmt("Post id not found: %0", id));
+    }
+
+    return *found;
   }
 
   Feed get_reply_feed(const Post &ps) {

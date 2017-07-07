@@ -25,13 +25,22 @@ namespace snackis {
 
   void copy(Feed &dst, const Msg &src) {
     Ctx &ctx(src.ctx);
-    ctx.db.feed_id.copy(dst, src.feed);
-    ctx.db.feed_owner_id.copy(dst, src.feed);
-    ctx.db.feed_name.copy(dst, src.feed);
-    ctx.db.feed_info.copy(dst, src.feed);
-    ctx.db.feed_active.copy(dst, src.feed);
-    ctx.db.feed_visible.copy(dst, src.feed);
-    ctx.db.feed_tags.copy(dst, src.feed);
+    Feed fd(get_feed_id(ctx, *db::get(src.feed, ctx.db.feed_id)));
+
+    dst.id = fd.id;
+    dst.owner_id = fd.owner_id;
+    dst.name = fd.name;
+    dst.info = fd.info;
+    dst.active = fd.active;
+    dst.visible = fd.visible;
+    dst.tags = fd.tags;
+
+    auto my_pid(whoami(ctx).id);
+    std::copy_if(fd.peer_ids.begin(), fd.peer_ids.end(),
+		 std::inserter(dst.peer_ids, dst.peer_ids.end()),
+		 [&ctx, &my_pid](auto &pid) {
+		   return find_peer_id(ctx, pid) && pid != my_pid;
+		 });
     dst.peer_ids.insert(src.from_id);
   }
 
