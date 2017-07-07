@@ -29,10 +29,10 @@ namespace gui {
     auto fnd(rdr->cmds.lower_bound(in));
     if (fnd == rdr->cmds.end()) { return true; }
     const str fnd_str(fnd->first);
-    if (fnd_str.find(in) == str::npos) { return true; }
+    if (fnd_str.find(in) != 0) { return true; }
     size_t i(fnd_str.size());
       
-    while (fnd != rdr->cmds.end() && fnd->first.find(in) != str::npos) {
+    while (fnd != rdr->cmds.end() && fnd->first.find(in) == 0) {
       const str nxt_str(fnd->first);
       size_t j(0);
       
