@@ -33,7 +33,6 @@ namespace snackis {
     ctx.db.feed_visible.copy(dst, src.feed);
     ctx.db.feed_tags.copy(dst, src.feed);
     dst.peer_ids.insert(src.from_id);
-    dst.peer_ids.erase(whoami(ctx).id);    
   }
 
   opt<Feed> find_feed_id(Ctx &ctx, UId id) {

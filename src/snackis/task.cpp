@@ -36,7 +36,6 @@ namespace snackis {
     ctx.db.task_info.copy(dst, src.task);
     ctx.db.task_done.copy(dst, src.task);
     dst.peer_ids.insert(src.from_id);
-    dst.peer_ids.erase(whoami(ctx).id);
   }
   
   opt<Task> find_task_id(Ctx &ctx, UId id) {

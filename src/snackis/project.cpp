@@ -32,7 +32,6 @@ namespace snackis {
     ctx.db.project_info.copy(dst, src.project);
     ctx.db.project_active.copy(dst, src.project);
     dst.peer_ids.insert(src.from_id);
-    dst.peer_ids.erase(whoami(ctx).id);
   }
 
   opt<Project> find_project_id(Ctx &ctx, UId id) {

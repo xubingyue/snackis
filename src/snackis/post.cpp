@@ -33,7 +33,6 @@ namespace snackis {
     ctx.db.post_body.copy(dst, src.post);
     ctx.db.post_tags.copy(dst, src.post);
     dst.peer_ids.insert(src.from_id);    
-    dst.peer_ids.erase(whoami(ctx).id);
   }
 
   opt<Post> find_post_id(Ctx &ctx, UId id) {
