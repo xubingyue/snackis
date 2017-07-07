@@ -36,9 +36,10 @@ namespace snackis {
     return Post(ctx, rec);
   }
 
-  void set_feed(Post &pst, Feed &fd) {
-    pst.feed_id = fd.id;
-    pst.peer_ids = fd.peer_ids;
+  void set_feed(Post &ps, Feed &fd) {
+    ps.feed_id = fd.id;
+    ps.peer_ids = fd.peer_ids;
+    std::copy(fd.tags.begin(), fd.tags.end(), std::inserter(ps.tags, ps.tags.end()));
   }
 
   void send(const Post &pst) {

@@ -1,12 +1,8 @@
-* add feed tags
-** search fld + col
-** feed view fld
-** init posts and diff/patch on post update
 * add post replies
 ** get_reply_feed(post, owner)
 *** create with owner if not exists
 ** add 'find replies' and 'new reply'
-** handle new feeds for existing projects/tasks/posts automagically
+** handle new feeds for existing projects/tasks/posts in imap
 *** make sure that msg.feed.owner_id == project/task/post.owner_id
 ** init/update post feed-tags
 * add project/task tags like feed/post

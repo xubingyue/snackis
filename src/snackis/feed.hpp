@@ -16,6 +16,7 @@ namespace snackis {
     Time created_at, changed_at;
     str name, info;
     bool active, visible;
+    std::set<str> tags;
     std::set<UId> peer_ids;
     
     Feed(Ctx &ctx, UId id=UId(true));

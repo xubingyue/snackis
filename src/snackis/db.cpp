@@ -42,13 +42,14 @@ namespace snackis {
     feed_changed_at("changed_at", time_type,    &Feed::changed_at),
     feed_name(      "name",       str_type,     &Feed::name),
     feed_info(      "into",       str_type,     &Feed::info),
+    feed_tags(      "tags",       str_set_type, &Feed::tags),
     feed_active(    "active",     bool_type,    &Feed::active),
     feed_visible(   "visible",    bool_type,    &Feed::visible),
     feed_peer_ids(  "peer_ids",   uid_set_type, &Feed::peer_ids),
     
     feeds(ctx, "feeds", {&feed_id},
 	  {&feed_owner_id, &feed_created_at, &feed_changed_at, &feed_name,
-	      &feed_info, &feed_active, &feed_visible, &feed_peer_ids}),
+	      &feed_info, &feed_tags, &feed_active, &feed_visible, &feed_peer_ids}),
 
     feeds_sort(ctx, "feeds_sort", {&feed_created_at, &feed_id}, {}),
 		  

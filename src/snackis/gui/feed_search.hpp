@@ -8,7 +8,7 @@
 namespace snackis {
 namespace gui {
   struct FeedSearch: SearchView<Feed> {
-    GtkWidget *id_fld, *text_fld, *active_fld;
+    GtkWidget *id_fld, *active_fld, *tags_fld, *text_fld;
     PeerSelect peer_fld;
 
     FeedSearch(Ctx &ctx);

@@ -8,7 +8,8 @@
 namespace snackis {
 namespace gui {
   struct FeedView: RecView<Feed> {
-    GtkWidget *find_posts_btn, *post_btn, *name_fld, *active_fld, *info_fld;
+    GtkWidget *find_posts_btn, *post_btn, *name_fld, *tags_fld, *active_fld,
+      *info_fld;
     PeerList peer_lst;
     
     FeedView(const Feed &feed);
