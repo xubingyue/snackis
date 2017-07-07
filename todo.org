@@ -2,13 +2,28 @@
 ** show everything in inbox
 *** open form and allow accept/reject of changes
 * enable support for reverse updates
+** stop propagating peers with feeds, posts, projects & tasks
 ** modify send-functions to send to owner_id if != whoami
 *** replaces if in task/post views
+** propagate post to local peers except sender
+*** only if owner of post or owner of feed
 * add project/task tags like feed/post
 ** replaces queues
 ** tag tasks with todo instead
 ** search flds + cols
 ** project/task view flds
 ** init/update feed tags
+* add quick search
+** peer, feed, post, project, task
+** use search views
+** only push rec view if one result
 * switch Smtp to one trans per msg
 ** pick first and process
+* add calendar
+** id, owner_id, name, info, tags and peers
+* add event
+** id, owner_id, name, info, tags and peers
+** starts_at, ends_at
+** repeat every 3 days until
+* add calendar_event
+** id, starts_at, ends_at
