@@ -1,13 +1,18 @@
+* add feed tags
+** search fld + col
+** feed view fld
+** init posts and diff/patch on post update
 * add post replies
 ** get_reply_feed(post, owner)
 *** create with owner if not exists
 ** add 'find replies' and 'new reply'
 ** handle new feeds for existing projects/tasks/posts automagically
 *** make sure that msg.feed.owner_id == project/task/post.owner_id
-* add task tags like post
+** init/update post feed-tags
+* add project/task tags like feed/post
 ** replaces queues 
-** search fld + col
-** task view fld
+** search flds + cols
+** project/task view flds
 * move handle_msg from imap to msg
 ** change to return true if handled automatically
 ** add process_inbox()
