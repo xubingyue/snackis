@@ -9,7 +9,7 @@ namespace snackis {
 namespace gui {
   struct PostView: RecView<Post> {
     GtkListStore *post_store;
-    GtkWidget *edit_feed_btn, *body_fld, *post_lst;
+    GtkWidget *edit_feed_btn, *tags_fld, *body_fld, *post_lst;
     FeedSelect feed_fld;
     
     PostView(const Post &post);

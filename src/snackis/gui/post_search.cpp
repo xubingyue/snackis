@@ -6,7 +6,7 @@
 
 namespace snackis {
 namespace gui {
-  enum PostCol {COL_PTR=0, COL_ID, COL_BY, COL_FEED, COL_BODY};
+  enum PostCol {COL_PTR=0, COL_ID, COL_BY, COL_TAGS, COL_BODY};
   
   static void edit(Ctx &ctx, const db::Rec<Post> &rec) {
     Post post(ctx, rec);    
@@ -24,6 +24,7 @@ namespace gui {
 					G_TYPE_STRING),
 		     [&ctx](auto &rec) { edit(ctx, rec); }),
     id_fld(new_id_field()),
+    tags_fld(gtk_entry_new()),
     body_fld(gtk_entry_new()),
     min_time_fld(gtk_entry_new()),
     max_time_fld(gtk_entry_new()),
@@ -64,11 +65,22 @@ namespace gui {
 				   "yyyy-mm-dd hh:mm");
     gtk_grid_attach(GTK_GRID(post_box), max_time_fld, 2, 1, 1, 1);
 
+    GtkWidget *body_box(gtk_grid_new());
+    gtk_grid_set_row_spacing(GTK_GRID(body_box), 5);
+    gtk_grid_set_column_spacing(GTK_GRID(body_box), 5);
+    gtk_container_add(GTK_CONTAINER(fields), body_box);
+    
+    lbl = gtk_label_new("Tags");
+    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
+    gtk_grid_attach(GTK_GRID(body_box), lbl, 0, 0, 1, 1);
+    gtk_widget_set_hexpand(tags_fld, true);
+    gtk_grid_attach(GTK_GRID(body_box), tags_fld, 0, 1, 1, 1);
+
     lbl = gtk_label_new("Body");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
+    gtk_grid_attach(GTK_GRID(body_box), lbl, 1, 0, 1, 1);
     gtk_widget_set_hexpand(body_fld, true);
-    gtk_container_add(GTK_CONTAINER(fields), body_fld);
+    gtk_grid_attach(GTK_GRID(body_box), body_fld, 1, 1, 1, 1);
 
     lbl = gtk_label_new("Feed");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
@@ -82,7 +94,7 @@ namespace gui {
     
     add_col(GTK_TREE_VIEW(list), "Id", COL_ID);
     add_col(GTK_TREE_VIEW(list), "Posted", COL_BY);
-    add_col(GTK_TREE_VIEW(list), "Feed", COL_FEED);
+    add_col(GTK_TREE_VIEW(list), "Tags", COL_TAGS);
     add_col(GTK_TREE_VIEW(list), "Body", COL_BODY, true);
 
     focused = id_fld;
@@ -92,6 +104,8 @@ namespace gui {
     size_t cnt(0);
     
     str id_sel(trim(gtk_entry_get_text(GTK_ENTRY(id_fld))));
+    str tags_str(trim(gtk_entry_get_text(GTK_ENTRY(tags_fld))));
+    std::set<str> tags_sel(word_set(tags_str));
     str body_sel(trim(gtk_entry_get_text(GTK_ENTRY(body_fld))));
     auto feed_sel(feed_fld.selected);
     auto peer_sel(peer_fld.selected);
@@ -124,6 +138,14 @@ namespace gui {
 	continue;
       }
 
+      if (!tags_sel.empty()) {
+	std::vector<str> diff;
+	std::set_difference(tags_sel.begin(), tags_sel.end(),
+			    post.tags.begin(), post.tags.end(),
+			    std::back_inserter(diff));
+	if (!diff.empty()) { continue; }
+      }
+      
       if (!body_sel.empty() && find_ci(post.body, body_sel) == str::npos) {
 	continue;
       }
@@ -156,7 +178,8 @@ namespace gui {
 			 COL_PTR, &rec,
 			 COL_ID, id_str(post).c_str(),
 			 COL_BY, by.c_str(),
-			 COL_FEED, feed.name.c_str(),
+			 COL_TAGS,
+			 join(post.tags.begin(), post.tags.end(), ' ').c_str(),
 			 COL_BODY, post.body.c_str(),
 			 -1);
       cnt++;

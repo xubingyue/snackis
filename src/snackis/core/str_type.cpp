@@ -3,6 +3,7 @@
 
 namespace snackis {
   StrType str_type;
+  SetType<str> str_set_type(str_type);
 
   StrType::StrType(): Type<str>("Str") { }
 

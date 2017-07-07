@@ -64,6 +64,7 @@ namespace gui {
     RecView("Post", post),
     post_store(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
     edit_feed_btn(gtk_button_new_with_mnemonic("_Edit Feed")),
+    tags_fld(gtk_entry_new()),
     body_fld(new_text_view()),
     post_lst(new_tree_view(GTK_TREE_MODEL(post_store))),
     feed_fld(ctx)
@@ -88,9 +89,15 @@ namespace gui {
     gtk_widget_set_sensitive(edit_feed_btn, false);
     gtk_container_add(GTK_CONTAINER(feed_box), edit_feed_btn);
     
-    lbl = gtk_label_new("Body");
+    lbl = gtk_label_new("Tags");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_widget_set_margin_top(lbl, 5);
+    gtk_container_add(GTK_CONTAINER(fields), lbl);
+    gtk_container_add(GTK_CONTAINER(fields), tags_fld);
+    set_str(GTK_TEXT_VIEW(body_fld), join(rec.tags.begin(), rec.tags.end(), ' '));
+
+    lbl = gtk_label_new("Body");
+    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_container_add(GTK_CONTAINER(fields), lbl);
     gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(body_fld));
     set_str(GTK_TEXT_VIEW(body_fld), rec.body);
@@ -116,6 +123,7 @@ namespace gui {
 
   bool PostView::save() {
     set_feed(rec, *feed_fld.selected);
+    rec.tags = word_set(get_str(GTK_ENTRY(tags_fld)));
     rec.body = get_str(GTK_TEXT_VIEW(body_fld));
     db::upsert(ctx.db.posts, rec);
     send(rec);

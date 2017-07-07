@@ -1,3 +1,7 @@
+* add task tags like post
+** replaces queues 
+** search fld + col
+** task view fld
 * move handle_msg from imap to msg
 ** change to return true if handled automatically
 ** add process_inbox()

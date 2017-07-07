@@ -44,6 +44,7 @@ namespace snackis {
     db::Col<Post, UId>           post_owner_id;
     db::Col<Post, Time>          post_created_at, post_changed_at;
     db::Col<Post, str>           post_body;
+    db::Col<Post, std::set<str>> post_tags;
     db::Col<Post, std::set<UId>> post_peer_ids;
     db::Table<Post> posts, posts_sort, feed_posts;
     

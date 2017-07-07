@@ -9,7 +9,7 @@
 namespace snackis {
 namespace gui {
   struct PostSearch: SearchView<Post> {
-    GtkWidget *id_fld, *body_fld, *min_time_fld, *max_time_fld;
+    GtkWidget *id_fld, *tags_fld, *body_fld, *min_time_fld, *max_time_fld;
     FeedSelect feed_fld;
     PeerSelect peer_fld;
 

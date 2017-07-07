@@ -1,6 +1,7 @@
 #ifndef SNACKIS_STR_TYPE_HPP
 #define SNACKIS_STR_TYPE_HPP
 
+#include "snackis/core/set_type.hpp"
 #include "snackis/core/type.hpp"
 
 namespace snackis {
@@ -14,6 +15,7 @@ namespace snackis {
   };
 
   extern StrType str_type;
+  extern SetType<str> str_set_type;
 }
 
 #endif

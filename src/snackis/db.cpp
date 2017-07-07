@@ -58,11 +58,12 @@ namespace snackis {
     post_created_at("created_at", time_type,    &Post::created_at),
     post_changed_at("changed_at", time_type,    &Post::changed_at),
     post_body(      "body",       str_type,     &Post::body),
+    post_tags(      "tags",       str_set_type, &Post::tags),
     post_peer_ids(  "peer_ids",   uid_set_type, &Post::peer_ids),
 
     posts(ctx, "posts", {&post_id},
 	  {&post_feed_id, &post_owner_id, &post_created_at, &post_changed_at,
-	      &post_body, &post_peer_ids}),
+	      &post_body, &post_tags, &post_peer_ids}),
 
     posts_sort(ctx, "posts_sort", {&post_created_at, &post_id}, {}),
     feed_posts(ctx, "feed_posts", {&post_feed_id, &post_created_at, &post_id}, {}),

@@ -14,8 +14,9 @@ namespace snackis {
     UId feed_id, owner_id;
     Time created_at, changed_at;
     str body;
+    std::set<str> tags;
     std::set<UId> peer_ids;
-
+    
     Post(Ctx &ctx);
     Post(Ctx &ctx, const db::Rec<Post> &rec);   
     Post(const Msg &msg);

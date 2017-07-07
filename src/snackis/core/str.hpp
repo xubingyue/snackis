@@ -1,7 +1,9 @@
 #ifndef SNACKIS_STR_HPP
 #define SNACKIS_STR_HPP
 
+#include <set>
 #include <string>
+
 #include "snackis/core/data.hpp"
 #include "snackis/core/opt.hpp"
 #include "snackis/core/stream.hpp"
@@ -24,6 +26,8 @@ namespace snackis {
     
     return out.str();
   }
+
+  std::set<str> word_set(const str &in);
 
   size_t find_ci(const str &stack, const str& needle);
   int64_t to_int64(const str &in);

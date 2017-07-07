@@ -28,6 +28,14 @@ namespace snackis {
 			   }));
     return (found == stack.end()) ? str::npos : found - stack.begin();
   }
+
+  std::set<str> word_set(const str &in) {
+    InStream in_words(in);
+    std::set<str> out;
+    str w;
+    while (in_words >> w) { out.insert(w); }
+    return out;
+  }
   
   int64_t to_int64(const str &in) {
     return strtoll(in.c_str(), nullptr, 10);
