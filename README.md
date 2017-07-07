@@ -37,7 +37,7 @@ Each snackis installation is protected by a master password that is used to encr
 ![login example](images/login.png?raw=true)
 
 ### UI
-Snackis UI is divided into three parts; to the left is the read-only console, where output is printed; below is the auto-completed reader, where commands may be given; and to the right is an optional stack of open views. Each new view is pushed onto the stack when opened and popped when closed. All buttons have mnemonics that may be revealed by pressing ```Alt```. Pressing ```Escape``` moves focus between current view and reader.
+Snackis UI is divided into three parts; to the left is the read-only console, where output is printed; below is the auto-completed reader, where commands may be given; and to the right is an optional stack of open views. Each new view is pushed onto the stack when opened and popped when closed. Many buttons have mnemonics that may be revealed by pressing ```Alt```. Pressing ```Escape``` moves focus between current view and reader, and ```Ctrl-Tab``` switches between open views.
 
 #### Style
 The entire UI may be styled to your taste by editing ```gui.css``` in the root.

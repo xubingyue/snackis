@@ -5,7 +5,7 @@
 
 namespace snackis {
 namespace gui {
-  std::vector<View *> View::stack;
+  std::list<View *> View::stack;
 
   View::View(Ctx &ctx, const str &lbl, const str &inf): 
     ctx(ctx),
@@ -68,16 +68,16 @@ namespace gui {
     }
   }
 
-  void swap_views() {
+  void switch_view() {
     if (View::stack.size() > 2) {
       View *prev(View::stack.back());
       g_object_ref(prev->panel);
       gtk_container_remove(GTK_CONTAINER(panels), prev->panel);
       View::stack.pop_back();
       View *next(View::stack.back());
-      View::stack.pop_back();
-      View::stack.push_back(prev);
-      View::stack.push_back(next);
+      auto it(View::stack.begin());
+      it++;
+      View::stack.insert(it, prev);
       gtk_container_add(GTK_CONTAINER(panels), next->panel);  
       gtk_widget_show_all(next->panel);
       gtk_widget_grab_focus(next->focused);

@@ -22,7 +22,7 @@ static gboolean on_key(gpointer _, GdkEventKey *ev, gpointer __) {
   }
 
   if ((ev->state & GDK_CONTROL_MASK) && ev->keyval == GDK_KEY_Tab) {
-    gui::swap_views();
+    gui::switch_view();
     return true;
   }
   
