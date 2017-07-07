@@ -23,7 +23,7 @@ namespace gui {
     push_view(*tv);
   }
 
-  static void on_find_posts(gpointer *_, TaskView *v) {
+  static void on_find_posts(gpointer *_, ProjectView *v) {
     PostSearch *ps = new PostSearch(v->ctx);
     select<Feed>(ps->feed_fld, get_feed(v->rec));
     push_view(*ps);

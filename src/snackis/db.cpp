@@ -154,7 +154,6 @@ namespace snackis {
     posts.indexes.insert(&feed_posts);
     projects.indexes.insert(&projects_sort);
     tasks.indexes.insert(&tasks_sort);
-    queues.indexes.insert(&queues_sort);
 
     peers.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
 	db::set(curr_rec, peer_changed_at, now());
@@ -165,82 +164,50 @@ namespace snackis {
       });
 
     posts.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
-	Post prev(ctx, prev_rec), curr(ctx, curr_rec);
-
-	if (curr.tags != prev.tags ||
-	    curr.peer_ids != prev.peer_ids) {		    	
-	  auto fd(find_feed_id(ctx, curr.id));
-
-	  if (fd) {
+	Post curr(ctx, curr_rec);
+	auto fd(find_feed_id(ctx, curr.id));
+	
+	if (fd && (fd->tags != curr.tags ||
+		   fd->peer_ids != curr.peer_ids)) {		    	
 	    fd->tags = curr.tags;
 	    fd->peer_ids = curr.peer_ids;
 	    db::update(feeds, *fd);
 	  }
-	}
 	
 	db::set(curr_rec, post_changed_at, now());
       });
 
     projects.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
-	Project prev(ctx, prev_rec), curr(ctx, curr_rec);
-
-	if (curr.peer_ids != prev.peer_ids) {
-	  auto feed(find_feed_id(ctx, curr.id));
-
-	  if (feed) {
-	    feed->peer_ids = curr.peer_ids;
-	    db::update(feeds, *feed);
-	  }
+	Project curr(ctx, curr_rec);
+	auto feed(find_feed_id(ctx, curr.id));
+	
+	if (feed && feed->peer_ids != curr.peer_ids) {
+	  feed->peer_ids = curr.peer_ids;
+	  db::update(feeds, *feed);
 	}
 
 	db::set(curr_rec, project_changed_at, now());
       });
 
-    tasks.on_insert.push_back([&](auto &rec) {
-	Task tsk(ctx, rec);
-	
-	for (auto &id: tsk.queue_ids) {
-	  auto q(find_queue_id(ctx, id));
-	  if (q) { db::insert(ctx.db.queue_tasks, QueueTask(*q, tsk)); }
-	}
-      });
-      
     tasks.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
-	Task prev(ctx, prev_rec), curr(ctx, curr_rec);
-
-	if (curr.peer_ids != prev.peer_ids) {		    	
-	  auto feed(find_feed_id(ctx, curr.id));
-
-	  if (feed) {
-	    feed->peer_ids = curr.peer_ids;
-	    db::update(feeds, *feed);
-	  }
-	}
-
-	db::set(curr_rec, task_changed_at, now());
-	auto queues(diff(prev.queue_ids, curr.queue_ids));
+	Task curr(ctx, curr_rec);
+	auto feed(find_feed_id(ctx, curr.id));
 	
-	for (auto &id: queues.first) {
-	  auto q(find_queue_id(ctx, id));
-	  if (q) { db::insert(ctx.db.queue_tasks, QueueTask(*q, prev)); }
+	if (feed && feed->peer_ids != curr.peer_ids) {
+	  feed->peer_ids = curr.peer_ids;
+	  db::update(feeds, *feed);
 	}
-
-	for (auto &id: queues.second) {
-	  auto q(find_queue_id(ctx, id));
-	  if (q) { db::erase(ctx.db.queue_tasks, QueueTask(*q, prev)); }
-	}
+	
+	db::set(curr_rec, task_changed_at, now());
       });
 
     queues.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
-	Queue prev(ctx, prev_rec), curr(ctx, curr_rec);
-
-	if (curr.peer_ids != prev.peer_ids) {		    	
-	  auto feed(find_feed_id(ctx, curr.id));
-
-	  if (feed) {
-	    feed->peer_ids = curr.peer_ids;
-	    db::update(feeds, *feed);
-	  }
+	Queue curr(ctx, curr_rec);
+	auto feed(find_feed_id(ctx, curr.id));
+	
+	if (feed && feed->peer_ids != curr.peer_ids) {
+	  feed->peer_ids = curr.peer_ids;
+	  db::update(feeds, *feed);
 	}
 
 	db::set(curr_rec, queue_changed_at, now());

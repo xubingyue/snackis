@@ -4,6 +4,7 @@
 * enable support for reverse updates
 ** modify send-functions to send to owner_id if != whoami
 *** replaces if in task/post views
+** check peer membership
 ** propagate post to local peers except sender
 *** only if owner of post or owner of feed
 * add project/task tags like feed/post
