@@ -75,9 +75,7 @@ namespace gui {
       gtk_container_remove(GTK_CONTAINER(panels), prev->panel);
       View::stack.pop_back();
       View *next(View::stack.back());
-      auto it(View::stack.begin());
-      it++;
-      View::stack.insert(it, prev);
+      View::stack.insert(std::next(View::stack.begin()), prev);
       gtk_container_add(GTK_CONTAINER(panels), next->panel);  
       gtk_widget_show_all(next->panel);
       gtk_widget_grab_focus(next->focused);
