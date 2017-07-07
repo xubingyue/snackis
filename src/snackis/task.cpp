@@ -14,19 +14,29 @@ namespace snackis {
   { }
 
   Task::Task(Ctx &ctx, const db::Rec<Task> &rec): IdRec(ctx, false) {
-    copy(*this, rec);
+    db::copy(*this, rec);
+    auto prj(find_project_id(ctx, project_id));
+    if (prj) { peer_ids = prj->peer_ids; }
   }
 
   Task::Task(const Msg &msg):
-    IdRec(msg.ctx, *db::get(msg.task, msg.ctx.db.task_id))
+    IdRec(msg.ctx, *db::get(msg.task, msg.ctx.db.task_id)),
+    created_at(now()),
+    changed_at(created_at)
   {
     copy(*this, msg);
   }
 
   void copy(Task &dst, const Msg &src) {
-    db::copy(dst, src.task);    
-    dst.peer_ids.insert(src.from_id);    
-    dst.peer_ids.erase(whoami(src.ctx).id);
+    Ctx &ctx(src.ctx);
+    ctx.db.task_id.copy(dst, src.task);
+    ctx.db.task_project_id.copy(dst, src.task);
+    ctx.db.task_owner_id.copy(dst, src.task);
+    ctx.db.task_name.copy(dst, src.task);
+    ctx.db.task_info.copy(dst, src.task);
+    ctx.db.task_done.copy(dst, src.task);
+    dst.peer_ids.insert(src.from_id);
+    dst.peer_ids.erase(whoami(ctx).id);
   }
   
   opt<Task> find_task_id(Ctx &ctx, UId id) {

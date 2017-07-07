@@ -12,19 +12,28 @@ namespace snackis {
   { }
 
   Feed::Feed(Ctx &ctx, const db::Rec<Feed> &src): IdRec(ctx, null_uid) {
-    copy(*this, src);
+    db::copy(*this, src);
   }
   
   Feed::Feed(const Msg &msg):
-    IdRec(msg.ctx, *db::get(msg.feed, msg.ctx.db.feed_id))
+    IdRec(msg.ctx, *db::get(msg.feed, msg.ctx.db.feed_id)),
+    created_at(now()),
+    changed_at(created_at)
   {
     copy(*this, msg);
   }
 
   void copy(Feed &dst, const Msg &src) {
-    db::copy(dst, src.feed);    
-    dst.peer_ids.insert(src.from_id);    
-    dst.peer_ids.erase(whoami(src.ctx).id);
+    Ctx &ctx(src.ctx);
+    ctx.db.feed_id.copy(dst, src.feed);
+    ctx.db.feed_owner_id.copy(dst, src.feed);
+    ctx.db.feed_name.copy(dst, src.feed);
+    ctx.db.feed_info.copy(dst, src.feed);
+    ctx.db.feed_active.copy(dst, src.feed);
+    ctx.db.feed_visible.copy(dst, src.feed);
+    ctx.db.feed_tags.copy(dst, src.feed);
+    dst.peer_ids.insert(src.from_id);
+    dst.peer_ids.erase(whoami(ctx).id);    
   }
 
   opt<Feed> find_feed_id(Ctx &ctx, UId id) {

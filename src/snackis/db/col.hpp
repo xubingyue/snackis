@@ -42,7 +42,8 @@ namespace db {
 
   template <typename RecT, typename ValT>
   void Col<RecT, ValT>::copy(RecT &dest, const Rec<RecT> &src) const {
-    set(dest, src.at(this));
+    auto fnd(src.find(this));
+    if (fnd != src.end()) { set(dest, fnd->second); }
   }
 
   template <typename RecT, typename ValT>

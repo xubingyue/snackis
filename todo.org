@@ -2,7 +2,6 @@
 ** show everything in inbox
 *** open form and allow accept/reject of changes
 * enable support for reverse updates
-** stop propagating peers with feeds, posts, projects & tasks
 ** modify send-functions to send to owner_id if != whoami
 *** replaces if in task/post views
 ** propagate post to local peers except sender

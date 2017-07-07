@@ -12,21 +12,28 @@ namespace snackis {
   { }
 
   Post::Post(Ctx &ctx, const db::Rec<Post> &rec): IdRec(ctx, null_uid) {
-    copy(*this, rec);
+    db::copy(*this, rec);
+    auto fd(find_feed_id(ctx, feed_id));
+    if (fd) { peer_ids = fd->peer_ids; }
   }
 
   Post::Post(const Msg &msg):
-    IdRec(msg.ctx, *db::get(msg.post, msg.ctx.db.post_id))
+    IdRec(msg.ctx, *db::get(msg.post, msg.ctx.db.post_id)),
+    created_at(now()),
+    changed_at(created_at)
   {
-    db::copy(*this, msg.post);
-    peer_ids.erase(whoami(ctx).id);
-    peer_ids.insert(msg.from_id);
+    copy(*this, msg);
   }
 
   void copy(Post &dst, const Msg &src) {
-    db::copy(dst, src.post);    
+    Ctx &ctx(src.ctx);
+    ctx.db.post_id.copy(dst, src.post);
+    ctx.db.post_feed_id.copy(dst, src.post);
+    ctx.db.post_owner_id.copy(dst, src.post);
+    ctx.db.post_body.copy(dst, src.post);
+    ctx.db.post_tags.copy(dst, src.post);
     dst.peer_ids.insert(src.from_id);    
-    dst.peer_ids.erase(whoami(src.ctx).id);
+    dst.peer_ids.erase(whoami(ctx).id);
   }
 
   opt<Post> find_post_id(Ctx &ctx, UId id) {
