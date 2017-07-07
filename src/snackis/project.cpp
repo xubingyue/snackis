@@ -71,6 +71,7 @@ namespace snackis {
       TRY(try_create);
       fd.name = fmt("Project %0", id_str(prj));
       fd.owner_id = prj.owner_id;
+      fd.active = true;
       fd.visible = false;
       fd.peer_ids = prj.peer_ids;
       db::insert(ctx.db.feeds, fd);

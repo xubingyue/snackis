@@ -98,7 +98,7 @@ namespace gui {
       auto &rec(db::get(ctx.db.feeds, *key));
       Feed feed(ctx, rec);
 
-      if (!feed.visible) { continue; }
+      if (id_sel.empty() && !feed.visible) { continue; }
 
       if (!id_sel.empty() && find_ci(id_str(feed), id_sel) == str::npos) {
 	continue;

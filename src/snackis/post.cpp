@@ -73,6 +73,7 @@ namespace snackis {
       fd.owner_id = ps.owner_id;
       fd.name = fmt("Post %0", id_str(ps));
       fd.tags = ps.tags;
+      fd.active = true;
       fd.visible = false;
       fd.peer_ids = ps.peer_ids;
       db::insert(ctx.db.feeds, fd);
