@@ -1,5 +1,3 @@
-* add ctrl-space swap shortcut
-** replaces cmd
 * move handle_msg from imap to msg
 ** change to return true if handled automatically
 ** add process_inbox()

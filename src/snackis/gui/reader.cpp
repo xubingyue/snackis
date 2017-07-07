@@ -45,13 +45,9 @@ namespace gui {
       fnd++;
     }
       
-    if (i > in.size()) {
-      gtk_entry_set_text(GTK_ENTRY(rdr->entry), fnd_str.substr(0, i).c_str());
-      gtk_editable_set_position(GTK_EDITABLE(rdr->entry), i);
-      return true;
-    }
-      
-    return false;
+    gtk_entry_set_text(GTK_ENTRY(rdr->entry), fnd_str.substr(0, i).c_str());
+    gtk_editable_set_position(GTK_EDITABLE(rdr->entry), i);
+    return true;
   }
   
   static void init_cmds(Reader &rdr) {
@@ -265,16 +261,6 @@ namespace gui {
 	
 	Setup *v = new Setup(ctx);
 	push_view(*v);
-	return true;
-      });
-
-    rdr.cmds.emplace("swap", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: swap");
-	  return false;
-	}
-	
-	swap_views();
 	return true;
       });
 
