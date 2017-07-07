@@ -94,7 +94,7 @@ namespace gui {
     gtk_widget_set_margin_top(lbl, 5);
     gtk_container_add(GTK_CONTAINER(fields), lbl);
     gtk_container_add(GTK_CONTAINER(fields), tags_fld);
-    set_str(GTK_TEXT_VIEW(body_fld), join(rec.tags.begin(), rec.tags.end(), ' '));
+    set_str(GTK_ENTRY(tags_fld), join(rec.tags.begin(), rec.tags.end(), ' '));
 
     lbl = gtk_label_new("Body");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);

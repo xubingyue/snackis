@@ -85,10 +85,10 @@ namespace gui {
     return w;
   }
   
-  GtkTreeViewColumn *add_col(GtkTreeView *w, const str &lbl, int idx, bool ellips) {
+  GtkTreeViewColumn *add_col(GtkTreeView *w, const str &lbl, int idx, bool exp) {
     auto rnd(gtk_cell_renderer_text_new());
 
-    if (ellips) {
+    if (exp) {
       g_object_set(G_OBJECT(rnd),
 		   "ellipsize", PANGO_ELLIPSIZE_MIDDLE,
 		   nullptr);
@@ -98,6 +98,7 @@ namespace gui {
 						      rnd,
 						      "text", idx,
 						      nullptr));
+    if (exp) { gtk_tree_view_column_set_expand(col, true); }	    
     gtk_tree_view_append_column(GTK_TREE_VIEW(w), col);
     return col;
   }

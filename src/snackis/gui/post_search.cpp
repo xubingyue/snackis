@@ -179,7 +179,7 @@ namespace gui {
 			 COL_ID, id_str(post).c_str(),
 			 COL_BY, by.c_str(),
 			 COL_TAGS,
-			 join(post.tags.begin(), post.tags.end(), ' ').c_str(),
+			 join(post.tags.begin(), post.tags.end(), '\n').c_str(),
 			 COL_BODY, post.body.c_str(),
 			 -1);
       cnt++;
