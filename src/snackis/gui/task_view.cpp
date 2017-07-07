@@ -62,6 +62,10 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(fields), project_box);
 
     project_fld.on_change.emplace([this]() {
+	if (project_fld.selected) {
+	  set_project(this->rec, *project_fld.selected);
+	}
+	
 	auto sel(project_fld.selected ? true : false);
 	gtk_widget_set_sensitive(edit_project_btn, sel);
 	refresh(*this);
@@ -102,16 +106,15 @@ namespace gui {
   }
 
   bool TaskView::allow_save() const {
-    return rec.owner_id == whoami(ctx).id && project_fld.selected;
+    return project_fld.selected ? true : false;
   }
 
   bool TaskView::save() {
-    set_project(rec, *project_fld.selected);
     rec.name = get_str(GTK_ENTRY(name_fld));
     rec.info = get_str(GTK_TEXT_VIEW(info_fld));
     rec.done = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(done_fld));
     db::upsert(ctx.db.tasks, rec);
-    send(rec);
+    if (rec.owner_id == whoami(ctx).id) { send(rec); }
     return true;
   }
 }}

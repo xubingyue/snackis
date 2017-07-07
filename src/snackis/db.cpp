@@ -82,19 +82,16 @@ namespace snackis {
     msg_post(      "post",       posts.rec_type,      &Msg::post),
     msg_project(   "project",    projects.rec_type,   &Msg::project),
     msg_task(      "task",       tasks.rec_type,      &Msg::task),
-    msg_queue(     "queue",      queues.rec_type,     &Msg::queue),
     
     inbox(ctx, "inbox", {&msg_id},
 	  {&msg_type, &msg_fetched_at, &msg_peer_name, &msg_from, &msg_from_id,
-	      &msg_crypt_key, &msg_feed, &msg_post, &msg_project, &msg_task,
-	      &msg_queue}),
+	      &msg_crypt_key, &msg_feed, &msg_post, &msg_project, &msg_task}),
 
     inbox_sort(ctx, "inbox_sort", {&msg_fetched_at, &msg_id}, {}),
     
     outbox(ctx, "outbox", {&msg_id},
 	   {&msg_type, &msg_from, &msg_from_id, &msg_to, &msg_to_id, &msg_peer_name,
-	       &msg_crypt_key, &msg_feed, &msg_post, &msg_project, &msg_task,
-	       &msg_queue}),
+	       &msg_crypt_key, &msg_feed, &msg_post, &msg_project, &msg_task}),
 
     project_id(        "id",         uid_type,     &Project::id),
     project_owner_id(  "owner_id",   uid_type,     &Project::owner_id),
@@ -163,11 +160,24 @@ namespace snackis {
 	db::set(curr_rec, peer_changed_at, now());
       });
 
-    feeds.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
+    feeds.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {	
 	db::set(curr_rec, feed_changed_at, now());
       });
 
     posts.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
+	Post prev(ctx, prev_rec), curr(ctx, curr_rec);
+
+	if (curr.tags != prev.tags ||
+	    curr.peer_ids != prev.peer_ids) {		    	
+	  auto fd(find_feed_id(ctx, curr.id));
+
+	  if (fd) {
+	    fd->tags = curr.tags;
+	    fd->peer_ids = curr.peer_ids;
+	    db::update(feeds, *fd);
+	  }
+	}
+	
 	db::set(curr_rec, post_changed_at, now());
       });
 

@@ -12,7 +12,7 @@
 
 namespace snackis {
   struct Msg: IdRec {
-    static const str INVITE, ACCEPT, REJECT, POST, TASK, QUEUE;
+    static const str INVITE, ACCEPT, REJECT, POST, TASK;
     
     str type;
     Time fetched_at;
@@ -24,7 +24,6 @@ namespace snackis {
     db::Rec<Post> post;
     db::Rec<Project> project;
     db::Rec<Task> task;
-    db::Rec<Queue> queue;
 
     Msg(Ctx &ctx, const str &type);
     Msg(Ctx &ctx, const db::Rec<Msg> &src);

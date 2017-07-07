@@ -44,6 +44,7 @@ namespace gui {
     sv->on_activate = [v, sv](auto &rec) {
       select<RecT>(*v, RecT(v->ctx, rec));
       pop_view(*sv);
+      gtk_widget_grab_focus(v->clear_btn);
     };
     
     push_view(*sv);
@@ -52,6 +53,7 @@ namespace gui {
   template <typename RecT>
   void on_rec_clear(gpointer *_, RecSelect<RecT> *v) {
     select<RecT>(*v, nullopt);
+    gtk_widget_grab_focus(v->search_btn);
   }
 
   template <typename RecT>

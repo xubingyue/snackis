@@ -15,24 +15,12 @@ namespace snackis {
     copy(*this, rec);
   }
 
-  Queue::Queue(const Msg &msg):
-    IdRec(msg.ctx, *db::get(msg.queue, msg.ctx.db.queue_id))
-  {
-    copy(*this, msg);    
-  }
-  
   QueueTask::QueueTask(const Queue &q, const Task &tsk):
     Rec(q.ctx), id(tsk.id), queue_id(q.id), at(now())
   { }
 
   QueueTask::QueueTask(Ctx &ctx, const db::Rec<QueueTask> &rec): Rec(ctx) {
     copy(*this, rec);
-  }
-
-  void copy(Queue &dst, const Msg &src) {
-    db::copy(dst, src.queue);    
-    dst.peer_ids.insert(src.from_id);
-    dst.peer_ids.erase(whoami(src.ctx).id);
   }
 
   opt<Queue> find_queue_id(Ctx &ctx, UId id) {
@@ -71,19 +59,6 @@ namespace snackis {
     return feed;
   }
 
-  void send(const Queue &q) {
-    Ctx &ctx(q.ctx);
-    
-    for (auto &pid: q.peer_ids) {
-      auto pr(find_peer_id(ctx, pid));
-
-      if (pr) {
-	Msg msg(ctx, Msg::QUEUE);
-	msg.to = pr->email;
-	msg.to_id = pr->id;
-	db::copy(ctx.db.queues, msg.queue, q);
-	insert(ctx.db.outbox, msg);
-      }
-    }
-  }
+  void send(const Queue &q)
+  { }
 }

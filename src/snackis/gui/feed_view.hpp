@@ -13,7 +13,6 @@ namespace gui {
     PeerList peer_lst;
     
     FeedView(const Feed &feed);
-    bool allow_save() const override;
     bool save() override;
   };
 }}

@@ -36,6 +36,27 @@ namespace snackis {
     return Post(ctx, rec);
   }
 
+  Feed get_reply_feed(const Post &ps) {
+    Ctx &ctx(ps.ctx);
+    db::Rec<Feed> rec;
+    db::set(rec, ctx.db.feed_id, ps.id);
+    Feed fd(ctx, rec);
+
+    if (!db::load(ctx.db.feeds, fd)) {
+      db::Trans trans(ctx);
+      TRY(try_create);
+      fd.owner_id = ps.owner_id;
+      fd.name = fmt("Post %0", id_str(ps));
+      fd.tags = ps.tags;
+      fd.visible = false;
+      fd.peer_ids = ps.peer_ids;
+      db::insert(ctx.db.feeds, fd);
+      if (try_create.errors.empty()) { db::commit(trans); }
+    }
+    
+    return fd;
+  }
+
   void set_feed(Post &ps, Feed &fd) {
     ps.feed_id = fd.id;
     ps.peer_ids = fd.peer_ids;

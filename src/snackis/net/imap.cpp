@@ -120,8 +120,7 @@ namespace snackis {
 	if (ps_fnd->owner_id == pr.id) {
 	  copy(*ps_fnd, msg);
 	  db::update(ctx.db.posts, *ps_fnd);
-	  log(ctx, fmt("Post %0 updated by %1:\n%2",
-		       id_str(*ps_fnd), pr.name, ps_fnd->body));
+	  log(ctx, fmt("Post %0 updated:\n%1", id_str(*ps_fnd), ps_fnd->body));
 	} else {
 	  log(ctx, fmt("Unautorized post update from %0", msg.from));
 	}
@@ -131,7 +130,23 @@ namespace snackis {
 	log(ctx, fmt("New post %0 by %1:\n%2", id_str(ps), pr.name, ps.body));
       }
     } else {
-      db::insert(ctx.db.inbox, msg);
+      const UId fd_id(*db::get(msg.feed, ctx.db.feed_id));
+      
+      auto prj(find_project_id(ctx, fd_id));
+      auto tsk(find_task_id(ctx, fd_id));
+      auto ps(find_post_id(ctx, fd_id));
+      
+      if ((prj && msg.from_id == prj->owner_id) ||
+	  (tsk && msg.from_id == tsk->owner_id) ||
+	  (ps && msg.from_id == ps->owner_id)) {
+	Feed fd(msg);
+	db::insert(ctx.db.feeds, fd);
+	log(ctx, fmt("New feed: %0\n%1", id_str(fd), fd.name));
+      } else if (prj || tsk || ps) {
+	  log(ctx, fmt("Unautorized feed from %0", msg.from));	
+      } else {
+	db::insert(ctx.db.inbox, msg);
+      }
     }
   }
 
@@ -169,24 +184,6 @@ namespace snackis {
     }
   }
 
-  static void handle_queue_msg(Imap &imap, const Msg &msg) {
-    Ctx &ctx(imap.ctx);
-    opt<Queue> q_fnd(find_queue_id(ctx, *db::get(msg.queue, ctx.db.queue_id)));
-    Peer pr(get_peer_id(ctx, msg.from_id));
-	
-    if (q_fnd) {
-      if (q_fnd->owner_id == pr.id) {
-	copy(*q_fnd, msg);
-	db::update(ctx.db.queues, *q_fnd);
-	log(ctx, fmt("Queue %0 updated", id_str(*q_fnd)));
-      } else {
-	log(ctx, fmt("Unautorized queue update from %0", msg.from));
-      }
-    } else {
-      db::insert(ctx.db.inbox, msg);
-    }
-  }
-
   static void handle_msg(Imap &imap, const Msg &msg) {
     Ctx &ctx(imap.ctx);
 
@@ -207,8 +204,6 @@ namespace snackis {
       handle_post_msg(imap, msg);
     } else if (msg.type == Msg::TASK) {
       handle_task_msg(imap, msg);
-    } else if (msg.type == Msg::QUEUE) {
-      handle_queue_msg(imap, msg);
     } else {
       db::insert(ctx.db.inbox, msg);
     }

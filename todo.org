@@ -1,18 +1,14 @@
-* add post replies
-** get_reply_feed(post, owner)
-*** create with owner if not exists when posting reply
-** add 'find replies' and 'new reply'
-** handle new feeds for existing projects/tasks/posts in imap
-*** make sure that msg.feed.owner_id == project/task/post.owner_id
-** init/update post feed-tags
+* move handle-logic from imap to inbox
+** show everything in inbox
+*** open form and allow accept/reject of changes
+* enable support for reverse updates
+** modify send-functions to send to owner_id if != whoami
+*** replaces if in task/post views
 * add project/task tags like feed/post
-** replaces queues 
+** replaces queues
+** tag tasks with todo instead
 ** search flds + cols
 ** project/task view flds
-* move handle_msg from imap to msg
-** change to return true if handled automatically
-** add process_inbox()
-*** call handle_msg for each and delete if handled
-*** call from reader before inbox
+** init/update feed tags
 * switch Smtp to one trans per msg
 ** pick first and process

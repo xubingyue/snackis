@@ -82,10 +82,6 @@ namespace gui {
     refresh(*this);
   }
 
-  bool FeedView::allow_save() const {
-    return rec.owner_id == whoami(ctx).id;
-  }
-
   bool FeedView::save() {
     rec.name = gtk_entry_get_text(GTK_ENTRY(name_fld));
     rec.tags = word_set(get_str(GTK_ENTRY(tags_fld)));

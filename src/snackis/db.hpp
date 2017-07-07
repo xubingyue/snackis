@@ -60,7 +60,6 @@ namespace snackis {
     db::Col<Msg, db::Rec<Post>>    msg_post;
     db::Col<Msg, db::Rec<Project>> msg_project;
     db::Col<Msg, db::Rec<Task>>    msg_task;
-    db::Col<Msg, db::Rec<Queue>>   msg_queue;
     db::Table<Msg> inbox, inbox_sort, outbox;
 
     db::Col<Project, UId>           project_id;

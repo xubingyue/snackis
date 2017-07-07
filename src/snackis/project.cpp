@@ -49,18 +49,19 @@ namespace snackis {
     Ctx &ctx(prj.ctx);
     db::Rec<Feed> rec;
     db::set(rec, ctx.db.feed_id, prj.id);
-    Feed feed(ctx, rec);
+    Feed fd(ctx, rec);
 
-    if (!db::load(ctx.db.feeds, feed)) {
+    if (!db::load(ctx.db.feeds, fd)) {
       db::Trans trans(ctx);
       TRY(try_create);
-      feed.name = fmt("Project %0", id_str(prj));
-      feed.visible = false;
-      feed.peer_ids = prj.peer_ids;
-      db::insert(ctx.db.feeds, feed);
+      fd.name = fmt("Project %0", id_str(prj));
+      fd.owner_id = prj.owner_id;
+      fd.visible = false;
+      fd.peer_ids = prj.peer_ids;
+      db::insert(ctx.db.feeds, fd);
       if (try_create.errors.empty()) { db::commit(trans); }
     }
     
-    return feed;
+    return fd;
   }
 }

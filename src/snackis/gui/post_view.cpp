@@ -2,6 +2,7 @@
 #include "snackis/ctx.hpp"
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/feed_view.hpp"
+#include "snackis/gui/post_search.hpp"
 #include "snackis/gui/post_view.hpp"
 
 namespace snackis {
@@ -60,9 +61,25 @@ namespace gui {
     g_signal_connect(v.post_lst, "row-activated", G_CALLBACK(on_edit_post), &v);
   }
 
+  static void on_find_replies(gpointer *_, PostView *v) {
+    PostSearch *ps = new PostSearch(v->ctx);
+    select<Feed>(ps->feed_fld, get_reply_feed(v->rec));
+    push_view(*ps);
+  }
+
+  static void on_reply(gpointer *_, PostView *v) {
+    Post post(v->ctx);
+    post.feed_id = get_reply_feed(v->rec).id;
+    PostView *pv = new PostView(post);
+    pv->on_save.push_back([v]() { v->save(); });
+    push_view(*pv);
+  }
+  
   PostView::PostView(const Post &post):
     RecView("Post", post),
     post_store(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
+    find_replies_btn(gtk_button_new_with_mnemonic("_Find Replies")),
+    reply_btn(gtk_button_new_with_mnemonic("New _Reply")),
     edit_feed_btn(gtk_button_new_with_mnemonic("_Edit Feed")),
     tags_fld(gtk_entry_new()),
     body_fld(new_text_view()),
@@ -70,6 +87,14 @@ namespace gui {
     feed_fld(ctx)
   {
     GtkWidget *lbl;
+
+    GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    gtk_widget_set_margin_bottom(btns, 5);
+    gtk_container_add(GTK_CONTAINER(fields), btns);
+    g_signal_connect(find_replies_btn, "clicked", G_CALLBACK(on_find_replies), this);
+    gtk_container_add(GTK_CONTAINER(btns), find_replies_btn);
+    g_signal_connect(reply_btn, "clicked", G_CALLBACK(on_reply), this);
+    gtk_container_add(GTK_CONTAINER(btns), reply_btn);
 
     lbl = gtk_label_new("Feed");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
@@ -79,6 +104,8 @@ namespace gui {
 
     feed_fld.on_change.emplace([this]() {
 	load_posts(*this);
+	if (feed_fld.selected) { set_feed(rec, *feed_fld.selected); }
+	set_str(GTK_ENTRY(tags_fld), join(rec.tags.begin(), rec.tags.end(), ' '));
 	auto sel(feed_fld.selected ? true : false);
 	gtk_widget_set_sensitive(edit_feed_btn, sel);
 	refresh(*this);
@@ -118,15 +145,14 @@ namespace gui {
   }
 
   bool PostView::allow_save() const {
-    return rec.owner_id == whoami(ctx).id && feed_fld.selected;
+    return feed_fld.selected ? true : false;
   }
 
   bool PostView::save() {
-    set_feed(rec, *feed_fld.selected);
     rec.tags = word_set(get_str(GTK_ENTRY(tags_fld)));
     rec.body = get_str(GTK_TEXT_VIEW(body_fld));
     db::upsert(ctx.db.posts, rec);
-    send(rec);
+    if (rec.owner_id == whoami(ctx).id) { send(rec); }
     return true;
   }
 }}

@@ -20,7 +20,6 @@ namespace snackis {
     
     Queue(Ctx &ctx);
     Queue(Ctx &ctx, const db::Rec<Queue> &rec);   
-    Queue(const Msg &msg);
   };
 
   struct QueueTask: Rec {
@@ -31,7 +30,6 @@ namespace snackis {
     QueueTask(Ctx &ctx, const db::Rec<QueueTask> &rec);   
   };
   
-  void copy(Queue &dst, const Msg &src);
   opt<Queue> find_queue_id(Ctx &ctx, UId id);
   Queue get_queue_id(Ctx &ctx, UId id);
   bool add_task(Queue &q, Task &tsk);

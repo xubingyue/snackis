@@ -13,7 +13,6 @@ namespace gui {
     PeerList peer_lst;
     
     ProjectView(const Project &rec);
-    bool allow_save() const override;
     bool save() override;
   };
 }}
