@@ -23,7 +23,7 @@
 namespace snackis {
 namespace gui {
   static gboolean on_key(gpointer _, GdkEventKey *ev, Reader *rdr) {
-    if (ev->keyval == GDK_KEY_BackSpace) { return false; }
+    if (!std::isgraph(gdk_keyval_to_unicode(ev->keyval))) { return false; }
     const str in(gtk_entry_get_text(GTK_ENTRY(rdr->entry)));
     if (in.empty()) { return true; }
     auto fnd(rdr->cmds.lower_bound(in));
