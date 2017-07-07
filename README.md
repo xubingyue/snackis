@@ -4,7 +4,7 @@
 #### secure, distributed co-creation
 
 ### Introduction
-Snackis is aiming for something that might be described as a post-modern enigma-device; a tool that covers most secure communication needs using any regular email-account as transport. Peers, encryption keys, messages and and settings are stored locally, encrypted using a master password. At present; Snackis supports key-exchange via invites/accepts, encryption/decryption of files and feeds/posts. Coming up around the corner is projects, tasks, task queues, scheduled events and more.
+Snackis is aiming for something that might be described as a post-modern enigma-device; a tool that covers most secure communication needs using any regular email-account as transport. Peers, encryption keys, messages and and settings are stored locally, encrypted using a master password. At present; Snackis supports key-exchange via invites/accepts, encryption/decryption of files, feeds/posts and projects/tasks.
 
 ### Dependencies
 Snackis requires a ```C++1z```-capable compiler and standard library to build, and defaults to using [clang](http://releases.llvm.org/download.html#4.0.0) with ```libc++```. This unfortunately often means downloading and manually installing [clang](http://releases.llvm.org/download.html#4.0.0) to even run the application, but will improve over time. Snackis further depends on ```libcurl```, ```libpthread```, ```libsodium``` and ```libuuid``` for core functionality, as well as ```GTK+ 3``` for the UI.
@@ -126,16 +126,6 @@ A Task belongs to a project and changes are automatically propagated to all proj
 Type ```task-search``` in the reader and press ```Return``` to search tasks. Tasks are sorted by time of creation.
 
 ![task search example](images/task_search.png?raw=true)
-
-### Queues
-Queues are sets of tasks that may be shared among a set of peers. Any member may add tasks to a queue, but only the owner is allowed to modify the queue details. Each queue has its own feed that members may post to. Type ```queue-new``` in the reader and press ```Return``` to create a new queue. A default queue named ```Todo``` is automatically created; type ```todo my task name``` to create a new Todo-task named "my task name", or just ```todo``` to search.
-
-![queue example](images/queue.png?raw=true)
-
-#### Searching
-Type ```queue-search``` in the reader and press ```Return``` to search queues. Queues are sorted by name.
-
-![queue search example](images/queue_search.png?raw=true)
 
 ### Algorithms
 Snackis delegates anything concerning encryption to [libsodium](https://github.com/jedisct1/libsodium). The IETF-variant of ```ChaCha20-Poly1305``` is used to encrypt the master password and database, while ```XSalsa20```/```X25519``` with ```Poly1305 MAC```-authentication is used for everything else. The master password is hashed using ```Scrypt```, and encrypted using the hash as key for future validation.
