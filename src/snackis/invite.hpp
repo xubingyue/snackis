@@ -18,9 +18,10 @@ namespace snackis {
     Invite(Ctx &ctx, const db::Rec<Invite> &src);
   };
 
+  Peer get_peer(const Msg &in);
   void send(Invite &inv);
-  Peer accept_invite(const Msg &in);
-  Peer invite_accepted(const Msg &in);
+  void send_accept(const Msg &in);
+  void invite_accepted(const Msg &in);
   void reject_invite(const Msg &in);
   void invite_rejected(const Msg &in);
 }

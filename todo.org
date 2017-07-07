@@ -1,5 +1,3 @@
-* replace inbox accept/reject with on_accept/on_cancel on opened form
-** on_activate
 * add post replies
 ** get_reply_feed(post, owner)
 *** create with owner if not exists when posting reply

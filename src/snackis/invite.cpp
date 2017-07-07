@@ -19,7 +19,7 @@ namespace snackis {
     insert(inv.ctx.db.outbox, msg);
   }
 
-  static Peer get_peer(const Msg &in) {
+  Peer get_peer(const Msg &in) {
     Ctx &ctx(in.ctx);
     db::Rec<Peer> peer_rec;
     set(peer_rec, ctx.db.peer_id, in.from_id);
@@ -28,25 +28,22 @@ namespace snackis {
     peer.name = in.peer_name;
     peer.email = in.from;
     peer.crypt_key = in.crypt_key;
-    upsert(ctx.db.peers, peer);
     return peer;
   }
   
-  Peer accept_invite(const Msg &in) {
+  void send_accept(const Msg &in) {
     Ctx &ctx(in.ctx);
     Msg out(ctx, Msg::ACCEPT);
     out.to = in.from;
     out.to_id = in.from_id;
     insert(ctx.db.outbox, out);
-    return get_peer(in);
   }
 
-  Peer invite_accepted(const Msg &in) {
+  void invite_accepted(const Msg &in) {
     Ctx &ctx(in.ctx);
     db::Rec<Invite> inv;
     set(inv, ctx.db.invite_to, in.from);
     erase(ctx.db.invites, inv);
-    return get_peer(in);
   }
 
   void reject_invite(const Msg &in) {

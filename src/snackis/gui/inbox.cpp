@@ -5,7 +5,6 @@
 #include "snackis/gui/reader.hpp"
 #include "snackis/gui/peer_view.hpp"
 #include "snackis/gui/project_view.hpp"
-#include "snackis/gui/queue_view.hpp"
 
 namespace snackis {
 namespace gui {
@@ -15,102 +14,79 @@ namespace gui {
     pop_view(*v);
   }
 
-  static void sel_changed(Inbox &v) {
-    bool sel(get_sel_rec<Msg>(GTK_TREE_VIEW(v.list)));
-    gtk_widget_set_sensitive(v.accept, sel);
-    gtk_widget_set_sensitive(v.reject, sel);
-  }
-  
-  static void on_accept(gpointer *_, Inbox *v) {
-    TRACE("Inbox accept");
+  static void on_activate(GtkTreeView *treeview,
+			  GtkTreePath *path,
+			  GtkTreeViewColumn *col,
+			  Inbox *v) {
     Ctx &ctx(v->ctx);
-    db::Trans trans(ctx);
-    TRY(try_accept);
-    auto iter(*get_sel_iter(GTK_TREE_VIEW(v->list)));
-    auto &msg_rec(*get_sel_rec<Msg>(GTK_TREE_VIEW(v->list), iter));
-    Msg msg(ctx, msg_rec);
+    auto iter(*get_sel_iter(GTK_TREE_VIEW(v->lst)));
+    auto rec(get_sel_rec<Msg>(GTK_TREE_VIEW(v->lst), iter));
+    CHECK(rec != nullptr, _);
+    Msg msg(ctx, *rec);
 
     if (msg.type == Msg::INVITE) {
-      Peer pr(accept_invite(msg));
-      log(ctx, fmt("Invite accepted: %0", msg.from));
-      auto pv(new PeerView(pr));
+      auto pv(new PeerView(get_peer(msg)));
+
+      pv->on_save.push_back([&ctx, msg, rec]() {
+	  send_accept(msg);
+	  db::erase(ctx.db.inbox, *rec);
+	  log(ctx, fmt("Invite accepted: %0", msg.from));
+	});
+
+      pv->on_cancel.push_back([&ctx, msg, rec]() {
+	  reject_invite(msg);
+	  db::erase(ctx.db.inbox, *rec);
+	  log(ctx, fmt("Invite rejected: %0", msg.from));
+	});
+
       push_view(*pv);
     } else if (msg.type == Msg::ACCEPT) {
-      Peer pr(invite_accepted(msg));
-      auto pv(new PeerView(pr));
+      auto pv(new PeerView(get_peer(msg)));
+
+      pv->on_save.push_back([&ctx, msg, rec]() {
+	  invite_accepted(msg);
+	  db::erase(ctx.db.inbox, *rec);
+	});
+
       push_view(*pv);
     } else if (msg.type == Msg::POST) {
-      Feed fd(msg);
-      db::insert(ctx.db.feeds, fd);
-      Post ps(msg);
-      db::insert(ctx.db.posts, ps);
-      auto fv(new FeedView(fd));
+      auto fv(new FeedView(Feed(msg)));
+
+      fv->on_save.push_back([&ctx, msg, rec]() {
+	  Post ps(msg);
+	  db::insert(ctx.db.posts, ps);
+	  db::erase(ctx.db.inbox, *rec);
+	  auto pr(get_peer_id(ctx, msg.from_id));
+	  log(ctx, fmt("New post %0 by %1:\n%2", id_str(ps), pr.name, ps.body));
+	});
+      
+      fv->on_cancel.push_back([&ctx, rec]() {
+	  db::erase(ctx.db.inbox, *rec);
+	});      
+
       push_view(*fv);
-      auto pr(get_peer_id(ctx, msg.from_id));
-      log(ctx, fmt("New post %0 by %1:\n%2", id_str(ps), pr.name, ps.body));
     } else if (msg.type == Msg::TASK) {
-      Project prj(msg);
-      db::insert(ctx.db.projects, prj);
-      Task tsk(msg);
-      db::insert(ctx.db.tasks, tsk);
-      auto pv(new ProjectView(prj));
+      auto pv(new ProjectView(Project(msg)));
+      pv->on_save.push_back([&ctx, msg, rec]() {
+	  Task tsk(msg);
+	  db::insert(ctx.db.tasks, tsk);
+	  db::erase(ctx.db.inbox, *rec);
+	  log(ctx, fmt("New task %0:\n%1\n%2", id_str(tsk), tsk.name, tsk.info));
+	});
+      pv->on_cancel.push_back([&ctx, rec]() {
+	  db::erase(ctx.db.inbox, *rec);
+	});      
       push_view(*pv);
-      log(ctx, fmt("New task %0:\n%1\n%2", id_str(tsk), tsk.name, tsk.info));
-    } else if (msg.type == Msg::QUEUE) {
-      Queue q(msg);
-      db::insert(ctx.db.queues, q);
-      auto qv(new QueueView(q));
-      push_view(*qv);
-      log(ctx, fmt("New queue %0:\n%1\n%2", id_str(q), q.name, q.info));
     } else {
 	log(ctx, fmt("Invalid message type: %0", msg.type));
     }
 
-    if (try_accept.errors.empty()) {
-      db::erase(ctx.db.inbox, msg_rec);
-      db::commit(trans);
-      gtk_list_store_remove(v->msgs, &iter);    
-      sel_changed(*v);
-    }
-  }
-
-  static void on_reject(gpointer *_, Inbox *v) {
-    TRACE("Inbox reject");
-    Ctx &ctx(v->ctx);
-    db::Trans trans(ctx);
-    TRY(try_reject);
-    
-    auto iter(*get_sel_iter(GTK_TREE_VIEW(v->list)));
-    auto &msg_rec(*get_sel_rec<Msg>(GTK_TREE_VIEW(v->list), iter));
-    Msg msg(ctx, msg_rec);
-
-    if (msg.type == Msg::INVITE) {
-	reject_invite(msg);
-	log(ctx, fmt("Invite rejected: %0", msg.from));
-    } else if (msg.type == Msg::ACCEPT ||
-	       msg.type == Msg::POST ||
-	       msg.type == Msg::TASK ||
-	       msg.type == Msg::QUEUE) {
-      // Nothing to do here
-    } else {
-	log(ctx, fmt("Invalid message type: %0", msg.type));
-    }
-
-    if (try_reject.errors.empty()) {
-      db::erase(ctx.db.inbox, msg_rec);
-      db::commit(trans);
-      gtk_list_store_remove(v->msgs, &iter);
-      sel_changed(*v);
-    }
+    gtk_list_store_remove(v->msgs, &iter);    
   }
   
-  static void on_select(gpointer *_, Inbox *v) {
-    sel_changed(*v);
-  }
-  
-  static void init_list(Inbox &v) {
-    add_col(GTK_TREE_VIEW(v.list), "From", COL_FROM);
-    add_col(GTK_TREE_VIEW(v.list), "Message", COL_INFO);
+  static void init_lst(Inbox &v) {
+    add_col(GTK_TREE_VIEW(v.lst), "From", COL_FROM);
+    add_col(GTK_TREE_VIEW(v.lst), "Message", COL_INFO);
     Ctx &ctx(v.ctx);
     std::vector<UId> rem;
     
@@ -137,28 +113,17 @@ namespace gui {
 	gtk_list_store_set(v.msgs, &iter, COL_INFO, "Invite", -1);
       } else if (msg.type == Msg::ACCEPT) {
 	gtk_list_store_set(v.msgs, &iter, COL_INFO, "Invite accepted", -1);
-      } else if (msg.type == Msg::REJECT) {
-	gtk_list_store_set(v.msgs, &iter, COL_INFO, "Invite rejected", -1);
       } else if (msg.type == Msg::POST) {
 	gtk_list_store_set(v.msgs, &iter,
 			   COL_INFO,
-			   fmt("New feed:\n%0\n%1",
-			       *db::get(msg.feed, ctx.db.feed_name),
-			       *db::get(msg.feed, ctx.db.feed_info)).c_str(),
+			   fmt("New feed:\n%0",
+			       *db::get(msg.feed, ctx.db.feed_name)).c_str(),
 			   -1);
       } else if (msg.type == Msg::TASK) {
 	gtk_list_store_set(v.msgs, &iter,
 			   COL_INFO,
-			   fmt("New project:\n%0\n%1",
-			       *db::get(msg.project, ctx.db.project_name),
-			       *db::get(msg.project, ctx.db.project_info)).c_str(),
-			   -1);
-      } else if (msg.type == Msg::QUEUE) {
-	gtk_list_store_set(v.msgs, &iter,
-			   COL_INFO,
-			   fmt("New queue:\n%0\n%1",
-			       *db::get(msg.project, ctx.db.project_name),
-			       *db::get(msg.project, ctx.db.project_info)).c_str(),
+			   fmt("New project:\n%0",
+			       *db::get(msg.project, ctx.db.project_name)).c_str(),
 			   -1);
       } else {
 	gtk_list_store_set(v.msgs, &iter, COL_INFO,
@@ -166,11 +131,6 @@ namespace gui {
 			   -1);
       }
     }
-
-    g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(v.list)),
-		     "changed",
-		     G_CALLBACK(on_select),
-		     &v);
   }
   
   Inbox::Inbox(Ctx &ctx):
@@ -178,27 +138,23 @@ namespace gui {
     msgs(gtk_list_store_new(3,
 			    G_TYPE_POINTER,
 			    G_TYPE_STRING, G_TYPE_STRING)),
-    list(new_tree_view(GTK_TREE_MODEL(msgs)))
+    lst(new_tree_view(GTK_TREE_MODEL(msgs))),
+    close_btn(gtk_button_new_with_mnemonic("_Close Inbox"))
   {
-    init_list(*this);
-    gtk_container_add(GTK_CONTAINER(panel), gtk_widget_get_parent(list));
+    GtkWidget *lbl;
 
-    GtkWidget *list_btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    gtk_container_add(GTK_CONTAINER(panel), list_btns);
-        
-    accept = gtk_button_new_with_mnemonic("_Accept Message");
-    g_signal_connect(accept, "clicked", G_CALLBACK(on_accept), this);
-    gtk_container_add(GTK_CONTAINER(list_btns), accept);
-    
-    reject = gtk_button_new_with_mnemonic("_Reject Message");
-    g_signal_connect(reject, "clicked", G_CALLBACK(on_reject), this);
-    gtk_container_add(GTK_CONTAINER(list_btns), reject);
-    
-    close = gtk_button_new_with_mnemonic("_Close Inbox");
-    gtk_widget_set_halign(close, GTK_ALIGN_END);
-    g_signal_connect(close, "clicked", G_CALLBACK(on_close), this);
-    gtk_box_pack_start(GTK_BOX(panel), close, false, false, 5);
-    sel_changed(*this);
-    focused = list;
+    init_lst(*this);
+    g_signal_connect(lst, "row-activated", G_CALLBACK(on_activate), this);
+    gtk_container_add(GTK_CONTAINER(panel), gtk_widget_get_parent(lst));
+
+    lbl = gtk_label_new(fmt("Press Return or double-click "
+			    "to handle message").c_str());
+    gtk_container_add(GTK_CONTAINER(panel), lbl);
+     
+    gtk_widget_set_margin_top(close_btn, 10);
+    gtk_widget_set_halign(close_btn, GTK_ALIGN_END);
+    g_signal_connect(close_btn, "clicked", G_CALLBACK(on_close), this);
+    gtk_box_pack_start(GTK_BOX(panel), close_btn, false, false, 0);
+    focused = lst;
   }
 }}

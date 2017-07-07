@@ -8,8 +8,14 @@ namespace snackis {
 namespace gui {
   template <typename RecT>
   struct RecView: View {
+    using EventFn = func<void ()>;
+    using Event = std::vector<EventFn>;
+    
     RecT rec;
     GtkWidget *fields, *save_btn, *cancel_btn;
+    Event on_save;
+    Event on_cancel;
+    
     RecView(const str &lbl, const RecT &rec);
     virtual bool allow_save() const;
     virtual bool save()=0;
@@ -17,8 +23,18 @@ namespace gui {
 
   template <typename RecT>
   void on_cancel_rec(gpointer *_, RecView<RecT> *v) {
-    log(v->ctx, fmt("Cancelled %0", gtk_label_get_text(GTK_LABEL(v->label))));
+    Ctx &ctx(v->ctx);
+
+    if (!v->on_cancel.empty()) {
+      TRY(try_save);
+      db::Trans trans(ctx);
+      for (auto fn: v->on_cancel) { fn(); }
+      if (try_save.errors.empty()) { db::commit(trans); }
+    }
+
+    log(ctx, fmt("Cancelled %0", gtk_label_get_text(GTK_LABEL(v->label))));
     pop_view(*v);
+    
   }
 
   template <typename RecT>
@@ -27,6 +43,10 @@ namespace gui {
     TRY(try_save);
     db::Trans trans(ctx);
 
+    if (!v->on_save.empty()) {
+      for (auto fn: v->on_save) { fn(); }
+    }
+    
     if (v->save() && try_save.errors.empty()) {
       db::commit(trans);
       log(ctx, fmt("Saved %0", gtk_label_get_text(GTK_LABEL(v->label))));
