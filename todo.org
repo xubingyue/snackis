@@ -1,12 +1,12 @@
-* add feed quick search
-** extract search(SearchView)
 * move handle-logic from imap to inbox
 ** show everything in inbox
 *** open form and allow accept/reject of changes
 * enable support for reverse updates
 ** modify send-functions to send to owner_id if != whoami
 *** replaces if in task/post views
-** check peer membership
+* move owner_id, created_at, changed_at to IdRec
+** add changed_by_id to all id recs
+** add fields to display info in rec view
 * add project/task tags like feed/post
 ** replaces queues
 ** tag tasks with todo instead
@@ -14,16 +14,9 @@
 ** project/task view flds
 ** init/update feed tags
 * add quick search
-** peer, feed, post, project, task
-** use search views
-** only push rec view if one result
+** peer, post, project, task
 * switch Smtp to one trans per msg
 ** pick first and process
-* add calendar
-** id, owner_id, name, info, tags and peers
-* add event
-** id, owner_id, name, info, tags and peers
-** starts_at, ends_at
-** repeat every 3 days until
-* add calendar_event
-** id, starts_at, ends_at
+* add calendar/event
+** a calendar is a resource
+** an event may be booked in multiple calendars

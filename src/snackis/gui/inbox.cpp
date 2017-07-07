@@ -19,8 +19,8 @@ namespace gui {
 			  GtkTreeViewColumn *col,
 			  Inbox *v) {
     Ctx &ctx(v->ctx);
-    auto iter(*get_sel_iter(GTK_TREE_VIEW(v->lst)));
-    auto rec(get_sel_rec<Msg>(GTK_TREE_VIEW(v->lst), iter));
+    auto it(*get_sel_iter(GTK_TREE_VIEW(v->lst)));
+    auto rec(get_rec<Msg>(GTK_TREE_VIEW(v->lst), it));
     CHECK(rec != nullptr, _);
     Msg msg(ctx, *rec);
 
@@ -81,7 +81,7 @@ namespace gui {
 	log(ctx, fmt("Invalid message type: %0", msg.type));
     }
 
-    gtk_list_store_remove(v->msgs, &iter);    
+    gtk_list_store_remove(v->msgs, &it);    
   }
   
   static void init_lst(Inbox &v) {

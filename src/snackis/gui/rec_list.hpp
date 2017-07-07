@@ -58,7 +58,7 @@ namespace gui {
 
     if (iter) {
       auto it(*iter);
-      auto rec(get_sel_rec<RecT>(GTK_TREE_VIEW(w->list), it));
+      auto rec(get_rec<RecT>(GTK_TREE_VIEW(w->list), it));
       CHECK(rec ? true : false, _);
       RecT obj(ctx, *rec);
       w->ids.erase(obj.id);

@@ -20,11 +20,16 @@ namespace gui {
   };
 
   template <typename RecT>
-  void on_search_find(gpointer *_, SearchView<RecT> *v) {
+  size_t find(SearchView<RecT> &v) {
     TRY(try_find);
-    gtk_list_store_clear(v->store);
-    v->find();
-    gtk_widget_show(v->list);
+    gtk_list_store_clear(v.store);
+    v.find();
+    return gtk_tree_model_iter_n_children(GTK_TREE_MODEL(v.store), nullptr);
+  }
+  
+  template <typename RecT>
+  void on_search_find(gpointer *_, SearchView<RecT> *v) {
+    find(*v);
   }
   
   template <typename RecT>
@@ -82,6 +87,17 @@ namespace gui {
     g_signal_connect(cancel_btn, "clicked", G_CALLBACK(on_search_cancel<RecT>), this);
     gtk_container_add(GTK_CONTAINER(btns), cancel_btn);
     focused = fields;
+  }
+
+  template <typename RecT>
+  const db::Rec<RecT> *first_rec(const SearchView<RecT> &v) {
+    GtkTreeIter it;
+
+    if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(v.store), &it)) {
+      return nullptr;
+    }
+    
+    return gui::get_rec<RecT>(GTK_TREE_VIEW(v.list), it);
   }
 }}
 
