@@ -4,8 +4,8 @@
 * add owner fld to feed/post/project/view
 ** add creator_id to all id recs
 ** init with owner_id
-** convert id label to field in rec_view
-** add peer select for owner to the right
+** convert id label to disabled field in rec_view
+** add disabled fields for owner to the right
 * add remaining quick searches
 ** peer, project, task
 * switch Smtp to one trans per msg
