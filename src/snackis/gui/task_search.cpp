@@ -76,79 +76,61 @@ namespace gui {
     text_fld(gtk_entry_new()),
     done_fld(gtk_check_button_new_with_label("Done")),
     project_fld(ctx),
-    queue_fld(ctx),
     peer_fld(ctx)
   {
     GtkWidget *lbl;
 
-    GtkWidget *top_box = gtk_grid_new();
-    gtk_grid_set_row_spacing(GTK_GRID(top_box), 5);
-    gtk_grid_set_column_spacing(GTK_GRID(top_box), 5);
-    gtk_container_add(GTK_CONTAINER(fields), top_box);
+    GtkWidget *frm(gtk_grid_new());
+    gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
+    gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
+    gtk_container_add(GTK_CONTAINER(fields), frm);
+    int row = 0;
     
     lbl = gtk_label_new("Id");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(top_box), lbl, 0, 0, 1, 1);
-    gtk_grid_attach(GTK_GRID(top_box), id_fld, 0, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 1, 1);
+    gtk_widget_set_halign(id_fld, GTK_ALIGN_START);
+    gtk_grid_attach(GTK_GRID(frm), id_fld, 0, row+1, 1, 1);
+    gtk_widget_set_halign(done_fld, GTK_ALIGN_END);
+    gtk_grid_attach(GTK_GRID(frm), done_fld, 1, row+1, 1, 1);
 
+    row += 2;
     lbl = gtk_label_new("Text");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(top_box), lbl, 1, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 2, 1);
     gtk_widget_set_hexpand(text_fld, true);
-    gtk_grid_attach(GTK_GRID(top_box), text_fld, 1, 1, 1, 1);
-    gtk_grid_attach(GTK_GRID(top_box), done_fld, 2, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), text_fld, 0, row+1, 2, 1);
 
+    row += 2;
     lbl = gtk_label_new("Project");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
-    gtk_container_add(GTK_CONTAINER(fields), project_fld.ptr());
-
-    lbl = gtk_label_new("Queue");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
-    gtk_container_add(GTK_CONTAINER(fields), queue_fld.ptr());
-
+    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), project_fld.ptr(), 0, row+1, 1, 1);
+    
     lbl = gtk_label_new("Peer");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
-    gtk_container_add(GTK_CONTAINER(fields), peer_fld.ptr());
+    gtk_grid_attach(GTK_GRID(frm), lbl, 1, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), peer_fld.ptr(), 1, row+1, 1, 1);
 
     add_col(GTK_TREE_VIEW(list), "Id", COL_TASK_ID);
     add_col(GTK_TREE_VIEW(list), "Created", COL_TASK_CREATED);
     add_col(GTK_TREE_VIEW(list), "Owner", COL_TASK_OWNER);
     add_col(GTK_TREE_VIEW(list), "Project", COL_TASK_PROJECT);
     add_col(GTK_TREE_VIEW(list), "Name", COL_TASK_NAME);
-    focused = text_fld;
+    focused = id_fld;
   }
 
   void TaskSearch::find() {
-    auto queue_sel(queue_fld.selected);
     size_t cnt(0);    
-    
-    if (queue_sel) {
-      db::Rec<QueueTask> key;
-      db::set(key, ctx.db.queue_task_queue_id, queue_sel->id);
-      for (auto i = ctx.db.queue_tasks.recs.lower_bound(key);
-	   i != ctx.db.queue_tasks.recs.end() &&
-	     *db::get(*i, ctx.db.queue_task_queue_id) == queue_sel->id;
-	   i++) {
-	db::Rec<Task> rec_key;
-	db::set(rec_key, ctx.db.task_id, *db::get(*i, ctx.db.queue_task_id));
-	auto &rec(db::get(ctx.db.tasks, rec_key));
-	add_task(*this, rec);
-	cnt++;
-      }
-    } else {
-    
-      for (auto i = ctx.db.tasks_sort.recs.begin();
-	   i != ctx.db.tasks_sort.recs.end();
-	   i++) {
-	auto &rec(db::get(ctx.db.tasks, *i));
-	auto tsk(add_task(*this, rec));
-	cnt++;
-      }
+
+    for (auto i = ctx.db.tasks_sort.recs.begin();
+	 i != ctx.db.tasks_sort.recs.end();
+	 i++) {
+      auto &rec(db::get(ctx.db.tasks, *i));
+      auto tsk(add_task(*this, rec));
+      cnt++;
     }
     
-    gtk_widget_grab_focus(cnt ? list : text_fld);
+    gtk_widget_grab_focus(cnt ? list : id_fld);
   }
 }}

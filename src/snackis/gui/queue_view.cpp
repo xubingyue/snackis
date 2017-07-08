@@ -12,7 +12,6 @@ namespace snackis {
 namespace gui {
   static void on_find_tasks(gpointer *_, QueueView *v) {
     TaskSearch *ts = new TaskSearch(v->ctx);
-    select<Queue>(ts->queue_fld, v->rec);
     push_view(*ts);
   }
 

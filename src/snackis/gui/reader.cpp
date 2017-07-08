@@ -317,7 +317,7 @@ namespace gui {
 	
 	if (args.empty()) {
 	  auto v(new TaskSearch(ctx));
-	  select<Queue>(v->queue_fld, q);
+	  //TODO: select todo tag
 	  push_view(*v);
 	} else {
 	  Task task(ctx);

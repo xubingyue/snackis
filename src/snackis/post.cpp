@@ -33,7 +33,9 @@ namespace snackis {
     dst.feed_id = ps.feed_id;
     dst.owner_id = ps.owner_id;
     dst.body = ps.body;
-    dst.tags = ps.tags;
+    
+    std::copy(ps.tags.begin(), ps.tags.end(),
+	      std::inserter(dst.tags, dst.tags.end()));
 
     auto my_pid(whoami(ctx).id);
     std::copy_if(ps.peer_ids.begin(), ps.peer_ids.end(),

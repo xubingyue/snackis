@@ -33,27 +33,28 @@ namespace gui {
   {
     GtkWidget *lbl;
 
-    GtkWidget *top_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
-    gtk_container_add(GTK_CONTAINER(fields), top_box);
-
-    GtkWidget *id_box(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
-    gtk_container_add(GTK_CONTAINER(top_box), id_box);
+    GtkWidget *frm(gtk_grid_new());
+    gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
+    gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
+    gtk_container_add(GTK_CONTAINER(fields), frm);
+    int row = 0;
+    
     lbl = gtk_label_new("Id");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(id_box), lbl);
-    gtk_container_add(GTK_CONTAINER(id_box), id_fld);
+    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), id_fld, 0, row+1, 1, 1);
     
     GtkWidget *post_box(gtk_grid_new());
     gtk_grid_set_row_spacing(GTK_GRID(post_box), 5);
     gtk_grid_set_column_spacing(GTK_GRID(post_box), 5);
-    gtk_widget_set_halign(post_box, GTK_ALIGN_END);
-    gtk_box_pack_start(GTK_BOX(top_box), post_box, true, true, 0);
+    gtk_grid_attach(GTK_GRID(frm), post_box, 1, row, 1, 2);
 
-    lbl = gtk_label_new("Posted");
+    lbl = gtk_label_new("Posted At");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_grid_attach(GTK_GRID(post_box), lbl, 0, 0, 3, 1);
     gtk_entry_set_placeholder_text(GTK_ENTRY(min_time_fld),
 				   "yyyy-mm-dd hh:mm");
+    gtk_widget_set_hexpand(min_time_fld, true);
     gtk_grid_attach(GTK_GRID(post_box), min_time_fld, 0, 1, 1, 1);
     gtk_entry_set_text(GTK_ENTRY(min_time_fld),
 		       fmt(now() - std::chrono::hours(7*24),
@@ -61,34 +62,32 @@ namespace gui {
     gtk_grid_attach(GTK_GRID(post_box), gtk_label_new("-"), 1, 1, 1, 1);
     gtk_entry_set_placeholder_text(GTK_ENTRY(max_time_fld),
 				   "yyyy-mm-dd hh:mm");
+    gtk_widget_set_hexpand(max_time_fld, true);
     gtk_grid_attach(GTK_GRID(post_box), max_time_fld, 2, 1, 1, 1);
 
-    GtkWidget *body_box(gtk_grid_new());
-    gtk_grid_set_row_spacing(GTK_GRID(body_box), 5);
-    gtk_grid_set_column_spacing(GTK_GRID(body_box), 5);
-    gtk_container_add(GTK_CONTAINER(fields), body_box);
-    
+    row += 2;
     lbl = gtk_label_new("Tags");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(body_box), lbl, 0, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 1, 1);
     gtk_widget_set_hexpand(tags_fld, true);
-    gtk_grid_attach(GTK_GRID(body_box), tags_fld, 0, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), tags_fld, 0, row+1, 1, 1);
 
     lbl = gtk_label_new("Body");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(body_box), lbl, 1, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), lbl, 1, row, 1, 1);
     gtk_widget_set_hexpand(body_fld, true);
-    gtk_grid_attach(GTK_GRID(body_box), body_fld, 1, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), body_fld, 1, row+1, 1, 1);
 
+    row += 2;
     lbl = gtk_label_new("Feed");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
-    gtk_container_add(GTK_CONTAINER(fields), feed_fld.ptr());
+    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), feed_fld.ptr(), 0, row+1, 1, 1);
     
-    lbl = gtk_label_new("By");
+    lbl = gtk_label_new("By Peer");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
-    gtk_container_add(GTK_CONTAINER(fields), peer_fld.ptr());
+    gtk_grid_attach(GTK_GRID(frm), lbl, 1, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), peer_fld.ptr(), 1, row+1, 1, 1);
     
     add_col(GTK_TREE_VIEW(list), "Id", COL_ID);
     add_col(GTK_TREE_VIEW(list), "Posted", COL_BY);

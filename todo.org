@@ -1,6 +1,6 @@
-* --- new dist
 * move owner_id, created_at, changed_at to IdRec
 ** add changed_by_id to all id recs
+*** set to msg.from_id in copy(x, msg)-fns
 ** add fields to display info in rec view
 * add project/task tags like feed/post
 ** replaces queues
