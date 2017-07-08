@@ -3,11 +3,11 @@
 
 #include "snackis/post.hpp"
 #include "snackis/gui/feed_select.hpp"
-#include "snackis/gui/rec_view.hpp"
+#include "snackis/gui/shared_view.hpp"
 
 namespace snackis {
 namespace gui {
-  struct PostView: RecView<Post> {
+  struct PostView: SharedView<Post> {
     GtkListStore *post_store;
     GtkWidget *post_btn, *find_replies_btn, *reply_btn, *edit_feed_btn, *tags_fld,
       *body_fld, *post_lst;

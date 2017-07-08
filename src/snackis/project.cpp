@@ -18,6 +18,7 @@ namespace snackis {
 
   Project::Project(const Msg &msg):
     IdRec(msg.ctx, *db::get(msg.project, msg.ctx.db.project_id)),
+    owner_id(msg.from_id),
     created_at(now()),
     changed_at(created_at)
   {
@@ -29,7 +30,6 @@ namespace snackis {
     const Project prj(ctx, src.project);
 
     dst.id = prj.id;
-    dst.owner_id = prj.owner_id;
     dst.name = prj.name;
     dst.info = prj.info;
     dst.active = prj.active;

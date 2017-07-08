@@ -83,7 +83,7 @@ namespace gui {
   }
   
   PostView::PostView(const Post &post):
-    RecView("Post", post),
+    SharedView<Post>("Post", post),
     post_store(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
     post_btn(gtk_button_new_with_mnemonic("New _Post")),
     find_replies_btn(gtk_button_new_with_mnemonic("_Find Replies")),
@@ -96,15 +96,12 @@ namespace gui {
   {
     GtkWidget *lbl;
 
-    GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    gtk_widget_set_margin_bottom(btns, 5);
-    gtk_container_add(GTK_CONTAINER(fields), btns);
     g_signal_connect(post_btn, "clicked", G_CALLBACK(on_post), this);
-    gtk_container_add(GTK_CONTAINER(btns), post_btn);
+    gtk_container_add(GTK_CONTAINER(menu), post_btn);
     g_signal_connect(find_replies_btn, "clicked", G_CALLBACK(on_find_replies), this);
-    gtk_container_add(GTK_CONTAINER(btns), find_replies_btn);
+    gtk_container_add(GTK_CONTAINER(menu), find_replies_btn);
     g_signal_connect(reply_btn, "clicked", G_CALLBACK(on_reply), this);
-    gtk_container_add(GTK_CONTAINER(btns), reply_btn);
+    gtk_container_add(GTK_CONTAINER(menu), reply_btn);
 
     lbl = gtk_label_new("Feed");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);

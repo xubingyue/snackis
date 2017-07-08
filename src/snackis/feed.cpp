@@ -17,6 +17,7 @@ namespace snackis {
   
   Feed::Feed(const Msg &msg):
     IdRec(msg.ctx, *db::get(msg.feed, msg.ctx.db.feed_id)),
+    owner_id(msg.from_id),
     created_at(now()),
     changed_at(created_at)
   {
@@ -28,7 +29,6 @@ namespace snackis {
     Feed fd(ctx, src.feed);
 
     dst.id = fd.id;
-    dst.owner_id = fd.owner_id;
     dst.name = fd.name;
     dst.info = fd.info;
     dst.active = fd.active;

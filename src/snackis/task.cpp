@@ -23,6 +23,7 @@ namespace snackis {
 
   Task::Task(const Msg &msg):
     IdRec(msg.ctx, *db::get(msg.task, msg.ctx.db.task_id)),
+    owner_id(msg.from_id),
     created_at(now()),
     changed_at(created_at)
   {
@@ -35,7 +36,6 @@ namespace snackis {
 
     dst.id = tsk.id;
     dst.project_id = tsk.project_id;
-    dst.owner_id = tsk.owner_id;
     dst.name = tsk.name;
     dst.info = tsk.info;
     dst.done = tsk.done;

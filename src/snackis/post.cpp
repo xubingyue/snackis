@@ -21,6 +21,7 @@ namespace snackis {
 
   Post::Post(const Msg &msg):
     IdRec(msg.ctx, *db::get(msg.post, msg.ctx.db.post_id)),
+    owner_id(msg.from_id),
     created_at(now()),
     changed_at(created_at)
   {
@@ -33,7 +34,6 @@ namespace snackis {
 
     dst.id = ps.id;
     dst.feed_id = ps.feed_id;
-    dst.owner_id = ps.owner_id;
     dst.body = ps.body;
     
     std::copy(ps.tags.begin(), ps.tags.end(),

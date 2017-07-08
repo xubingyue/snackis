@@ -1,11 +1,10 @@
+* inherit feed, project & task from shared view
+* add created_changed panel manually to peer view
 * extract FeedHistory from post view
 ** add post replies
 * add post quick search
-* add rec_header
-** disabled
-** owner_id/name in left col
-** add created_at/changed_at in right_col
-** add to feed/post/project/view
+* extract rec view buttons container
+** remove from sub classes
 * add remaining quick searches
 ** peer, project, task
 * switch Smtp to one trans per msg

@@ -52,6 +52,7 @@ namespace gui {
     return get_rec<RecT>(w, *iter);
   }
 
+  GtkWidget *new_label(const str &txt);
   GtkWidget *new_id_field();
   GtkWidget *new_combo_box(GtkTreeModel *mod);
   GtkWidget *new_text_view();
