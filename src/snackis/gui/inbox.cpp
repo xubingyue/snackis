@@ -82,20 +82,18 @@ namespace gui {
 			 id_str(get_peer_id(ctx, msg.from_id))));
 	  }
 	} else {
-	  Post ps(msg);
-	  auto pv(new PostView(ps));
+	  auto pv(new PostView(Post(msg)));
 	  push_view(*pv);
 	}
       } else {
-	Feed fd(msg);	
-	auto fv(new FeedView(fd));
-	push_view(*fv);
-	
-	Post ps(msg);
-	auto pv(new PostView(ps));
-	push_view(*pv);
-      }      	
+	auto fv(new FeedView(Feed(msg)));
 
+	fv->on_save.push_back([msg]() {
+	    View::stack.push_back(new PostView(Post(msg)));
+	  });
+
+	push_view(*fv);	
+      }
     } else if (msg.type == Msg::TASK) {
       Project prj(ctx, msg.project);
       auto prj_fnd(find_project_id(ctx, prj.id));
@@ -103,8 +101,8 @@ namespace gui {
       if (prj_fnd) {
 	if (prj_fnd->owner_id == prj.owner_id || prj_fnd->owner_id == msg.from_id) {
 	  copy(*prj_fnd, msg);
-	  auto fv(new ProjectView(*prj_fnd));
-	  push_view(*fv);
+	  auto pv(new ProjectView(*prj_fnd));
+	  push_view(*pv);
 	} else {
 	  log(ctx, fmt("Skipped unauthorized update of project %0 by %1",
 		       id_str(*prj_fnd),
@@ -125,17 +123,16 @@ namespace gui {
 			 id_str(get_peer_id(ctx, msg.from_id))));
 	  }
 	} else {
-	  Task tsk(msg);
-	  auto pv(new TaskView(tsk));
+	  auto pv(new TaskView(Task(msg)));
 	  push_view(*pv);
 	}
       } else {
-	Project prj(msg);	
-	auto fv(new ProjectView(prj));
-	push_view(*fv);
+	auto pv(new ProjectView(Project(msg)));
 	
-	Task tsk(msg);
-	auto pv(new TaskView(tsk));
+	pv->on_save.push_back([msg]() {
+	    View::stack.push_back(new TaskView(Task(msg)));
+	  });
+
 	push_view(*pv);
       }      
     } else {
@@ -151,7 +148,6 @@ namespace gui {
     add_col(GTK_TREE_VIEW(v.lst), "From", COL_FROM);
     add_col(GTK_TREE_VIEW(v.lst), "Message", COL_INFO, true);
     Ctx &ctx(v.ctx);
-    std::vector<UId> rem;
     
     for(auto key = ctx.db.inbox_sort.recs.begin();
 	key != ctx.db.inbox_sort.recs.end();
@@ -253,7 +249,7 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(panel), gtk_widget_get_parent(lst));
 
     lbl = gtk_label_new(fmt("Press Return or double-click "
-			    "to handle message").c_str());
+			    "to handle Message").c_str());
     gtk_container_add(GTK_CONTAINER(panel), lbl);
      
     gtk_widget_set_margin_top(cancel_btn, 10);

@@ -116,7 +116,6 @@ namespace gui {
     rec.tags = word_set(get_str(GTK_ENTRY(tags_fld)));    
     rec.info = get_str(GTK_TEXT_VIEW(info_fld));
     db::upsert(ctx.db.tasks, rec);
-    send(rec);
     return true;
   }
 }}

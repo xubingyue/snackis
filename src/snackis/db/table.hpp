@@ -118,11 +118,7 @@ namespace db {
   template <typename RecT>
   const Rec<RecT> &get(Table<RecT> &tbl, const Rec<RecT> &key) {
     auto found = tbl.recs.find(key);
-
-    if (found == tbl.recs.end()) {
-      ERROR(Db, fmt("Record missing in table: %0", tbl.name));
-    }
-    
+    CHECK(found, _ != tbl.recs.end());
     return *found;
   }
 
@@ -166,7 +162,7 @@ namespace db {
   bool update(Table<RecT> &tbl, const Rec<RecT> &rec) {
     TRACE(fmt("Updating table: %0", tbl.name));
     auto found(tbl.recs.find(rec));
-    if (found == tbl.recs.end()) { return false; }
+    if (found == tbl.recs.end() || rec == *found) { return false; }
     
     for (auto idx: tbl.indexes) {
       erase(*idx, *found);

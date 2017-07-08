@@ -15,8 +15,10 @@ namespace snackis {
 
   Task::Task(Ctx &ctx, const db::Rec<Task> &rec): IdRec(ctx, false) {
     db::copy(*this, rec);
-    auto prj(find_project_id(ctx, project_id));
-    if (prj) { peer_ids = prj->peer_ids; }
+
+    if (project_id != null_uid) {
+      peer_ids = get_project_id(ctx, project_id).peer_ids;
+    }
   }
 
   Task::Task(const Msg &msg):
@@ -59,11 +61,7 @@ namespace snackis {
 
   Task get_task_id(Ctx &ctx, UId id) {
     auto found(find_task_id(ctx, id));
-    
-    if (!found) {
-      ERROR(Db, fmt("Task id not found: %0", id));
-    }
-
+    CHECK(found, _);
     return *found;
   }
 

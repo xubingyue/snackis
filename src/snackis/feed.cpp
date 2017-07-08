@@ -55,11 +55,7 @@ namespace snackis {
 
   Feed get_feed_id(Ctx &ctx, UId id) {
     auto found(find_feed_id(ctx, id));
-    
-    if (!found) {
-      ERROR(Db, fmt("Feed id not found: %0", id));
-    }
-
+    CHECK(found, _);
     return *found;
   }
 

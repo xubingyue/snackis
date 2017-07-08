@@ -55,11 +55,7 @@ namespace snackis {
 
   Project get_project_id(Ctx &ctx, UId id) {
     auto found(find_project_id(ctx, id));
-    
-    if (!found) {
-      ERROR(Db, fmt("Project id not found: %0", id));
-    }
-
+    CHECK(found, _);
     return *found;
   }
 

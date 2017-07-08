@@ -143,6 +143,11 @@ namespace snackis {
 	db::set(curr_rec, feed_changed_at, now());
       });
 
+    posts.on_insert.push_back([&](auto &rec) {
+	Post ps(ctx, rec);
+	if (ps.owner_id == whoami(ctx).id) { send(ps); }
+      });
+
     posts.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
 	Post curr(ctx, curr_rec);
 	auto fd(find_feed_id(ctx, curr.id));
@@ -155,6 +160,7 @@ namespace snackis {
 	  }
 	
 	db::set(curr_rec, post_changed_at, now());
+	send(curr);
       });
 
     projects.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
@@ -170,6 +176,11 @@ namespace snackis {
 	db::set(curr_rec, project_changed_at, now());
       });
 
+    tasks.on_insert.push_back([&](auto &rec) {
+	Task tsk(ctx, rec);
+	if (tsk.owner_id == whoami(ctx).id) { send(tsk); }
+      });
+
     tasks.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
 	Task curr(ctx, curr_rec);
 	auto fd(find_feed_id(ctx, curr.id));
@@ -181,6 +192,7 @@ namespace snackis {
 	}
 	
 	db::set(curr_rec, task_changed_at, now());
+	send(curr);
       });
   }
 }

@@ -22,7 +22,7 @@ namespace snackis {
   }
 
   Msg::Msg(Ctx &ctx, const db::Rec<Msg> &src): IdRec(ctx, null_uid) {
-    copy(*this, src);
+    db::copy(*this, src);
   }
 
   str encode(const Msg &msg) {

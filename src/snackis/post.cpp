@@ -13,8 +13,10 @@ namespace snackis {
 
   Post::Post(Ctx &ctx, const db::Rec<Post> &rec): IdRec(ctx, null_uid) {
     db::copy(*this, rec);
-    auto fd(find_feed_id(ctx, feed_id));
-    if (fd) { peer_ids = fd->peer_ids; }
+
+    if (feed_id != null_uid) {
+      peer_ids = get_feed_id(ctx, feed_id).peer_ids;
+    }
   }
 
   Post::Post(const Msg &msg):
@@ -55,11 +57,7 @@ namespace snackis {
 
   Post get_post_id(Ctx &ctx, UId id) {
     auto found(find_post_id(ctx, id));
-    
-    if (!found) {
-      ERROR(Db, fmt("Post id not found: %0", id));
-    }
-
+    CHECK(found, _);
     return *found;
   }
 
