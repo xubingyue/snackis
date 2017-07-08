@@ -114,7 +114,7 @@ namespace gui {
     rec.info = get_str(GTK_TEXT_VIEW(info_fld));
     rec.done = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(done_fld));
     db::upsert(ctx.db.tasks, rec);
-    if (rec.owner_id == whoami(ctx).id) { send(rec); }
+    send(rec);
     return true;
   }
 }}

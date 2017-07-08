@@ -22,6 +22,7 @@ namespace gui {
 			  GtkTreeViewColumn *col,
 			  Inbox *v) {
     Ctx &ctx(v->ctx);
+    auto &me(whoami(ctx));
     db::Trans trans(ctx);
     auto it(*get_sel_iter(GTK_TREE_VIEW(v->lst)));
     auto rec(get_rec<Msg>(GTK_TREE_VIEW(v->lst), it));
@@ -56,15 +57,28 @@ namespace gui {
       auto fd_fnd(find_feed_id(ctx, *db::get(msg.feed, ctx.db.feed_id)));
       
       if (fd_fnd) {
-	copy(*fd_fnd, msg);
-	auto fv(new FeedView(*fd_fnd));
-	push_view(*fv);
-	auto ps_fnd(find_post_id(ctx, *db::get(msg.post, ctx.db.post_id)));
+	if (fd_fnd->owner_id == me.id || fd_fnd->owner_id == msg.from_id) {
+	  copy(*fd_fnd, msg);
+	  auto fv(new FeedView(*fd_fnd));
+	  push_view(*fv);
+	} else {
+	  log(ctx, fmt("Skipped unauthorized update of feed %0 by %1",
+		       id_str(*fd_fnd),
+		       id_str(get_peer_id(ctx, msg.from_id))));
+	}
 	
+	auto ps_fnd(find_post_id(ctx, *db::get(msg.post, ctx.db.post_id)));
+
 	if (ps_fnd) {
-	  copy(*ps_fnd, msg);
-	  auto pv(new PostView(*ps_fnd));
-	  push_view(*pv);
+	  if (ps_fnd->owner_id == me.id || ps_fnd->owner_id != msg.from_id) {
+	    copy(*ps_fnd, msg);
+	    auto pv(new PostView(*ps_fnd));
+	    push_view(*pv);
+	  } else {
+	    log(ctx, fmt("Skipped unauthorized update of post %0 by %1",
+			 id_str(*ps_fnd),
+			 id_str(get_peer_id(ctx, msg.from_id))));
+	  }
 	} else {
 	  Post ps(msg);
 	  auto pv(new PostView(ps));
@@ -78,20 +92,34 @@ namespace gui {
 	Post ps(msg);
 	auto pv(new PostView(ps));
 	push_view(*pv);
-      }      
+      }      	
+
     } else if (msg.type == Msg::TASK) {
       auto prj_fnd(find_project_id(ctx, *db::get(msg.project, ctx.db.project_id)));
       
       if (prj_fnd) {
-	copy(*prj_fnd, msg);
-	auto fv(new ProjectView(*prj_fnd));
-	push_view(*fv);
+	if (prj_fnd->owner_id == me.id || prj_fnd->owner_id != msg.from_id) {
+	  copy(*prj_fnd, msg);
+	  auto fv(new ProjectView(*prj_fnd));
+	  push_view(*fv);
+	} else {
+	  log(ctx, fmt("Skipped unauthorized update of project %0 by %1",
+		       id_str(*prj_fnd),
+		       id_str(get_peer_id(ctx, msg.from_id))));
+	} 
+	  
 	auto tsk_fnd(find_task_id(ctx, *db::get(msg.task, ctx.db.task_id)));
-	
+
 	if (tsk_fnd) {
-	  copy(*tsk_fnd, msg);
-	  auto pv(new TaskView(*tsk_fnd));
-	  push_view(*pv);
+	  if (tsk_fnd->owner_id == me.id || tsk_fnd->owner_id != msg.from_id) {
+	    copy(*tsk_fnd, msg);
+	    auto pv(new TaskView(*tsk_fnd));
+	    push_view(*pv);
+	  } else {
+	    log(ctx, fmt("Skipped unauthorized update of task %0 by %1",
+			 id_str(*tsk_fnd),
+			 id_str(get_peer_id(ctx, msg.from_id))));
+	  }
 	} else {
 	  Task tsk(msg);
 	  auto pv(new TaskView(tsk));

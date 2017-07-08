@@ -1,7 +1,3 @@
-* move accept/reject-processing from imap to inbox
-** commit
-* modify send-functions to send to owner_id if != whoami
-** replaces if in task/post views
 * --- new dist
 * move owner_id, created_at, changed_at to IdRec
 ** add changed_by_id to all id recs

@@ -152,7 +152,7 @@ namespace gui {
     rec.tags = word_set(get_str(GTK_ENTRY(tags_fld)));
     rec.body = get_str(GTK_TEXT_VIEW(body_fld));
     db::upsert(ctx.db.posts, rec);
-    if (rec.owner_id == whoami(ctx).id) { send(rec); }
+    send(rec);
     return true;
   }
 }}

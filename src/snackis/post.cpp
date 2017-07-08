@@ -89,21 +89,26 @@ namespace snackis {
     std::copy(fd.tags.begin(), fd.tags.end(), std::inserter(ps.tags, ps.tags.end()));
   }
 
-  void send(const Post &pst) {
-    Ctx &ctx(pst.ctx);
-    Feed fd(get_feed_id(ctx, pst.feed_id));
-    
-    for (auto &pid: pst.peer_ids) {
-      auto pr(find_peer_id(ctx, pid));
+  static void send(const Post &ps, const Peer &pr) {
+    Ctx &ctx(ps.ctx);
+    Msg msg(ctx, Msg::POST);
+    msg.to = pr.email;
+    msg.to_id = pr.id;
+    db::copy(ctx.db.feeds, msg.feed, get_feed_id(ctx, ps.feed_id));
+    db::copy(ctx.db.posts, msg.post, ps);
+    insert(ctx.db.outbox, msg);
+  }
+  
+  void send(const Post &ps) {
+    Ctx &ctx(ps.ctx);
 
-      if (pr) {
-	Msg msg(ctx, Msg::POST);
-	msg.to = pr->email;
-	msg.to_id = pr->id;
-	db::copy(ctx.db.feeds, msg.feed, fd);
-	db::copy(ctx.db.posts, msg.post, pst);
-	insert(ctx.db.outbox, msg);
+    if (ps.owner_id == whoami(ctx).id) {
+      for (auto &pid: ps.peer_ids) {
+	auto pr(find_peer_id(ctx, pid));
+	if (pr) { send(ps, *pr); }
       }
+    } else {
+      send(ps, get_peer_id(ctx, ps.owner_id));
     }
   }
 }

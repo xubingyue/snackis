@@ -90,21 +90,25 @@ namespace snackis {
     tsk.peer_ids = prj.peer_ids;
   }
 
+  static void send(const Task &tsk, const Peer &pr) {
+    Ctx &ctx(tsk.ctx);
+    Msg msg(ctx, Msg::TASK);
+    msg.to = pr.email;
+    msg.to_id = pr.id;
+    db::copy(ctx.db.projects, msg.project, get_project_id(ctx, tsk.project_id));
+    db::copy(ctx.db.tasks, msg.task, tsk);
+    insert(ctx.db.outbox, msg);
+  }
+
   void send(const Task &tsk) {
     Ctx &ctx(tsk.ctx);
-    Project prj(get_project_id(ctx, tsk.project_id));
-    
-    for (auto &pid: tsk.peer_ids) {
-      auto pr(find_peer_id(ctx, pid));
-
-      if (pr) {
-	Msg msg(ctx, Msg::TASK);
-	msg.to = pr->email;
-	msg.to_id = pr->id;
-	db::copy(ctx.db.projects, msg.project, prj);
-	db::copy(ctx.db.tasks, msg.task, tsk);
-	insert(ctx.db.outbox, msg);
+    if (tsk.owner_id == whoami(ctx).id) {
+      for (auto &pid: tsk.peer_ids) {
+	auto pr(find_peer_id(ctx, pid));
+	if (pr) { send(tsk, *pr); }
       }
+    } else {
+      send(tsk, get_peer_id(ctx, tsk.owner_id));
     }
   }
 }
