@@ -28,6 +28,18 @@ namespace db {
     scm.cols.push_back(&col);
     scm.col_lookup[col.name] = &col;
   }
+
+  template <typename RecT>
+  int compare(const Schema<RecT> &scm, const RecT &x, const RecT &y) {
+    for (auto c: scm.cols) {
+      auto xv(c->get(x));
+      auto yv(c->get(y));
+      if (xv < yv) { return -1; }
+      if (yv < xv) { return 1; }
+    }
+
+    return 0;
+  }
   
   template <typename RecT>
   int compare(const Schema<RecT> &scm, const Rec<RecT> &x, const Rec<RecT> &y) {

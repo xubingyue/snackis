@@ -103,112 +103,6 @@ namespace snackis {
     return msg;
   }
 
-  static void handle_post_msg(Imap &imap, const Msg &msg) {
-    Ctx &ctx(imap.ctx);
-    opt<Feed> fd_fnd(find_feed_id(ctx, *db::get(msg.feed, ctx.db.feed_id)));
-    
-    if (fd_fnd) {
-      opt<Post> ps_fnd(find_post_id(ctx, *db::get(msg.post, ctx.db.post_id)));
-      Peer pr(get_peer_id(ctx, msg.from_id));
-
-      if (fd_fnd->owner_id == pr.id) {
-	copy(*fd_fnd, msg);
-	db::update(ctx.db.feeds, *fd_fnd);
-      }
-
-      if (ps_fnd) {
-	if (ps_fnd->owner_id == pr.id) {
-	  copy(*ps_fnd, msg);
-	  db::update(ctx.db.posts, *ps_fnd);
-	  log(ctx, fmt("Post %0 updated:\n%1", id_str(*ps_fnd), ps_fnd->body));
-	} else {
-	  log(ctx, fmt("Unautorized post update from %0", msg.from));
-	}
-      } else {
-	Post ps(msg);
-	db::insert(ctx.db.posts, ps);
-	log(ctx, fmt("New post %0 by %1:\n%2", id_str(ps), pr.name, ps.body));
-      }
-    } else {
-      const UId fd_id(*db::get(msg.feed, ctx.db.feed_id));
-      
-      auto prj(find_project_id(ctx, fd_id));
-      auto tsk(find_task_id(ctx, fd_id));
-      auto ps(find_post_id(ctx, fd_id));
-      
-      if ((prj && msg.from_id == prj->owner_id) ||
-	  (tsk && msg.from_id == tsk->owner_id) ||
-	  (ps && msg.from_id == ps->owner_id)) {
-	Feed fd(msg);
-	db::insert(ctx.db.feeds, fd);
-	log(ctx, fmt("New feed: %0\n%1", id_str(fd), fd.name));
-      } else if (prj || tsk || ps) {
-	  log(ctx, fmt("Unautorized feed from %0", msg.from));	
-      } else {
-	db::insert(ctx.db.inbox, msg);
-      }
-    }
-  }
-
-  static void handle_task_msg(Imap &imap, const Msg &msg) {
-    Ctx &ctx(imap.ctx);
-    auto prj_fnd(find_project_id(ctx, *db::get(msg.project, ctx.db.project_id)));
-    
-    if (prj_fnd) {
-      opt<Task> tsk_fnd(find_task_id(ctx, *db::get(msg.task, ctx.db.task_id)));
-      Peer pr(get_peer_id(ctx, msg.from_id));
-
-      if (prj_fnd->owner_id == pr.id) {
-	copy(*prj_fnd, msg);
-	db::update(ctx.db.projects, *prj_fnd);
-      }
-
-      if (tsk_fnd) {
-	if (tsk_fnd->owner_id == pr.id) {
-	  copy(*tsk_fnd, msg);
-	  db::update(ctx.db.tasks, *tsk_fnd);
-	  log(ctx, fmt("Task %0 updated", id_str(*tsk_fnd)));
-	} else {
-	  log(ctx, fmt("Unautorized task update from %0", msg.from));
-	}
-      } else {
-	Task tsk(msg);
-	db::insert(ctx.db.tasks, tsk);	
-	log(ctx, fmt("New task %0:\n%1\n%2",
-		     id_str(tsk),
-		     tsk.name,
-		     tsk.info));
-      }
-    } else {
-      db::insert(ctx.db.inbox, msg);
-    }
-  }
-
-  static void handle_msg(Imap &imap, const Msg &msg) {
-    Ctx &ctx(imap.ctx);
-
-    if (msg.type == Msg::ACCEPT || msg.type == Msg::REJECT) {
-      db::Rec<Invite> inv;
-      set(inv, ctx.db.invite_to, msg.from);
-      
-      if (!load(ctx.db.invites, inv)) {
-	log(ctx, fmt("Missing invite: %0", msg.from));
-	return;
-      }
-    }
-    
-    if (msg.type == Msg::REJECT) {
-      invite_rejected(msg);
-      log(ctx, fmt("Invite to %0 was rejected", msg.from));
-    } else if (msg.type == Msg::POST) {
-      handle_post_msg(imap, msg);
-    } else if (msg.type == Msg::TASK) {
-      handle_task_msg(imap, msg);
-    } else {
-      db::insert(ctx.db.inbox, msg);
-    }
-  }
-  
   void fetch(struct Imap &imap) {
     TRACE("Fetching email");
     Ctx &ctx(imap.ctx);
@@ -248,7 +142,7 @@ namespace snackis {
 	opt<Msg> msg = fetch_uid(imap, uid);
 	
 	if (msg) {
-	  handle_msg(imap, *msg);
+	  db::insert(ctx.db.inbox, *msg);
 	  msg_cnt++;
 	} else {
 	  log(ctx, "Failed decoding message");

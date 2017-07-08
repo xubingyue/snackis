@@ -83,12 +83,12 @@ Type ```fetch``` and press return in the reader to fetch email manually. Automat
 If you haven't previously used external clients with your email-address, it's quite likely that you'll get an error when Snackis tries connecting to the server. Most email providers will send a message to your inbox with a warning and instructions on how to enable external access. Rest assured that there is nothing insecure about Snackis way of accessing your email, and as long as you don't type in your server-details anywhere else nothing bad can happen as a consequence of allowing external access to your account.
 
 ### Inbox
-Incoming traffic that needs approval arrives in the inbox, type ```inbox``` end press ```Return``` in the reader to open the inbox form.
+Incoming messages arrive in the inbox, type ```inbox``` end press ```Return``` in the reader to open the inbox form.
 
 ![inbox example](images/inbox.png?raw=true)
 
 ### Feeds
-Snackis main mode of communication is through feeds/posts. Type ```feed-new``` in the reader and press ```Return``` to start a new feed. Local posts are sent to all specified peers, and any peer may reply.
+Snackis main mode of communication is using feeds/posts. Type ```feed-new``` in the reader and press ```Return``` to start a new feed.
 
 ![feed example](images/feed.png?raw=true)
 
@@ -98,7 +98,7 @@ Type ```feed-search``` in the reader and press ```Return``` to search feeds.
 ![feed search example](images/feed_search.png?raw=true)
 
 ### Posts
-Type ```post-new``` in the reader and press ```Return``` to post in existing feed. Existing posts may be updated and updates are propagated to all local feed peers.
+Type ```post-new``` in the reader and press ```Return``` to post in existing feed.
 
 ![post example](images/post.png?raw=true)
 
@@ -108,7 +108,7 @@ Type ```post-search``` in the reader and press ```Return``` to search posts. By 
 ![post search example](images/post_search.png?raw=true)
 
 ### Projects
-Projects are sets of tasks that may be shared among a set of peers. Any member may add tasks to a project, but only the owner is allowed to modify the project details. Each task has its own feed that members may post to. Type ```project-new``` in the reader and press ```Return``` to create a new project.
+Projects are sets of tasks that may be shared among a set of peers. Each task has its own feed that members may post to. Type ```project-new``` in the reader and press ```Return``` to create a new project.
 
 ![project example](images/project.png?raw=true)
 
@@ -118,7 +118,7 @@ Type ```project-search``` in the reader and press ```Return``` to search project
 ![project search example](images/project_search.png?raw=true)
 
 ### Tasks
-A Task belongs to a project and changes are automatically propagated to all project members. Tasks are owned by the creating peer, who alone is allowed to modify the task. Each task has its own feed that members may post to. Type ```task-new``` in the reader and press ```Return``` to create a new task.
+A Task belongs to a project and changes are automatically propagated to all project members. Each task has its own feed that members may post to. Type ```task-new``` in the reader and press ```Return``` to create a new task.
 
 ![task example](images/task.png?raw=true)
 

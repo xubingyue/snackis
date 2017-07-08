@@ -7,7 +7,7 @@ namespace snackis {
 namespace gui {
   struct Inbox: View {
     GtkListStore *msgs;
-    GtkWidget *lst, *close_btn;
+    GtkWidget *lst, *cancel_btn;
 
     Inbox(Ctx &ctx);
   };

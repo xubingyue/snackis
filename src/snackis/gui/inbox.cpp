@@ -3,14 +3,17 @@
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/inbox.hpp"
 #include "snackis/gui/reader.hpp"
+#include "snackis/gui/feed_view.hpp"
 #include "snackis/gui/peer_view.hpp"
+#include "snackis/gui/post_view.hpp"
 #include "snackis/gui/project_view.hpp"
+#include "snackis/gui/task_view.hpp"
 
 namespace snackis {
 namespace gui {
   enum Cols { COL_PTR=0, COL_FROM, COL_INFO };
   
-  static void on_close(gpointer *_, Inbox *v) {
+  static void on_cancel(gpointer *_, Inbox *v) {
     pop_view(*v);
   }
 
@@ -19,6 +22,7 @@ namespace gui {
 			  GtkTreeViewColumn *col,
 			  Inbox *v) {
     Ctx &ctx(v->ctx);
+    db::Trans trans(ctx);
     auto it(*get_sel_iter(GTK_TREE_VIEW(v->lst)));
     auto rec(get_rec<Msg>(GTK_TREE_VIEW(v->lst), it));
     CHECK(rec != nullptr, _);
@@ -29,13 +33,11 @@ namespace gui {
 
       pv->on_save.push_back([&ctx, msg, rec]() {
 	  send_accept(msg);
-	  db::erase(ctx.db.inbox, *rec);
 	  log(ctx, fmt("Invite accepted: %0", msg.from));
 	});
 
       pv->on_cancel.push_back([&ctx, msg, rec]() {
 	  reject_invite(msg);
-	  db::erase(ctx.db.inbox, *rec);
 	  log(ctx, fmt("Invite rejected: %0", msg.from));
 	});
 
@@ -45,43 +47,72 @@ namespace gui {
 
       pv->on_save.push_back([&ctx, msg, rec]() {
 	  invite_accepted(msg);
-	  db::erase(ctx.db.inbox, *rec);
 	});
 
       push_view(*pv);
+    } else if (msg.type == Msg::REJECT) {
+      invite_rejected(msg);
     } else if (msg.type == Msg::POST) {
-      auto fv(new FeedView(Feed(msg)));
-
-      fv->on_save.push_back([&ctx, msg, rec]() {
-	  Post ps(msg);
-	  db::insert(ctx.db.posts, ps);
-	  db::erase(ctx.db.inbox, *rec);
-	  auto pr(get_peer_id(ctx, msg.from_id));
-	  log(ctx, fmt("New post %0 by %1:\n%2", id_str(ps), pr.name, ps.body));
-	});
+      auto fd_fnd(find_feed_id(ctx, *db::get(msg.feed, ctx.db.feed_id)));
       
-      fv->on_cancel.push_back([&ctx, rec]() {
-	  db::erase(ctx.db.inbox, *rec);
-	});      
-
-      push_view(*fv);
+      if (fd_fnd) {
+	copy(*fd_fnd, msg);
+	auto fv(new FeedView(*fd_fnd));
+	push_view(*fv);
+	auto ps_fnd(find_post_id(ctx, *db::get(msg.post, ctx.db.post_id)));
+	
+	if (ps_fnd) {
+	  copy(*ps_fnd, msg);
+	  auto pv(new PostView(*ps_fnd));
+	  push_view(*pv);
+	} else {
+	  Post ps(msg);
+	  auto pv(new PostView(ps));
+	  push_view(*pv);
+	}
+      } else {
+	Feed fd(msg);	
+	auto fv(new FeedView(fd));
+	push_view(*fv);
+	
+	Post ps(msg);
+	auto pv(new PostView(ps));
+	push_view(*pv);
+      }      
     } else if (msg.type == Msg::TASK) {
-      auto pv(new ProjectView(Project(msg)));
-      pv->on_save.push_back([&ctx, msg, rec]() {
+      auto prj_fnd(find_project_id(ctx, *db::get(msg.project, ctx.db.project_id)));
+      
+      if (prj_fnd) {
+	copy(*prj_fnd, msg);
+	auto fv(new ProjectView(*prj_fnd));
+	push_view(*fv);
+	auto tsk_fnd(find_task_id(ctx, *db::get(msg.task, ctx.db.task_id)));
+	
+	if (tsk_fnd) {
+	  copy(*tsk_fnd, msg);
+	  auto pv(new TaskView(*tsk_fnd));
+	  push_view(*pv);
+	} else {
 	  Task tsk(msg);
-	  db::insert(ctx.db.tasks, tsk);
-	  db::erase(ctx.db.inbox, *rec);
-	  log(ctx, fmt("New task %0:\n%1\n%2", id_str(tsk), tsk.name, tsk.info));
-	});
-      pv->on_cancel.push_back([&ctx, rec]() {
-	  db::erase(ctx.db.inbox, *rec);
-	});      
-      push_view(*pv);
+	  auto pv(new TaskView(tsk));
+	  push_view(*pv);
+	}
+      } else {
+	Project prj(msg);	
+	auto fv(new ProjectView(prj));
+	push_view(*fv);
+	
+	Task tsk(msg);
+	auto pv(new TaskView(tsk));
+	push_view(*pv);
+      }      
     } else {
 	log(ctx, fmt("Invalid message type: %0", msg.type));
     }
-
-    gtk_list_store_remove(v->msgs, &it);    
+    
+    gtk_list_store_remove(v->msgs, &it);
+    db::erase(ctx.db.inbox, *rec);
+    db::commit(trans);
   }
   
   static void init_lst(Inbox &v) {
@@ -113,18 +144,62 @@ namespace gui {
 	gtk_list_store_set(v.msgs, &iter, COL_INFO, "Invite", -1);
       } else if (msg.type == Msg::ACCEPT) {
 	gtk_list_store_set(v.msgs, &iter, COL_INFO, "Invite accepted", -1);
+      } else if (msg.type == Msg::REJECT) {
+	gtk_list_store_set(v.msgs, &iter, COL_INFO, "Invite rejected", -1);
       } else if (msg.type == Msg::POST) {
-	gtk_list_store_set(v.msgs, &iter,
-			   COL_INFO,
-			   fmt("New feed:\n%0",
-			       *db::get(msg.feed, ctx.db.feed_name)).c_str(),
-			   -1);
+	Feed fd(ctx, msg.feed);
+	Post ps(ctx, msg.post);
+	auto fd_fnd(find_feed_id(ctx, fd.id));
+
+	if (fd_fnd) {  
+	  auto ps_fnd(find_post_id(ctx, ps.id));
+	  
+	  if (ps_fnd) {
+	    gtk_list_store_set(v.msgs, &iter,
+			       COL_INFO,
+			       fmt("Post %0 updated", id_str(ps)).c_str(),
+			       -1);
+	  } else {
+	    gtk_list_store_set(v.msgs, &iter,
+			       COL_INFO,
+			       fmt("New post in feed %0:\n%1",
+				   id_str(fd), ps.body).c_str(),
+			       -1);
+	  }
+	} else {
+	  gtk_list_store_set(v.msgs, &iter,
+			     COL_INFO,
+			     fmt("New feed:\n%0",
+				 *db::get(msg.feed, ctx.db.feed_name)).c_str(),
+			     -1);
+	}
       } else if (msg.type == Msg::TASK) {
-	gtk_list_store_set(v.msgs, &iter,
-			   COL_INFO,
-			   fmt("New project:\n%0",
-			       *db::get(msg.project, ctx.db.project_name)).c_str(),
-			   -1);
+	Project prj(ctx, msg.project);
+	Task tsk(ctx, msg.task);
+	auto prj_fnd(find_project_id(ctx, prj.id));
+
+	if (prj_fnd) {  
+	  auto tsk_fnd(find_task_id(ctx, tsk.id));
+	  
+	  if (tsk_fnd) {
+	    gtk_list_store_set(v.msgs, &iter,
+			       COL_INFO,
+			       fmt("Task %0 updated", id_str(tsk)).c_str(),
+			       -1);
+	  } else {
+	    gtk_list_store_set(v.msgs, &iter,
+			       COL_INFO,
+			       fmt("New task in project %0:\n%1",
+				   id_str(prj), tsk.name).c_str(),
+			       -1);
+	  }
+	} else {
+	  gtk_list_store_set(v.msgs, &iter,
+			     COL_INFO,
+			     fmt("New project:\n%0",
+				 *db::get(msg.project, ctx.db.project_name)).c_str(),
+			     -1);
+	}	  
       } else {
 	gtk_list_store_set(v.msgs, &iter, COL_INFO,
 			   fmt("Invalid message type: %0", msg.type).c_str(),
@@ -139,7 +214,7 @@ namespace gui {
 			    G_TYPE_POINTER,
 			    G_TYPE_STRING, G_TYPE_STRING)),
     lst(new_tree_view(GTK_TREE_MODEL(msgs))),
-    close_btn(gtk_button_new_with_mnemonic("_Close Inbox"))
+    cancel_btn(gtk_button_new_with_mnemonic("_Cancel"))
   {
     GtkWidget *lbl;
 
@@ -151,10 +226,10 @@ namespace gui {
 			    "to handle message").c_str());
     gtk_container_add(GTK_CONTAINER(panel), lbl);
      
-    gtk_widget_set_margin_top(close_btn, 10);
-    gtk_widget_set_halign(close_btn, GTK_ALIGN_END);
-    g_signal_connect(close_btn, "clicked", G_CALLBACK(on_close), this);
-    gtk_box_pack_start(GTK_BOX(panel), close_btn, false, false, 0);
+    gtk_widget_set_margin_top(cancel_btn, 10);
+    gtk_widget_set_halign(cancel_btn, GTK_ALIGN_END);
+    g_signal_connect(cancel_btn, "clicked", G_CALLBACK(on_cancel), this);
+    gtk_box_pack_start(GTK_BOX(panel), cancel_btn, false, false, 0);
     focused = lst;
   }
 }}
