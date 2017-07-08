@@ -34,13 +34,14 @@ namespace gui {
     }
   }
 
-  TaskView::TaskView(const Task &rec):
-    RecView("Task", rec),
+  TaskView::TaskView(const Task &tsk):
+    RecView("Task", tsk),
     find_posts_btn(gtk_button_new_with_mnemonic("_Find Posts")),
     post_btn(gtk_button_new_with_mnemonic("New _Post")),
     edit_project_btn(gtk_button_new_with_mnemonic("_Edit Project")),
     name_fld(gtk_entry_new()),
     done_fld(gtk_check_button_new_with_mnemonic("_Done")),
+    tags_fld(gtk_entry_new()),    
     info_fld(new_text_view()),
     project_fld(ctx)
   {
@@ -61,10 +62,8 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(fields), project_box);
 
     project_fld.on_change.emplace([this]() {
-	if (project_fld.selected) {
-	  set_project(this->rec, *project_fld.selected);
-	}
-	
+	if (project_fld.selected) { set_project(rec, *project_fld.selected); }
+	set_str(GTK_ENTRY(tags_fld), join(rec.tags.begin(), rec.tags.end(), ' '));
 	auto sel(project_fld.selected ? true : false);
 	gtk_widget_set_sensitive(edit_project_btn, sel);
 	refresh(*this);
@@ -90,8 +89,15 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(name_box), done_fld);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(done_fld), rec.done);
 
+    lbl = gtk_label_new("Tags");
+    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
+    gtk_container_add(GTK_CONTAINER(fields), lbl);
+    gtk_container_add(GTK_CONTAINER(fields), tags_fld);
+    set_str(GTK_ENTRY(tags_fld), join(rec.tags.begin(), rec.tags.end(), ' '));
+    
     lbl = gtk_label_new("Info");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
+    gtk_widget_set_margin_top(lbl, 5);
     gtk_container_add(GTK_CONTAINER(fields), lbl);
     gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(info_fld));
     set_str(GTK_TEXT_VIEW(info_fld), rec.info);
@@ -106,8 +112,9 @@ namespace gui {
 
   bool TaskView::save() {
     rec.name = get_str(GTK_ENTRY(name_fld));
-    rec.info = get_str(GTK_TEXT_VIEW(info_fld));
     rec.done = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(done_fld));
+    rec.tags = word_set(get_str(GTK_ENTRY(tags_fld)));    
+    rec.info = get_str(GTK_TEXT_VIEW(info_fld));
     db::upsert(ctx.db.tasks, rec);
     send(rec);
     return true;

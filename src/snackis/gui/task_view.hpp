@@ -10,7 +10,7 @@ namespace gui {
   struct TaskView: RecView<Task> {
     GtkListStore *project_store;
     GtkWidget *find_posts_btn, *post_btn, *edit_project_btn,
-      *name_fld, *done_fld, *info_fld;
+      *name_fld, *done_fld, *tags_fld, *info_fld;
     ProjectSelect project_fld;
     
     TaskView(const Task &rec);

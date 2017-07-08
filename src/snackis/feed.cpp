@@ -33,7 +33,9 @@ namespace snackis {
     dst.info = fd.info;
     dst.active = fd.active;
     dst.visible = fd.visible;
-    dst.tags = fd.tags;
+
+    std::copy(fd.tags.begin(), fd.tags.end(),
+	      std::inserter(dst.tags, dst.tags.end()));
 
     auto my_pid(whoami(ctx).id);
     std::copy_if(fd.peer_ids.begin(), fd.peer_ids.end(),

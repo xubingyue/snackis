@@ -1,7 +1,3 @@
-* add project/task tags like feed/post
-** add search flds + cols
-** add project/task view flds
-** init/update feed tags
 * add owner fld to feed/post/project/view
 ** add creator_id to all id recs
 * add quick search

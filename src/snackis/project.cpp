@@ -33,6 +33,9 @@ namespace snackis {
     dst.name = prj.name;
     dst.info = prj.info;
     dst.active = prj.active;
+
+    std::copy(prj.tags.begin(), prj.tags.end(),
+	      std::inserter(dst.tags, dst.tags.end()));
     
     auto my_pid(whoami(ctx).id);
     std::copy_if(prj.peer_ids.begin(), prj.peer_ids.end(),
@@ -70,6 +73,7 @@ namespace snackis {
       db::Trans trans(ctx);
       TRY(try_create);
       fd.name = fmt("Project %0", id_str(prj));
+      fd.tags = prj.tags;
       fd.owner_id = prj.owner_id;
       fd.active = true;
       fd.visible = false;

@@ -38,6 +38,9 @@ namespace snackis {
     dst.info = tsk.info;
     dst.done = tsk.done;
 
+    std::copy(tsk.tags.begin(), tsk.tags.end(),
+	      std::inserter(dst.tags, dst.tags.end()));
+
     auto my_pid(whoami(ctx).id);
     std::copy_if(tsk.peer_ids.begin(), tsk.peer_ids.end(),
 		 std::inserter(dst.peer_ids, dst.peer_ids.end()),
@@ -74,6 +77,7 @@ namespace snackis {
       db::Trans trans(ctx);
       TRY(try_create);
       fd.name = fmt("Task %0", id_str(tsk));
+      fd.tags = tsk.tags;
       fd.owner_id = tsk.owner_id;
       fd.active = true;
       fd.visible = false;

@@ -23,11 +23,11 @@ namespace gui {
   static gboolean on_key(gpointer _, GdkEventKey *ev, Reader *rdr) {
     if (!std::isgraph(gdk_keyval_to_unicode(ev->keyval))) { return false; }
     const str in(gtk_entry_get_text(GTK_ENTRY(rdr->entry)));
-    if (in.empty()) { return true; }
+    if (in.empty()) { return false; }
     auto fnd(rdr->cmds.lower_bound(in));
-    if (fnd == rdr->cmds.end()) { return true; }
+    if (fnd == rdr->cmds.end()) { return false; }
     const str fnd_str(fnd->first);
-    if (fnd_str.find(in) != 0) { return true; }
+    if (fnd_str.find(in) != 0) { return false; }
     size_t i(fnd_str.size());
       
     while (fnd != rdr->cmds.end() && fnd->first.find(in) == 0) {
@@ -45,7 +45,7 @@ namespace gui {
       
     gtk_entry_set_text(GTK_ENTRY(rdr->entry), fnd_str.substr(0, i).c_str());
     gtk_editable_set_position(GTK_EDITABLE(rdr->entry), i);
-    return true;
+    return false;
   }
   
   static void init_cmds(Reader &rdr) {

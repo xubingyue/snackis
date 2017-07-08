@@ -16,7 +16,6 @@ namespace snackis {
     std::set<str> tags;
     bool done;
     std::set<UId> peer_ids;
-    std::set<UId> queue_ids;
     
     Task(Ctx &ctx);
     Task(Ctx &ctx, const db::Rec<Task> &rec);   

@@ -9,7 +9,7 @@
 namespace snackis {
 namespace gui {
   struct TaskSearch: SearchView<Task> {
-    GtkWidget *id_fld, *text_fld, *done_fld;
+    GtkWidget *id_fld, *done_fld, *tags_fld, *text_fld;
     ProjectSelect project_fld;
     PeerSelect peer_fld;
     

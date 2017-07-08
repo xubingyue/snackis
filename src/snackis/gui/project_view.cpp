@@ -50,6 +50,7 @@ namespace gui {
     find_posts_btn(gtk_button_new_with_mnemonic("Find Posts")),
     post_btn(gtk_button_new_with_mnemonic("New _Post")),
     name_fld(gtk_entry_new()),
+    tags_fld(gtk_entry_new()),
     active_fld(gtk_check_button_new_with_label("Active")),    
     info_fld(new_text_view()),
     peer_lst(ctx, "Peer", this->rec.peer_ids)
@@ -78,9 +79,18 @@ namespace gui {
     gtk_entry_set_text(GTK_ENTRY(name_fld), rec.name.c_str());
     gtk_container_add(GTK_CONTAINER(name_box), active_fld);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active_fld), rec.active);
+
+    lbl = gtk_label_new("Tags");
+    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
+    gtk_container_add(GTK_CONTAINER(fields), lbl);
+    gtk_widget_set_hexpand(tags_fld, true);
+    gtk_container_add(GTK_CONTAINER(fields), tags_fld);    
+    gtk_entry_set_text(GTK_ENTRY(tags_fld),
+		       join(rec.tags.begin(), rec.tags.end(), ' ').c_str());
     
     lbl = gtk_label_new("Info");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
+    gtk_widget_set_margin_top(lbl, 5);    
     gtk_container_add(GTK_CONTAINER(fields), lbl);
     gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(info_fld));
     set_str(GTK_TEXT_VIEW(info_fld), rec.info);
@@ -94,6 +104,7 @@ namespace gui {
 
   bool ProjectView::save() {
     rec.name = gtk_entry_get_text(GTK_ENTRY(name_fld));
+    rec.tags = word_set(get_str(GTK_ENTRY(tags_fld)));
     rec.info = get_str(GTK_TEXT_VIEW(info_fld));
     db::upsert(ctx.db.projects, rec);
     return true;

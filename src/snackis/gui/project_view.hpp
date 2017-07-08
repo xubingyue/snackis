@@ -9,7 +9,7 @@ namespace snackis {
 namespace gui {
   struct ProjectView: RecView<Project> {
     GtkWidget *find_tasks_btn, *new_task_btn, *find_posts_btn, *post_btn, *name_fld,
-      *active_fld, *info_fld;
+      *tags_fld, *active_fld, *info_fld;
     PeerList peer_lst;
     
     ProjectView(const Project &rec);

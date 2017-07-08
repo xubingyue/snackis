@@ -159,11 +159,12 @@ namespace snackis {
 
     projects.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
 	Project curr(ctx, curr_rec);
-	auto feed(find_feed_id(ctx, curr.id));
+	auto fd(find_feed_id(ctx, curr.id));
 	
-	if (feed && feed->peer_ids != curr.peer_ids) {
-	  feed->peer_ids = curr.peer_ids;
-	  db::update(feeds, *feed);
+	if (fd && (fd->tags != curr.tags ||
+		   fd->peer_ids != curr.peer_ids)) {
+	  fd->peer_ids = curr.peer_ids;
+	  db::update(feeds, *fd);
 	}
 
 	db::set(curr_rec, project_changed_at, now());
@@ -171,11 +172,12 @@ namespace snackis {
 
     tasks.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
 	Task curr(ctx, curr_rec);
-	auto feed(find_feed_id(ctx, curr.id));
+	auto fd(find_feed_id(ctx, curr.id));
 	
-	if (feed && feed->peer_ids != curr.peer_ids) {
-	  feed->peer_ids = curr.peer_ids;
-	  db::update(feeds, *feed);
+	if (fd && (fd->tags != curr.tags ||
+		   fd->peer_ids != curr.peer_ids)) {
+	  fd->peer_ids = curr.peer_ids;
+	  db::update(feeds, *fd);
 	}
 	
 	db::set(curr_rec, task_changed_at, now());

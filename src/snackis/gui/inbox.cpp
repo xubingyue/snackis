@@ -201,8 +201,7 @@ namespace gui {
 	} else {
 	  gtk_list_store_set(v.msgs, &iter,
 			     COL_INFO,
-			     fmt("New feed:\n%0",
-				 *db::get(msg.feed, ctx.db.feed_name)).c_str(),
+			     fmt("New feed:\n%0", fd.name).c_str(),
 			     -1);
 	}
       } else if (msg.type == Msg::TASK) {
@@ -228,8 +227,7 @@ namespace gui {
 	} else {
 	  gtk_list_store_set(v.msgs, &iter,
 			     COL_INFO,
-			     fmt("New project:\n%0",
-				 *db::get(msg.project, ctx.db.project_name)).c_str(),
+			     fmt("New project:\n%0", prj.name).c_str(),
 			     -1);
 	}	  
       } else {

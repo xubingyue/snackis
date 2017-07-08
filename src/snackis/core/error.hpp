@@ -1,6 +1,8 @@
 #ifndef SNACKIS_ERROR_HPP
 #define SNACKIS_ERROR_HPP
 
+#include <cassert>
+
 #include "snackis/core/fmt.hpp"
 #include "snackis/core/func.hpp"
 #include "snackis/core/str.hpp"
@@ -12,15 +14,10 @@
     throw_error(new CONCAT(type, Error)(what));	\
   }						\
 
-#define CHECK(expr, cond) {						\
-    auto _(expr);							\
-									\
-    if (!(cond)) {							\
-      ERROR(snackis::Core,						\
-	    fmt("Check failed: %0 (%1 = %2)",				\
-		#cond, #expr, _));					\
-    }									\
-  }									\
+#define CHECK(expr, cond) {			\
+    auto _(expr);				\
+    assert(cond);				\
+  }						\
 
 #define TRY(id)					\
   Try id(#id, __FILE__, __LINE__)		\
