@@ -13,6 +13,7 @@ namespace snackis {
     UId project_id, owner_id;
     Time created_at, changed_at;
     str name, info;
+    std::set<str> tags;
     bool done;
     std::set<UId> peer_ids;
     std::set<UId> queue_ids;

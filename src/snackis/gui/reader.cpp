@@ -13,8 +13,6 @@
 #include "snackis/gui/post_view.hpp"
 #include "snackis/gui/project_search.hpp"
 #include "snackis/gui/project_view.hpp"
-#include "snackis/gui/queue_search.hpp"
-#include "snackis/gui/queue_view.hpp"
 #include "snackis/gui/reader.hpp"
 #include "snackis/gui/task_search.hpp"
 #include "snackis/gui/task_view.hpp"
@@ -242,28 +240,6 @@ namespace gui {
 	return true;
       });
     
-    rdr.cmds.emplace("queue-new", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: queue");
-	  return false;
-	}
-	
-	QueueView *v = new QueueView(Queue(ctx));
-	push_view(*v);
-	return true;
-      });
-
-    rdr.cmds.emplace("queue-search", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: queue-search");
-	  return false;
-	}
-	
-	QueueSearch *v = new QueueSearch(ctx);
-	push_view(*v);
-	return true;
-      });
-    
     rdr.cmds.emplace("send", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: send");
@@ -313,15 +289,13 @@ namespace gui {
       });
     
     rdr.cmds.emplace("todo", [&ctx](auto args) {
-	auto q(todo_queue(ctx));
-	
 	if (args.empty()) {
 	  auto v(new TaskSearch(ctx));
 	  //TODO: select todo tag
 	  push_view(*v);
 	} else {
 	  Task task(ctx);
-	  task.queue_ids.insert(q.id);
+	  task.tags.insert("todo");
 	  task.name = join(args.begin(), args.end(), ' ');
 	  auto v(new TaskView(task));
 	  push_view(*v);

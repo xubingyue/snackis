@@ -99,12 +99,14 @@ namespace snackis {
     project_changed_at("changed_at", time_type,    &Project::changed_at),
     project_name(      "name",       str_type,     &Project::name),
     project_info(      "info",       str_type,     &Project::info),
+    project_tags(      "tags",       str_set_type, &Project::tags),
     project_active(    "active",     bool_type,    &Project::active),
     project_peer_ids(  "peer_ids",   uid_set_type, &Project::peer_ids),
     
     projects(ctx, "projects", {&project_id},
 	     {&project_owner_id, &project_created_at, &project_changed_at,
-		 &project_name, &project_info, &project_active, &project_peer_ids}),
+		 &project_name, &project_info, &project_tags, &project_active,
+		 &project_peer_ids}),
 
     projects_sort(ctx, "projects_sort", {&project_name, &project_id}, {}),
     
@@ -115,37 +117,15 @@ namespace snackis {
     task_changed_at("changed_at", time_type,    &Task::changed_at),
     task_name(      "name",       str_type,     &Task::name),
     task_info(      "info",       str_type,     &Task::info),
+    task_tags(      "tags",       str_set_type, &Task::tags),
     task_done(      "done",       bool_type,    &Task::done),
     task_peer_ids(  "peer_ids",   uid_set_type, &Task::peer_ids),
-    task_queue_ids( "queue_ids",  uid_set_type, &Task::queue_ids),
     
     tasks(ctx, "tasks", {&task_id},
 	  {&task_project_id, &task_owner_id, &task_created_at, &task_changed_at,
-	      &task_name, &task_info, &task_done, &task_peer_ids, &task_queue_ids}),
+	      &task_name, &task_info, &task_tags, &task_done, &task_peer_ids}),
 
-    tasks_sort(ctx, "tasks_sort", {&task_created_at, &task_id}, {}),
-    
-    queue_id(        "id",         uid_type,     &Queue::id),
-    queue_owner_id(  "owner_id",   uid_type,     &Queue::owner_id),
-    queue_created_at("created_at", time_type,    &Queue::created_at),
-    queue_changed_at("changed_at", time_type,    &Queue::changed_at),
-    queue_name(      "name",       str_type,     &Queue::name),
-    queue_info(      "info",       str_type,     &Queue::info),
-    queue_peer_ids(  "peer_ids",   uid_set_type, &Queue::peer_ids),
-    
-    queues(ctx, "queues", {&queue_id},
-	   {&queue_owner_id, &queue_created_at, &queue_changed_at, &queue_name,
-	       &queue_info, &queue_peer_ids}),
-
-    queues_sort(ctx, "queues_sort", {&queue_name, &queue_id}, {}),
-
-    queue_task_id(      "id",       uid_type,  &QueueTask::id),
-    queue_task_queue_id("queue_id", uid_type,  &QueueTask::queue_id),
-    queue_task_at(      "at",       time_type, &QueueTask::at),
-    
-    queue_tasks(ctx, "queue_tasks",
-		{&queue_task_queue_id, &queue_task_at, &queue_task_id},
-		{})
+    tasks_sort(ctx, "tasks_sort", {&task_created_at, &task_id}, {})
   {
     peers.indexes.insert(&peers_sort);
     inbox.indexes.insert(&inbox_sort);
@@ -199,18 +179,6 @@ namespace snackis {
 	}
 	
 	db::set(curr_rec, task_changed_at, now());
-      });
-
-    queues.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
-	Queue curr(ctx, curr_rec);
-	auto feed(find_feed_id(ctx, curr.id));
-	
-	if (feed && feed->peer_ids != curr.peer_ids) {
-	  feed->peer_ids = curr.peer_ids;
-	  db::update(feeds, *feed);
-	}
-
-	db::set(curr_rec, queue_changed_at, now());
       });
   }
 }

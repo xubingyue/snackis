@@ -122,26 +122,4 @@ namespace snackis {
 
     return ctx.whoami;
   }
-
-  Queue todo_queue(Ctx &ctx) {
-    auto id(get_val(ctx.settings.todo_queue));
-
-    if (!id) {
-      db::Trans trans(ctx);
-      TRY(try_create);
-      Queue queue(ctx);
-      queue.name = "Todo";
-      set_val(ctx.settings.todo_queue, queue.id);
-      db::insert(ctx.db.queues, queue);
-
-      if (try_create.errors.empty()) {
-	db::commit(trans);
-	log(ctx, "Initialized Todo queue");
-      }
-      
-      return queue;
-    }
-    
-    return get_queue_id(ctx, *id);
-  }
 }

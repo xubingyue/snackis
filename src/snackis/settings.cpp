@@ -23,8 +23,6 @@ namespace snackis {
     smtp_port(ctx, "smtp_port", int64_type, 587),
     smtp_user(ctx, "smtp_user", str_type,   str("")),
     smtp_pass(ctx, "smtp_pass", str_type,   str("")),
-    smtp_poll(ctx, "smtp_poll", int64_type, 0),
-
-    todo_queue(ctx, "todo_queue", uid_type)
+    smtp_poll(ctx, "smtp_poll", int64_type, 0)
   { }
 }

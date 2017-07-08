@@ -42,8 +42,7 @@ namespace gui {
     name_fld(gtk_entry_new()),
     done_fld(gtk_check_button_new_with_mnemonic("_Done")),
     info_fld(new_text_view()),
-    project_fld(ctx),
-    queue_lst(ctx, "Queue", this->rec.queue_ids)    
+    project_fld(ctx)
   {
     GtkWidget *lbl;
 
@@ -97,10 +96,6 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(info_fld));
     set_str(GTK_TEXT_VIEW(info_fld), rec.info);
 
-    load(queue_lst);
-    gtk_widget_set_margin_top(queue_lst.ptr(), 5);
-    gtk_container_add(GTK_CONTAINER(fields), queue_lst.ptr());
-    
     focused = project_fld.search_btn;
     refresh(*this);
   }
