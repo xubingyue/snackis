@@ -1,11 +1,11 @@
 * extract FeedHistory from post view
 ** add post replies
 * add post quick search
-* add owner fld to feed/post/project/view
-** add creator_id to all id recs
-** init with owner_id
-** convert id label to disabled field in rec_view
-** add disabled fields for owner to the right
+* add rec_header
+** disabled
+** owner_id/name in left col
+** add created_at/changed_at in right_col
+** add to feed/post/project/view
 * add remaining quick searches
 ** peer, project, task
 * switch Smtp to one trans per msg

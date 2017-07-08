@@ -58,29 +58,17 @@ namespace gui {
       auto fd_fnd(find_feed_id(ctx, fd.id));
       
       if (fd_fnd) {
-	if (fd_fnd->owner_id == fd.owner_id || fd_fnd->owner_id == msg.from_id) {
-	  copy(*fd_fnd, msg);
-	  auto fv(new FeedView(*fd_fnd));
-	  push_view(*fv);
-	} else {
-	  log(ctx, fmt("Skipped unauthorized update of feed %0 by %1",
-		       id_str(*fd_fnd),
-		       id_str(get_peer_id(ctx, msg.from_id))));
-	}
+	copy(*fd_fnd, msg);
+	auto fv(new FeedView(*fd_fnd));
+	push_view(*fv);
 	
 	Post ps(ctx, msg.post);
 	auto ps_fnd(find_post_id(ctx, ps.id));
 
 	if (ps_fnd) {
-	  if (ps_fnd->owner_id == ps.owner_id || ps_fnd->owner_id == msg.from_id) {
-	    copy(*ps_fnd, msg);
-	    auto pv(new PostView(*ps_fnd));
-	    push_view(*pv);
-	  } else {
-	    log(ctx, fmt("Skipped unauthorized update of post %0 by %1",
-			 id_str(*ps_fnd),
-			 id_str(get_peer_id(ctx, msg.from_id))));
-	  }
+	  copy(*ps_fnd, msg);
+	  auto pv(new PostView(*ps_fnd));
+	  push_view(*pv);
 	} else {
 	  auto pv(new PostView(Post(msg)));
 	  push_view(*pv);
@@ -99,29 +87,17 @@ namespace gui {
       auto prj_fnd(find_project_id(ctx, prj.id));
       
       if (prj_fnd) {
-	if (prj_fnd->owner_id == prj.owner_id || prj_fnd->owner_id == msg.from_id) {
-	  copy(*prj_fnd, msg);
-	  auto pv(new ProjectView(*prj_fnd));
-	  push_view(*pv);
-	} else {
-	  log(ctx, fmt("Skipped unauthorized update of project %0 by %1",
-		       id_str(*prj_fnd),
-		       id_str(get_peer_id(ctx, msg.from_id))));
-	} 
+	copy(*prj_fnd, msg);
+	auto pv(new ProjectView(*prj_fnd));
+	push_view(*pv);
 
 	Task tsk(ctx, msg.task);
 	auto tsk_fnd(find_task_id(ctx, *db::get(msg.task, ctx.db.task_id)));
 
 	if (tsk_fnd) {
-	  if (tsk_fnd->owner_id == tsk.owner_id || tsk_fnd->owner_id == msg.from_id) {
-	    copy(*tsk_fnd, msg);
-	    auto pv(new TaskView(*tsk_fnd));
-	    push_view(*pv);
-	  } else {
-	    log(ctx, fmt("Skipped unauthorized update of task %0 by %1",
-			 id_str(*tsk_fnd),
-			 id_str(get_peer_id(ctx, msg.from_id))));
-	  }
+	  copy(*tsk_fnd, msg);
+	  auto pv(new TaskView(*tsk_fnd));
+	  push_view(*pv);
 	} else {
 	  auto pv(new TaskView(Task(msg)));
 	  push_view(*pv);
