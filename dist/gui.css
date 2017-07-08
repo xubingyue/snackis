@@ -16,7 +16,7 @@ GtkButton {
     border-color: #cccccc;
     box-shadow: none;
     background: #333333;
-    padding: 0.4em;
+    padding: 0.3em 0.6em;
 }
 
 GtkButton:insensitive GtkLabel {
@@ -47,7 +47,7 @@ GtkComboBox GtkButton {
 GtkEntry {
     border: 1px solid;
     border-color: silver;
-    padding: 0.4em;
+    padding: 0.3em 0.6em;
 }
 
 GtkEntry:insensitive {
@@ -84,7 +84,7 @@ GtkNotebook:focused {
 GtkNotebook tab {
     border-color: #cccccc;
     border: 1px solid;
-    padding: 0.4em;
+    padding: 0.3em 0.6em;
 }
 
 GtkNotebook tab:active {

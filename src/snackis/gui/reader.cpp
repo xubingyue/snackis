@@ -85,18 +85,15 @@ namespace gui {
 
     rdr.cmds.emplace("feed", [&ctx](auto args) {
 	if (args.size() != 1) {
-	  log(ctx, "Invalid number of arguments, syntax: feed ea36258");
+	  log(ctx, "Invalid number of arguments, syntax: feed ea362b58");
 	  return false;
 	}
 	
 	FeedSearch *v = new FeedSearch(ctx);
 	auto id(args.back());
 	gui::set_str(GTK_ENTRY(v->id_fld), id);
-	auto fnd(find(*v));
 
-	if (fnd == 0) {
-	  log(ctx, fmt("Feed not found: %0", id));
-	} else if (fnd == 1) {
+	if (find(*v) == 1) {
 	  auto rec(first_rec(*v));
 	  CHECK(rec != nullptr, _);
 	  FeedView *fv = new FeedView(Feed(ctx, *rec));
@@ -193,6 +190,29 @@ namespace gui {
 	
 	PeerSearch *v = new PeerSearch(ctx);
 	push_view(*v);
+	return true;
+      });
+
+    rdr.cmds.emplace("post", [&ctx](auto args) {
+	if (args.size() != 1) {
+	  log(ctx, "Invalid number of arguments, syntax: post ea362b58");
+	  return false;
+	}
+	
+	PostSearch *v = new PostSearch(ctx);
+	auto id(args.back());
+	gui::set_str(GTK_ENTRY(v->id_fld), id);
+
+	if (find(*v) == 1) {
+	  auto rec(first_rec(*v));
+	  CHECK(rec != nullptr, _);
+	  PostView *fv = new PostView(Post(ctx, *rec));
+	  push_view(*fv);
+	  delete v;
+	} else {
+	  push_view(*v);
+	}
+	
 	return true;
       });
     

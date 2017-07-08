@@ -191,6 +191,7 @@ namespace gui {
   static GtkWidget *init_general(Setup &v) {
     GtkWidget *lbl;
     GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+    gtk_widget_set_margin_top(frm, 5);
     Peer &me(whoami(v.ctx));
 
     lbl = gtk_label_new("Name");
@@ -216,6 +217,7 @@ namespace gui {
     Ctx &ctx(v.ctx);
     
     GtkWidget *frm = gtk_grid_new();
+    gtk_widget_set_margin_top(frm, 5);
     gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
     gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
 
@@ -273,6 +275,7 @@ namespace gui {
     Ctx &ctx(v.ctx);
     
     GtkWidget *frm = gtk_grid_new();
+    gtk_widget_set_margin_top(frm, 5);
     gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
     gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
 

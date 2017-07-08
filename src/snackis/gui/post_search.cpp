@@ -42,6 +42,7 @@ namespace gui {
     lbl = gtk_label_new("Id");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 1, 1);
+    gtk_widget_set_halign(id_fld, GTK_ALIGN_START);
     gtk_grid_attach(GTK_GRID(frm), id_fld, 0, row+1, 1, 1);
     
     GtkWidget *post_box(gtk_grid_new());

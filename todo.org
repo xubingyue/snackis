@@ -1,10 +1,13 @@
+* extract FeedHistory from post view
+** add post replies
+* add post quick search
 * add owner fld to feed/post/project/view
 ** add creator_id to all id recs
 ** init with owner_id
 ** convert id label to field in rec_view
 ** add peer select for owner to the right
-* add quick search
-** peer, post, project, task
+* add remaining quick searches
+** peer, project, task
 * switch Smtp to one trans per msg
 ** pick first and process
 * add calendar/event

@@ -61,6 +61,13 @@ namespace gui {
     g_signal_connect(v.post_lst, "row-activated", G_CALLBACK(on_edit_post), &v);
   }
 
+  static void on_post(gpointer *_, PostView *v) {
+    Post post(v->ctx);
+    post.feed_id = v->rec.feed_id;
+    PostView *pv = new PostView(post);
+    push_view(*pv);
+  }
+
   static void on_find_replies(gpointer *_, PostView *v) {
     PostSearch *ps = new PostSearch(v->ctx);
     select<Feed>(ps->feed_fld, get_reply_feed(v->rec));
@@ -78,6 +85,7 @@ namespace gui {
   PostView::PostView(const Post &post):
     RecView("Post", post),
     post_store(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
+    post_btn(gtk_button_new_with_mnemonic("New _Post")),
     find_replies_btn(gtk_button_new_with_mnemonic("_Find Replies")),
     reply_btn(gtk_button_new_with_mnemonic("New _Reply")),
     edit_feed_btn(gtk_button_new_with_mnemonic("_Edit Feed")),
@@ -91,6 +99,8 @@ namespace gui {
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_widget_set_margin_bottom(btns, 5);
     gtk_container_add(GTK_CONTAINER(fields), btns);
+    g_signal_connect(post_btn, "clicked", G_CALLBACK(on_post), this);
+    gtk_container_add(GTK_CONTAINER(btns), post_btn);
     g_signal_connect(find_replies_btn, "clicked", G_CALLBACK(on_find_replies), this);
     gtk_container_add(GTK_CONTAINER(btns), find_replies_btn);
     g_signal_connect(reply_btn, "clicked", G_CALLBACK(on_reply), this);
