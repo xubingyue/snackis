@@ -26,7 +26,7 @@ namespace snackis {
 
   void copy(Project &dst, const Msg &src) {
     Ctx &ctx(src.ctx);
-    const Project prj(get_project_id(ctx, *db::get(src.project, ctx.db.project_id)));
+    const Project prj(ctx, src.project);
 
     dst.id = prj.id;
     dst.owner_id = prj.owner_id;

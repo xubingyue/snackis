@@ -1,13 +1,12 @@
-* move owner_id, created_at, changed_at to IdRec
-** add changed_by_id to all id recs
-*** set to msg.from_id in copy(x, msg)-fns
-** add fields to display info in rec view
+* add owner fld to feed/post/project/view
+** add creator_id to all id recs
 * add project/task tags like feed/post
 ** replaces queues
 ** tag tasks with todo instead
 ** search flds + cols
 ** project/task view flds
 ** init/update feed tags
+
 * add quick search
 ** peer, post, project, task
 * switch Smtp to one trans per msg

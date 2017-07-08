@@ -21,8 +21,8 @@ namespace gui {
 			  GtkTreePath *path,
 			  GtkTreeViewColumn *col,
 			  Inbox *v) {
+    TRY(try_activate);
     Ctx &ctx(v->ctx);
-    auto &me(whoami(ctx));
     db::Trans trans(ctx);
     auto it(*get_sel_iter(GTK_TREE_VIEW(v->lst)));
     auto rec(get_rec<Msg>(GTK_TREE_VIEW(v->lst), it));
@@ -54,10 +54,11 @@ namespace gui {
     } else if (msg.type == Msg::REJECT) {
       invite_rejected(msg);
     } else if (msg.type == Msg::POST) {
-      auto fd_fnd(find_feed_id(ctx, *db::get(msg.feed, ctx.db.feed_id)));
+      Feed fd(ctx, msg.feed);
+      auto fd_fnd(find_feed_id(ctx, fd.id));
       
       if (fd_fnd) {
-	if (fd_fnd->owner_id == me.id || fd_fnd->owner_id == msg.from_id) {
+	if (fd_fnd->owner_id == fd.owner_id || fd_fnd->owner_id == msg.from_id) {
 	  copy(*fd_fnd, msg);
 	  auto fv(new FeedView(*fd_fnd));
 	  push_view(*fv);
@@ -67,10 +68,11 @@ namespace gui {
 		       id_str(get_peer_id(ctx, msg.from_id))));
 	}
 	
-	auto ps_fnd(find_post_id(ctx, *db::get(msg.post, ctx.db.post_id)));
+	Post ps(ctx, msg.post);
+	auto ps_fnd(find_post_id(ctx, ps.id));
 
 	if (ps_fnd) {
-	  if (ps_fnd->owner_id == me.id || ps_fnd->owner_id != msg.from_id) {
+	  if (ps_fnd->owner_id == ps.owner_id || ps_fnd->owner_id == msg.from_id) {
 	    copy(*ps_fnd, msg);
 	    auto pv(new PostView(*ps_fnd));
 	    push_view(*pv);
@@ -95,10 +97,11 @@ namespace gui {
       }      	
 
     } else if (msg.type == Msg::TASK) {
-      auto prj_fnd(find_project_id(ctx, *db::get(msg.project, ctx.db.project_id)));
+      Project prj(ctx, msg.project);
+      auto prj_fnd(find_project_id(ctx, prj.id));
       
       if (prj_fnd) {
-	if (prj_fnd->owner_id == me.id || prj_fnd->owner_id != msg.from_id) {
+	if (prj_fnd->owner_id == prj.owner_id || prj_fnd->owner_id == msg.from_id) {
 	  copy(*prj_fnd, msg);
 	  auto fv(new ProjectView(*prj_fnd));
 	  push_view(*fv);
@@ -107,11 +110,12 @@ namespace gui {
 		       id_str(*prj_fnd),
 		       id_str(get_peer_id(ctx, msg.from_id))));
 	} 
-	  
+
+	Task tsk(ctx, msg.task);
 	auto tsk_fnd(find_task_id(ctx, *db::get(msg.task, ctx.db.task_id)));
 
 	if (tsk_fnd) {
-	  if (tsk_fnd->owner_id == me.id || tsk_fnd->owner_id != msg.from_id) {
+	  if (tsk_fnd->owner_id == tsk.owner_id || tsk_fnd->owner_id == msg.from_id) {
 	    copy(*tsk_fnd, msg);
 	    auto pv(new TaskView(*tsk_fnd));
 	    push_view(*pv);
@@ -145,7 +149,7 @@ namespace gui {
   
   static void init_lst(Inbox &v) {
     add_col(GTK_TREE_VIEW(v.lst), "From", COL_FROM);
-    add_col(GTK_TREE_VIEW(v.lst), "Message", COL_INFO);
+    add_col(GTK_TREE_VIEW(v.lst), "Message", COL_INFO, true);
     Ctx &ctx(v.ctx);
     std::vector<UId> rem;
     

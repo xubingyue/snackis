@@ -25,7 +25,7 @@ namespace snackis {
 
   void copy(Feed &dst, const Msg &src) {
     Ctx &ctx(src.ctx);
-    Feed fd(get_feed_id(ctx, *db::get(src.feed, ctx.db.feed_id)));
+    Feed fd(ctx, src.feed);
 
     dst.id = fd.id;
     dst.owner_id = fd.owner_id;

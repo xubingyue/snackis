@@ -27,7 +27,7 @@ namespace snackis {
 
   void copy(Post &dst, const Msg &src) {
     Ctx &ctx(src.ctx);
-    Post ps(get_post_id(ctx, *db::get(src.post, ctx.db.post_id)));
+    Post ps(ctx, src.post);
 
     dst.id = ps.id;
     dst.feed_id = ps.feed_id;

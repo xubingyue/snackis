@@ -29,7 +29,7 @@ namespace snackis {
 
   void copy(Task &dst, const Msg &src) {
     Ctx &ctx(src.ctx);
-    const Task tsk(get_task_id(ctx, *db::get(src.task, ctx.db.task_id)));
+    const Task tsk(ctx, src.task);
 
     dst.id = tsk.id;
     dst.project_id = tsk.project_id;
