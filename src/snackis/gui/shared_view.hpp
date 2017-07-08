@@ -44,6 +44,7 @@ namespace gui {
     frm = gtk_grid_new();
     gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
     gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
+    gtk_widget_set_halign(frm, GTK_ALIGN_END);    
     gtk_container_add(GTK_CONTAINER(hdr), frm);
 
     lbl = new_label("Created At");

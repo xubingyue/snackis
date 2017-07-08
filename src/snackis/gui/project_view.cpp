@@ -44,7 +44,7 @@ namespace gui {
   }
 
   ProjectView::ProjectView(const Project &rec):
-    RecView<Project>("Project", rec),
+    SharedView<Project>("Project", rec),
     find_tasks_btn(gtk_button_new_with_mnemonic("_Find Tasks")),
     new_task_btn(gtk_button_new_with_mnemonic("New _Task")),
     find_posts_btn(gtk_button_new_with_mnemonic("Find Posts")),

@@ -35,7 +35,7 @@ namespace gui {
   }
 
   TaskView::TaskView(const Task &tsk):
-    RecView("Task", tsk),
+    SharedView<Task>("Task", tsk),
     find_posts_btn(gtk_button_new_with_mnemonic("_Find Posts")),
     post_btn(gtk_button_new_with_mnemonic("New _Post")),
     edit_project_btn(gtk_button_new_with_mnemonic("_Edit Project")),

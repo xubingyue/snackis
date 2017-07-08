@@ -29,7 +29,7 @@ namespace gui {
   }
   
   FeedView::FeedView(const Feed &feed):
-    RecView("Feed", feed),
+    SharedView<Feed>("Feed", feed),
     find_posts_btn(gtk_button_new_with_mnemonic("_Find Posts")),
     post_btn(gtk_button_new_with_mnemonic("New _Post")),
     name_fld(gtk_entry_new()),

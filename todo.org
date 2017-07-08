@@ -1,5 +1,5 @@
-* inherit feed, project & task from shared view
-* add created_changed panel manually to peer view
+* change reader tab completion to use tab key
+* add created/changed panel manually to peer view
 * extract FeedHistory from post view
 ** add post replies
 * add post quick search

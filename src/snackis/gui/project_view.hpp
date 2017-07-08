@@ -3,11 +3,11 @@
 
 #include "snackis/project.hpp"
 #include "snackis/gui/peer_list.hpp"
-#include "snackis/gui/rec_view.hpp"
+#include "snackis/gui/shared_view.hpp"
 
 namespace snackis {
 namespace gui {
-  struct ProjectView: RecView<Project> {
+  struct ProjectView: SharedView<Project> {
     GtkWidget *find_tasks_btn, *new_task_btn, *find_posts_btn, *post_btn, *name_fld,
       *tags_fld, *active_fld, *info_fld;
     PeerList peer_lst;
