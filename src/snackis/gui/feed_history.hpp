@@ -13,7 +13,7 @@ namespace gui {
   struct FeedHistory: Widget {
     Ctx &ctx;
     GtkListStore *store;
-    GtkWidget *lst;
+    GtkWidget *box, *lst;
     
     FeedHistory(Ctx &ctx, const str &lbl);
     GtkWidget *ptr() override;

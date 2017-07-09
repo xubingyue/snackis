@@ -9,6 +9,7 @@
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/inbox.hpp"
 #include "snackis/gui/peer_search.hpp"
+#include "snackis/gui/peer_view.hpp"
 #include "snackis/gui/post_search.hpp"
 #include "snackis/gui/post_view.hpp"
 #include "snackis/gui/project_search.hpp"
@@ -183,6 +184,29 @@ namespace gui {
 	return true;
       });
 
+    rdr.cmds.emplace("peer", [&ctx](auto args) {
+	if (args.size() != 1) {
+	  log(ctx, "Invalid number of arguments, syntax: peer ea362b58");
+	  return false;
+	}
+	
+	PeerSearch *v = new PeerSearch(ctx);
+	auto id(args.back());
+	gui::set_str(GTK_ENTRY(v->id_fld), id);
+
+	if (find(*v) == 1) {
+	  auto rec(first_rec(*v));
+	  CHECK(rec != nullptr, _);
+	  PeerView *fv = new PeerView(Peer(ctx, *rec));
+	  push_view(*fv);
+	  delete v;
+	} else {
+	  push_view(*v);
+	}
+	
+	return true;
+      });
+    
     rdr.cmds.emplace("peer-search", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: peer-search");
@@ -239,6 +263,29 @@ namespace gui {
 	return true;
       });
 
+    rdr.cmds.emplace("project", [&ctx](auto args) {
+	if (args.size() != 1) {
+	  log(ctx, "Invalid number of arguments, syntax: project ea362b58");
+	  return false;
+	}
+	
+	ProjectSearch *v = new ProjectSearch(ctx);
+	auto id(args.back());
+	gui::set_str(GTK_ENTRY(v->id_fld), id);
+
+	if (find(*v) == 1) {
+	  auto rec(first_rec(*v));
+	  CHECK(rec != nullptr, _);
+	  ProjectView *fv = new ProjectView(Project(ctx, *rec));
+	  push_view(*fv);
+	  delete v;
+	} else {
+	  push_view(*v);
+	}
+	
+	return true;
+      });
+    
     rdr.cmds.emplace("project-new", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: project");
@@ -284,6 +331,29 @@ namespace gui {
 	
 	Setup *v = new Setup(ctx);
 	push_view(*v);
+	return true;
+      });
+
+    rdr.cmds.emplace("task", [&ctx](auto args) {
+	if (args.size() != 1) {
+	  log(ctx, "Invalid number of arguments, syntax: task ea362b58");
+	  return false;
+	}
+	
+	TaskSearch *v = new TaskSearch(ctx);
+	auto id(args.back());
+	gui::set_str(GTK_ENTRY(v->id_fld), id);
+
+	if (find(*v) == 1) {
+	  auto rec(first_rec(*v));
+	  CHECK(rec != nullptr, _);
+	  TaskView *fv = new TaskView(Task(ctx, *rec));
+	  push_view(*fv);
+	  delete v;
+	} else {
+	  push_view(*v);
+	}
+	
 	return true;
       });
 

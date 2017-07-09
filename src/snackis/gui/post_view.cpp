@@ -48,6 +48,8 @@ namespace gui {
 
     g_signal_connect(post_btn, "clicked", G_CALLBACK(on_post), this);
     gtk_container_add(GTK_CONTAINER(menu), post_btn);
+    gtk_widget_set_sensitive(find_replies_btn,
+			     find_feed_id(ctx, rec.id) ? true : false);
     g_signal_connect(find_replies_btn, "clicked", G_CALLBACK(on_find_replies), this);
     gtk_container_add(GTK_CONTAINER(menu), find_replies_btn);
     g_signal_connect(reply_btn, "clicked", G_CALLBACK(on_reply), this);
@@ -94,8 +96,6 @@ namespace gui {
 
     gtk_widget_set_margin_top(post_lst.ptr(), 5);
     gtk_container_add(GTK_CONTAINER(fields), post_lst.ptr());
-    lbl = gtk_label_new("Press Return or double-click to edit Post");
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
 
     if (rec.feed_id == null_uid) {
       refresh(*this);

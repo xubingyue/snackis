@@ -25,15 +25,21 @@ namespace gui {
     store(gtk_list_store_new(3, G_TYPE_POINTER,
 			     G_TYPE_STRING,
 			     G_TYPE_STRING)),
+    box(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5)),
     lst(new_tree_view(GTK_TREE_MODEL(store)))
   {
+    
     add_col(GTK_TREE_VIEW(lst), lbl, COL_BY);
     add_col(GTK_TREE_VIEW(lst), "", COL_BODY, true);
     gtk_widget_set_hexpand(lst, true);
     g_signal_connect(lst, "row-activated", G_CALLBACK(on_activate), this);
+    gtk_container_add(GTK_CONTAINER(box), gtk_widget_get_parent(lst));
+    gtk_container_add(GTK_CONTAINER(box),
+		      new_label("Press Return or double-click to edit Post"));
+
   }
 
-  GtkWidget *FeedHistory::ptr() { return gtk_widget_get_parent(lst); }
+  GtkWidget *FeedHistory::ptr() { return box; }
 
   void clear(FeedHistory &w) {
     gtk_list_store_clear(w.store);

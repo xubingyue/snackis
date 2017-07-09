@@ -47,6 +47,8 @@ namespace gui {
   {
     GtkWidget *lbl;
 
+    gtk_widget_set_sensitive(find_posts_btn,
+			     find_feed_id(ctx, rec.id) ? true : false);
     g_signal_connect(find_posts_btn, "clicked", G_CALLBACK(on_find_posts), this);
     gtk_container_add(GTK_CONTAINER(menu), find_posts_btn);
     g_signal_connect(post_btn, "clicked", G_CALLBACK(on_post), this);
