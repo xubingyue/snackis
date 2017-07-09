@@ -67,7 +67,7 @@ namespace gui {
     gtk_widget_set_hexpand(text_fld, true);
     gtk_grid_attach(GTK_GRID(text_box), text_fld, 1, 1, 1, 1);
 
-    lbl = gtk_label_new("Peer");
+    lbl = gtk_label_new("Owner");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_container_add(GTK_CONTAINER(fields), lbl);
     gtk_container_add(GTK_CONTAINER(fields), peer_fld.ptr());

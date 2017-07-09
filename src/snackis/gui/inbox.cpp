@@ -60,7 +60,7 @@ namespace gui {
       if (fd_fnd) {
 	copy(*fd_fnd, msg);
 	auto fv(new FeedView(*fd_fnd));
-	push_view(*fv);
+	View::stack.push_back(fv);
 	
 	Post ps(ctx, msg.post);
 	auto ps_fnd(find_post_id(ctx, ps.id));
@@ -89,7 +89,7 @@ namespace gui {
       if (prj_fnd) {
 	copy(*prj_fnd, msg);
 	auto pv(new ProjectView(*prj_fnd));
-	push_view(*pv);
+	View::stack.push_back(pv);
 
 	Task tsk(ctx, msg.task);
 	auto tsk_fnd(find_task_id(ctx, *db::get(msg.task, ctx.db.task_id)));

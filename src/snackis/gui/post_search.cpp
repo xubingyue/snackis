@@ -85,7 +85,7 @@ namespace gui {
     gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 1, 1);
     gtk_grid_attach(GTK_GRID(frm), feed_fld.ptr(), 0, row+1, 1, 1);
     
-    lbl = gtk_label_new("By Peer");
+    lbl = gtk_label_new("Owner");
     gtk_widget_set_halign(lbl, GTK_ALIGN_START);
     gtk_grid_attach(GTK_GRID(frm), lbl, 1, row, 1, 1);
     gtk_grid_attach(GTK_GRID(frm), peer_fld.ptr(), 1, row+1, 1, 1);
