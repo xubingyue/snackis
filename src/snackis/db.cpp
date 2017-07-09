@@ -150,16 +150,18 @@ namespace snackis {
 
     posts.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
 	Post curr(ctx, curr_rec);
+	curr.peer_ids = get_feed_id(ctx, curr.feed_id).peer_ids;
+	curr.changed_at = now();
+	db::copy(posts, curr_rec, curr);
+
 	auto fd(find_feed_id(ctx, curr.id));
-	
 	if (fd && (fd->tags != curr.tags ||
 		   fd->peer_ids != curr.peer_ids)) {		    	
-	    fd->tags = curr.tags;
-	    fd->peer_ids = curr.peer_ids;
-	    db::update(feeds, *fd);
-	  }
+	  fd->tags = curr.tags;
+	  fd->peer_ids = curr.peer_ids;
+	  db::update(feeds, *fd);
+	}
 	
-	db::set(curr_rec, post_changed_at, now());
 	send(curr);
       });
 
@@ -183,15 +185,17 @@ namespace snackis {
 
     tasks.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
 	Task curr(ctx, curr_rec);
-	auto fd(find_feed_id(ctx, curr.id));
+	curr.peer_ids = get_project_id(ctx, curr.project_id).peer_ids;
+	curr.changed_at = now();
+	db::copy(tasks, curr_rec, curr);
 	
+	auto fd(find_feed_id(ctx, curr.id));
 	if (fd && (fd->tags != curr.tags ||
 		   fd->peer_ids != curr.peer_ids)) {
 	  fd->peer_ids = curr.peer_ids;
 	  db::update(feeds, *fd);
 	}
 	
-	db::set(curr_rec, task_changed_at, now());
 	send(curr);
       });
   }

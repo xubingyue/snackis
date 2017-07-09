@@ -30,7 +30,7 @@ namespace gui {
     Msg msg(ctx, *rec);
 
     if (msg.type == Msg::INVITE) {
-      auto pv(new PeerView(get_peer(msg)));
+      auto pv(new PeerView(Peer(msg)));
 
       pv->on_save.push_back([&ctx, msg, rec]() {
 	  send_accept(msg);
@@ -44,7 +44,7 @@ namespace gui {
 
       push_view(*pv);
     } else if (msg.type == Msg::ACCEPT) {
-      auto pv(new PeerView(get_peer(msg)));
+      auto pv(new PeerView(Peer(msg)));
 
       pv->on_save.push_back([&ctx, msg, rec]() {
 	  invite_accepted(msg);
@@ -60,7 +60,6 @@ namespace gui {
       if (fd_fnd) {
 	copy(*fd_fnd, msg);
 	auto fv(new FeedView(*fd_fnd));
-	View::stack.push_back(fv);
 	
 	Post ps(ctx, msg.post);
 	auto ps_fnd(find_post_id(ctx, ps.id));
@@ -73,11 +72,14 @@ namespace gui {
 	  auto pv(new PostView(Post(msg)));
 	  push_view(*pv);
 	}
+
+	push_view(*fv);
       } else {
 	auto fv(new FeedView(Feed(msg)));
 
 	fv->on_save.push_back([msg]() {
-	    View::stack.push_back(new PostView(Post(msg)));
+	    auto pv(new PostView(Post(msg)));
+	    push_view(*pv);
 	  });
 
 	push_view(*fv);	
@@ -89,19 +91,20 @@ namespace gui {
       if (prj_fnd) {
 	copy(*prj_fnd, msg);
 	auto pv(new ProjectView(*prj_fnd));
-	View::stack.push_back(pv);
 
 	Task tsk(ctx, msg.task);
 	auto tsk_fnd(find_task_id(ctx, *db::get(msg.task, ctx.db.task_id)));
 
 	if (tsk_fnd) {
 	  copy(*tsk_fnd, msg);
-	  auto pv(new TaskView(*tsk_fnd));
-	  push_view(*pv);
+	  auto tv(new TaskView(*tsk_fnd));
+	  push_view(*tv);
 	} else {
-	  auto pv(new TaskView(Task(msg)));
-	  push_view(*pv);
+	  auto tv(new TaskView(Task(msg)));
+	  push_view(*tv);
 	}
+
+	push_view(*pv);
       } else {
 	auto pv(new ProjectView(Project(msg)));
 	

@@ -26,8 +26,10 @@ namespace snackis {
   }
 
   str encode(const Msg &msg) {
+    TRACE("Encoding message");
     Ctx &ctx(msg.ctx);
     const bool encrypt(msg.type != Msg::INVITE &&
+		       msg.type != Msg::ACCEPT &&
 		       msg.type != Msg::REJECT);
     
     Stream buf;
@@ -37,8 +39,8 @@ namespace snackis {
     str data(buf.str());
     
     if (encrypt) {
-      Peer peer(get_peer_id(ctx, msg.to_id));
-      Data out(crypt::encrypt(*get_val(ctx.settings.crypt_key), peer.crypt_key,
+      Peer pr(get_peer_id(ctx, msg.to_id));
+      Data out(crypt::encrypt(*get_val(ctx.settings.crypt_key), pr.crypt_key,
 			      reinterpret_cast<const unsigned char *>(data.c_str()),
 			      data.size()));
       data.assign(out.begin(), out.end());
@@ -56,6 +58,7 @@ namespace snackis {
   }
 
   bool decode(Msg &msg, const str &in) {
+    TRACE("Decoding message");
     Ctx &ctx(msg.ctx);
     Data data(hex_bin(in));
     InStream in_buf(str(data.begin(), data.end()));
@@ -68,20 +71,22 @@ namespace snackis {
     }
     
     const bool decrypt(bool_type.read(in_buf));
-
+    
     if (decrypt) {
       msg.from_id = uid_type.read(in_buf);
-      const Peer peer(get_peer_id(ctx, msg.from_id));
+      auto pr(find_peer_id(ctx, msg.from_id));
+      if (!pr) { return false; }
+      
       data.erase(data.begin(), data.begin()+in_buf.tellg());
-      data = crypt::decrypt(*get_val(ctx.settings.crypt_key), peer.crypt_key,
+      data = crypt::decrypt(*get_val(ctx.settings.crypt_key), pr->crypt_key,
 			    &data[0],
 			    data.size());
       in_buf.str(str(data.begin(), data.end()));
     }
 
     db::Rec<Msg> rec;
-    read(ctx.db.inbox, in_buf, rec, nullopt);
-    copy(ctx.db.inbox, msg, rec);
+    db::read(ctx.db.inbox, in_buf, rec, nullopt);
+    db::copy(ctx.db.inbox, msg, rec);
     return true;
   }
 }

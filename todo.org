@@ -1,3 +1,4 @@
+* add 'find feeds' & 'find posts' btns to peer view
 * add calendar/event
 ** a calendar is a resource
 ** an event may be booked in multiple calendars

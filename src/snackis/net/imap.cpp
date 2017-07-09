@@ -92,6 +92,7 @@ namespace snackis {
  
     if (res != CURLE_OK) {
       ERROR(Imap, fmt("Failed fetching uid: %0", curl_easy_strerror(res)));
+      return nullopt;
     }
 
     db::Rec<Msg> rec;
@@ -99,7 +100,12 @@ namespace snackis {
     const str body(out.str());
     const str tag("__SNACKIS__\r\n");
     auto i(body.find(tag) + tag.size());
-    if (i == str::npos || !decode(msg, body.substr(i))) { return nullopt; }
+
+    if (i == str::npos || !decode(msg, body.substr(i))) {
+      ERROR(Imap, "Failed decoding message");
+      return nullopt;
+    }
+
     return msg;
   }
 
@@ -141,16 +147,11 @@ namespace snackis {
 	const str uid(*tok);
 	opt<Msg> msg = fetch_uid(imap, uid);
 	
-	if (msg) {
-	  db::insert(ctx.db.inbox, *msg);
-	  msg_cnt++;
-	} else {
-	  log(ctx, "Failed decoding message");
-	}
-	
-	if (try_msg.errors.empty()) {
-	  delete_uid(imap, uid);
-	  db::commit(trans);
+	if (msg && try_msg.errors.empty()) {
+	    db::insert(ctx.db.inbox, *msg);
+	    msg_cnt++;
+	    delete_uid(imap, uid);
+	    db::commit(trans);
 	}
       }
 

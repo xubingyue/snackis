@@ -15,10 +15,6 @@ namespace snackis {
 
   Task::Task(Ctx &ctx, const db::Rec<Task> &rec): IdRec(ctx, false) {
     db::copy(*this, rec);
-
-    if (project_id != null_uid) {
-      peer_ids = get_project_id(ctx, project_id).peer_ids;
-    }
   }
 
   Task::Task(const Msg &msg):

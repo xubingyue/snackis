@@ -13,10 +13,6 @@ namespace snackis {
 
   Post::Post(Ctx &ctx, const db::Rec<Post> &rec): IdRec(ctx, null_uid) {
     db::copy(*this, rec);
-
-    if (feed_id != null_uid) {
-      peer_ids = get_feed_id(ctx, feed_id).peer_ids;
-    }
   }
 
   Post::Post(const Msg &msg):

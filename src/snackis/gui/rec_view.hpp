@@ -43,15 +43,12 @@ namespace gui {
     Ctx &ctx(v->ctx);
     TRY(try_save);
     db::Trans trans(ctx);
-
-    if (!v->on_save.empty()) {
-      for (auto fn: v->on_save) { fn(); }
-    }
     
     if (v->save() && try_save.errors.empty()) {
-      db::commit(trans);
       log(ctx, fmt("Saved %0", gtk_label_get_text(GTK_LABEL(v->label))));
       pop_view(*v);
+      for (auto fn: v->on_save) { fn(); }
+      db::commit(trans);
     }
   }
   

@@ -8,6 +8,22 @@ namespace snackis {
   Peer::Peer(Ctx &ctx, const db::Rec<Peer> &src): IdRec(ctx, null_uid) {
     copy(*this, src);
   }
+  
+  Peer::Peer(const Msg &msg):
+    IdRec(msg.ctx, msg.from_id)
+  {
+    Ctx &ctx(msg.ctx);
+    bool exists = load(ctx.db.peers, *this) ? true : false;    
+
+    if (!exists) {
+      created_at = now();
+      changed_at = created_at;
+      name = msg.peer_name;
+    }
+    
+    email = msg.from;
+    crypt_key = msg.crypt_key;
+  }
 
   opt<Peer> find_peer_id(Ctx &ctx, const UId &id) {
     db::Rec<Peer> rec;

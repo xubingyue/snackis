@@ -10,6 +10,8 @@
 #include "snackis/db/rec.hpp"
 
 namespace snackis {
+  struct Msg;
+  
   struct Peer: IdRec {
     Time created_at, changed_at;
     str name, email;
@@ -17,6 +19,7 @@ namespace snackis {
     
     Peer(Ctx &ctx);
     Peer(Ctx &ctx, const db::Rec<Peer> &src);
+    Peer(const Msg &msg);
   };
 
   opt<Peer> find_peer_id(Ctx &ctx, const UId &id);

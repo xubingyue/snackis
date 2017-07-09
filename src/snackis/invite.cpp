@@ -18,18 +18,6 @@ namespace snackis {
     msg.to = inv.to;
     insert(inv.ctx.db.outbox, msg);
   }
-
-  Peer get_peer(const Msg &in) {
-    Ctx &ctx(in.ctx);
-    db::Rec<Peer> peer_rec;
-    set(peer_rec, ctx.db.peer_id, in.from_id);
-    load(ctx.db.peers, peer_rec);    
-    Peer peer(ctx, peer_rec);
-    peer.name = in.peer_name;
-    peer.email = in.from;
-    peer.crypt_key = in.crypt_key;
-    return peer;
-  }
   
   void send_accept(const Msg &in) {
     Ctx &ctx(in.ctx);
