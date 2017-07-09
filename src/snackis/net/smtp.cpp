@@ -117,8 +117,9 @@ namespace snackis {
     db::Table<Msg> &tbl(ctx.db.outbox);
     log(ctx, "Sending %0 messages...", tbl.recs.size());
     
-    while (tbl.recs.size() > 0) {
+    while (true) {
       db::Trans trans(ctx);
+      if (tbl.recs.empty()) { break; }
       TRY(try_send);
 
       auto i = tbl.recs.begin();
