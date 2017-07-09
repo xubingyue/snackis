@@ -65,6 +65,7 @@ namespace gui {
   {
     gtk_widget_set_margin_bottom(menu, 5);
     gtk_container_add(GTK_CONTAINER(panel), menu);
+    gtk_widget_set_vexpand(fields, true);
     gtk_container_add(GTK_CONTAINER(panel), fields);
     
     GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);

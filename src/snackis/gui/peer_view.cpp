@@ -1,28 +1,46 @@
 #include "snackis/ctx.hpp"
+#include "snackis/gui/gui.hpp"
 #include "snackis/gui/peer_view.hpp"
 
 namespace snackis {
 namespace gui {  
-  PeerView::PeerView(const Peer &peer):
-    RecView<Peer>("Peer", peer),
+  PeerView::PeerView(const Peer &pr):
+    RecView<Peer>("Peer", pr),
+    created_at_fld(gtk_entry_new()),
+    changed_at_fld(gtk_entry_new()),
     name_fld(gtk_entry_new()),
     email_fld(gtk_entry_new())
   {
-    GtkWidget *lbl;
+    GtkWidget *frm(gtk_grid_new());
+    gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
+    gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
+    gtk_widget_set_halign(frm, GTK_ALIGN_END);    
+    gtk_container_add(GTK_CONTAINER(fields), frm);
 
-    lbl = gtk_label_new("Name");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
-    gtk_widget_set_hexpand(name_fld, true);
-    gtk_entry_set_text(GTK_ENTRY(name_fld), rec.name.c_str());
-    gtk_container_add(GTK_CONTAINER(fields), name_fld);
+    gtk_grid_attach(GTK_GRID(frm), new_label("Created At"), 0, 0, 1, 1);
+    gtk_widget_set_sensitive(created_at_fld, false);
+    gtk_grid_attach(GTK_GRID(frm), created_at_fld, 0, 1, 1, 1);
+    set_str(GTK_ENTRY(created_at_fld), fmt(pr.created_at, "%a %b %d, %H:%M"));
+
+    gtk_grid_attach(GTK_GRID(frm), new_label("Changed At"), 1, 0, 1, 1);    
+    gtk_widget_set_sensitive(changed_at_fld, false);
+    gtk_grid_attach(GTK_GRID(frm), changed_at_fld, 1, 1, 1, 1);    
+    set_str(GTK_ENTRY(changed_at_fld), fmt(pr.changed_at, "%a %b %d, %H:%M"));
+
+    frm = gtk_grid_new();
+    gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
+    gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
+    gtk_container_add(GTK_CONTAINER(fields), frm);
     
-    lbl = gtk_label_new("Email");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
+    gtk_grid_attach(GTK_GRID(frm), new_label("Name"), 0, 0, 1, 1);
+    gtk_widget_set_hexpand(name_fld, true);
+    gtk_grid_attach(GTK_GRID(frm), name_fld, 0, 1, 1, 1);
+    set_str(GTK_ENTRY(name_fld), pr.name);
+    
+    gtk_grid_attach(GTK_GRID(frm), new_label("Email"), 1, 0, 1, 1);
     gtk_widget_set_hexpand(email_fld, true);
-    gtk_entry_set_text(GTK_ENTRY(email_fld), rec.email.c_str());
-    gtk_container_add(GTK_CONTAINER(fields), email_fld);
+    gtk_grid_attach(GTK_GRID(frm), email_fld, 1, 1, 1, 1);    
+    set_str(GTK_ENTRY(email_fld), pr.email);
 
     focused = name_fld;
   }

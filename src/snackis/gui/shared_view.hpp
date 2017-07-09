@@ -13,8 +13,8 @@ namespace gui {
   };
 
   template <typename RecT>
-  SharedView<RecT>::SharedView(const str &label, const RecT &rec):
-    RecView<RecT>(label, rec),
+  SharedView<RecT>::SharedView(const str &lbl, const RecT &rec):
+    RecView<RecT>(lbl, rec),
     owner_id_fld(new_id_field()),
     owner_name_fld(gtk_entry_new()),
     created_at_fld(gtk_entry_new()),
@@ -31,9 +31,7 @@ namespace gui {
 
     Peer own(get_peer_id(rec.ctx, rec.owner_id));
     
-    GtkWidget *lbl;
-    lbl = new_label("Owner");
-    gtk_grid_attach(GTK_GRID(frm), lbl, 0, 0, 2, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label("Owner"), 0, 0, 2, 1);
     gtk_widget_set_sensitive(owner_id_fld, false);
     gtk_grid_attach(GTK_GRID(frm), owner_id_fld, 0, 1, 1, 1);
     set_str(GTK_ENTRY(owner_id_fld), id_str(own));
@@ -47,14 +45,12 @@ namespace gui {
     gtk_widget_set_halign(frm, GTK_ALIGN_END);    
     gtk_container_add(GTK_CONTAINER(hdr), frm);
 
-    lbl = new_label("Created At");
-    gtk_grid_attach(GTK_GRID(frm), lbl, 0, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label("Created At"), 0, 0, 1, 1);
     gtk_widget_set_sensitive(created_at_fld, false);
     gtk_grid_attach(GTK_GRID(frm), created_at_fld, 0, 1, 1, 1);
     set_str(GTK_ENTRY(created_at_fld), fmt(rec.created_at, "%a %b %d, %H:%M"));
 
-    lbl = new_label("Changed At");
-    gtk_grid_attach(GTK_GRID(frm), lbl, 1, 0, 1, 1);    
+    gtk_grid_attach(GTK_GRID(frm), new_label("Changed At"), 1, 0, 1, 1);    
     gtk_widget_set_sensitive(changed_at_fld, false);
     gtk_grid_attach(GTK_GRID(frm), changed_at_fld, 1, 1, 1, 1);    
     set_str(GTK_ENTRY(changed_at_fld), fmt(rec.changed_at, "%a %b %d, %H:%M"));

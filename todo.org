@@ -1,5 +1,3 @@
-* change reader tab completion to use tab key
-* add created/changed panel manually to peer view
 * extract FeedHistory from post view
 ** add post replies
 * add post quick search
