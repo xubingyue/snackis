@@ -24,7 +24,7 @@ namespace gui {
     if (ev->keyval != GDK_KEY_Tab) { return false; }
 
     const str in(gtk_entry_get_text(GTK_ENTRY(rdr->entry)));
-    if (in.empty()) { return false; }
+    if (in.empty()) { return true; }
     auto fnd(rdr->cmds.lower_bound(in));
     if (fnd == rdr->cmds.end()) { return true; }
     const str fnd_str(fnd->first);
@@ -405,7 +405,7 @@ namespace gui {
     g_signal_connect(entry, "activate", G_CALLBACK(on_activate), this);
 
     g_signal_connect(G_OBJECT(entry),
-		     "key_release_event",
+		     "key_press_event",
 		     G_CALLBACK(on_key),
 		     this);
   }
