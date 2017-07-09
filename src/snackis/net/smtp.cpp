@@ -29,7 +29,7 @@ namespace snackis {
     return len;
   }
   
-  Smtp::Smtp(Ctx &ctx): ctx(ctx), trans(ctx), client(curl_easy_init()) {
+  Smtp::Smtp(Ctx &ctx): ctx(ctx), client(curl_easy_init()) {
     if (!client) { ERROR(Smtp, "Failed initializing client"); }
     curl_easy_setopt(client, 
 		     CURLOPT_USERNAME, 
@@ -118,13 +118,19 @@ namespace snackis {
     log(ctx, "Sending %0 messages...", tbl.recs.size());
     
     while (tbl.recs.size() > 0) {
+      db::Trans trans(ctx);
+      TRY(try_send);
+
       auto i = tbl.recs.begin();
       Msg msg(ctx, *i);
       send(smtp, msg);
       erase(tbl, *i);
+
+      if (try_send.errors.empty()) {
+	db::commit(trans);
+      }
     }
     
-    db::commit(smtp.trans);
     log(ctx, "Finished sending email");
   }
 }

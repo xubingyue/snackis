@@ -18,7 +18,6 @@ namespace snackis {
   
   struct Smtp {
     Ctx &ctx;
-    db::Trans trans;
     CURL *client;
     Data data;
     

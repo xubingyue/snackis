@@ -1,12 +1,8 @@
 * extract FeedHistory from post view
 ** add post replies
 * add post quick search
-* extract rec view buttons container
-** remove from sub classes
 * add remaining quick searches
 ** peer, project, task
-* switch Smtp to one trans per msg
-** pick first and process
 * add calendar/event
 ** a calendar is a resource
 ** an event may be booked in multiple calendars
