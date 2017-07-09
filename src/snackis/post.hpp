@@ -7,8 +7,9 @@
 #include "snackis/core/uid.hpp"
 
 namespace snackis {
-  struct Peer;
   struct Feed;
+  struct Msg;
+  struct Peer;
   
   struct Post: IdRec {
     UId feed_id, owner_id;

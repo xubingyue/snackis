@@ -7,60 +7,11 @@
 
 namespace snackis {
 namespace gui {
-  enum PostCol {COL_POST_PTR=0, COL_POST_BY, COL_POST_BODY};
-    
-  static bool load_posts(PostView &v) {
-    Ctx &ctx(v.ctx);
-    gtk_list_store_clear(v.post_store);
-
-    auto feed(v.feed_fld.selected);
-    if (!feed) { return false; }
-    
-    for (auto rec: last_posts(*feed, v.rec.created_at, 30)) {
-      Post post(ctx, *rec);
-      Peer peer(get_peer_id(ctx, post.owner_id));
-      
-      GtkTreeIter iter;
-      gtk_list_store_append(v.post_store, &iter);
-      const str by(fmt("%0\n%1",
-		       peer.name.c_str(),
-		       fmt(post.created_at, "%a %b %d, %H:%M").c_str()));
-      
-      gtk_list_store_set(v.post_store, &iter,
-			 COL_POST_PTR, rec,
-			 COL_POST_BY, by.c_str(),
-			 COL_POST_BODY, post.body.c_str(),
-			 -1);
-    }
-    
-    return true;
-  }
-
   static void on_edit_feed(gpointer *_, PostView *v) {
     FeedView *fv(new FeedView(*v->feed_fld.selected));
     push_view(*fv);
   }
   
-  static void on_edit_post(GtkTreeView *treeview,
-			   GtkTreePath *path,
-			   GtkTreeViewColumn *col,
-			   PostView *v) {
-    Ctx &ctx(v->ctx);
-    auto post_rec(get_sel_rec<Post>(GTK_TREE_VIEW(v->post_lst)));
-    assert(post_rec);
-    Post post(ctx, *post_rec);
-    PostView *pv(new PostView(post));
-    push_view(*pv);
-  }
-  
-  static void init_posts(PostView &v) {
-    gtk_widget_set_hexpand(v.post_lst, true);
-    gtk_widget_set_vexpand(v.post_lst, true);
-    add_col(GTK_TREE_VIEW(v.post_lst), "Feed History", COL_POST_BY);
-    add_col(GTK_TREE_VIEW(v.post_lst), "", COL_POST_BODY, true);
-    g_signal_connect(v.post_lst, "row-activated", G_CALLBACK(on_edit_post), &v);
-  }
-
   static void on_post(gpointer *_, PostView *v) {
     Post post(v->ctx);
     post.feed_id = v->rec.feed_id;
@@ -84,15 +35,14 @@ namespace gui {
   
   PostView::PostView(const Post &post):
     SharedView<Post>("Post", post),
-    post_store(gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING)),
     post_btn(gtk_button_new_with_mnemonic("New _Post")),
     find_replies_btn(gtk_button_new_with_mnemonic("_Find Replies")),
     reply_btn(gtk_button_new_with_mnemonic("New _Reply")),
     edit_feed_btn(gtk_button_new_with_mnemonic("_Edit Feed")),
     tags_fld(gtk_entry_new()),
     body_fld(new_text_view()),
-    post_lst(new_tree_view(GTK_TREE_MODEL(post_store))),
-    feed_fld(ctx)
+    feed_fld(ctx),
+    post_lst(ctx, "History")
   {
     GtkWidget *lbl;
 
@@ -110,8 +60,14 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(fields), feed_box);
 
     feed_fld.on_change.emplace([this]() {
-	load_posts(*this);
-	if (feed_fld.selected) { set_feed(rec, *feed_fld.selected); }
+	clear(post_lst);
+
+	if (feed_fld.selected) {
+	  set_feed(rec, *feed_fld.selected);
+	  auto reply_fd(find_feed_id(ctx, rec.id));
+	  load(post_lst, *feed_fld.selected, rec.created_at);
+	}
+	
 	set_str(GTK_ENTRY(tags_fld), join(rec.tags.begin(), rec.tags.end(), ' '));
 	auto sel(feed_fld.selected ? true : false);
 	gtk_widget_set_sensitive(edit_feed_btn, sel);
@@ -135,10 +91,9 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(fields), lbl);
     gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(body_fld));
     set_str(GTK_TEXT_VIEW(body_fld), rec.body);
-    
-    init_posts(*this);
-    gtk_widget_set_margin_top(post_lst, 10);
-    gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(post_lst));
+
+    gtk_widget_set_margin_top(post_lst.ptr(), 5);
+    gtk_container_add(GTK_CONTAINER(fields), post_lst.ptr());
     lbl = gtk_label_new("Press Return or double-click to edit Post");
     gtk_container_add(GTK_CONTAINER(fields), lbl);
 

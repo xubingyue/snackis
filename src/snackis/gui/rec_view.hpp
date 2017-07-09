@@ -1,6 +1,7 @@
 #ifndef SNACKIS_GUI_REC_VIEW_HPP
 #define SNACKIS_GUI_REC_VIEW_HPP
 
+#include "snackis/ctx.hpp"
 #include "snackis/rec.hpp"
 #include "snackis/gui/view.hpp"
 

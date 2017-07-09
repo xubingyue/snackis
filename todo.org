@@ -1,6 +1,3 @@
-* extract FeedHistory from post view
-** add post replies
-* add post quick search
 * add remaining quick searches
 ** peer, project, task
 * add calendar/event
