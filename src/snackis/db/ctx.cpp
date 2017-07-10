@@ -115,12 +115,16 @@ namespace db {
     for (auto t: ctx.tables) { t->slurp(); }
   }
 
-  void defrag(Ctx &ctx) {
+  int64_t defrag(Ctx &ctx) {
     TRACE("Defragmenting database");
     std::unique_lock<std::recursive_mutex> lock(ctx.mutex);
+    int64_t res(0);
+    
     for (auto t: ctx.tables) {
-      t->defrag();
+      res += t->defrag();
       t->file.flush();
     }
+
+    return res;
   }
 }}

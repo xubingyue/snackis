@@ -53,7 +53,7 @@ namespace db {
     Table(Ctx &ctx, const str &name, Cols key_cols, Cols cols);
     virtual ~Table();
     void slurp() override;
-    void defrag() override;
+    int64_t defrag() override;
   };
     
   enum TableOp {TABLE_INSERT, TABLE_UPDATE, TABLE_ERASE};
@@ -337,10 +337,12 @@ namespace db {
   }
 
   template <typename RecT>
-  void defrag(Table<RecT> &tbl) {    
+  int64_t defrag(Table<RecT> &tbl) {
+    auto old_size(tbl.file.tellg());
     tbl.file.close();
     open(tbl, std::ios::trunc);
     dump(tbl, tbl.file);
+    return old_size-tbl.file.tellg();
   }
   
   template <typename RecT>
@@ -400,7 +402,7 @@ namespace db {
   void Table<RecT>::slurp() { db::slurp(*this); }
 
   template <typename RecT>
-  void Table<RecT>::defrag() { db::defrag(*this); }
+  int64_t Table<RecT>::defrag() { return db::defrag(*this); }
 
   template <typename RecT>
   TableChange<RecT>::TableChange(TableOp op,

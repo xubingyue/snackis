@@ -81,8 +81,7 @@ namespace gui {
 	}
 
 	log(ctx, "Defragmenting database...");
-	db::defrag(ctx);
-	log(ctx, "Finished defragmenting database");
+	log(ctx, fmt("Finished, reclaimed %0k", db::defrag(ctx) / 1000));
 	return true;
       });
 
