@@ -1,3 +1,15 @@
 * grep ERROR and add early return where possible
 * don't show update feed view for new feeds
 * don't show update feed/project views if not changed
+* add unlimited undo
+** add trans label
+** add ChangeSet
+*** label, timestamp and changes
+** add ctx.undo vector
+*** push back change set on commit if !changes.empty
+**** use set.swap
+** add gui::Undo
+*** copy inbox
+*** list with changes
+*** undo button (alt+u)
+*** cancel
