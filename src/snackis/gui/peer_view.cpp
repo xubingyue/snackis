@@ -1,16 +1,27 @@
 #include "snackis/ctx.hpp"
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/peer_view.hpp"
+#include "snackis/gui/post_search.hpp"
 
 namespace snackis {
-namespace gui {  
+namespace gui {
+  static void on_find_posts(gpointer *_, PeerView *v) {
+    PostSearch *ps = new PostSearch(v->ctx);
+    select<Peer>(ps->peer_fld, v->rec);
+    push_view(*ps);
+  }
+  
   PeerView::PeerView(const Peer &pr):
     RecView<Peer>("Peer", pr),
+    find_posts_btn(gtk_button_new_with_mnemonic("_Find Posts")),
     created_at_fld(gtk_entry_new()),
     changed_at_fld(gtk_entry_new()),
     name_fld(gtk_entry_new()),
     email_fld(gtk_entry_new())
   {
+    g_signal_connect(find_posts_btn, "clicked", G_CALLBACK(on_find_posts), this);
+    gtk_container_add(GTK_CONTAINER(menu), find_posts_btn);
+    
     GtkWidget *frm(gtk_grid_new());
     gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
     gtk_grid_set_column_spacing(GTK_GRID(frm), 5);

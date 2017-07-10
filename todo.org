@@ -1,3 +1,4 @@
+* figure out how to stop newly shared posts/tasks from bouncing back when saved
 * add 'find feeds' & 'find posts' btns to peer view
 * add calendar/event
 ** a calendar is a resource
