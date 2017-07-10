@@ -5,24 +5,19 @@
 
 namespace snackis {
 namespace db {
-  struct Change {
-    virtual void commit() const = 0;
-    virtual void rollback() const = 0;
-  };
-
+  struct Change;
   struct Ctx;
   
   struct Trans {
     Ctx &ctx;
     Trans *super;
     std::unique_lock<std::recursive_mutex> lock; 
-    std::vector<const Change *> changes;
+    std::vector<Change *> changes;
     Trans(Ctx &ctx);
     ~Trans();
   };
 
-  void log_change(Trans &trans, const Change *change);
-
+  void log_change(Trans &trans, Change *change);
   void commit(Trans &trans, const opt<str> &lbl);
   void rollback(Trans &trans);
 }}

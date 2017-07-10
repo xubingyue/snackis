@@ -9,6 +9,7 @@
 #include "snackis/core/path.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/crypt/secret.hpp"
+#include "snackis/db/change.hpp"
 
 namespace snackis {
 namespace db {
@@ -24,6 +25,7 @@ namespace db {
     std::set<BasicTable *> tables;
     Trans *trans;
     std::set<std::ostream *> dirty_files;
+    std::vector<ChangeSet> undo_stack;
     std::recursive_mutex mutex;
 
     Ctx(const Path &path);

@@ -14,11 +14,12 @@
 #include "snackis/core/stream.hpp"
 #include "snackis/crypt/secret.hpp"
 #include "snackis/db/basic_table.hpp"
+#include "snackis/db/change.hpp"
 #include "snackis/db/ctx.hpp"
 #include "snackis/db/error.hpp"
+#include "snackis/db/rec.hpp"
 #include "snackis/db/schema.hpp"
 #include "snackis/db/trans.hpp"
-#include "snackis/db/rec.hpp"
 
 namespace snackis {  
 namespace db {
