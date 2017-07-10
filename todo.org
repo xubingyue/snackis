@@ -1,6 +1,3 @@
-* grep ERROR and add early return where possible
-* don't show update feed view for new feeds
-* don't show update feed/project views if not changed
 * add unlimited undo
 ** add trans label
 ** add ChangeSet
@@ -8,8 +5,23 @@
 ** add ctx.undo vector
 *** push back change set on commit if !changes.empty
 **** use set.swap
+** add ChangeSet::undo
+*** add undo-method to change
 ** add gui::Undo
 *** copy inbox
 *** list with changes
 *** undo button (alt+u)
 *** cancel
+
+* grep ERROR and add early return where possible
+* don't show update feed view for new feeds
+** create feed in outer transction and commit on post view save
+* don't show update feed/project views if not changed
+* add permanent views
+** inbox, setup & undo
+** add opt gui vars
+** move delete out of pop_view
+*** grep and delete manually
+** extract load method
+*** add virtual view::load
+**** call on push
