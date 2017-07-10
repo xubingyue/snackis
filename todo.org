@@ -1,5 +1,8 @@
-* figure out how to stop newly shared posts/tasks from bouncing back when saved
-* add 'find feeds' & 'find posts' btns to peer view
+* add post/task.skip_send
+** check in db.cpp
+** init to false in constructors
+** set to true from inbox
+* don't show feed/project views if not changed
 * add calendar/event
 ** a calendar is a resource
 ** an event may be booked in multiple calendars
