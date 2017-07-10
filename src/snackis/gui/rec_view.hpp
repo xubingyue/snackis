@@ -30,7 +30,9 @@ namespace gui {
       TRY(try_save);
       db::Trans trans(ctx);
       for (auto fn: v->on_cancel) { fn(); }
-      if (try_save.errors.empty()) { db::commit(trans); }
+      if (try_save.errors.empty()) {
+	db::commit(trans, fmt("Cancelled %0", label(*v)));
+      }
     }
 
     log(ctx, fmt("Cancelled %0", gtk_label_get_text(GTK_LABEL(v->label))));
@@ -48,7 +50,7 @@ namespace gui {
       log(ctx, fmt("Saved %0", gtk_label_get_text(GTK_LABEL(v->label))));
       pop_view(*v);
       for (auto fn: v->on_save) { fn(); }
-      db::commit(trans);
+      db::commit(trans, fmt("Saved %0", label(*v)));
     }
   }
   

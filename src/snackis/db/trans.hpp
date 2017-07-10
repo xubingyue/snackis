@@ -23,7 +23,7 @@ namespace db {
 
   void log_change(Trans &trans, const Change *change);
 
-  void commit(Trans &trans);
+  void commit(Trans &trans, const opt<str> &lbl);
   void rollback(Trans &trans);
 }}
 

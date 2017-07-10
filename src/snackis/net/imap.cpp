@@ -151,7 +151,7 @@ namespace snackis {
 	    db::insert(ctx.db.inbox, *msg);
 	    msg_cnt++;
 	    delete_uid(imap, uid);
-	    db::commit(trans);
+	    db::commit(trans, nullopt);
 	}
       }
 

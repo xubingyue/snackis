@@ -17,6 +17,7 @@ namespace gui {
     GtkWidget *ptr() override;
   };
 
+  str label(View &v);
   void push_view(View &v);
   void pop_view(View &v);
   void switch_view();

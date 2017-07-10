@@ -1,5 +1,5 @@
 * add unlimited undo
-** add trans label
+** extract change.hpp
 ** add ChangeSet
 *** label, timestamp and changes
 ** add ctx.undo vector

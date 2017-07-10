@@ -181,7 +181,7 @@ namespace gui {
 	send(inv);
 	if (!try_invite.errors.empty()) { return false; }
 	log(ctx, fmt("Saved new invite: %0", inv.to));
-	db::commit(trans);
+	db::commit(trans, fmt("Created invite: ", inv.to));
 	return true;
       });
 

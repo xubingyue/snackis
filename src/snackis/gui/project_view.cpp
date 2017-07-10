@@ -35,7 +35,7 @@ namespace gui {
     v->save();
     
     if (try_save.errors.empty()) {
-      db::commit(trans);
+      db::commit(trans, fmt("Saved Project %0", id_str(v->rec)));
       Post post(v->ctx);
       post.feed_id = get_feed(v->rec).id;
       PostView *pv = new PostView(post);

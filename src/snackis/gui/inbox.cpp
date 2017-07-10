@@ -120,7 +120,7 @@ namespace gui {
     
     gtk_list_store_remove(v->msgs, &it);
     db::erase(ctx.db.inbox, *rec);
-    db::commit(trans);
+    db::commit(trans, fmt("Handled Message: %0", id_str(msg)));
   }
   
   static void init_lst(Inbox &v) {

@@ -128,7 +128,7 @@ namespace snackis {
       erase(tbl, *i);
 
       if (try_send.errors.empty()) {
-	db::commit(trans);
+	db::commit(trans, nullopt);
       }
     }
     

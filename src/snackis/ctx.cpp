@@ -108,7 +108,9 @@ namespace snackis {
     }
     
     db::upsert(ctx.db.peers, ctx.whoami);
-    if (try_open.errors.empty()) { db::commit(trans); }
+    if (try_open.errors.empty()) {
+      db::commit(trans, "Initialized database");
+    }
     ctx.fetcher.emplace(fetch_loop, &ctx);
     ctx.sender.emplace(send_loop, &ctx);
   }

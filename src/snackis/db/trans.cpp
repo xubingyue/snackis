@@ -19,10 +19,14 @@ namespace db {
     trans.changes.push_back(change);
   }
 
-  void commit(Trans &trans) {
+  void commit(Trans &trans, const opt<str> &lbl) {
     for (const Change *c: trans.changes) { c->commit(); }
     flush(trans.ctx);
-    trans.changes.clear();
+    
+    if (lbl) {
+    } else {
+      trans.changes.clear();
+    }
   }
   
   void rollback(Trans &trans) {

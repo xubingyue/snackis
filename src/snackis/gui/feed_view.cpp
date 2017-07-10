@@ -20,7 +20,7 @@ namespace gui {
     v->save();
 
     if (try_save.errors.empty()) {
-      db::commit(trans);
+      db::commit(trans, fmt("Saved Feed ", id_str(v->rec)));
       Post post(v->ctx);
       set_feed(post, v->rec);
       PostView *pv = new PostView(post);

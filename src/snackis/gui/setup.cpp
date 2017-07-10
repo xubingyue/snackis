@@ -121,7 +121,7 @@ namespace gui {
     }
 
     if (try_save.errors.empty()) {
-      db::commit(trans);
+      db::commit(trans, "Saved Setup");
       log(v->ctx, "Saved setup");
       pop_view(*v);
     }
