@@ -17,6 +17,7 @@
 #include "snackis/db/ctx.hpp"
 #include "snackis/db/error.hpp"
 #include "snackis/db/schema.hpp"
+#include "snackis/db/trans.hpp"
 #include "snackis/db/rec.hpp"
 
 namespace snackis {  
@@ -52,6 +53,7 @@ namespace db {
     Table(Ctx &ctx, const str &name, Cols key_cols, Cols cols);
     virtual ~Table();
     void slurp() override;
+    void defrag() override;
   };
     
   enum TableOp {TABLE_INSERT, TABLE_UPDATE, TABLE_ERASE};
@@ -277,6 +279,13 @@ namespace db {
   }
 
   template <typename RecT>
+  void dump(Table<RecT> &tbl, std::ostream &out) {    
+    for (auto &rec: tbl.recs) {
+      write(tbl, rec, TABLE_INSERT);
+    }
+  }
+
+  template <typename RecT>
   void slurp(Table<RecT> &tbl, std::istream &in) {    
     while (true) {
       uint8_t op;
@@ -314,18 +323,26 @@ namespace db {
 
   template <typename RecT>
   void slurp(Table<RecT> &tbl) {
-    std::fstream file;
+    std::fstream f;
     
-    file.open(get_path(tbl.ctx, tbl.name + ".tbl").string(),
+    f.open(get_path(tbl.ctx, tbl.name + ".tbl").string(),
 	      std::ios::in | std::ios::binary);
-    if (tbl.file.fail()) {
+    if (f.fail()) {
       ERROR(Db, fmt("Failed opening file: %0", tbl.name));
+      return;
     }
 
-    slurp(tbl, file);
-    file.close();
+    slurp(tbl, f);
+    f.close();
   }
 
+  template <typename RecT>
+  void defrag(Table<RecT> &tbl) {    
+    tbl.file.close();
+    open(tbl, std::ios::trunc);
+    dump(tbl, tbl.file);
+  }
+  
   template <typename RecT>
   RecType<RecT>::RecType(Table<RecT> &tbl):
     Type<Rec<RecT>>(fmt("Rec(%0)", tbl.name)), table(tbl) { }
@@ -381,7 +398,10 @@ namespace db {
 
   template <typename RecT>
   void Table<RecT>::slurp() { db::slurp(*this); }
-  
+
+  template <typename RecT>
+  void Table<RecT>::defrag() { db::defrag(*this); }
+
   template <typename RecT>
   TableChange<RecT>::TableChange(TableOp op,
 				 Table<RecT> &table,

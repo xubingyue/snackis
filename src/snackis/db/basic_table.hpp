@@ -15,10 +15,10 @@ namespace db {
     
     BasicTable(Ctx &ctx, const str &name);
     virtual void slurp() = 0;
+    virtual void defrag() = 0;
   };
 
-  void open(BasicTable &tbl);
-
+  void open(BasicTable &tbl, std::ios_base::openmode mod=std::ios::app);
 }}
 
 #endif

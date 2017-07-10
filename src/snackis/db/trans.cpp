@@ -3,8 +3,9 @@
 
 namespace snackis {
 namespace db {
-  Trans::Trans(Ctx &ctx): ctx(ctx) {
-    ctx.mutex.lock();
+  Trans::Trans(Ctx &ctx):
+    ctx(ctx), lock(ctx.mutex)
+  {
     super = ctx.trans;
     ctx.trans = this;
   }
@@ -12,7 +13,6 @@ namespace db {
   Trans::~Trans() {
     if (!changes.empty()) { rollback(*this); }
     ctx.trans = super;
-    ctx.mutex.unlock();
   }
   
   void log_change(Trans &trans, const Change *change) {

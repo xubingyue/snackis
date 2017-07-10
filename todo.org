@@ -1,8 +1,5 @@
-* add post/task.skip_send
-** check in db.cpp
-** init to false in constructors
-** set to true from inbox
-* don't show feed/project views if not changed
+* grep ERROR and add early return where possible
+* don't show update feed/project views if not changed
 * add calendar/event
 ** a calendar is a resource
 ** an event may be booked in multiple calendars

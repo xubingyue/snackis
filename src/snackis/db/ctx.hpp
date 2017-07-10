@@ -9,11 +9,11 @@
 #include "snackis/core/path.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/crypt/secret.hpp"
-#include "snackis/db/trans.hpp"
 
 namespace snackis {
 namespace db {
   struct BasicTable;
+  struct Trans;
   
   struct Ctx {
     using Log = func<void (const str &)>;
@@ -26,7 +26,6 @@ namespace db {
     std::set<std::ostream *> dirty_files;
     std::recursive_mutex mutex;
 
-    
     Ctx(const Path &path);
     virtual ~Ctx();
   };
@@ -41,6 +40,7 @@ namespace db {
   void dirty_file(Ctx &ctx, std::ostream &file);
   void flush(Ctx &ctx);
   void slurp(Ctx &ctx);
+  void defrag(Ctx &ctx);
 
   template <typename...Args>
   void log(const Ctx &ctx, const str &spec, const Args &...args) {

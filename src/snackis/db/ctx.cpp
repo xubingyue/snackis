@@ -93,7 +93,7 @@ namespace db {
   }
 
   void open(Ctx &ctx) {
-    TRACE("Opening DB context");
+    TRACE("Opening database");
     init_db_rev(ctx);
     for (auto t: ctx.tables) { open(*t); }
   }
@@ -103,11 +103,24 @@ namespace db {
   }
 
   void flush(Ctx &ctx) {
+    TRACE("Flushing database");
+    std::unique_lock<std::recursive_mutex> lock(ctx.mutex);
     for (auto f: ctx.dirty_files) { f->flush(); }
     ctx.dirty_files.clear();
   }
 
   void slurp(Ctx &ctx) {
+    TRACE("Slurping database");
+    std::unique_lock<std::recursive_mutex> lock(ctx.mutex);
     for (auto t: ctx.tables) { t->slurp(); }
+  }
+
+  void defrag(Ctx &ctx) {
+    TRACE("Defragmenting database");
+    std::unique_lock<std::recursive_mutex> lock(ctx.mutex);
+    for (auto t: ctx.tables) {
+      t->defrag();
+      t->file.flush();
+    }
   }
 }}

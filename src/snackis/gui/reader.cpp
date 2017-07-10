@@ -74,6 +74,18 @@ namespace gui {
 	return true;
       });
 
+    rdr.cmds.emplace("defrag", [&ctx](auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: defrag");
+	  return false;
+	}
+
+	log(ctx, "Defragmenting database...");
+	db::defrag(ctx);
+	log(ctx, "Finished defragmenting database");
+	return true;
+      });
+
     rdr.cmds.emplace("encrypt", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: encrypt");

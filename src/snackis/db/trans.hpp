@@ -15,6 +15,7 @@ namespace db {
   struct Trans {
     Ctx &ctx;
     Trans *super;
+    std::unique_lock<std::recursive_mutex> lock; 
     std::vector<const Change *> changes;
     Trans(Ctx &ctx);
     ~Trans();
