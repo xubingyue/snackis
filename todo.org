@@ -1,5 +1,3 @@
 * grep ERROR and add early return where possible
+* don't show update feed view for new feeds
 * don't show update feed/project views if not changed
-* add calendar/event
-** a calendar is a resource
-** an event may be booked in multiple calendars
