@@ -30,6 +30,7 @@ namespace snackis {
   
   str encode(const Msg &msg);
   bool decode(Msg &msg, const str &in);
+  bool receive(Msg &msg);
 }
 
 #endif

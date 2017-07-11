@@ -89,4 +89,47 @@ namespace snackis {
     db::copy(ctx.db.inbox, msg, rec);
     return true;
   }
+
+  bool receive(Msg &msg) {
+    Ctx &ctx(msg.ctx);
+
+    if (msg.type == Msg::POST) {
+      Feed fd(ctx, msg.feed);
+      auto fd_fnd(find_feed_id(ctx, fd.id));
+      
+      if (fd_fnd) {
+	Post ps(ctx, msg.post);
+	auto ps_fnd(find_post_id(ctx, ps.id));
+
+	if (ps_fnd) {
+	  Post prev(*ps_fnd);
+	  copy(*ps_fnd, msg);
+	  
+	  if (db::compare(ctx.db.posts, prev, *ps_fnd) == 0) {
+	    return false;
+	  }
+	}
+      }
+    } else if (msg.type == Msg::TASK) {
+      Project prj(ctx, msg.project);
+      auto prj_fnd(find_project_id(ctx, prj.id));
+      
+      if (prj_fnd) {
+	Task tsk(ctx, msg.task);
+	auto tsk_fnd(find_task_id(ctx, tsk.id));
+
+	if (tsk_fnd) {
+	  Task tsk_prev(*tsk_fnd);
+	  copy(*tsk_fnd, msg);
+	  
+	  if (db::compare(ctx.db.tasks, tsk_prev, *tsk_fnd) == 0) {
+	    return false;
+	  }
+	}
+      }
+    }
+    
+    db::insert(ctx.db.inbox, msg);
+    return true;
+  }
 }

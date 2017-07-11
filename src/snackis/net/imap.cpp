@@ -147,12 +147,12 @@ namespace snackis {
 	const str uid(*tok);
 	opt<Msg> msg = fetch_uid(imap, uid);
 	
-	if (msg && try_msg.errors.empty()) {
-	    db::insert(ctx.db.inbox, *msg);
-	    msg_cnt++;
-	    delete_uid(imap, uid);
-	    db::commit(trans, nullopt);
+	if (msg && try_msg.errors.empty() && receive(*msg)) {
+	  msg_cnt++;
+	  db::commit(trans, nullopt);
 	}
+
+	delete_uid(imap, uid);
       }
 
       expunge(imap);

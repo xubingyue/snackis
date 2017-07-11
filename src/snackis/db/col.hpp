@@ -19,6 +19,7 @@ namespace db {
     void copy(RecT &dest, const RecT &src) const override;
     void copy(Rec<RecT> &dest, const RecT &src) const override;
     void copy(RecT &dest, const Rec<RecT> &src) const override;
+    Val get(const RecT &src) const override;
     void set(RecT &dest, const Val &val) const override;
     Val read(std::istream &in) const override;
     void write(const Val &val, std::ostream &out) const override;
@@ -44,6 +45,11 @@ namespace db {
   void Col<RecT, ValT>::copy(RecT &dest, const Rec<RecT> &src) const {
     auto fnd(src.find(this));
     if (fnd != src.end()) { set(dest, fnd->second); }
+  }
+
+  template <typename RecT, typename ValT>
+  Val Col<RecT, ValT>::get(const RecT &src) const {
+    return type.to_val(src.*field);
   }
 
   template <typename RecT, typename ValT>

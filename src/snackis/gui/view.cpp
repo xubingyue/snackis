@@ -56,7 +56,6 @@ namespace gui {
     View::stack.pop_back();
     g_object_ref(v.panel);
     gtk_container_remove(GTK_CONTAINER(panels), v.panel);
-    delete &v;
     
     auto next(View::stack.back());
     gtk_container_add(GTK_CONTAINER(panels), next->panel);

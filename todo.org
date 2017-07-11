@@ -1,12 +1,8 @@
 * grep ERROR and return early where possible
-* don't show update feed view for new feeds
-** create feed in outer transaction and commit on post view save
-* don't show update feed/project views if not changed
 * add permanent views
 ** inbox, setup & undo
 ** add opt gui vars
-** move delete out of pop_view
-*** grep and delete manually
+** grep pop_view and delete if not reused
 ** extract load method
 *** add virtual view::load
 **** call on push and pop

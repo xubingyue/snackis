@@ -57,10 +57,7 @@ namespace gui {
       Feed fd(ctx, msg.feed);
       auto fd_fnd(find_feed_id(ctx, fd.id));
       
-      if (fd_fnd) {
-	copy(*fd_fnd, msg);
-	auto fv(new FeedView(*fd_fnd));
-	
+      if (fd_fnd) {	
 	Post ps(ctx, msg.post);
 	auto ps_fnd(find_post_id(ctx, ps.id));
 
@@ -73,25 +70,26 @@ namespace gui {
 	  push_view(*pv);
 	}
 
-	push_view(*fv);
+	Feed fd_prev(*fd_fnd);
+	copy(*fd_fnd, msg);
+	
+	if (db::compare(ctx.db.feeds, *fd_fnd, fd_prev) != 0) {
+	  auto fv(new FeedView(*fd_fnd));
+	  push_view(*fv);
+	}
       } else {
 	auto fv(new FeedView(Feed(msg)));
-
 	fv->on_save.push_back([msg]() {
 	    auto pv(new PostView(Post(msg)));
 	    push_view(*pv);
 	  });
-
-	push_view(*fv);	
+	push_view(*fv);
       }
     } else if (msg.type == Msg::TASK) {
       Project prj(ctx, msg.project);
       auto prj_fnd(find_project_id(ctx, prj.id));
       
       if (prj_fnd) {
-	copy(*prj_fnd, msg);
-	auto pv(new ProjectView(*prj_fnd));
-
 	Task tsk(ctx, msg.task);
 	auto tsk_fnd(find_task_id(ctx, *db::get(msg.task, ctx.db.task_id)));
 
@@ -104,16 +102,21 @@ namespace gui {
 	  push_view(*tv);
 	}
 
-	push_view(*pv);
+	Project prj_prev(*prj_fnd);
+	copy(*prj_fnd, msg);
+	
+	if (db::compare(ctx.db.projects, *prj_fnd, prj_prev) != 0) {
+	  auto pv(new ProjectView(*prj_fnd));
+	  push_view(*pv);
+	}
       } else {
 	auto pv(new ProjectView(Project(msg)));
-	
 	pv->on_save.push_back([msg]() {
-	    View::stack.push_back(new TaskView(Task(msg)));
+	    auto tv(new TaskView(Task(msg)));
+	    push_view(*tv);
 	  });
-
 	push_view(*pv);
-      }      
+      }
     } else {
 	log(ctx, fmt("Invalid message type: %0", msg.type));
     }
