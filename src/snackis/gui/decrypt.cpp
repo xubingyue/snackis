@@ -63,7 +63,8 @@ namespace gui {
 
   static void on_cancel(gpointer *_, Decrypt *v) {
     log(v->ctx, "Cancelled decryption");
-    pop_view(*v);
+    pop_view(v);
+    delete v;
   }
 
   static void on_save(gpointer *_, Decrypt *v) {
@@ -82,7 +83,8 @@ namespace gui {
     
     if (try_decrypt.errors.empty()) {
       log(v->ctx, "Finished decrypting");
-      pop_view(*v);
+      pop_view(v);
+      delete v;
     }
   }
 

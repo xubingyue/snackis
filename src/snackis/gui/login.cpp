@@ -30,7 +30,8 @@ namespace gui {
 
     Peer &me(whoami(ctx));
     if (!me.name.empty()) { log(ctx, fmt("Welcome back, %0", me.name)); }
-    pop_view(*v);
+    pop_view(v);
+    delete v;
     gtk_widget_show_all(gui::window);
   }
   

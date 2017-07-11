@@ -14,7 +14,7 @@ namespace gui {
   enum Cols { COL_TIME=0, COL_LABEL };
   
   static void on_cancel(gpointer *_, Undo *v) {
-    pop_view(*v);
+    pop_view(v);
   }
 
   static void on_undo(gpointer *_, Undo *v) {
@@ -23,7 +23,7 @@ namespace gui {
     db::Trans trans(ctx);
     TRY(try_undo);
     auto &cs(ctx.undo_stack.back());
-    undo(cs);
+    db::undo(cs);
     
     if (try_undo.errors.empty()) {
       db::commit(trans, nullopt);
@@ -38,21 +38,6 @@ namespace gui {
     ctx.undo_stack.pop_back();
   }
   
-  static void init_lst(Undo &v) {
-    add_col(GTK_TREE_VIEW(v.lst), "Time", COL_TIME);
-    add_col(GTK_TREE_VIEW(v.lst), "Change", COL_LABEL, true);
-    Ctx &ctx(v.ctx);
-    
-    for(auto cs=ctx.undo_stack.rbegin(); cs != ctx.undo_stack.rend(); cs++) {
-      GtkTreeIter it;
-      gtk_list_store_append(v.store, &it);
-      gtk_list_store_set(v.store, &it,
-			 COL_TIME, fmt(cs->committed_at, "%a %d, %H:%M").c_str(),
-			 COL_LABEL, cs->label.c_str(),
-			 -1);
-    }
-  }
-  
   Undo::Undo(Ctx &ctx):
     View(ctx, "Undo"),
     store(gtk_list_store_new(2,
@@ -61,7 +46,8 @@ namespace gui {
     revert_btn(gtk_button_new_with_mnemonic("_Revert Last Change")),
     cancel_btn(gtk_button_new_with_mnemonic("_Cancel"))
   {
-    init_lst(*this);
+    add_col(GTK_TREE_VIEW(lst), "Time", COL_TIME);
+    add_col(GTK_TREE_VIEW(lst), "Change", COL_LABEL, true);
     gtk_container_add(GTK_CONTAINER(panel), gtk_widget_get_parent(lst));
     GtkWidget *lst_btns(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
     gtk_container_add(GTK_CONTAINER(panel), lst_btns);
@@ -73,5 +59,19 @@ namespace gui {
     g_signal_connect(cancel_btn, "clicked", G_CALLBACK(on_cancel), this);
     gtk_box_pack_start(GTK_BOX(panel), cancel_btn, false, false, 0);
     focused = lst;
+  }
+
+  void Undo::load() {
+    View::load();
+    gtk_list_store_clear(store);
+
+    for(auto cs=ctx.undo_stack.rbegin(); cs != ctx.undo_stack.rend(); cs++) {
+      GtkTreeIter it;
+      gtk_list_store_append(store, &it);
+      gtk_list_store_set(store, &it,
+			 COL_TIME, fmt(cs->committed_at, "%a %d, %H:%M").c_str(),
+			 COL_LABEL, cs->label.c_str(),
+			 -1);
+    }
   }
 }}

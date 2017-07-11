@@ -71,8 +71,7 @@ namespace gui {
 	  return false;
 	}
 	
-	Decrypt *v = new Decrypt(ctx);
-	push_view(*v);
+	push_view(new Decrypt(ctx));
 	return true;
       });
 
@@ -94,8 +93,7 @@ namespace gui {
 	  return false;
 	}
 	
-	Encrypt *v = new Encrypt(ctx);
-	push_view(*v);
+	push_view(new Encrypt(ctx));
 	return true;
       });
 
@@ -112,11 +110,10 @@ namespace gui {
 	if (find(*v) == 1) {
 	  auto rec(first_rec(*v));
 	  CHECK(rec != nullptr, _);
-	  FeedView *fv = new FeedView(Feed(ctx, *rec));
-	  push_view(*fv);
+	  push_view(new FeedView(Feed(ctx, *rec)));
 	  delete v;
 	} else {
-	  push_view(*v);
+	  push_view(v);
 	}
 	
 	return true;
@@ -128,8 +125,7 @@ namespace gui {
 	  return false;
 	}
 	
-	FeedView *v = new FeedView(Feed(ctx));
-	push_view(*v);
+	push_view(new FeedView(Feed(ctx)));
 	return true;
       });
 
@@ -139,8 +135,7 @@ namespace gui {
 	  return false;
 	}
 	
-	FeedSearch *v = new FeedSearch(ctx);
-	push_view(*v);
+	push_view(new FeedSearch(ctx));
 	return true;
       });
 
@@ -164,9 +159,9 @@ namespace gui {
 	  log(ctx, "Inbox is empty");
 	  return true;
 	}
-	
-	Inbox *v = new Inbox(ctx);
-	push_view(*v);
+
+	if (!inbox) { inbox.reset(new Inbox(ctx)); }
+	push_view(inbox.get());
 	return true;
       });
 
@@ -193,8 +188,7 @@ namespace gui {
 	  return false;
 	}
 	gtk_widget_hide(left_panel);
-	Login *v = new Login(ctx);
-	push_view(*v);
+	push_view(new Login(ctx));
 	return true;
       });
 
@@ -211,11 +205,10 @@ namespace gui {
 	if (find(*v) == 1) {
 	  auto rec(first_rec(*v));
 	  CHECK(rec != nullptr, _);
-	  PeerView *fv = new PeerView(Peer(ctx, *rec));
-	  push_view(*fv);
+	  push_view(new PeerView(Peer(ctx, *rec)));
 	  delete v;
 	} else {
-	  push_view(*v);
+	  push_view(v);
 	}
 	
 	return true;
@@ -227,8 +220,7 @@ namespace gui {
 	  return false;
 	}
 	
-	PeerSearch *v = new PeerSearch(ctx);
-	push_view(*v);
+	push_view(new PeerSearch(ctx));
 	return true;
       });
 
@@ -245,11 +237,10 @@ namespace gui {
 	if (find(*v) == 1) {
 	  auto rec(first_rec(*v));
 	  CHECK(rec != nullptr, _);
-	  PostView *fv = new PostView(Post(ctx, *rec));
-	  push_view(*fv);
+	  push_view(new PostView(Post(ctx, *rec)));
 	  delete v;
 	} else {
-	  push_view(*v);
+	  push_view(v);
 	}
 	
 	return true;
@@ -261,8 +252,7 @@ namespace gui {
 	  return false;
 	}
 	
-	PostView *v = new PostView(Post(ctx));
-	push_view(*v);
+	push_view(new PostView(Post(ctx)));
 	return true;
       });
 
@@ -272,8 +262,7 @@ namespace gui {
 	  return false;
 	}
 	
-	PostSearch *v = new PostSearch(ctx);
-	push_view(*v);
+	push_view(new PostSearch(ctx));
 	return true;
       });
 
@@ -290,11 +279,10 @@ namespace gui {
 	if (find(*v) == 1) {
 	  auto rec(first_rec(*v));
 	  CHECK(rec != nullptr, _);
-	  ProjectView *fv = new ProjectView(Project(ctx, *rec));
-	  push_view(*fv);
+	  push_view(new ProjectView(Project(ctx, *rec)));
 	  delete v;
 	} else {
-	  push_view(*v);
+	  push_view(v);
 	}
 	
 	return true;
@@ -306,8 +294,7 @@ namespace gui {
 	  return false;
 	}
 	
-	ProjectView *v = new ProjectView(Project(ctx));
-	push_view(*v);
+	push_view(new ProjectView(Project(ctx)));
 	return true;
       });
 
@@ -317,8 +304,7 @@ namespace gui {
 	  return false;
 	}
 	
-	ProjectSearch *v = new ProjectSearch(ctx);
-	push_view(*v);
+	push_view(new ProjectSearch(ctx));
 	return true;
       });
     
@@ -342,9 +328,9 @@ namespace gui {
 	  log(ctx, "Invalid number of arguments, syntax: setup");
 	  return false;
 	}
-	
-	Setup *v = new Setup(ctx);
-	push_view(*v);
+
+	if (!setup) { setup.reset(new Setup(ctx)); }
+	push_view(setup.get());
 	return true;
       });
 
@@ -361,11 +347,10 @@ namespace gui {
 	if (find(*v) == 1) {
 	  auto rec(first_rec(*v));
 	  CHECK(rec != nullptr, _);
-	  TaskView *fv = new TaskView(Task(ctx, *rec));
-	  push_view(*fv);
+	  push_view(new TaskView(Task(ctx, *rec)));
 	  delete v;
 	} else {
-	  push_view(*v);
+	  push_view(v);
 	}
 	
 	return true;
@@ -377,8 +362,7 @@ namespace gui {
 	  return false;
 	}
 	
-	TaskView *v = new TaskView(Task(ctx));
-	push_view(*v);
+	push_view(new TaskView(Task(ctx)));
 	return true;
       });
 
@@ -388,22 +372,20 @@ namespace gui {
 	  return false;
 	}
 	
-	TaskSearch *v = new TaskSearch(ctx);
-	push_view(*v);
+	push_view(new TaskSearch(ctx));
 	return true;
       });
     
     rdr.cmds.emplace("todo", [&ctx](auto args) {
 	if (args.empty()) {
 	  auto v(new TaskSearch(ctx));
-	  //TODO: select todo tag
-	  push_view(*v);
+	  set_str(GTK_ENTRY(v->tags_fld), "todo");
+	  push_view(v);
 	} else {
 	  Task task(ctx);
 	  task.tags.insert("todo");
 	  task.name = join(args.begin(), args.end(), ' ');
-	  auto v(new TaskView(task));
-	  push_view(*v);
+	  push_view(new TaskView(task));
 	}
 	
 	return true;
@@ -419,9 +401,9 @@ namespace gui {
 	  log(ctx, "Nothing to undo");
 	  return true;
 	}
-	
-	Undo *v = new Undo(ctx);
-	push_view(*v);
+
+	if (!undo) { undo.reset(new Undo(ctx)); }
+	push_view(undo.get());
 	return true;
       });
   }

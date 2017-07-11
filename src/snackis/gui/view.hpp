@@ -14,11 +14,12 @@ namespace gui {
     
     View(Ctx &ctx, const str &lbl, const str &inf="");
     virtual ~View();
+    virtual void load();
     GtkWidget *ptr() override;
   };
 
-  void push_view(View &v);
-  void pop_view(View &v);
+  void push_view(View *v);
+  void pop_view(View *v);
   void switch_view();
 }}
 

@@ -11,13 +11,13 @@ namespace gui {
   static void on_edit_project(gpointer *_, TaskView *v) {
     CHECK(v->project_fld.selected != nullopt, _);
     ProjectView *fv(new ProjectView(*v->project_fld.selected));
-    push_view(*fv);
+    push_view(fv);
   }
   
   static void on_find_posts(gpointer *_, TaskView *v) {
     PostSearch *ps = new PostSearch(v->ctx);
     select<Feed>(ps->feed_fld, get_feed(v->rec));
-    push_view(*ps);
+    push_view(ps);
   }
 
   static void on_post(gpointer *_, TaskView *v) {
@@ -29,8 +29,7 @@ namespace gui {
       db::commit(trans, fmt("Saved Task %0", id_str(v->rec)));
       Post post(v->ctx);
       post.feed_id = get_feed(v->rec).id;
-      PostView *pv = new PostView(post);
-      push_view(*pv);
+      push_view(new PostView(post));
     }
   }
 

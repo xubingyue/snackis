@@ -10,6 +10,7 @@ namespace gui {
     GtkWidget *lst, *revert_btn, *cancel_btn;
 
     Undo(Ctx &ctx);
+    void load() override;
   };
 }}
 

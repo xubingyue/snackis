@@ -10,8 +10,7 @@ namespace gui {
   
   static void edit(Ctx &ctx, const db::Rec<Post> &rec) {
     Post post(ctx, rec);    
-    PostView *fv(new PostView(post));
-    push_view(*fv);
+    push_view(new PostView(post));
   }
 
   PostSearch::PostSearch(Ctx &ctx):

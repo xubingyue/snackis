@@ -8,21 +8,19 @@
 namespace snackis {
 namespace gui {
   static void on_edit_feed(gpointer *_, PostView *v) {
-    FeedView *fv(new FeedView(*v->feed_fld.selected));
-    push_view(*fv);
+    push_view(new FeedView(*v->feed_fld.selected));
   }
   
   static void on_post(gpointer *_, PostView *v) {
     Post post(v->ctx);
     post.feed_id = v->rec.feed_id;
-    PostView *pv = new PostView(post);
-    push_view(*pv);
+    push_view(new PostView(post));
   }
 
   static void on_find_replies(gpointer *_, PostView *v) {
     PostSearch *ps = new PostSearch(v->ctx);
     select<Feed>(ps->feed_fld, get_reply_feed(v->rec));
-    push_view(*ps);
+    push_view(ps);
   }
 
   static void on_reply(gpointer *_, PostView *v) {
@@ -30,7 +28,7 @@ namespace gui {
     post.feed_id = get_reply_feed(v->rec).id;
     PostView *pv = new PostView(post);
     pv->on_save.push_back([v]() { v->save(); });
-    push_view(*pv);
+    push_view(pv);
   }
   
   PostView::PostView(const Post &post):
@@ -67,7 +65,7 @@ namespace gui {
 	if (feed_fld.selected) {
 	  set_feed(rec, *feed_fld.selected);
 	  auto reply_fd(find_feed_id(ctx, rec.id));
-	  load(post_lst, *feed_fld.selected, rec.created_at);
+	  gui::load(post_lst, *feed_fld.selected, rec.created_at);
 	}
 	
 	set_str(GTK_ENTRY(tags_fld), join(rec.tags.begin(), rec.tags.end(), ' '));

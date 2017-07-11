@@ -41,11 +41,12 @@ namespace gui {
 	gtk_tree_selection_select_iter(sel, &iter);
       }
       
-      pop_view(*sv);
+      pop_view(sv);
+      delete sv;
       gtk_widget_grab_focus(w->add_btn);
     };
     
-    push_view(*sv);
+    push_view(sv);
   }
 
   template <typename RecT>

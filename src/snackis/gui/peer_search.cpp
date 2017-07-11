@@ -9,9 +9,7 @@ namespace gui {
   enum PeerCol {COL_PTR=0, COL_ID, COL_NAME, COL_EMAIL};
 
   static void edit(Ctx &ctx, const db::Rec<Peer> &rec) {
-    Peer peer(ctx, rec);
-    PeerView *fv(new PeerView(peer));
-    push_view(*fv);
+    push_view(new PeerView(Peer(ctx, rec)));
   }  
 
   PeerSearch::PeerSearch(Ctx &ctx):

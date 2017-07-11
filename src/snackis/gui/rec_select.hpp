@@ -43,11 +43,12 @@ namespace gui {
     
     sv->on_activate = [v, sv](auto &rec) {
       select<RecT>(*v, RecT(v->ctx, rec));
-      pop_view(*sv);
+      pop_view(sv);
+      delete sv;
       gtk_widget_grab_focus(v->clear_btn);
     };
     
-    push_view(*sv);
+    push_view(sv);
   }
 
   template <typename RecT>

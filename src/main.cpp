@@ -76,15 +76,13 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
     for (auto e: errors) { log(*ctx, e->what); }
   };
   
-  gui::root_view.emplace(*ctx);
-  gui::push_view(*gui::root_view);
+  gui::root_view.reset(new gui::RootView(*ctx));
+  gui::push_view(gui::root_view.get());
 
-  gui::Login *login = new gui::Login(*ctx);
-  gui::push_view(*login);
+  gui::push_view(new gui::Login(*ctx));
   gtk_widget_show(gui::window);
   gtk_widget_show(gui::main_panel);
   gtk_widget_show(gui::panels);
-  gtk_widget_show_all(login->ptr());
 }
 
 int main(int argc, char **argv) {

@@ -6,7 +6,11 @@ namespace gui {
 
   opt<Console> console;
   opt<Reader> reader;
-  opt<RootView> root_view;
+  
+  std::unique_ptr<RootView> root_view;
+  std::unique_ptr<Setup> setup;
+  std::unique_ptr<Inbox> inbox;
+  std::unique_ptr<Undo> undo;
 
   str get_str(GtkEntry *w) {
     return gtk_entry_get_text(w);

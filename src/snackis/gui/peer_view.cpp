@@ -8,7 +8,7 @@ namespace gui {
   static void on_find_posts(gpointer *_, PeerView *v) {
     PostSearch *ps = new PostSearch(v->ctx);
     select<Peer>(ps->peer_fld, v->rec);
-    push_view(*ps);
+    push_view(ps);
   }
   
   PeerView::PeerView(const Peer &pr):

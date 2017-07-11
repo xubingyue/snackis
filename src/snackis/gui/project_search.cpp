@@ -10,8 +10,7 @@ namespace gui {
 		   COL_INFO};
 
   static void edit(Ctx &ctx, const db::Rec<Project> &rec) {
-    ProjectView *fv(new ProjectView(Project(ctx, rec)));
-    push_view(*fv);
+    push_view(new ProjectView(Project(ctx, rec)));
   }
   
   ProjectSearch::ProjectSearch(Ctx &ctx):

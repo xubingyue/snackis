@@ -11,8 +11,7 @@ namespace gui {
 
   static void edit(Ctx &ctx, const db::Rec<Feed> &rec) {
     Feed feed(ctx, rec);
-    FeedView *fv(new FeedView(feed));
-    push_view(*fv);
+    push_view(new FeedView(feed));
   }
   
   FeedSearch::FeedSearch(Ctx &ctx):

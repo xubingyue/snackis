@@ -13,20 +13,19 @@ namespace gui {
   static void on_find_tasks(gpointer *_, ProjectView *v) {
     TaskSearch *ts = new TaskSearch(v->ctx);
     select<Project>(ts->project_fld, v->rec);
-    push_view(*ts);
+    push_view(ts);
   }
 
   static void on_new_task(gpointer *_, ProjectView *v) {
     Task tsk(v->ctx);
     set_project(tsk, v->rec);
-    TaskView *tv = new TaskView(tsk);
-    push_view(*tv);
+    push_view(new TaskView(tsk));
   }
 
   static void on_find_posts(gpointer *_, ProjectView *v) {
     PostSearch *ps = new PostSearch(v->ctx);
     select<Feed>(ps->feed_fld, get_feed(v->rec));
-    push_view(*ps);
+    push_view(ps);
   }
 
   static void on_post(gpointer *_, ProjectView *v) {
@@ -38,8 +37,7 @@ namespace gui {
       db::commit(trans, fmt("Saved Project %0", id_str(v->rec)));
       Post post(v->ctx);
       post.feed_id = get_feed(v->rec).id;
-      PostView *pv = new PostView(post);
-      push_view(*pv);
+      push_view(new PostView(post));
     }
   }
 
@@ -94,7 +92,7 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(info_fld));
     set_str(GTK_TEXT_VIEW(info_fld), rec.info);
     
-    load(peer_lst);
+    gui::load(peer_lst);
     gtk_widget_set_margin_top(peer_lst.ptr(), 5);
     gtk_container_add(GTK_CONTAINER(fields), peer_lst.ptr());
     

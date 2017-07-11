@@ -6,10 +6,12 @@
 #include "snackis/core/str.hpp"
 #include "snackis/db/rec.hpp"
 #include "snackis/gui/console.hpp"
+#include "snackis/gui/inbox.hpp"
 #include "snackis/gui/login.hpp"
 #include "snackis/gui/reader.hpp"
 #include "snackis/gui/root_view.hpp"
 #include "snackis/gui/setup.hpp"
+#include "snackis/gui/undo.hpp"
 
 namespace snackis {
 namespace gui {
@@ -19,8 +21,11 @@ namespace gui {
   
   extern opt<Console> console;
   extern opt<Reader> reader;
-  extern opt<RootView> root_view;
-
+  extern std::unique_ptr<RootView> root_view;
+  extern std::unique_ptr<Setup> setup;
+  extern std::unique_ptr<Inbox> inbox;
+  extern std::unique_ptr<Undo> undo;
+  
   str get_str(GtkEntry *w);
   str get_str(GtkTextView *w);
   void set_str(GtkEntry *w, const str &in);

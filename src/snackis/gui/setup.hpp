@@ -13,6 +13,7 @@ namespace gui {
       *save, *cancel;
     
     Setup(Ctx &ctx);
+    void load() override;
   };
 }}
 

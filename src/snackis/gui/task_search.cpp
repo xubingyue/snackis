@@ -11,8 +11,7 @@ namespace gui {
 
   static void edit(Ctx &ctx, const db::Rec<Task> &rec) {
     Task task(ctx, rec);
-    TaskView *fv(new TaskView(task));
-    push_view(*fv);
+    push_view(new TaskView(task));
   }
 
   TaskSearch::TaskSearch(Ctx &ctx):

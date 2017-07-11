@@ -16,8 +16,7 @@ namespace gui {
     auto ps_rec(get_sel_rec<Post>(GTK_TREE_VIEW(w->lst)));
     CHECK(ps_rec, _);
     Post ps(w->ctx, *ps_rec);
-    PostView *pv(new PostView(ps));
-    push_view(*pv);
+    push_view(new PostView(ps));
   }
   
   FeedHistory::FeedHistory(Ctx &ctx, const str &lbl):

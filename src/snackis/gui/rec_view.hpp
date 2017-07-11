@@ -39,8 +39,8 @@ namespace gui {
     }
 
     log(ctx, msg);
-    pop_view(*v);
-    
+    pop_view(v);
+    delete v;
   }
 
   template <typename RecT>
@@ -53,10 +53,11 @@ namespace gui {
       const str
 	lbl(gtk_label_get_text(GTK_LABEL(v->label))),
 	msg(fmt("Saved %0 %1", lbl, id_str(v->rec)));
-      pop_view(*v);
+      pop_view(v);
       for (auto fn: v->on_save) { fn(); }
       log(ctx, msg);
       db::commit(trans, msg);
+      delete v;
     }
   }
   

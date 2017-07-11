@@ -34,9 +34,9 @@ namespace gui {
   
   template <typename RecT>
   void on_search_activate(GtkTreeView *treeview,
-		      GtkTreePath *path,
-		      GtkTreeViewColumn *col,
-		      SearchView<RecT> *v) {
+			  GtkTreePath *path,
+			  GtkTreeViewColumn *col,
+			  SearchView<RecT> *v) {
     TRY(try_activate);
     auto rec(get_sel_rec<RecT>(GTK_TREE_VIEW(v->list)));
     CHECK(rec != nullptr, _);
@@ -45,7 +45,8 @@ namespace gui {
   
   template <typename RecT>
   void on_search_cancel(gpointer *_, SearchView<RecT> *v) {
-    pop_view(*v);
+    pop_view(v);
+    delete v;
   }
   
   template <typename RecT>
@@ -88,7 +89,7 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(btns), cancel_btn);
     focused = fields;
   }
-
+  
   template <typename RecT>
   const db::Rec<RecT> *first_rec(const SearchView<RecT> &v) {
     GtkTreeIter it;

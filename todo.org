@@ -1,8 +1,1 @@
 * grep ERROR and return early where possible
-* add permanent views
-** inbox, setup & undo
-** add opt gui vars
-** grep pop_view and delete if not reused
-** extract load method
-*** add virtual view::load
-**** call on push and pop

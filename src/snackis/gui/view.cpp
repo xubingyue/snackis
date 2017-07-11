@@ -32,12 +32,15 @@ namespace gui {
   View::~View() {
     gtk_widget_destroy(panel);
   }
-  
+
+  void View::load()
+  { }
+
   GtkWidget *View::ptr() {
       return panel;
   }
 
-  void push_view(View &v) {
+  void push_view(View *v) {
     if (!View::stack.empty()) {
       View *prev(View::stack.back());
       prev->focused = gtk_window_get_focus(GTK_WINDOW(window));
@@ -45,17 +48,18 @@ namespace gui {
       gtk_container_remove(GTK_CONTAINER(panels), prev->panel);
     }
 
-    View::stack.push_back(&v);    
-    gtk_container_add(GTK_CONTAINER(panels), v.panel);  
-    gtk_widget_show_all(v.ptr());
-    gtk_widget_grab_focus(v.focused);
+    v->load();
+    View::stack.push_back(v);    
+    gtk_container_add(GTK_CONTAINER(panels), v->panel);  
+    gtk_widget_show_all(v->ptr());
+    gtk_widget_grab_focus(v->focused);
   }
 
-  void pop_view(View &v) {
-    assert(View::stack.back() == &v);
+  void pop_view(View *v) {
+    assert(View::stack.back() == v);
     View::stack.pop_back();
-    g_object_ref(v.panel);
-    gtk_container_remove(GTK_CONTAINER(panels), v.panel);
+    g_object_ref(v->panel);
+    gtk_container_remove(GTK_CONTAINER(panels), v->panel);
     
     auto next(View::stack.back());
     gtk_container_add(GTK_CONTAINER(panels), next->panel);

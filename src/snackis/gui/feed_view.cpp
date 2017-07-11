@@ -11,7 +11,7 @@ namespace gui {
   static void on_find_posts(gpointer *_, FeedView *v) {
     PostSearch *ps = new PostSearch(v->ctx);
     select<Feed>(ps->feed_fld, v->rec);
-    push_view(*ps);
+    push_view(ps);
   }
 
   static void on_post(gpointer *_, FeedView *v) {
@@ -23,8 +23,7 @@ namespace gui {
       db::commit(trans, fmt("Saved Feed ", id_str(v->rec)));
       Post post(v->ctx);
       set_feed(post, v->rec);
-      PostView *pv = new PostView(post);
-      push_view(*pv);
+      push_view(new PostView(post));
     }
   }
   
@@ -75,7 +74,7 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(fields), peer_lst.ptr());
 
     focused = name_fld;
-    load(peer_lst);
+    gui::load(peer_lst);
     refresh(*this);
   }
 
