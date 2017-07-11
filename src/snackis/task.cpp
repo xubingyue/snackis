@@ -79,7 +79,7 @@ namespace snackis {
       db::insert(ctx.db.feeds, fd);
 
       if (try_create.errors.empty()) {
-	db::commit(trans, fmt("Created feed: %0", fd.name));
+	db::commit(trans, fmt("Created Task feed %0", id_str(fd)));
       }
     }
     

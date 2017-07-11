@@ -73,6 +73,7 @@ namespace db {
   struct Insert: TableChange<RecT> {
     Insert(Table<RecT> &table, const Rec<RecT> &rec);    
     void rollback() const override;
+    void undo() const override;
   };
 
   template <typename RecT>
@@ -80,12 +81,14 @@ namespace db {
     const Rec<RecT> prev_rec;
     Update(Table<RecT> &table, const Rec<RecT> &rec, const Rec<RecT> &prev_rec);    
     void rollback() const override;
+    void undo() const override;
   };
 
   template <typename RecT>
   struct Erase: TableChange<RecT> {
     Erase(Table<RecT> &table, const Rec<RecT> &rec);    
     void rollback() const override;
+    void undo() const override;
   };
 
   template <typename RecT>
@@ -426,6 +429,11 @@ namespace db {
   }
 
   template <typename RecT>
+  void Insert<RecT>::undo() const {
+    erase(this->table, this->rec);
+  }
+
+  template <typename RecT>
   Update<RecT>::Update(Table<RecT> &table,
 		       const Rec<RecT> &rec, const Rec<RecT> &prev_rec):
     TableChange<RecT>(TABLE_UPDATE, table, rec), prev_rec(prev_rec) { }
@@ -437,12 +445,22 @@ namespace db {
   }
 
   template <typename RecT>
+  void Update<RecT>::undo() const {
+    update(this->table, this->prev_rec);
+  }
+
+  template <typename RecT>
   Erase<RecT>::Erase(Table<RecT> &table, const Rec<RecT> &rec):
     TableChange<RecT>(TABLE_ERASE, table, rec) { }
   
   template <typename RecT>
   void Erase<RecT>::rollback() const {
     this->table.recs.insert(this->rec);
+  }
+
+  template <typename RecT>
+  void Erase<RecT>::undo() const {
+    insert(this->table, this->rec);
   }
 }}
 

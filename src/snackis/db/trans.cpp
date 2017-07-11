@@ -31,7 +31,7 @@ namespace db {
     flush(trans.ctx);
     
     if (lbl) {
-      trans.ctx.undo_stack.emplace_back(*lbl, trans.changes);
+      trans.ctx.undo_stack.emplace_back(trans.ctx, *lbl, trans.changes);
     } else {
       clear(trans);
     }

@@ -39,7 +39,6 @@ namespace gui {
     gtk_text_buffer_get_start_iter(buf, &start);
     gtk_text_buffer_get_end_iter(buf, &end);
     gtk_text_buffer_delete(buf, &start, &end);
-    log(cns, "Cleared console");
   }
 
   Console::Console(): view(new_text_view()) {

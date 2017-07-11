@@ -1,16 +1,9 @@
-* add unlimited undo
-** add ChangeSet::undo
-*** execute in hidden trans
-*** add undo-method to change
-** add gui::Undo
-*** copy inbox
-*** list with changes
-*** undo button (alt+u)
-*** cancel
-
-* grep ERROR and add early return where possible
+* add undo
+** implement methods
+** test
+* grep ERROR and return early where possible
 * don't show update feed view for new feeds
-** create feed in outer transction and commit on post view save
+** create feed in outer transaction and commit on post view save
 * don't show update feed/project views if not changed
 * add permanent views
 ** inbox, setup & undo
@@ -19,4 +12,4 @@
 *** grep and delete manually
 ** extract load method
 *** add virtual view::load
-**** call on push
+**** call on push and pop

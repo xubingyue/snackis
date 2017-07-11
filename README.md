@@ -50,6 +50,11 @@ Once inside, the first thing you probably want to do is to have a look at the se
 ### Locking
 Type ```lock``` and press ```Return``` in the reader to lock Snackis and return to the login screen, the application will keep running in the background until closed.
 
+### Undo
+Snackis logs all committed changes to an undo-stack. Type ```undo``` and press ```Return``` in the reader to list/revert changes. The undo-stack is emptied whenever the ```clear```-command is executed.
+
+![undo example](images/undo.png?raw=true)
+
 ### Encryption
 Snackis supports encrypting arbitrary data for specific peers. Type ```encrypt``` and press ```Return``` in the reader to open the encryption view. On top of being encrypted; the resulting file is cryptographically signed, and the signature is verified when decrypting. Encoding ensures that the resulting file can be reliable transferred over text-based protocols, it also rougly doubles the size of the output.
 
@@ -64,7 +69,7 @@ Type ```decrypt``` and press ```Return``` in the reader to open the decryption v
 Type ```invite foo@bar.com``` in the reader and press ```Return``` to create a new invite. Snackis will send an email containing your public encryption key to the specified address. When an invite is accepted/rejected, a reply is sent to inform the inviting peer. The easiest way to see how it works is to try with your own address.
 
 ### Peers
-Type ```peer-search``` in the reader and press ```Return``` to search Peers locally. Peers are sorted by name.
+Type ```peer-search``` in the reader and press ```Return``` to search Peers locally. Peers are sorted by name. A short-cut is provided to find peers by id, execute ```peer id``` to open the specified peer.
 
 ![peer search example](images/peer_search.png?raw=true)
 
@@ -93,7 +98,7 @@ Snackis main mode of communication is using feeds/posts. Type ```feed-new``` in 
 ![feed example](images/feed.png?raw=true)
 
 #### Searching
-Type ```feed-search``` in the reader and press ```Return``` to search feeds.
+Type ```feed-search``` in the reader and press ```Return``` to search feeds. A short-cut is provided to find feeds by id, execute ```feed id``` to open the specified feed, any unique part of the id will do.
 
 ![feed search example](images/feed_search.png?raw=true)
 
@@ -103,7 +108,7 @@ Type ```post-new``` in the reader and press ```Return``` to post in existing fee
 ![post example](images/post.png?raw=true)
 
 #### Searching
-Type ```post-search``` in the reader and press ```Return``` to search posts. By default, a list of last weeks posts in reverse chronological order is displayed.
+Type ```post-search``` in the reader and press ```Return``` to search posts. By default, a list of last weeks posts in reverse chronological order is displayed. A short-cut is provided to find posts by id, execute ```post id``` to open the specified post, any unique part of the id will do.
 
 ![post search example](images/post_search.png?raw=true)
 
@@ -113,12 +118,12 @@ Projects are sets of tasks that may be shared among a set of peers. Each task ha
 ![project example](images/project.png?raw=true)
 
 #### Searching
-Type ```project-search``` in the reader and press ```Return``` to search projects. Projects are sorted by name.
+Type ```project-search``` in the reader and press ```Return``` to search projects. Projects are sorted by name. A short-cut is provided to find projects by id, execute ```project id``` to open the specified project, any unique part of the id will do.
 
 ![project search example](images/project_search.png?raw=true)
 
 ### Tasks
-A Task belongs to a project and changes are automatically propagated to all project members. Each task has its own feed that members may post to. Type ```task-new``` in the reader and press ```Return``` to create a new task.
+A Task belongs to a project and changes are automatically propagated to all project members. Each task has its own feed that members may post to. Type ```task-new``` in the reader and press ```Return``` to create a new task. A short-cut is provided to find tasks by id, execute ```task id``` to open the specified task, any unique part of the id will do.
 
 ![task example](images/task.png?raw=true)
 

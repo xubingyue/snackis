@@ -2,6 +2,7 @@
 #define SNACKIS_DB_CTX_HPP
 
 #include <mutex>
+#include <list>
 #include <set>
 
 #include "snackis/core/func.hpp"
@@ -25,7 +26,7 @@ namespace db {
     std::set<BasicTable *> tables;
     Trans *trans;
     std::set<std::ostream *> dirty_files;
-    std::vector<ChangeSet> undo_stack;
+    std::list<ChangeSet> undo_stack;
     std::recursive_mutex mutex;
 
     Ctx(const Path &path);

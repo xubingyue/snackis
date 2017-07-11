@@ -37,10 +37,6 @@ namespace gui {
       return panel;
   }
 
-  str label(View &v) {
-    return gtk_label_get_text(GTK_LABEL(v.label));
-  }
-
   void push_view(View &v) {
     if (!View::stack.empty()) {
       View *prev(View::stack.back());

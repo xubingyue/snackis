@@ -17,6 +17,7 @@
 #include "snackis/gui/reader.hpp"
 #include "snackis/gui/task_search.hpp"
 #include "snackis/gui/task_view.hpp"
+#include "snackis/gui/undo.hpp"
 #include "snackis/gui/widget.hpp"
 
 namespace snackis {
@@ -60,6 +61,7 @@ namespace gui {
 	}
 	
 	clear(*console);
+	ctx.undo_stack.clear();
 	return true;
       });
 
@@ -404,6 +406,22 @@ namespace gui {
 	  push_view(*v);
 	}
 	
+	return true;
+      });
+
+    rdr.cmds.emplace("undo", [&ctx](auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: inbox");
+	  return false;
+	}
+
+	if (ctx.undo_stack.empty()) {
+	  log(ctx, "Nothing to undo");
+	  return true;
+	}
+	
+	Undo *v = new Undo(ctx);
+	push_view(*v);
 	return true;
       });
   }

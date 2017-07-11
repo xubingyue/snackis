@@ -25,17 +25,20 @@ namespace gui {
   template <typename RecT>
   void on_cancel_rec(gpointer *_, RecView<RecT> *v) {
     Ctx &ctx(v->ctx);
-
+    const str
+      lbl(gtk_label_get_text(GTK_LABEL(v->label))),
+      msg(fmt("Cancelled %0 %1", lbl, id_str(v->rec)));
+    
     if (!v->on_cancel.empty()) {
       TRY(try_save);
       db::Trans trans(ctx);
       for (auto fn: v->on_cancel) { fn(); }
       if (try_save.errors.empty()) {
-	db::commit(trans, fmt("Cancelled %0", label(*v)));
+	db::commit(trans, msg);
       }
     }
 
-    log(ctx, fmt("Cancelled %0", gtk_label_get_text(GTK_LABEL(v->label))));
+    log(ctx, msg);
     pop_view(*v);
     
   }
@@ -47,10 +50,13 @@ namespace gui {
     db::Trans trans(ctx);
     
     if (v->save() && try_save.errors.empty()) {
-      log(ctx, fmt("Saved %0", gtk_label_get_text(GTK_LABEL(v->label))));
+      const str
+	lbl(gtk_label_get_text(GTK_LABEL(v->label))),
+	msg(fmt("Saved %0 %1", lbl, id_str(v->rec)));
+      log(ctx, msg);
       pop_view(*v);
       for (auto fn: v->on_save) { fn(); }
-      db::commit(trans, fmt("Saved %0", label(*v)));
+      db::commit(trans, msg);
     }
   }
   
