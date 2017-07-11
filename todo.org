@@ -1,6 +1,3 @@
-* add undo
-** implement methods
-** test
 * grep ERROR and return early where possible
 * don't show update feed view for new feeds
 ** create feed in outer transaction and commit on post view save
