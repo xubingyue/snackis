@@ -106,6 +106,7 @@ namespace snackis {
 	  copy(*ps_fnd, msg);
 	  
 	  if (db::compare(ctx.db.posts, prev, *ps_fnd) == 0) {
+	    log(ctx, "Skipped duplicate post update");
 	    return false;
 	  }
 	}
@@ -123,6 +124,7 @@ namespace snackis {
 	  copy(*tsk_fnd, msg);
 	  
 	  if (db::compare(ctx.db.tasks, tsk_prev, *tsk_fnd) == 0) {
+	    log(ctx, "Skipped duplicate task update");
 	    return false;
 	  }
 	}
