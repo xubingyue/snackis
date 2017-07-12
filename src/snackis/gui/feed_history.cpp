@@ -21,7 +21,7 @@ namespace gui {
   
   FeedHistory::FeedHistory(Ctx &ctx, const str &lbl):
     ctx(ctx),
-    store(gtk_list_store_new(3, G_TYPE_POINTER,
+    store(gtk_tree_store_new(3, G_TYPE_POINTER,
 			     G_TYPE_STRING,
 			     G_TYPE_STRING)),
     box(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5)),
@@ -42,25 +42,42 @@ namespace gui {
   GtkWidget *FeedHistory::ptr() { return box; }
 
   void clear(FeedHistory &w) {
-    gtk_list_store_clear(w.store);
+    gtk_tree_store_clear(w.store);
   }
 
+  static void add_post(FeedHistory &w,
+		       const Feed &fd,
+		       const db::Rec<Post> *rec,
+		       Time start,
+		       GtkTreeIter *parent) {
+    Post ps(w.ctx, *rec);
+    Peer pr(get_peer_id(w.ctx, ps.owner_id));
+    
+    GtkTreeIter it;
+    gtk_tree_store_append(w.store, &it, parent);
+    const str by(fmt("%0\n%1",
+		     pr.name.c_str(),
+		     fmt(ps.created_at, "%a %b %d, %H:%M").c_str()));
+    
+    gtk_tree_store_set(w.store, &it,
+		       COL_PTR, rec,
+		       COL_BY, by.c_str(),
+		       COL_BODY, ps.body.c_str(),
+		       -1);
+
+    if (ps.id != fd.id) {
+      auto ps_fd(find_feed_id(w.ctx, ps.id));
+      if (ps_fd) {
+	for (auto r: last_posts(*ps_fd, start, POST_HISTORY_MAX)) {
+	  add_post(w, *ps_fd, r, start, &it);
+	}
+      }
+    }
+  }
+  
   void load(FeedHistory &w, const Feed &fd, Time start) {
-    for (auto rec: last_posts(fd, start, 30)) {
-      Post ps(w.ctx, *rec);
-      Peer pr(get_peer_id(w.ctx, ps.owner_id));
-      
-      GtkTreeIter it;
-      gtk_list_store_append(w.store, &it);
-      const str by(fmt("%0\n%1",
-		       pr.name.c_str(),
-		       fmt(ps.created_at, "%a %b %d, %H:%M").c_str()));
-      
-      gtk_list_store_set(w.store, &it,
-			 COL_PTR, rec,
-			 COL_BY, by.c_str(),
-			 COL_BODY, ps.body.c_str(),
-			 -1);
+    for (auto r: last_posts(fd, start, POST_HISTORY_MAX)) {
+      add_post(w, fd, r, start, nullptr);
     }
   }
 }}

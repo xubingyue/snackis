@@ -10,9 +10,11 @@ namespace snackis {
   struct Feed;
   
 namespace gui {
+  const int POST_HISTORY_MAX(30);
+  
   struct FeedHistory: Widget {
     Ctx &ctx;
-    GtkListStore *store;
+    GtkTreeStore *store;
     GtkWidget *box, *lst;
     
     FeedHistory(Ctx &ctx, const str &lbl);

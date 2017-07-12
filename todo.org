@@ -1,4 +1,2 @@
 * compress gui/gtk_label_new
 * add new_grid() & update code
-* change post history to show tree
-** load post feeds history recursively if exists
