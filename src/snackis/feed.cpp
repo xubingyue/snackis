@@ -66,6 +66,11 @@ namespace snackis {
     std::vector<const db::Rec<Post> *> out;
     if (ctx.db.feed_posts.recs.empty()) { return out; }
 
+    db::Rec<Post> pst;
+    db::set(pst, ctx.db.post_id, fd.id);
+    auto pst_fnd(db::find(ctx.db.posts, pst));
+    if (pst_fnd) { out.push_back(pst_fnd); }
+    
     db::Rec<Post> key;
     set(key, ctx.db.post_feed_id, fd.id);
     set(key, ctx.db.post_created_at, end);

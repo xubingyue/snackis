@@ -1,8 +1,4 @@
 * compress gui/gtk_label_new
 * add new_grid() & update code
-* save post before 'New Post'
-* show history from post thread in 'New Reply'
-** add feed.reply_id
-** assign on new reply
-** save original post
-** add reply_id post to history list if !null_uid
+* change post history to show tree
+** load post feeds history recursively if exists

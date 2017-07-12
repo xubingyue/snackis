@@ -10,11 +10,22 @@ namespace gui {
   static void on_edit_feed(gpointer *_, PostView *v) {
     push_view(new FeedView(*v->feed_fld.selected));
   }
+
+  static bool save_rec(PostView &v) {
+    Ctx &ctx(v.ctx);
+    db::Trans trans(ctx);
+    TRY(try_save);
+    if (!v.save() || !try_save.errors.empty()) { return false; }
+    db::commit(trans, fmt("Saved Post %0", id_str(v.rec)));
+    return true;
+  }
   
   static void on_post(gpointer *_, PostView *v) {
-    Post post(v->ctx);
-    post.feed_id = v->rec.feed_id;
-    push_view(new PostView(post));
+    if (save_rec(*v)) {
+      Post post(v->ctx);
+      post.feed_id = v->rec.feed_id;
+      push_view(new PostView(post));
+    }
   }
 
   static void on_find_replies(gpointer *_, PostView *v) {
@@ -24,11 +35,13 @@ namespace gui {
   }
 
   static void on_reply(gpointer *_, PostView *v) {
-    Post post(v->ctx);
-    post.feed_id = get_reply_feed(v->rec).id;
-    PostView *pv = new PostView(post);
-    pv->on_save.push_back([v]() { v->save(); });
-    push_view(pv);
+    if (save_rec(*v)) {
+      Post post(v->ctx);
+      post.feed_id = get_reply_feed(v->rec).id;
+      PostView *pv = new PostView(post);
+      pv->on_save.push_back([v]() { v->save(); });
+      push_view(pv);
+    }
   }
   
   PostView::PostView(const Post &post):
