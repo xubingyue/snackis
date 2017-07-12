@@ -1,2 +1,5 @@
 * compress gui/gtk_label_new
 * add new_grid() & update code
+* add automagic inbox update
+** register inbox.on_insert
+** use g_idle_add like console to update lst
