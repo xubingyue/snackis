@@ -30,7 +30,11 @@ namespace snackis {
   }
   
   Smtp::Smtp(Ctx &ctx): ctx(ctx), client(curl_easy_init()) {
-    if (!client) { ERROR(Smtp, "Failed initializing client"); }
+    if (!client) {
+      ERROR(Smtp, "Failed initializing client");
+      return;
+    }
+    
     curl_easy_setopt(client, 
 		     CURLOPT_USERNAME, 
 		     get_val(ctx.settings.smtp_user)->c_str());
@@ -65,7 +69,8 @@ namespace snackis {
     CURLcode res(curl_easy_perform(smtp.client));
  
     if (res != CURLE_OK) {
-      ERROR(Smtp, fmt("Failed sending NOOP: %0", curl_easy_strerror(res))); 
+      ERROR(Smtp, fmt("Failed sending NOOP: %0", curl_easy_strerror(res)));
+      return;
     }
 
     std::vector<str> resp {
@@ -104,6 +109,7 @@ namespace snackis {
     
     if (res != CURLE_OK) {
       ERROR(Smtp, fmt("Failed sending email: %0", curl_easy_strerror(res)));
+      return;
     }
 
     if (resp_buf.str() != "") {

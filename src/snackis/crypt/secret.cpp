@@ -53,6 +53,7 @@ namespace crypt {
 						  nullptr, 0,
 						  in, hash(secret)) != 0) {
       ERROR(Crypt, "Failed decrypting secret message");
+      return out;
     }
 
     out.resize(dlen);

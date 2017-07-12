@@ -95,6 +95,7 @@ namespace snackis {
       ctx.whoami.id = *me_id;
       if (!load(ctx.db.peers, ctx.whoami)) {
 	ERROR(Db, "Failed loading me");
+	return;
       }
     } else {
       set_val(ctx.settings.whoami, ctx.whoami.id);
@@ -116,10 +117,7 @@ namespace snackis {
   void log(const Ctx &ctx, const str &msg) { db::log(ctx,msg); }
 
   Peer &whoami(Ctx &ctx) {
-    if (!load(ctx.db.peers, ctx.whoami)) {
-      ERROR(Db, "Failed loading me");
-    }
-
+    CHECK(load(ctx.db.peers, ctx.whoami), _);
     return ctx.whoami;
   }
 }

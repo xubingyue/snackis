@@ -155,15 +155,9 @@ namespace gui {
 	continue;
       }
       
-      if (feed_sel) {
-	if (post.feed_id != feed_sel->id) { continue; }
-      } else {
-	if (!feed.visible) { continue; }
-      }
+      if (feed_sel && post.feed_id != feed_sel->id) { continue; }
 
-      if (peer_sel) {
-	if (post.owner_id != peer_sel->id) { continue; }
-      }
+      if (peer_sel && post.owner_id != peer_sel->id) { continue; }
       
       Peer peer(get_peer_id(ctx, post.owner_id));
       GtkTreeIter iter;

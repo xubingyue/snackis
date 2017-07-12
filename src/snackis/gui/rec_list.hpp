@@ -77,7 +77,7 @@ namespace gui {
 			     G_TYPE_STRING)),
     box(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5)),
     list(new_tree_view(GTK_TREE_MODEL(store))),
-    add_btn(gtk_button_new_with_label(fmt("Add %0", lbl).c_str())),
+    add_btn(gtk_button_new_with_mnemonic(fmt("_Add %0", lbl).c_str())),
     ids(ids)
   {
     auto list_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));

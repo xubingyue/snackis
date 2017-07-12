@@ -16,10 +16,7 @@ namespace db {
   }
 
   Trans &get_trans(Ctx &ctx) {
-    if (!ctx.trans) {
-      ERROR(Db, "Not in transaction");
-    }
-
+    CHECK(ctx.trans, _);
     return *ctx.trans;
   }
 
@@ -36,6 +33,7 @@ namespace db {
       if (rev < DB_REV) {
 	ERROR(Db, fmt("This version of Snackis requires database revision #%0 to run",
 		      DB_REV));
+	return;
       }
     } else {
       log(ctx, "Initialized database, revision %0", DB_REV);

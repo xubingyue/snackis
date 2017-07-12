@@ -33,8 +33,9 @@ namespace gui {
     gtk_widget_set_hexpand(lst, true);
     g_signal_connect(lst, "row-activated", G_CALLBACK(on_activate), this);
     gtk_container_add(GTK_CONTAINER(box), gtk_widget_get_parent(lst));
+
     gtk_container_add(GTK_CONTAINER(box),
-		      new_label("Press Return or double-click to edit Post"));
+		      gtk_label_new("Press Return or double-click to edit Post"));
 
   }
 

@@ -20,7 +20,11 @@ namespace snackis {
   }
 
   Imap::Imap(Ctx &ctx): ctx(ctx), client(curl_easy_init()) {
-    if (!client) { ERROR(Imap, "Failed initializing client"); }
+    if (!client) {
+      ERROR(Imap, "Failed initializing client");
+      return;
+    }
+    
     curl_easy_setopt(client, 
 		     CURLOPT_USERNAME, 
 		     get_val(ctx.settings.imap_user)->c_str());
@@ -127,6 +131,7 @@ namespace snackis {
  
     if (res != CURLE_OK) {
       ERROR(Imap, fmt("Failed searching inbox: %0", curl_easy_strerror(res)));
+      return;
     }
 
     std::vector<str> tokens {
@@ -134,7 +139,8 @@ namespace snackis {
     };
 
     if (tokens.size() < 2 || tokens[1] != "SEARCH") {
-      ERROR(Imap, fmt("Invalid fetch result:\n%0", out.str())); 
+      ERROR(Imap, fmt("Invalid fetch result:\n%0", out.str()));
+      return;
     }
 
     int msg_cnt = 0;
