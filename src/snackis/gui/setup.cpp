@@ -195,7 +195,7 @@ namespace gui {
     imap(ctx, ctx.settings.imap, G_CALLBACK(on_imap)),
     smtp(ctx, ctx.settings.smtp, G_CALLBACK(on_smtp))
   {
-    GtkWidget *tabs = gtk_notebook_new();
+    GtkWidget *tabs(gtk_notebook_new());
     gtk_widget_set_vexpand(tabs, true);
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
 			     init_general(*this),
@@ -208,7 +208,7 @@ namespace gui {
 			     gtk_label_new_with_mnemonic("_3 Smtp"));
     gtk_container_add(GTK_CONTAINER(panel), tabs);
     
-    GtkWidget *btns = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    GtkWidget *btns(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
     gtk_widget_set_halign(btns, GTK_ALIGN_END);
     gtk_widget_set_valign(btns, GTK_ALIGN_END);
     gtk_container_add(GTK_CONTAINER(panel), btns);

@@ -19,7 +19,7 @@ namespace gui {
     push_view(new PostView(ps));
   }
   
-  FeedHistory::FeedHistory(Ctx &ctx, const str &lbl):
+  FeedHistory::FeedHistory(Ctx &ctx):
     ctx(ctx),
     store(gtk_tree_store_new(3, G_TYPE_POINTER,
 			     G_TYPE_STRING,
@@ -28,9 +28,10 @@ namespace gui {
     lst(new_tree_view(GTK_TREE_MODEL(store)))
   {
     
-    add_col(GTK_TREE_VIEW(lst), lbl, COL_BY);
+    add_col(GTK_TREE_VIEW(lst), "", COL_BY);
     add_col(GTK_TREE_VIEW(lst), "", COL_BODY, true);
     gtk_widget_set_hexpand(lst, true);
+    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(lst), false);
     g_signal_connect(lst, "row-activated", G_CALLBACK(on_activate), this);
     gtk_container_add(GTK_CONTAINER(box), gtk_widget_get_parent(lst));
 

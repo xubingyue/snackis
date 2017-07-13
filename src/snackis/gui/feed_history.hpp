@@ -17,7 +17,7 @@ namespace gui {
     GtkTreeStore *store;
     GtkWidget *box, *lst;
     
-    FeedHistory(Ctx &ctx, const str &lbl);
+    FeedHistory(Ctx &ctx);
     GtkWidget *ptr() override;
   };
 

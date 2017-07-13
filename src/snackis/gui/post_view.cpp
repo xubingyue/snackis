@@ -65,7 +65,7 @@ namespace gui {
     tags_fld(gtk_entry_new()),
     body_fld(new_text_view()),
     feed_fld(ctx),
-    post_lst(ctx, "History")
+    post_lst(ctx)
   {
     g_signal_connect(post_btn, "clicked", G_CALLBACK(on_post), this);
     gtk_container_add(GTK_CONTAINER(menu), post_btn);

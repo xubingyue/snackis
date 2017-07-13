@@ -8,6 +8,10 @@
 
 namespace snackis {
 namespace gui {
+  static void on_page(GtkNotebook *w, GtkWidget *p, guint pn, FeedView *v) {
+    if (pn == 1) { load(v->post_lst, v->rec, now()); }
+  }
+  
   static void on_find_posts(gpointer *_, FeedView *v) {
     PostSearch *ps = new PostSearch(v->ctx);
     select<Feed>(ps->feed_fld, v->rec);
@@ -27,6 +31,36 @@ namespace gui {
     }
   }
   
+  static GtkWidget *init_general(FeedView &v) {
+    GtkWidget *frm(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
+    gtk_widget_set_margin_top(frm, 5);
+    
+    gtk_container_add(GTK_CONTAINER(frm), new_label("Name"));
+    GtkWidget *name_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
+    gtk_container_add(GTK_CONTAINER(frm), name_box);
+    gtk_widget_set_hexpand(v.name_fld, true);
+    gtk_container_add(GTK_CONTAINER(name_box), v.name_fld);    
+    gtk_entry_set_text(GTK_ENTRY(v.name_fld), v.rec.name.c_str());
+    gtk_container_add(GTK_CONTAINER(name_box), v.active_fld);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(v.active_fld), v.rec.active);
+
+    gtk_container_add(GTK_CONTAINER(frm), new_label("Tags"));
+    gtk_widget_set_hexpand(v.tags_fld, true);
+    gtk_container_add(GTK_CONTAINER(frm), v.tags_fld);    
+    set_str(GTK_ENTRY(v.tags_fld), join(v.rec.tags.begin(), v.rec.tags.end(), ' '));
+
+    GtkWidget *lbl = new_label("Info");
+    gtk_widget_set_margin_top(lbl, 5);
+    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    gtk_container_add(GTK_CONTAINER(frm), gtk_widget_get_parent(v.info_fld));
+    set_str(GTK_TEXT_VIEW(v.info_fld), v.rec.info);
+
+    gtk_widget_set_margin_top(v.peer_lst.ptr(), 5);
+    gtk_container_add(GTK_CONTAINER(frm), v.peer_lst.ptr());
+    gui::load(v.peer_lst);
+    return frm;
+  }
+
   FeedView::FeedView(const Feed &feed):
     SharedView<Feed>("Feed", feed),
     find_posts_btn(gtk_button_new_with_mnemonic("_Find Posts")),
@@ -35,39 +69,28 @@ namespace gui {
     tags_fld(gtk_entry_new()),
     active_fld(gtk_check_button_new_with_label("Active")),
     info_fld(new_text_view()),
-    peer_lst(ctx, "Peer", this->rec.peer_ids)
+    peer_lst(ctx, "Peer", this->rec.peer_ids),
+    post_lst(ctx)    
   {
     g_signal_connect(find_posts_btn, "clicked", G_CALLBACK(on_find_posts), this);
     gtk_container_add(GTK_CONTAINER(menu), find_posts_btn);
     g_signal_connect(post_btn, "clicked", G_CALLBACK(on_post), this);
     gtk_container_add(GTK_CONTAINER(menu), post_btn);
 
-    gtk_container_add(GTK_CONTAINER(fields), new_label("Name"));
-    GtkWidget *name_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    gtk_container_add(GTK_CONTAINER(fields), name_box);
-    gtk_widget_set_hexpand(name_fld, true);
-    gtk_container_add(GTK_CONTAINER(name_box), name_fld);    
-    gtk_entry_set_text(GTK_ENTRY(name_fld), rec.name.c_str());
-    gtk_container_add(GTK_CONTAINER(name_box), active_fld);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active_fld), rec.active);
+    GtkWidget *tabs(gtk_notebook_new());
+    gtk_widget_set_vexpand(tabs, true);
+    g_signal_connect(tabs, "switch-page", G_CALLBACK(on_page), this);
+    gtk_container_add(GTK_CONTAINER(fields), tabs);
 
-    gtk_container_add(GTK_CONTAINER(fields), new_label("Tags"));
-    gtk_widget_set_hexpand(tags_fld, true);
-    gtk_container_add(GTK_CONTAINER(fields), tags_fld);    
-    gtk_entry_set_text(GTK_ENTRY(tags_fld),
-		       join(rec.tags.begin(), rec.tags.end(), ' ').c_str());
+    gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
+			     init_general(*this),
+			     gtk_label_new_with_mnemonic("_1 General"));
 
-    GtkWidget *lbl = new_label("Info");
-    gtk_widget_set_margin_top(lbl, 5);
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
-    gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(info_fld));
-    set_str(GTK_TEXT_VIEW(info_fld), rec.info);
-
-    gtk_widget_set_margin_top(peer_lst.ptr(), 5);
-    gtk_container_add(GTK_CONTAINER(fields), peer_lst.ptr());
-
+    gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
+			     post_lst.ptr(),
+			     gtk_label_new_with_mnemonic("_2 Post History"));
+    
     focused = name_fld;
-    gui::load(peer_lst);
     refresh(*this);
   }
 
