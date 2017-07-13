@@ -5,12 +5,18 @@
 
 namespace snackis {
 namespace gui {
+  struct Setup;
+  
+  struct Server {
+    GtkWidget *box, *url, *port, *user, *pass, *poll;
+    Server(Setup &v, GCallback fn);
+  };
+
   struct Setup: View {
     GtkWidget *name, *email,
       *load_folder, *save_folder,
-      *imap_url, *imap_port, *imap_user, *imap_pass, *imap_poll,
-      *smtp_url, *smtp_port, *smtp_user, *smtp_pass, *smtp_poll,
       *save, *cancel;
+    Server imap, smtp;
     
     Setup(Ctx &ctx);
     void load() override;

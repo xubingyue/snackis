@@ -6,42 +6,68 @@
 
 namespace snackis {
 namespace gui {
-  static void on_load_folder(gpointer *_, Setup *v) {
-    GtkWidget *dlg(gtk_file_chooser_dialog_new("Select Load Folder",
+  Server::Server(Setup &v, GCallback fn):
+    box(new_grid()),
+    url(gtk_entry_new()),
+    port(gtk_entry_new()),
+    user(gtk_entry_new()),
+    pass(gtk_entry_new()),
+    poll(gtk_entry_new())
+  {
+    gtk_widget_set_margin_top(box, 5);
+
+    int row(0);
+    gtk_grid_attach(GTK_GRID(box), new_label("URL"), 0, row, 2, 1);
+    gtk_widget_set_hexpand(url, true);
+    gtk_grid_attach(GTK_GRID(box), url, 0, row+1, 2, 1);
+
+    gtk_grid_attach(GTK_GRID(box), new_label("SSL Port"), 2, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(box), port, 2, row+1, 1, 1);
+
+    row += 2;
+    gtk_grid_attach(GTK_GRID(box), new_label("User"), 0, row, 1, 1);
+    gtk_widget_set_hexpand(user, true);
+    gtk_grid_attach(GTK_GRID(box), user, 0, row+1, 1, 1);
+
+    gtk_grid_attach(GTK_GRID(box), new_label("Password"), 1, row, 1, 1);
+    gtk_entry_set_visibility(GTK_ENTRY(pass), false);
+    gtk_widget_set_hexpand(pass, true);
+    gtk_grid_attach(GTK_GRID(box), pass, 1, row+1, 1, 1);
+
+    gtk_grid_attach(GTK_GRID(box), new_label("Poll (s)"), 2, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(box), poll, 2, row+1, 1, 1);
+
+    row += 2;
+    GtkWidget *btn = gtk_button_new_with_label("Connect");
+    g_signal_connect(btn, "clicked", G_CALLBACK(fn), &v);
+    gtk_grid_attach(GTK_GRID(box), btn, 2, row, 1, 1);
+  }
+
+  static void on_folder(GtkEntry *e, const str &lbl) {
+    GtkWidget *dlg(gtk_file_chooser_dialog_new(fmt("Select %0 Folder", lbl).c_str(),
 					       GTK_WINDOW(window),
 					       GTK_FILE_CHOOSER_ACTION_CREATE_FOLDER,
 					       "_Cancel", GTK_RESPONSE_CANCEL,
 					       "_Select", GTK_RESPONSE_ACCEPT,
 					       nullptr));
-    const char *f(gtk_entry_get_text(GTK_ENTRY(v->load_folder)));
+    const char *f(gtk_entry_get_text(e));
     gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg), f);
 
     if (gtk_dialog_run(GTK_DIALOG(dlg)) == GTK_RESPONSE_ACCEPT) {
       char *dir = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dlg));
-      gtk_entry_set_text(GTK_ENTRY(v->load_folder), dir);
+      gtk_entry_set_text(e, dir);
       g_free(dir);
     }
 
     gtk_widget_destroy(dlg);
   }
+  
+  static void on_lfolder(gpointer *_, Setup *v) {
+    on_folder(GTK_ENTRY(v->load_folder), "Load");
+  }
 
-  static void on_save_folder(gpointer *_, Setup *v) {
-    GtkWidget *dlg(gtk_file_chooser_dialog_new("Select Save Folder",
-					       GTK_WINDOW(window),
-					       GTK_FILE_CHOOSER_ACTION_CREATE_FOLDER,
-					       "_Cancel", GTK_RESPONSE_CANCEL,
-					       "_Select", GTK_RESPONSE_ACCEPT,
-					       nullptr));
-    const char *f(gtk_entry_get_text(GTK_ENTRY(v->save_folder)));
-    gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg), f);
-
-    if (gtk_dialog_run(GTK_DIALOG(dlg)) == GTK_RESPONSE_ACCEPT) {
-      char *dir = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dlg));
-      gtk_entry_set_text(GTK_ENTRY(v->save_folder), dir);
-      g_free(dir);
-    }
-
-    gtk_widget_destroy(dlg);
+  static void on_sfolder(gpointer *_, Setup *v) {
+    on_folder(GTK_ENTRY(v->save_folder), "Load");
   }
 
   static void on_cancel(gpointer *_, Setup *v) {
@@ -52,9 +78,9 @@ namespace gui {
   static void copy_imap(Setup &v) {
     Ctx &ctx(v.ctx);
     set_val(ctx.settings.imap_url,
-	    str(gtk_entry_get_text(GTK_ENTRY(v.imap_url))));
+	    str(gtk_entry_get_text(GTK_ENTRY(v.imap.url))));
 
-    const str port_str(gtk_entry_get_text(GTK_ENTRY(v.imap_port)));
+    const str port_str(gtk_entry_get_text(GTK_ENTRY(v.imap.port)));
     auto port(to_int64(port_str));
     
     if (!port) {
@@ -64,20 +90,20 @@ namespace gui {
     }
 
     set_val(ctx.settings.imap_user,
-	    str(gtk_entry_get_text(GTK_ENTRY(v.imap_user))));
+	    str(gtk_entry_get_text(GTK_ENTRY(v.imap.user))));
     set_val(ctx.settings.imap_pass,
-	    str(gtk_entry_get_text(GTK_ENTRY(v.imap_pass))));
+	    str(gtk_entry_get_text(GTK_ENTRY(v.imap.pass))));
 
-    const str poll_str(gtk_entry_get_text(GTK_ENTRY(v.imap_poll)));
+    const str poll_str(gtk_entry_get_text(GTK_ENTRY(v.imap.poll)));
     set_val(ctx.settings.imap_poll, to_int64(poll_str));
   }
 
   static void copy_smtp(Setup &v) {
     Ctx &ctx(v.ctx);
     set_val(ctx.settings.smtp_url,
-	    str(gtk_entry_get_text(GTK_ENTRY(v.smtp_url))));
+	    str(gtk_entry_get_text(GTK_ENTRY(v.smtp.url))));
 
-    const str port_str(gtk_entry_get_text(GTK_ENTRY(v.smtp_port)));
+    const str port_str(gtk_entry_get_text(GTK_ENTRY(v.smtp.port)));
     auto port(to_int64(port_str));
     
     if (!port) {
@@ -87,11 +113,11 @@ namespace gui {
     }
 
     set_val(ctx.settings.smtp_user,
-	    str(gtk_entry_get_text(GTK_ENTRY(v.smtp_user))));
+	    str(gtk_entry_get_text(GTK_ENTRY(v.smtp.user))));
     set_val(ctx.settings.smtp_pass,
-	    str(gtk_entry_get_text(GTK_ENTRY(v.smtp_pass))));
+	    str(gtk_entry_get_text(GTK_ENTRY(v.smtp.pass))));
 
-    const str poll_str(gtk_entry_get_text(GTK_ENTRY(v.smtp_poll)));
+    const str poll_str(gtk_entry_get_text(GTK_ENTRY(v.smtp.poll)));
     set_val(ctx.settings.smtp_poll, to_int64(poll_str));
   }
 
@@ -147,34 +173,24 @@ namespace gui {
     if (try_smtp.errors.empty()) { log(ctx, "Smtp Ok"); }
   }
 
-  static GtkWidget *init_load_folder(Setup &v) {
+  static GtkWidget *init_folder(Setup &v,
+				GtkWidget *e,
+				GCallback fn,
+				const str &lbl) {
     GtkWidget *frm(new_grid());
     gtk_widget_set_margin_top(frm, 5);
 
-    gtk_grid_attach(GTK_GRID(frm), new_label("Load Folder"), 0, 0, 1, 1);
-    gtk_widget_set_hexpand(v.load_folder, true);
-    gtk_widget_set_sensitive(v.load_folder, false);
-    gtk_grid_attach(GTK_GRID(frm), v.load_folder, 0, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label(fmt("%0 Folder", lbl)), 0, 0, 1, 1);
+    gtk_widget_set_hexpand(e, true);
+    gtk_widget_set_sensitive(e, false);
+    gtk_grid_attach(GTK_GRID(frm), e, 0, 1, 1, 1);
 
     GtkWidget *btn = gtk_button_new_with_label("Select");
-    g_signal_connect(btn, "clicked", G_CALLBACK(on_load_folder), &v);
+    g_signal_connect(btn, "clicked", fn, &v);
     gtk_grid_attach(GTK_GRID(frm), btn, 1, 1, 1, 1);
     return frm;
   }
-
-  static GtkWidget *init_save_folder(Setup &v) {
-    GtkWidget *frm(new_grid());
-    gtk_grid_attach(GTK_GRID(frm), new_label("Save Folder"), 0, 0, 1, 1);
-    gtk_widget_set_hexpand(v.save_folder, true);
-    gtk_widget_set_sensitive(v.save_folder, false);
-    gtk_grid_attach(GTK_GRID(frm), v.save_folder, 0, 1, 1, 1);
-
-    GtkWidget *btn = gtk_button_new_with_label("Select");
-    g_signal_connect(btn, "clicked", G_CALLBACK(on_save_folder), &v);
-    gtk_grid_attach(GTK_GRID(frm), btn, 1, 1, 1, 1);
-    return frm;
-  }
-  
+    
   static GtkWidget *init_general(Setup &v) {
     GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
     gtk_widget_set_margin_top(frm, 5);
@@ -187,72 +203,10 @@ namespace gui {
     gtk_widget_set_hexpand(v.email, true);
     gtk_container_add(GTK_CONTAINER(frm), v.email);
 
-    gtk_container_add(GTK_CONTAINER(frm), init_load_folder(v));
-    gtk_container_add(GTK_CONTAINER(frm), init_save_folder(v));
-    return frm;
-  }
-
-  static GtkWidget *init_imap(Setup &v) {
-    GtkWidget *frm(new_grid());
-    gtk_widget_set_margin_top(frm, 5);
-
-    int row(0);
-    gtk_grid_attach(GTK_GRID(frm), new_label("URL"), 0, row, 2, 1);
-    gtk_widget_set_hexpand(v.imap_url, true);
-    gtk_grid_attach(GTK_GRID(frm), v.imap_url, 0, row+1, 2, 1);
-
-    gtk_grid_attach(GTK_GRID(frm), new_label("SSL Port"), 2, row, 1, 1);
-    gtk_grid_attach(GTK_GRID(frm), v.imap_port, 2, row+1, 1, 1);
-
-    row += 2;
-    gtk_grid_attach(GTK_GRID(frm), new_label("User"), 0, row, 1, 1);
-    gtk_widget_set_hexpand(v.imap_user, true);
-    gtk_grid_attach(GTK_GRID(frm), v.imap_user, 0, row+1, 1, 1);
-
-    gtk_grid_attach(GTK_GRID(frm), new_label("Password"), 1, row, 1, 1);
-    gtk_entry_set_visibility(GTK_ENTRY(v.imap_pass), false);
-    gtk_widget_set_hexpand(v.imap_pass, true);
-    gtk_grid_attach(GTK_GRID(frm), v.imap_pass, 1, row+1, 1, 1);
-
-    gtk_grid_attach(GTK_GRID(frm), new_label("Poll (s)"), 2, row, 1, 1);
-    gtk_grid_attach(GTK_GRID(frm), v.imap_poll, 2, row+1, 1, 1);
-
-    row += 2;
-    GtkWidget *btn = gtk_button_new_with_label("Connect");
-    g_signal_connect(btn, "clicked", G_CALLBACK(on_imap), &v);
-    gtk_grid_attach(GTK_GRID(frm), btn, 2, row, 1, 1);
-    return frm;
-  }
-
-  static GtkWidget *init_smtp(Setup &v) {
-    GtkWidget *frm(new_grid());
-    gtk_widget_set_margin_top(frm, 5);
-
-    int row(0);
-    gtk_grid_attach(GTK_GRID(frm), new_label("URL"), 0, row, 2, 1);
-    gtk_widget_set_hexpand(v.smtp_url, true);
-    gtk_grid_attach(GTK_GRID(frm), v.smtp_url, 0, row+1, 2, 1);
-
-    gtk_grid_attach(GTK_GRID(frm), new_label("SSL Port"), 2, row, 1, 1);
-    gtk_grid_attach(GTK_GRID(frm), v.smtp_port, 2, row+1, 1, 1);
-
-    row += 2;
-    gtk_grid_attach(GTK_GRID(frm), new_label("User"), 0, row, 1, 1);
-    gtk_widget_set_hexpand(v.smtp_user, true);
-    gtk_grid_attach(GTK_GRID(frm), v.smtp_user, 0, row+1, 1, 1);
-
-    gtk_grid_attach(GTK_GRID(frm), new_label("Password"), 1, row, 1, 1);
-    gtk_entry_set_visibility(GTK_ENTRY(v.smtp_pass), false);
-    gtk_widget_set_hexpand(v.smtp_pass, true);
-    gtk_grid_attach(GTK_GRID(frm), v.smtp_pass, 1, row+1, 1, 1);
-
-    gtk_grid_attach(GTK_GRID(frm), new_label("Poll (s)"), 2, row, 1, 1);
-    gtk_grid_attach(GTK_GRID(frm), v.smtp_poll, 2, row+1, 1, 1);
-
-    row += 2;
-    GtkWidget *btn = gtk_button_new_with_label("Connect");
-    g_signal_connect(btn, "clicked", G_CALLBACK(on_smtp), &v);
-    gtk_grid_attach(GTK_GRID(frm), btn, 2, row, 1, 1);
+    gtk_container_add(GTK_CONTAINER(frm),
+		      init_folder(v, v.load_folder, G_CALLBACK(on_lfolder), "Load"));
+    gtk_container_add(GTK_CONTAINER(frm),
+		      init_folder(v, v.save_folder, G_CALLBACK(on_sfolder), "Save"));
     return frm;
   }
 
@@ -262,18 +216,10 @@ namespace gui {
     email(gtk_entry_new()),
     load_folder(gtk_entry_new()),
     save_folder(gtk_entry_new()),
-    imap_url(gtk_entry_new()),
-    imap_port(gtk_entry_new()),
-    imap_user(gtk_entry_new()),
-    imap_pass(gtk_entry_new()),
-    imap_poll(gtk_entry_new()),
-    smtp_url(gtk_entry_new()),
-    smtp_port(gtk_entry_new()),
-    smtp_user(gtk_entry_new()),
-    smtp_pass(gtk_entry_new()),
-    smtp_poll(gtk_entry_new()),
     save(gtk_button_new_with_mnemonic("_Save Setup")),
-    cancel(gtk_button_new_with_mnemonic("_Cancel"))
+    cancel(gtk_button_new_with_mnemonic("_Cancel")),
+    imap(*this, G_CALLBACK(on_imap)),
+    smtp(*this, G_CALLBACK(on_smtp))
   {
     GtkWidget *tabs = gtk_notebook_new();
     gtk_widget_set_vexpand(tabs, true);
@@ -281,10 +227,10 @@ namespace gui {
 			     init_general(*this),
 			     gtk_label_new_with_mnemonic("_1 General"));
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
-			     init_imap(*this),
+			     imap.box,
 			     gtk_label_new_with_mnemonic("_2 Imap"));
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
-			     init_smtp(*this),
+			     smtp.box,
 			     gtk_label_new_with_mnemonic("_3 Smtp"));
     gtk_container_add(GTK_CONTAINER(panel), tabs);
     
@@ -313,26 +259,26 @@ namespace gui {
     gtk_entry_set_text(GTK_ENTRY(save_folder),
 		       get_val(ctx.settings.save_folder)->c_str());
 
-    gtk_entry_set_text(GTK_ENTRY(imap_url),
+    gtk_entry_set_text(GTK_ENTRY(imap.url),
 		       get_val(ctx.settings.imap_url)->c_str());
-    gtk_entry_set_text(GTK_ENTRY(imap_port),
+    gtk_entry_set_text(GTK_ENTRY(imap.port),
 		       to_str(*get_val(ctx.settings.imap_port)).c_str());
-    gtk_entry_set_text(GTK_ENTRY(imap_user),
+    gtk_entry_set_text(GTK_ENTRY(imap.user),
 		       get_val(ctx.settings.imap_user)->c_str());
-    gtk_entry_set_text(GTK_ENTRY(imap_pass),
+    gtk_entry_set_text(GTK_ENTRY(imap.pass),
 		       get_val(ctx.settings.imap_pass)->c_str());
-    gtk_entry_set_text(GTK_ENTRY(imap_poll),
+    gtk_entry_set_text(GTK_ENTRY(imap.poll),
 		       to_str(*get_val(ctx.settings.imap_poll)).c_str());
     
-    gtk_entry_set_text(GTK_ENTRY(smtp_url),
+    gtk_entry_set_text(GTK_ENTRY(smtp.url),
 		       get_val(ctx.settings.smtp_url)->c_str());
-    gtk_entry_set_text(GTK_ENTRY(smtp_port),
+    gtk_entry_set_text(GTK_ENTRY(smtp.port),
 		       to_str(*get_val(ctx.settings.smtp_port)).c_str());
-    gtk_entry_set_text(GTK_ENTRY(smtp_user),
+    gtk_entry_set_text(GTK_ENTRY(smtp.user),
 		       get_val(ctx.settings.smtp_user)->c_str());
-    gtk_entry_set_text(GTK_ENTRY(smtp_pass),
+    gtk_entry_set_text(GTK_ENTRY(smtp.pass),
 		       get_val(ctx.settings.smtp_pass)->c_str());
-    gtk_entry_set_text(GTK_ENTRY(smtp_poll),
+    gtk_entry_set_text(GTK_ENTRY(smtp.poll),
 		       to_str(*get_val(ctx.settings.smtp_poll)).c_str());
   }
 }}
