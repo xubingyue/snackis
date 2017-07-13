@@ -4,6 +4,7 @@
 #include "snackis/core/bool_type.hpp"
 #include "snackis/core/int64_type.hpp"
 #include "snackis/core/uid_type.hpp"
+#include "snackis/crypt/pub_key_type.hpp"
 
 namespace snackis {
   const str
@@ -25,11 +26,10 @@ namespace snackis {
     db::copy(*this, src);
   }
 
-  str encode(const Msg &msg) {
+  str encode(Msg &msg) {
     TRACE("Encoding message");
     Ctx &ctx(msg.ctx);
     const bool encrypt(msg.type != Msg::INVITE &&
-		       msg.type != Msg::ACCEPT &&
 		       msg.type != Msg::REJECT);
     
     Stream buf;
@@ -45,11 +45,17 @@ namespace snackis {
 			      data.size()));
       data.assign(out.begin(), out.end());
     }
-
+    
     buf.str("");
     int64_type.write(PROTO_REV, buf);
-    bool_type.write(encrypt, buf);
-    if (encrypt) { uid_type.write(msg.from_id, buf); }
+    str_type.write(msg.type, buf);
+
+    if (msg.type == Msg::ACCEPT) {
+      crypt::pub_key_type.write(msg.crypt_key, buf);
+    } else if (encrypt) {
+      uid_type.write(msg.from_id, buf);
+    }
+   
     buf << data;
     data = buf.str();
     
@@ -69,16 +75,23 @@ namespace snackis {
       log(msg.ctx, "Protocol revision mismatch");
       return false;
     }
-    
-    const bool decrypt(bool_type.read(in_buf));
+
+    msg.type = str_type.read(in_buf);
+    const bool decrypt(msg.type != Msg::INVITE &&
+		       msg.type != Msg::REJECT);
     
     if (decrypt) {
-      msg.from_id = uid_type.read(in_buf);
-      auto pr(find_peer_id(ctx, msg.from_id));
-      if (!pr) { return false; }
+      if (msg.type == Msg::ACCEPT) {
+	msg.crypt_key = crypt::pub_key_type.read(in_buf);
+      } else {
+	msg.from_id = uid_type.read(in_buf);
+	auto pr(find_peer_id(ctx, msg.from_id));
+	if (!pr) { return false; }
+	msg.crypt_key = pr->crypt_key;
+      }
       
       data.erase(data.begin(), data.begin()+in_buf.tellg());
-      data = crypt::decrypt(*get_val(ctx.settings.crypt_key), pr->crypt_key,
+      data = crypt::decrypt(*get_val(ctx.settings.crypt_key), msg.crypt_key,
 			    &data[0],
 			    data.size());
       in_buf.str(str(data.begin(), data.end()));
@@ -93,7 +106,11 @@ namespace snackis {
   bool receive(Msg &msg) {
     Ctx &ctx(msg.ctx);
 
-    if (msg.type == Msg::POST) {
+    if (msg.type == Msg::ACCEPT) {
+      if (!invite_accepted(msg)) { return false; }
+    } else if (msg.type == Msg::REJECT) {
+      if (!invite_rejected(msg)) { return false; }
+    } else if (msg.type == Msg::POST) {
       Feed fd(ctx, msg.feed);
       auto fd_fnd(find_feed_id(ctx, fd.id));
       

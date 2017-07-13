@@ -28,7 +28,7 @@ namespace snackis {
     Msg(Ctx &ctx, const db::Rec<Msg> &src);
   };
   
-  str encode(const Msg &msg);
+  str encode(Msg &msg);
   bool decode(Msg &msg, const str &in);
   bool receive(Msg &msg);
 }

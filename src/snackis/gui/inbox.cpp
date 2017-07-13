@@ -38,21 +38,15 @@ namespace gui {
 	});
 
       pv->on_cancel.push_back([&ctx, msg, rec]() {
-	  reject_invite(msg);
+	  send_reject(msg);
 	  log(ctx, fmt("Invite rejected: %0", msg.from));
 	});
 
       push_view(pv);
     } else if (msg.type == Msg::ACCEPT) {
-      auto pv(new PeerView(Peer(msg)));
-
-      pv->on_save.push_back([&ctx, msg, rec]() {
-	  invite_accepted(msg);
-	});
-
-      push_view(pv);
+      push_view(new PeerView(Peer(msg)));
     } else if (msg.type == Msg::REJECT) {
-      invite_rejected(msg);
+      // Nothing to do here
     } else if (msg.type == Msg::POST) {
       Feed fd(ctx, msg.feed);
       auto fd_fnd(find_feed_id(ctx, fd.id));

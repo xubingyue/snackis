@@ -21,30 +21,35 @@ namespace snackis {
   
   void send_accept(const Msg &in) {
     Ctx &ctx(in.ctx);
+    Peer pr(in);
+    db::upsert(ctx.db.peers, pr);
     Msg out(ctx, Msg::ACCEPT);
     out.to = in.from;
     out.to_id = in.from_id;
-    insert(ctx.db.outbox, out);
+    db::insert(ctx.db.outbox, out);
   }
 
-  void invite_accepted(const Msg &in) {
+  bool invite_accepted(const Msg &in) {
     Ctx &ctx(in.ctx);
+    Peer peer(in);
+    db::upsert(ctx.db.peers, peer);
+
     db::Rec<Invite> inv;
     set(inv, ctx.db.invite_to, in.from);
-    erase(ctx.db.invites, inv);
+    return erase(ctx.db.invites, inv) > 0;
   }
 
-  void reject_invite(const Msg &in) {
+  void send_reject(const Msg &in) {
     Ctx &ctx(in.ctx);
     Msg out(ctx, Msg::REJECT);
     out.to = in.from;
     insert(ctx.db.outbox, out);
   }
 
-  void invite_rejected(const Msg &in) {
+  bool invite_rejected(const Msg &in) {
     Ctx &ctx(in.ctx);
     db::Rec<Invite> inv;
     set(inv, ctx.db.invite_to, in.from);
-    erase(ctx.db.invites, inv);
+    return erase(ctx.db.invites, inv) > 0;
   }
 }

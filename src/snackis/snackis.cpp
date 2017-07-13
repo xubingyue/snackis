@@ -8,7 +8,7 @@
 namespace snackis {
   const int VERSION[3] = {0, 8, 21};
   const int64_t DB_REV = 3;
-  const int64_t PROTO_REV = 5;
+  const int64_t PROTO_REV = 6;
   
   void init() {
     if (sodium_init() == -1) {

@@ -129,7 +129,7 @@ namespace snackis {
       TRY(try_send);
 
       auto i = tbl.recs.begin();
-      Msg msg(ctx, *i);
+      Msg msg(ctx, *i);      
       send(smtp, msg);
       erase(tbl, *i);
 

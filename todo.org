@@ -1,11 +1,6 @@
-* enable accept encryption
-** create peer on accept receive
 * add task prio
 ** add to tasks_sort
 ** add field to task view
 ** add field to task search
 *** search < specified
-* add automagic inbox update
-** register inbox.on_insert
-** use g_idle_add like console to update lst
-* compress folder selection in encrypt/decrypt
+* refactor folder selection in encrypt/decrypt

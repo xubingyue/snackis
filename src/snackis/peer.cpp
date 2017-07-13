@@ -13,15 +13,14 @@ namespace snackis {
     IdRec(msg.ctx, msg.from_id)
   {
     Ctx &ctx(msg.ctx);
-    bool exists = load(ctx.db.peers, *this) ? true : false;    
 
-    if (!exists) {
+    if (!load(ctx.db.peers, *this)) {
       created_at = now();
       changed_at = created_at;
       name = msg.peer_name;
+      email = msg.from;
     }
     
-    email = msg.from;
     crypt_key = msg.crypt_key;
   }
 
