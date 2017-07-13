@@ -4,10 +4,20 @@
 #include "snackis/gui/feed_view.hpp"
 #include "snackis/gui/post_search.hpp"
 #include "snackis/gui/post_view.hpp"
+#include "snackis/gui/project_view.hpp"
+#include "snackis/gui/task_view.hpp"
 
 namespace snackis {
 namespace gui {
-  static void on_edit_feed(gpointer *_, PostView *v) {
+  static void on_project(gpointer *_, PostView *v) {
+    push_view(new ProjectView(get_project_id(v->ctx, v->rec.feed_id)));
+  }
+
+  static void on_task(gpointer *_, PostView *v) {
+    push_view(new TaskView(get_task_id(v->ctx, v->rec.feed_id)));
+  }
+
+  static void on_feed(gpointer *_, PostView *v) {
     push_view(new FeedView(*v->feed_fld.selected));
   }
 
@@ -49,7 +59,9 @@ namespace gui {
     post_btn(gtk_button_new_with_mnemonic("New _Post")),
     find_replies_btn(gtk_button_new_with_mnemonic("_Find Replies")),
     reply_btn(gtk_button_new_with_mnemonic("New _Reply")),
-    edit_feed_btn(gtk_button_new_with_mnemonic("_Edit Feed")),
+    project_btn(gtk_button_new_with_mnemonic("_View Project")),
+    task_btn(gtk_button_new_with_mnemonic("_View Task")),
+    feed_btn(gtk_button_new_with_mnemonic("View Feed")),
     tags_fld(gtk_entry_new()),
     body_fld(new_text_view()),
     feed_fld(ctx),
@@ -64,6 +76,14 @@ namespace gui {
     g_signal_connect(reply_btn, "clicked", G_CALLBACK(on_reply), this);
     gtk_container_add(GTK_CONTAINER(menu), reply_btn);
 
+    if (find_project_id(ctx, rec.feed_id)) {
+      g_signal_connect(project_btn, "clicked", G_CALLBACK(on_project), this);
+      gtk_container_add(GTK_CONTAINER(menu), project_btn);
+    } else if (find_task_id(ctx, rec.feed_id)) {
+      g_signal_connect(task_btn, "clicked", G_CALLBACK(on_task), this);
+      gtk_container_add(GTK_CONTAINER(menu), task_btn);
+    }
+    
     gtk_container_add(GTK_CONTAINER(fields), new_label("Feed"));
     GtkWidget *feed_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_container_add(GTK_CONTAINER(fields), feed_box);
@@ -79,14 +99,14 @@ namespace gui {
 	
 	set_str(GTK_ENTRY(tags_fld), join(rec.tags.begin(), rec.tags.end(), ' '));
 	auto sel(feed_fld.selected ? true : false);
-	gtk_widget_set_sensitive(edit_feed_btn, sel);
+	gtk_widget_set_sensitive(feed_btn, sel);
 	refresh(*this);
       });
 
     gtk_container_add(GTK_CONTAINER(feed_box), feed_fld.ptr());
-    g_signal_connect(edit_feed_btn, "clicked", G_CALLBACK(on_edit_feed), this);
-    gtk_widget_set_sensitive(edit_feed_btn, false);
-    gtk_container_add(GTK_CONTAINER(feed_box), edit_feed_btn);
+    g_signal_connect(feed_btn, "clicked", G_CALLBACK(on_feed), this);
+    gtk_widget_set_sensitive(feed_btn, false);
+    gtk_container_add(GTK_CONTAINER(feed_box), feed_btn);
     
     GtkWidget *lbl(new_label("Tags"));
     gtk_widget_set_margin_top(lbl, 5);

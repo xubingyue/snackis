@@ -8,7 +8,7 @@
 
 namespace snackis {
 namespace gui {
-  static void on_edit_project(gpointer *_, TaskView *v) {
+  static void on_project(gpointer *_, TaskView *v) {
     CHECK(v->project_fld.selected != nullopt, _);
     ProjectView *fv(new ProjectView(*v->project_fld.selected));
     push_view(fv);
@@ -37,7 +37,7 @@ namespace gui {
     SharedView<Task>("Task", tsk),
     find_posts_btn(gtk_button_new_with_mnemonic("_Find Posts")),
     post_btn(gtk_button_new_with_mnemonic("New _Post")),
-    edit_project_btn(gtk_button_new_with_mnemonic("_Edit Project")),
+    project_btn(gtk_button_new_with_mnemonic("_View Project")),
     name_fld(gtk_entry_new()),
     done_fld(gtk_check_button_new_with_mnemonic("_Done")),
     tags_fld(gtk_entry_new()),    
@@ -59,13 +59,13 @@ namespace gui {
 	if (project_fld.selected) { set_project(rec, *project_fld.selected); }
 	set_str(GTK_ENTRY(tags_fld), join(rec.tags.begin(), rec.tags.end(), ' '));
 	auto sel(project_fld.selected ? true : false);
-	gtk_widget_set_sensitive(edit_project_btn, sel);
+	gtk_widget_set_sensitive(project_btn, sel);
 	refresh(*this);
       });
     
     gtk_container_add(GTK_CONTAINER(project_box), project_fld.ptr());
-    g_signal_connect(edit_project_btn, "clicked", G_CALLBACK(on_edit_project), this);
-    gtk_container_add(GTK_CONTAINER(project_box), edit_project_btn);
+    g_signal_connect(project_btn, "clicked", G_CALLBACK(on_project), this);
+    gtk_container_add(GTK_CONTAINER(project_box), project_btn);
 
     if (rec.project_id != null_uid) {
       select<Project>(project_fld, get_project_id(ctx, rec.project_id));

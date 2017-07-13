@@ -1,6 +1,3 @@
-* compress folder selection in encrypt/decrypt
-* add Edit Project/Task buttons to post view
-** check if feed id exists
 * add task prio
 ** add to tasks_sort
 ** add field to task view
@@ -12,3 +9,4 @@
 * add automagic inbox update
 ** register inbox.on_insert
 ** use g_idle_add like console to update lst
+* compress folder selection in encrypt/decrypt

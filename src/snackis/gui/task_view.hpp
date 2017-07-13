@@ -9,7 +9,7 @@ namespace snackis {
 namespace gui {
   struct TaskView: SharedView<Task> {
     GtkListStore *project_store;
-    GtkWidget *find_posts_btn, *post_btn, *edit_project_btn,
+    GtkWidget *find_posts_btn, *post_btn, *project_btn,
       *name_fld, *done_fld, *tags_fld, *info_fld;
     ProjectSelect project_fld;
     
