@@ -6,7 +6,9 @@
 
 namespace snackis {
 namespace gui {
-  Server::Server(Setup &v, GCallback fn):
+  Server::Server(Ctx &ctx, ServerSettings &sts, GCallback fn):
+    ctx(ctx),
+    settings(sts),
     box(new_grid()),
     url(gtk_entry_new()),
     port(gtk_entry_new()),
@@ -39,7 +41,7 @@ namespace gui {
 
     row += 2;
     GtkWidget *btn = gtk_button_new_with_label("Connect");
-    g_signal_connect(btn, "clicked", G_CALLBACK(fn), &v);
+    g_signal_connect(btn, "clicked", G_CALLBACK(fn), this);
     gtk_grid_attach(GTK_GRID(box), btn, 2, row, 1, 1);
   }
 
@@ -75,52 +77,24 @@ namespace gui {
     pop_view(v);
   }
 
-  static void copy_imap(Setup &v) {
+  static void copy_flds(Server &v) {
     Ctx &ctx(v.ctx);
-    set_val(ctx.settings.imap_url,
-	    str(gtk_entry_get_text(GTK_ENTRY(v.imap.url))));
-
-    const str port_str(gtk_entry_get_text(GTK_ENTRY(v.imap.port)));
+    set_val(v.settings.url, get_str(GTK_ENTRY(v.url)));
+    auto port_str(get_str(GTK_ENTRY(v.port)));
     auto port(to_int64(port_str));
     
     if (!port) {
-      log(ctx, fmt("Invalid Imap port: %0", port_str));
+      log(ctx, fmt("Invalid port: %0", port_str));
     } else {
-      set_val(ctx.settings.imap_port, port);
+      set_val(v.settings.port, port);
     }
 
-    set_val(ctx.settings.imap_user,
-	    str(gtk_entry_get_text(GTK_ENTRY(v.imap.user))));
-    set_val(ctx.settings.imap_pass,
-	    str(gtk_entry_get_text(GTK_ENTRY(v.imap.pass))));
-
-    const str poll_str(gtk_entry_get_text(GTK_ENTRY(v.imap.poll)));
-    set_val(ctx.settings.imap_poll, to_int64(poll_str));
+    set_val(v.settings.user, get_str(GTK_ENTRY(v.user)));
+    set_val(v.settings.pass, get_str(GTK_ENTRY(v.pass)));
+    auto poll_str(get_str(GTK_ENTRY(v.poll)));
+    set_val(v.settings.poll, to_int64(poll_str));
   }
-
-  static void copy_smtp(Setup &v) {
-    Ctx &ctx(v.ctx);
-    set_val(ctx.settings.smtp_url,
-	    str(gtk_entry_get_text(GTK_ENTRY(v.smtp.url))));
-
-    const str port_str(gtk_entry_get_text(GTK_ENTRY(v.smtp.port)));
-    auto port(to_int64(port_str));
-    
-    if (!port) {
-      log(ctx, fmt("Invalid Smtp port: %0", port_str));
-    } else {
-      set_val(ctx.settings.smtp_port, port);
-    }
-
-    set_val(ctx.settings.smtp_user,
-	    str(gtk_entry_get_text(GTK_ENTRY(v.smtp.user))));
-    set_val(ctx.settings.smtp_pass,
-	    str(gtk_entry_get_text(GTK_ENTRY(v.smtp.pass))));
-
-    const str poll_str(gtk_entry_get_text(GTK_ENTRY(v.smtp.poll)));
-    set_val(ctx.settings.smtp_poll, to_int64(poll_str));
-  }
-
+  
   static void on_save(gpointer *_, Setup *v) {
     Ctx &ctx(v->ctx);
     db::Trans trans(ctx);
@@ -136,13 +110,13 @@ namespace gui {
     set_val(ctx.settings.save_folder,
 	    str(gtk_entry_get_text(GTK_ENTRY(v->save_folder))));
 
-    copy_imap(*v);
-    if (*get_val(ctx.settings.imap_poll)) {
+    copy_flds(v->imap);
+    if (*get_val(ctx.settings.imap.poll)) {
       ctx.fetch_cond.notify_one();
     }
     
-    copy_smtp(*v);
-    if (*get_val(ctx.settings.smtp_poll)) {
+    copy_flds(v->smtp);
+    if (*get_val(ctx.settings.smtp.poll)) {
       ctx.send_cond.notify_one();
     }
 
@@ -153,20 +127,20 @@ namespace gui {
     }
   }
   
-  static void on_imap(gpointer *_, Setup *v) {
+  static void on_imap(gpointer *_, Server *v) {
     Ctx &ctx(v->ctx);
     db::Trans trans(v->ctx);
-    copy_imap(*v);
+    copy_flds(*v);
 
     TRY(try_imap);
     Imap imap(ctx);
     if (try_imap.errors.empty()) { log(ctx, "Imap Ok"); }
   }
 
-  static void on_smtp(gpointer *_, Setup *v) {
+  static void on_smtp(gpointer *_, Server *v) {
     Ctx &ctx(v->ctx);
     db::Trans trans(v->ctx);
-    copy_smtp(*v);
+    copy_flds(*v);
 
     TRY(try_smtp);
     Smtp smtp(ctx);
@@ -190,7 +164,7 @@ namespace gui {
     gtk_grid_attach(GTK_GRID(frm), btn, 1, 1, 1, 1);
     return frm;
   }
-    
+  
   static GtkWidget *init_general(Setup &v) {
     GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
     gtk_widget_set_margin_top(frm, 5);
@@ -209,7 +183,7 @@ namespace gui {
 		      init_folder(v, v.save_folder, G_CALLBACK(on_sfolder), "Save"));
     return frm;
   }
-
+      
   Setup::Setup(Ctx &ctx):
     View(ctx, "Setup"),
     name(gtk_entry_new()),
@@ -218,8 +192,8 @@ namespace gui {
     save_folder(gtk_entry_new()),
     save(gtk_button_new_with_mnemonic("_Save Setup")),
     cancel(gtk_button_new_with_mnemonic("_Cancel")),
-    imap(*this, G_CALLBACK(on_imap)),
-    smtp(*this, G_CALLBACK(on_smtp))
+    imap(ctx, ctx.settings.imap, G_CALLBACK(on_imap)),
+    smtp(ctx, ctx.settings.smtp, G_CALLBACK(on_smtp))
   {
     GtkWidget *tabs = gtk_notebook_new();
     gtk_widget_set_vexpand(tabs, true);
@@ -247,38 +221,25 @@ namespace gui {
     focused = name;
   }
 
+  static void load_flds(Server &v) {
+    set_str(GTK_ENTRY(v.url), *get_val(v.settings.url));
+    set_str(GTK_ENTRY(v.port), to_str(*get_val(v.settings.port)));
+    set_str(GTK_ENTRY(v.user), *get_val(v.settings.user));
+    set_str(GTK_ENTRY(v.pass), *get_val(v.settings.pass));
+    set_str(GTK_ENTRY(v.poll), to_str(*get_val(v.settings.poll)));
+  }
+  
   void Setup::load() {
     View::load();
     
     Peer &me(whoami(ctx));
-    gtk_entry_set_text(GTK_ENTRY(name), me.name.c_str());
-    gtk_entry_set_text(GTK_ENTRY(email), me.email.c_str());
+    set_str(GTK_ENTRY(name), me.name);
+    set_str(GTK_ENTRY(email), me.email);
 
-    gtk_entry_set_text(GTK_ENTRY(load_folder),
-		       get_val(ctx.settings.load_folder)->c_str());    
-    gtk_entry_set_text(GTK_ENTRY(save_folder),
-		       get_val(ctx.settings.save_folder)->c_str());
+    set_str(GTK_ENTRY(load_folder), *get_val(ctx.settings.load_folder));    
+    set_str(GTK_ENTRY(save_folder), *get_val(ctx.settings.save_folder));
 
-    gtk_entry_set_text(GTK_ENTRY(imap.url),
-		       get_val(ctx.settings.imap_url)->c_str());
-    gtk_entry_set_text(GTK_ENTRY(imap.port),
-		       to_str(*get_val(ctx.settings.imap_port)).c_str());
-    gtk_entry_set_text(GTK_ENTRY(imap.user),
-		       get_val(ctx.settings.imap_user)->c_str());
-    gtk_entry_set_text(GTK_ENTRY(imap.pass),
-		       get_val(ctx.settings.imap_pass)->c_str());
-    gtk_entry_set_text(GTK_ENTRY(imap.poll),
-		       to_str(*get_val(ctx.settings.imap_poll)).c_str());
-    
-    gtk_entry_set_text(GTK_ENTRY(smtp.url),
-		       get_val(ctx.settings.smtp_url)->c_str());
-    gtk_entry_set_text(GTK_ENTRY(smtp.port),
-		       to_str(*get_val(ctx.settings.smtp_port)).c_str());
-    gtk_entry_set_text(GTK_ENTRY(smtp.user),
-		       get_val(ctx.settings.smtp_user)->c_str());
-    gtk_entry_set_text(GTK_ENTRY(smtp.pass),
-		       get_val(ctx.settings.smtp_pass)->c_str());
-    gtk_entry_set_text(GTK_ENTRY(smtp.poll),
-		       to_str(*get_val(ctx.settings.smtp_poll)).c_str());
+    load_flds(imap);
+    load_flds(smtp);
   }
 }}

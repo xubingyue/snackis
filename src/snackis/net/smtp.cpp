@@ -37,15 +37,15 @@ namespace snackis {
     
     curl_easy_setopt(client, 
 		     CURLOPT_USERNAME, 
-		     get_val(ctx.settings.smtp_user)->c_str());
+		     get_val(ctx.settings.smtp.user)->c_str());
     curl_easy_setopt(client, 
 		     CURLOPT_PASSWORD, 
-		     get_val(ctx.settings.smtp_pass)->c_str());
+		     get_val(ctx.settings.smtp.pass)->c_str());
     curl_easy_setopt(client,
 		     CURLOPT_URL,
 		     fmt("smtp://%0:%1",
-			 *get_val(ctx.settings.smtp_url),
-			 *get_val(ctx.settings.smtp_port)).c_str());
+			 *get_val(ctx.settings.smtp.url),
+			 *get_val(ctx.settings.smtp.port)).c_str());
     curl_easy_setopt(client, CURLOPT_USE_SSL, (long)CURLUSESSL_ALL);
     curl_easy_setopt(client, CURLOPT_READFUNCTION, on_write);
     curl_easy_setopt(client, CURLOPT_READDATA, this);

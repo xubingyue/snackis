@@ -4,21 +4,20 @@
 #include "snackis/setting.hpp"
 
 namespace snackis {
+  struct ServerSettings {
+    Setting<str> url;
+    Setting<int64_t> port;
+    Setting<str> user, pass;
+    Setting<int64_t> poll;
+    
+    ServerSettings(Ctx &ctx, const str &n, int64_t port);
+  };
+
   struct Settings {
     Setting<UId> whoami;
     Setting<crypt::Key> crypt_key;
-
     Setting<str> load_folder, save_folder;
-    
-    Setting<str> imap_url;
-    Setting<int64_t> imap_port;
-    Setting<str> imap_user, imap_pass;
-    Setting<int64_t> imap_poll;
-    
-    Setting<str> smtp_url;
-    Setting<int64_t> smtp_port;
-    Setting<str> smtp_user, smtp_pass;
-    Setting<int64_t> smtp_poll;
+    ServerSettings imap, smtp;
     
     Settings(Ctx &ctx);
   };

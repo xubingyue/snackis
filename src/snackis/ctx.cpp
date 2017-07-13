@@ -17,7 +17,7 @@ namespace snackis {
       
       {
 	std::unique_lock<std::recursive_mutex> lock(ctx->mutex);
-	poll = *get_val(ctx->settings.imap_poll);
+	poll = *get_val(ctx->settings.imap.poll);
       }
       
       if (poll) {
@@ -45,7 +45,7 @@ namespace snackis {
       
       {
 	std::unique_lock<std::recursive_mutex> lock(ctx->mutex);
-	poll = *get_val(ctx->settings.smtp_poll);
+	poll = *get_val(ctx->settings.smtp.poll);
       }
       
       if (poll) {

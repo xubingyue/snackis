@@ -27,15 +27,15 @@ namespace snackis {
     
     curl_easy_setopt(client, 
 		     CURLOPT_USERNAME, 
-		     get_val(ctx.settings.imap_user)->c_str());
+		     get_val(ctx.settings.imap.user)->c_str());
     curl_easy_setopt(client, 
 		     CURLOPT_PASSWORD, 
-		     get_val(ctx.settings.imap_pass)->c_str());
+		     get_val(ctx.settings.imap.pass)->c_str());
     curl_easy_setopt(client,
 		     CURLOPT_URL,
 		     fmt("imaps://%0:%1/INBOX",
-			 *get_val(ctx.settings.imap_url),
-			 *get_val(ctx.settings.imap_port)).c_str());
+			 *get_val(ctx.settings.imap.url),
+			 *get_val(ctx.settings.imap.port)).c_str());
     curl_easy_setopt(client, CURLOPT_WRITEFUNCTION, on_read);
     //curl_easy_setopt(client, CURLOPT_VERBOSE, 1L);
 

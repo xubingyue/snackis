@@ -4,12 +4,16 @@
 #include "snackis/gui/view.hpp"
 
 namespace snackis {
+  struct ServerSettings;
+  
 namespace gui {
   struct Setup;
   
   struct Server {
+    Ctx &ctx;
+    ServerSettings &settings;
     GtkWidget *box, *url, *port, *user, *pass, *poll;
-    Server(Setup &v, GCallback fn);
+    Server(Ctx &ctx, ServerSettings &sts, GCallback fn);
   };
 
   struct Setup: View {

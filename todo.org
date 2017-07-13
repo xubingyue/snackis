@@ -1,7 +1,4 @@
-* extract ServerSettings from Settings
-** take as param to Setup.Server constructor
-** move field init from load to Server.load
-** move copy to Server.copy
+* compress folder selection in encrypt/decrypt
 * add Edit Project/Task buttons to post view
 ** check if feed id exists
 * add task prio
