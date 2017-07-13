@@ -46,9 +46,7 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(top_box), active_fld);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active_fld), true);
     
-    auto text_box(gtk_grid_new());
-    gtk_grid_set_row_spacing(GTK_GRID(text_box), 5);
-    gtk_grid_set_column_spacing(GTK_GRID(text_box), 5);
+    auto text_box(new_grid());
     gtk_container_add(GTK_CONTAINER(fields), text_box);
     
     gtk_grid_attach(GTK_GRID(text_box), new_label("Tags"), 0, 0, 1, 1);

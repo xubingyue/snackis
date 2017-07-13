@@ -89,10 +89,8 @@ namespace gui {
   }
 
   static GtkWidget *init_source(Decrypt &v) {
-    GtkWidget *frm = gtk_grid_new();
+    GtkWidget *frm(new_grid());
     gtk_widget_set_margin_top(frm, 5);
-    gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
-    gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
     gtk_grid_attach(GTK_GRID(frm), new_label("Source File"), 0, 0, 1, 1);
     gtk_widget_set_hexpand(v.source, true);
     gtk_widget_set_sensitive(v.source, false);
@@ -105,9 +103,7 @@ namespace gui {
   }
 
   static GtkWidget *init_target(Decrypt &v) {
-    GtkWidget *frm = gtk_grid_new();
-    gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
-    gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
+    GtkWidget *frm(new_grid());
     gtk_grid_attach(GTK_GRID(frm), new_label("Target File"), 0, 0, 1, 1);
     gtk_widget_set_hexpand(v.target, true);
     gtk_widget_set_sensitive(v.target, false);

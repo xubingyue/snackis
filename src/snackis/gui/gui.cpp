@@ -41,6 +41,13 @@ namespace gui {
     return iter;
   }
 
+  GtkWidget *new_grid() {
+    GtkWidget *w(gtk_grid_new());
+    gtk_grid_set_row_spacing(GTK_GRID(w), 5);
+    gtk_grid_set_column_spacing(GTK_GRID(w), 5);
+    return w;
+  }
+  
   GtkWidget *new_label(const str &txt) {
     GtkWidget *w(gtk_label_new(txt.c_str()));
     gtk_widget_set_halign(w, GTK_ALIGN_START);

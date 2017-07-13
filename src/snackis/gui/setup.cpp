@@ -148,10 +148,8 @@ namespace gui {
   }
 
   static GtkWidget *init_load_folder(Setup &v) {
-    GtkWidget *frm = gtk_grid_new();
+    GtkWidget *frm(new_grid());
     gtk_widget_set_margin_top(frm, 5);
-    gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
-    gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
 
     gtk_grid_attach(GTK_GRID(frm), new_label("Load Folder"), 0, 0, 1, 1);
     gtk_widget_set_hexpand(v.load_folder, true);
@@ -165,9 +163,7 @@ namespace gui {
   }
 
   static GtkWidget *init_save_folder(Setup &v) {
-    GtkWidget *frm = gtk_grid_new();
-    gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
-    gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
+    GtkWidget *frm(new_grid());
     gtk_grid_attach(GTK_GRID(frm), new_label("Save Folder"), 0, 0, 1, 1);
     gtk_widget_set_hexpand(v.save_folder, true);
     gtk_widget_set_sensitive(v.save_folder, false);
@@ -197,12 +193,10 @@ namespace gui {
   }
 
   static GtkWidget *init_imap(Setup &v) {
-    GtkWidget *frm = gtk_grid_new();
+    GtkWidget *frm(new_grid());
     gtk_widget_set_margin_top(frm, 5);
-    gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
-    gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
 
-    int row = 0;
+    int row(0);
     gtk_grid_attach(GTK_GRID(frm), new_label("URL"), 0, row, 2, 1);
     gtk_widget_set_hexpand(v.imap_url, true);
     gtk_grid_attach(GTK_GRID(frm), v.imap_url, 0, row+1, 2, 1);
@@ -231,12 +225,10 @@ namespace gui {
   }
 
   static GtkWidget *init_smtp(Setup &v) {
-    GtkWidget *frm = gtk_grid_new();
+    GtkWidget *frm(new_grid());
     gtk_widget_set_margin_top(frm, 5);
-    gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
-    gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
 
-    int row = 0;
+    int row(0);
     gtk_grid_attach(GTK_GRID(frm), new_label("URL"), 0, row, 2, 1);
     gtk_widget_set_hexpand(v.smtp_url, true);
     gtk_grid_attach(GTK_GRID(frm), v.smtp_url, 0, row+1, 2, 1);

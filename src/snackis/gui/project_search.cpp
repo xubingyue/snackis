@@ -30,11 +30,9 @@ namespace gui {
     text_fld(gtk_entry_new()),
     peer_fld(ctx)
   {
-    auto frm(gtk_grid_new());
-    gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
-    gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
+    auto frm(new_grid());
     gtk_container_add(GTK_CONTAINER(fields), frm);
-    int row = 0;
+    int row(0);
     
     gtk_grid_attach(GTK_GRID(frm), new_label("Id"), 0, row, 1, 1);
     gtk_widget_set_halign(id_fld, GTK_ALIGN_START);

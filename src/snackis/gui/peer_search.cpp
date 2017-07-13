@@ -23,9 +23,7 @@ namespace gui {
     id_fld(new_id_field()),
     text_fld(gtk_entry_new())
   {
-    auto box(gtk_grid_new());
-    gtk_grid_set_row_spacing(GTK_GRID(box), 5);
-    gtk_grid_set_column_spacing(GTK_GRID(box), 5);
+    auto box(new_grid());
     gtk_container_add(GTK_CONTAINER(fields), box);
 
     gtk_grid_attach(GTK_GRID(box), new_label("Id"), 0, 0, 1, 1);

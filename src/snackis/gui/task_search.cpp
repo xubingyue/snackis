@@ -33,9 +33,7 @@ namespace gui {
     project_fld(ctx),
     peer_fld(ctx)
   {
-    GtkWidget *frm(gtk_grid_new());
-    gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
-    gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
+    GtkWidget *frm(new_grid());
     gtk_container_add(GTK_CONTAINER(fields), frm);
     int row = 0;
     

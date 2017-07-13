@@ -22,9 +22,7 @@ namespace gui {
     g_signal_connect(find_posts_btn, "clicked", G_CALLBACK(on_find_posts), this);
     gtk_container_add(GTK_CONTAINER(menu), find_posts_btn);
     
-    GtkWidget *frm(gtk_grid_new());
-    gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
-    gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
+    GtkWidget *frm(new_grid());
     gtk_widget_set_halign(frm, GTK_ALIGN_END);    
     gtk_container_add(GTK_CONTAINER(fields), frm);
 
@@ -38,9 +36,7 @@ namespace gui {
     gtk_grid_attach(GTK_GRID(frm), changed_at_fld, 1, 1, 1, 1);    
     set_str(GTK_ENTRY(changed_at_fld), fmt(pr.changed_at, "%a %b %d, %H:%M"));
 
-    frm = gtk_grid_new();
-    gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
-    gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
+    frm = new_grid();
     gtk_container_add(GTK_CONTAINER(fields), frm);
     
     gtk_grid_attach(GTK_GRID(frm), new_label("Name"), 0, 0, 1, 1);
