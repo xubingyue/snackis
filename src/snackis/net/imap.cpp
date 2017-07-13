@@ -155,13 +155,12 @@ namespace snackis {
 	
 	if (msg && try_msg.errors.empty() && receive(*msg)) {
 	  db::commit(trans, nullopt);
+	  delete_uid(imap, uid);
+	  msg_cnt++;
 	}
-
-	msg_cnt++;
-	delete_uid(imap, uid);
       }
 
-      expunge(imap);
+      if (msg_cnt) { expunge(imap); }
     }
 
     log(ctx, fmt("Finished fetching %0 messages", msg_cnt));
