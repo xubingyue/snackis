@@ -80,18 +80,22 @@ namespace gui {
     add_btn(gtk_button_new_with_mnemonic(fmt("_Add %0", lbl).c_str())),
     ids(ids)
   {
-    auto list_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
-    gtk_container_add(GTK_CONTAINER(box), list_box);
     add_col(GTK_TREE_VIEW(list), fmt("%0s", lbl), COL_REC_ID);
     add_col(GTK_TREE_VIEW(list), "", COL_REC_NAME);
     g_signal_connect(list, "row-activated", G_CALLBACK(on_remove_rec<RecT>), this);
-    gtk_container_add(GTK_CONTAINER(list_box), gtk_widget_get_parent(list));
-    gtk_widget_set_valign(add_btn, GTK_ALIGN_END);
+    gtk_container_add(GTK_CONTAINER(box), gtk_widget_get_parent(list));
+
+    GtkWidget *btn_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
+    gtk_container_add(GTK_CONTAINER(box), btn_box);
+    
+    gtk_widget_set_halign(add_btn, GTK_ALIGN_START);
     g_signal_connect(add_btn, "clicked", G_CALLBACK(on_add_rec<RecT>), this);
-    gtk_container_add(GTK_CONTAINER(list_box), add_btn);
-    gtk_container_add(GTK_CONTAINER(box),
-		      gtk_label_new(fmt("Press Return or double-click "
-					"to remove selected %0", lbl).c_str()));
+    gtk_container_add(GTK_CONTAINER(btn_box), add_btn);
+
+    GtkWidget *l(gtk_label_new(fmt("Press Return or double-click "
+				     "to remove selected %0", lbl).c_str()));
+    gtk_widget_set_hexpand(l, true);
+    gtk_container_add(GTK_CONTAINER(btn_box), l);
   }
 
   template <typename RecT>
@@ -119,6 +123,11 @@ namespace gui {
 			   -1);
       }
     }
+  }
+
+  template <typename RecT>
+  size_t rec_count(RecList<RecT> &w) {
+    return gtk_tree_model_iter_n_children(GTK_TREE_MODEL(w.store), nullptr);
   }
 }}
 

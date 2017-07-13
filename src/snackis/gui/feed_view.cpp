@@ -9,8 +9,19 @@
 namespace snackis {
 namespace gui {
   static void on_page(GtkNotebook *w, GtkWidget *p, guint pn, FeedView *v) {
-    if (pn == 1 && !post_count(v->post_lst)) {
-      load(v->post_lst, v->rec, now());
+    switch (pn) {
+    case 1:
+      if (!rec_count(v->peer_lst)) {
+	load(v->peer_lst);
+      }
+      
+      break;
+    case 2:
+      if (!post_count(v->post_lst)) {
+	load(v->post_lst, v->rec, now());
+      }
+      
+      break;
     }
   }
   
@@ -57,9 +68,6 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(frm), gtk_widget_get_parent(v.info_fld));
     set_str(GTK_TEXT_VIEW(v.info_fld), v.rec.info);
 
-    gtk_widget_set_margin_top(v.peer_lst.ptr(), 5);
-    gtk_container_add(GTK_CONTAINER(frm), v.peer_lst.ptr());
-    gui::load(v.peer_lst);
     return frm;
   }
 
@@ -89,8 +97,12 @@ namespace gui {
 			     gtk_label_new_with_mnemonic("_1 General"));
 
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
+			     peer_lst.ptr(),
+			     gtk_label_new_with_mnemonic("_2 Peers"));
+
+    gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
 			     post_lst.ptr(),
-			     gtk_label_new_with_mnemonic("_2 Post History"));
+			     gtk_label_new_with_mnemonic("_3 Post History"));
     
     focused = name_fld;
     refresh(*this);
