@@ -55,8 +55,6 @@ namespace gui {
     feed_fld(ctx),
     post_lst(ctx, "History")
   {
-    GtkWidget *lbl;
-
     g_signal_connect(post_btn, "clicked", G_CALLBACK(on_post), this);
     gtk_container_add(GTK_CONTAINER(menu), post_btn);
     gtk_widget_set_sensitive(find_replies_btn,
@@ -66,9 +64,7 @@ namespace gui {
     g_signal_connect(reply_btn, "clicked", G_CALLBACK(on_reply), this);
     gtk_container_add(GTK_CONTAINER(menu), reply_btn);
 
-    lbl = gtk_label_new("Feed");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
+    gtk_container_add(GTK_CONTAINER(fields), new_label("Feed"));
     GtkWidget *feed_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_container_add(GTK_CONTAINER(fields), feed_box);
 
@@ -92,16 +88,13 @@ namespace gui {
     gtk_widget_set_sensitive(edit_feed_btn, false);
     gtk_container_add(GTK_CONTAINER(feed_box), edit_feed_btn);
     
-    lbl = gtk_label_new("Tags");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
+    GtkWidget *lbl(new_label("Tags"));
     gtk_widget_set_margin_top(lbl, 5);
     gtk_container_add(GTK_CONTAINER(fields), lbl);
     gtk_container_add(GTK_CONTAINER(fields), tags_fld);
     set_str(GTK_ENTRY(tags_fld), join(rec.tags.begin(), rec.tags.end(), ' '));
 
-    lbl = gtk_label_new("Body");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
+    gtk_container_add(GTK_CONTAINER(fields), new_label("Body"));
     gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(body_fld));
     set_str(GTK_TEXT_VIEW(body_fld), rec.body);
 

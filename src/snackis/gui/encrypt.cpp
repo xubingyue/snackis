@@ -93,9 +93,8 @@ namespace gui {
     gtk_widget_set_margin_top(frm, 5);
     gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
     gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
-    GtkWidget *lbl = gtk_label_new("Source File");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
-    gtk_grid_attach(GTK_GRID(frm), lbl, 0, 0, 1, 1);
+
+    gtk_grid_attach(GTK_GRID(frm), new_label("Source File"), 0, 0, 1, 1);
     gtk_widget_set_hexpand(v.source, true);
     gtk_widget_set_sensitive(v.source, false);
     gtk_grid_attach(GTK_GRID(frm), v.source, 0, 1, 1, 1);
@@ -111,9 +110,7 @@ namespace gui {
     gtk_widget_set_margin_top(frm, 5);
     gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
     gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
-    GtkWidget *lbl = gtk_label_new("Target File");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
-    gtk_grid_attach(GTK_GRID(frm), lbl, 0, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label("Target File"), 0, 0, 1, 1);
     gtk_widget_set_hexpand(v.target, true);
     gtk_widget_set_sensitive(v.target, false);
     gtk_grid_attach(GTK_GRID(frm), v.target, 0, 1, 1, 1);
@@ -133,14 +130,10 @@ namespace gui {
     cancel_btn(gtk_button_new_with_mnemonic("_Cancel")),
     peer_fld(ctx)
   {
-    GtkWidget *lbl;
-
     GtkWidget *frm(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
     gtk_box_pack_start(GTK_BOX(panel), frm, true, true, 0);
     
-    lbl = gtk_label_new("Peer");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    gtk_container_add(GTK_CONTAINER(frm), new_label("Peer"));
     peer_fld.on_change.emplace([this]() { refresh(*this); });
     gtk_container_add(GTK_CONTAINER(frm), peer_fld.ptr());
     

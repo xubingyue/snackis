@@ -40,8 +40,6 @@ namespace gui {
     pass(gtk_entry_new()),
     repeat(nullptr)
   {
-    GtkWidget *lbl;
-
     GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_box_pack_start(GTK_BOX(panel), frm, true, true, 0);
     gtk_widget_set_halign(frm, GTK_ALIGN_CENTER);
@@ -51,9 +49,7 @@ namespace gui {
     gtk_widget_set_halign(logo, GTK_ALIGN_CENTER);
     gtk_container_add(GTK_CONTAINER(frm), logo);
 
-    lbl = gtk_label_new("Password");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_box_pack_start(GTK_BOX(frm), lbl, false, false, 5);
+    gtk_box_pack_start(GTK_BOX(frm), new_label("Password"), false, false, 5);
 
     gtk_entry_set_visibility(GTK_ENTRY(pass), false);
     gtk_entry_set_width_chars(GTK_ENTRY(pass), 50);
@@ -61,10 +57,7 @@ namespace gui {
     gtk_box_pack_start(GTK_BOX(frm), pass, false, false, 0);
 
     if (!pass_exists(ctx)) {
-      lbl = gtk_label_new("Repeat");
-      gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-      gtk_box_pack_start(GTK_BOX(frm), lbl, false, false, 5);
-      
+      gtk_box_pack_start(GTK_BOX(frm), new_label("Repeat"), false, false, 5);      
       repeat = gtk_entry_new();
       gtk_entry_set_visibility(GTK_ENTRY(repeat), false);
       gtk_entry_set_width_chars(GTK_ENTRY(repeat), 50);

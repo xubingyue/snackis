@@ -32,16 +32,13 @@ namespace gui {
     text_fld(gtk_entry_new()),
     peer_fld(ctx)
   {
-    GtkWidget *lbl;
-
     GtkWidget *top_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
     gtk_container_add(GTK_CONTAINER(fields), top_box);
 
     GtkWidget *id_box(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
     gtk_container_add(GTK_CONTAINER(top_box), id_box);
-    lbl = gtk_label_new("Id");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(id_box), lbl);
+
+    gtk_container_add(GTK_CONTAINER(id_box), new_label("Id"));
     gtk_container_add(GTK_CONTAINER(id_box), id_fld);
     gtk_widget_set_halign(active_fld, GTK_ALIGN_END);
     gtk_widget_set_valign(active_fld, GTK_ALIGN_END);
@@ -54,21 +51,15 @@ namespace gui {
     gtk_grid_set_column_spacing(GTK_GRID(text_box), 5);
     gtk_container_add(GTK_CONTAINER(fields), text_box);
     
-    lbl = gtk_label_new("Tags");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(text_box), lbl, 0, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(text_box), new_label("Tags"), 0, 0, 1, 1);
     gtk_widget_set_hexpand(tags_fld, true);
     gtk_grid_attach(GTK_GRID(text_box), tags_fld, 0, 1, 1, 1);
 
-    lbl = gtk_label_new("Text");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(text_box), lbl, 1, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(text_box), new_label("Text"), 1, 0, 1, 1);
     gtk_widget_set_hexpand(text_fld, true);
     gtk_grid_attach(GTK_GRID(text_box), text_fld, 1, 1, 1, 1);
 
-    lbl = gtk_label_new("Owner");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
+    gtk_container_add(GTK_CONTAINER(fields), new_label("Owner"));
     gtk_container_add(GTK_CONTAINER(fields), peer_fld.ptr());
 
     add_col(GTK_TREE_VIEW(list), "Id", COL_ID);

@@ -23,21 +23,15 @@ namespace gui {
     id_fld(new_id_field()),
     text_fld(gtk_entry_new())
   {
-    GtkWidget *lbl;
-
     auto box(gtk_grid_new());
     gtk_grid_set_row_spacing(GTK_GRID(box), 5);
     gtk_grid_set_column_spacing(GTK_GRID(box), 5);
     gtk_container_add(GTK_CONTAINER(fields), box);
 
-    lbl = gtk_label_new("Id");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(box), lbl, 0, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(box), new_label("Id"), 0, 0, 1, 1);
     gtk_grid_attach(GTK_GRID(box), id_fld, 0, 1, 1, 1);
 
-    lbl = gtk_label_new("Text");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(box), lbl, 1, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(box), new_label("Text"), 1, 0, 1, 1);
     gtk_widget_set_hexpand(text_fld, true);
     gtk_grid_attach(GTK_GRID(box), text_fld, 1, 1, 1, 1);
 

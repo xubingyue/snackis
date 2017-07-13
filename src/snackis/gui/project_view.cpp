@@ -53,8 +53,6 @@ namespace gui {
     info_fld(new_text_view()),
     peer_lst(ctx, "Peer", this->rec.peer_ids)
   {
-    GtkWidget *lbl;
-
     g_signal_connect(find_tasks_btn, "clicked", G_CALLBACK(on_find_tasks), this);
     gtk_container_add(GTK_CONTAINER(menu), find_tasks_btn);
     g_signal_connect(new_task_btn, "clicked", G_CALLBACK(on_new_task), this);
@@ -66,9 +64,7 @@ namespace gui {
     g_signal_connect(post_btn, "clicked", G_CALLBACK(on_post), this);
     gtk_container_add(GTK_CONTAINER(menu), post_btn);
     
-    lbl = gtk_label_new("Name");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
+    gtk_container_add(GTK_CONTAINER(fields), new_label("Name"));
     GtkWidget *name_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_container_add(GTK_CONTAINER(fields), name_box);
     gtk_widget_set_hexpand(name_fld, true);    
@@ -77,16 +73,13 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(name_box), active_fld);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active_fld), rec.active);
 
-    lbl = gtk_label_new("Tags");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
+    gtk_container_add(GTK_CONTAINER(fields), new_label("Tags"));
     gtk_widget_set_hexpand(tags_fld, true);
     gtk_container_add(GTK_CONTAINER(fields), tags_fld);    
     gtk_entry_set_text(GTK_ENTRY(tags_fld),
 		       join(rec.tags.begin(), rec.tags.end(), ' ').c_str());
     
-    lbl = gtk_label_new("Info");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
+    GtkWidget *lbl = new_label("Info");
     gtk_widget_set_margin_top(lbl, 5);    
     gtk_container_add(GTK_CONTAINER(fields), lbl);
     gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(info_fld));

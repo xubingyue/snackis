@@ -33,44 +33,32 @@ namespace gui {
     project_fld(ctx),
     peer_fld(ctx)
   {
-    GtkWidget *lbl;
-
     GtkWidget *frm(gtk_grid_new());
     gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
     gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
     gtk_container_add(GTK_CONTAINER(fields), frm);
     int row = 0;
     
-    lbl = gtk_label_new("Id");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label("Id"), 0, row, 1, 1);
     gtk_widget_set_halign(id_fld, GTK_ALIGN_START);
     gtk_grid_attach(GTK_GRID(frm), id_fld, 0, row+1, 1, 1);
     gtk_widget_set_halign(done_fld, GTK_ALIGN_END);
     gtk_grid_attach(GTK_GRID(frm), done_fld, 1, row+1, 1, 1);
 
     row += 2;
-    lbl = gtk_label_new("Tags");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label("Tags"), 0, row, 1, 1);
     gtk_widget_set_hexpand(tags_fld, true);
     gtk_grid_attach(GTK_GRID(frm), tags_fld, 0, row+1, 1, 1);
 
-    lbl = gtk_label_new("Text");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(frm), lbl, 1, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label("Text"), 1, row, 1, 1);
     gtk_widget_set_hexpand(text_fld, true);
     gtk_grid_attach(GTK_GRID(frm), text_fld, 1, row+1, 1, 1);
 
     row += 2;
-    lbl = gtk_label_new("Project");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label("Project"), 0, row, 1, 1);
     gtk_grid_attach(GTK_GRID(frm), project_fld.ptr(), 0, row+1, 1, 1);
     
-    lbl = gtk_label_new("Owner");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(frm), lbl, 1, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label("Owner"), 1, row, 1, 1);
     gtk_grid_attach(GTK_GRID(frm), peer_fld.ptr(), 1, row+1, 1, 1);
 
     add_col(GTK_TREE_VIEW(list), "Id", COL_ID);

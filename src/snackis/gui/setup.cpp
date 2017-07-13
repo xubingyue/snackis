@@ -152,9 +152,8 @@ namespace gui {
     gtk_widget_set_margin_top(frm, 5);
     gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
     gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
-    GtkWidget *lbl = gtk_label_new("Load Folder");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
-    gtk_grid_attach(GTK_GRID(frm), lbl, 0, 0, 1, 1);
+
+    gtk_grid_attach(GTK_GRID(frm), new_label("Load Folder"), 0, 0, 1, 1);
     gtk_widget_set_hexpand(v.load_folder, true);
     gtk_widget_set_sensitive(v.load_folder, false);
     gtk_grid_attach(GTK_GRID(frm), v.load_folder, 0, 1, 1, 1);
@@ -169,9 +168,7 @@ namespace gui {
     GtkWidget *frm = gtk_grid_new();
     gtk_grid_set_row_spacing(GTK_GRID(frm), 5);
     gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
-    GtkWidget *lbl = gtk_label_new("Save Folder");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
-    gtk_grid_attach(GTK_GRID(frm), lbl, 0, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label("Save Folder"), 0, 0, 1, 1);
     gtk_widget_set_hexpand(v.save_folder, true);
     gtk_widget_set_sensitive(v.save_folder, false);
     gtk_grid_attach(GTK_GRID(frm), v.save_folder, 0, 1, 1, 1);
@@ -183,19 +180,14 @@ namespace gui {
   }
   
   static GtkWidget *init_general(Setup &v) {
-    GtkWidget *lbl;
     GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
     gtk_widget_set_margin_top(frm, 5);
 
-    lbl = gtk_label_new("Name");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    gtk_container_add(GTK_CONTAINER(frm), new_label("Name"));
     gtk_widget_set_hexpand(v.name, true);
     gtk_container_add(GTK_CONTAINER(frm), v.name);
     
-    lbl = gtk_label_new("Email");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
-    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    gtk_container_add(GTK_CONTAINER(frm), new_label("Email"));
     gtk_widget_set_hexpand(v.email, true);
     gtk_container_add(GTK_CONTAINER(frm), v.email);
 
@@ -211,36 +203,24 @@ namespace gui {
     gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
 
     int row = 0;
-    GtkWidget *lbl(nullptr);
-    
-    lbl = gtk_label_new("URL");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
-    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 2, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label("URL"), 0, row, 2, 1);
     gtk_widget_set_hexpand(v.imap_url, true);
     gtk_grid_attach(GTK_GRID(frm), v.imap_url, 0, row+1, 2, 1);
 
-    lbl = gtk_label_new("SSL Port");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(frm), lbl, 2, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label("SSL Port"), 2, row, 1, 1);
     gtk_grid_attach(GTK_GRID(frm), v.imap_port, 2, row+1, 1, 1);
 
     row += 2;
-    lbl = gtk_label_new("User");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
-    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label("User"), 0, row, 1, 1);
     gtk_widget_set_hexpand(v.imap_user, true);
     gtk_grid_attach(GTK_GRID(frm), v.imap_user, 0, row+1, 1, 1);
 
-    lbl = gtk_label_new("Password");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
-    gtk_grid_attach(GTK_GRID(frm), lbl, 1, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label("Password"), 1, row, 1, 1);
     gtk_entry_set_visibility(GTK_ENTRY(v.imap_pass), false);
     gtk_widget_set_hexpand(v.imap_pass, true);
     gtk_grid_attach(GTK_GRID(frm), v.imap_pass, 1, row+1, 1, 1);
 
-    lbl = gtk_label_new("Poll (s)");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(frm), lbl, 2, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label("Poll (s)"), 2, row, 1, 1);
     gtk_grid_attach(GTK_GRID(frm), v.imap_poll, 2, row+1, 1, 1);
 
     row += 2;
@@ -257,36 +237,24 @@ namespace gui {
     gtk_grid_set_column_spacing(GTK_GRID(frm), 5);
 
     int row = 0;
-    GtkWidget *lbl(nullptr);
-    
-    lbl = gtk_label_new("URL");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
-    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 2, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label("URL"), 0, row, 2, 1);
     gtk_widget_set_hexpand(v.smtp_url, true);
     gtk_grid_attach(GTK_GRID(frm), v.smtp_url, 0, row+1, 2, 1);
 
-    lbl = gtk_label_new("SSL Port");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(frm), lbl, 2, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label("SSL Port"), 2, row, 1, 1);
     gtk_grid_attach(GTK_GRID(frm), v.smtp_port, 2, row+1, 1, 1);
 
     row += 2;
-    lbl = gtk_label_new("User");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
-    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label("User"), 0, row, 1, 1);
     gtk_widget_set_hexpand(v.smtp_user, true);
     gtk_grid_attach(GTK_GRID(frm), v.smtp_user, 0, row+1, 1, 1);
 
-    lbl = gtk_label_new("Password");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);  
-    gtk_grid_attach(GTK_GRID(frm), lbl, 1, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label("Password"), 1, row, 1, 1);
     gtk_entry_set_visibility(GTK_ENTRY(v.smtp_pass), false);
     gtk_widget_set_hexpand(v.smtp_pass, true);
     gtk_grid_attach(GTK_GRID(frm), v.smtp_pass, 1, row+1, 1, 1);
 
-    lbl = gtk_label_new("Poll (s)");
-    gtk_widget_set_halign(lbl, GTK_ALIGN_START);
-    gtk_grid_attach(GTK_GRID(frm), lbl, 2, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label("Poll (s)"), 2, row, 1, 1);
     gtk_grid_attach(GTK_GRID(frm), v.smtp_poll, 2, row+1, 1, 1);
 
     row += 2;
