@@ -31,7 +31,6 @@ namespace gui {
     add_col(GTK_TREE_VIEW(lst), "", COL_BY);
     add_col(GTK_TREE_VIEW(lst), "", COL_BODY, true);
     gtk_widget_set_hexpand(lst, true);
-    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(lst), false);
     g_signal_connect(lst, "row-activated", G_CALLBACK(on_activate), this);
     gtk_container_add(GTK_CONTAINER(box), gtk_widget_get_parent(lst));
 
@@ -80,5 +79,9 @@ namespace gui {
     for (auto r: last_posts(fd, start, POST_HISTORY_MAX)) {
       add_post(w, fd, r, start, nullptr);
     }
+  }
+
+  size_t post_count(FeedHistory &w) {
+    return gtk_tree_model_iter_n_children(GTK_TREE_MODEL(w.store), nullptr);
   }
 }}

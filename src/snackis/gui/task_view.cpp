@@ -8,6 +8,13 @@
 
 namespace snackis {
 namespace gui {
+  static void on_page(GtkNotebook *w, GtkWidget *p, guint pn, TaskView *v) {
+    if (pn == 1 && !post_count(v->post_lst)) {
+      auto fd(find_feed_id(v->ctx, v->rec.id));
+      if (fd) { load(v->post_lst, *fd, now()); }
+    }
+  }
+
   static void on_project(gpointer *_, TaskView *v) {
     CHECK(v->project_fld.selected != nullopt, _);
     ProjectView *fv(new ProjectView(*v->project_fld.selected));
@@ -33,6 +40,58 @@ namespace gui {
     }
   }
 
+  static GtkWidget *init_general(TaskView &v) {
+    GtkWidget *frm(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
+    gtk_widget_set_margin_top(frm, 5);
+    
+    gtk_container_add(GTK_CONTAINER(frm), new_label("Project"));
+    GtkWidget *project_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
+    gtk_container_add(GTK_CONTAINER(frm), project_box);
+
+    v.project_fld.on_change.emplace([&v]() {
+	if (v.project_fld.selected) {
+	  set_project(v.rec, *v.project_fld.selected);
+	}
+	
+	set_str(GTK_ENTRY(v.tags_fld),
+		join(v.rec.tags.begin(), v.rec.tags.end(), ' '));
+	auto sel(v.project_fld.selected ? true : false);
+	gtk_widget_set_sensitive(v.project_btn, sel);
+	refresh(v);
+      });
+    
+    gtk_container_add(GTK_CONTAINER(project_box), v.project_fld.ptr());
+    g_signal_connect(v.project_btn, "clicked", G_CALLBACK(on_project), &v);
+    gtk_container_add(GTK_CONTAINER(project_box), v.project_btn);
+
+    if (v.rec.project_id != null_uid) {
+      select<Project>(v.project_fld, get_project_id(v.ctx, v.rec.project_id));
+    }
+    
+    GtkWidget *lbl;
+    lbl = new_label("Name");
+    gtk_widget_set_margin_top(lbl, 5);
+    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    GtkWidget *name_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    gtk_container_add(GTK_CONTAINER(frm), name_box);
+    gtk_widget_set_hexpand(v.name_fld, true);
+    gtk_container_add(GTK_CONTAINER(name_box), v.name_fld);
+    set_str(GTK_ENTRY(v.name_fld), v.rec.name);
+    gtk_container_add(GTK_CONTAINER(name_box), v.done_fld);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(v.done_fld), v.rec.done);
+
+    gtk_container_add(GTK_CONTAINER(frm), new_label("Tags"));
+    gtk_container_add(GTK_CONTAINER(frm), v.tags_fld);
+    set_str(GTK_ENTRY(v.tags_fld), join(v.rec.tags.begin(), v.rec.tags.end(), ' '));
+    
+    lbl = new_label("Info");
+    gtk_widget_set_margin_top(lbl, 5);
+    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    gtk_container_add(GTK_CONTAINER(frm), gtk_widget_get_parent(v.info_fld));
+    set_str(GTK_TEXT_VIEW(v.info_fld), v.rec.info);
+    return frm;
+  }
+  
   TaskView::TaskView(const Task &tsk):
     SharedView<Task>("Task", tsk),
     find_posts_btn(gtk_button_new_with_mnemonic("_Find Posts")),
@@ -42,7 +101,8 @@ namespace gui {
     done_fld(gtk_check_button_new_with_mnemonic("_Done")),
     tags_fld(gtk_entry_new()),    
     info_fld(new_text_view()),
-    project_fld(ctx)
+    project_fld(ctx),
+    post_lst(ctx)
   {
     gtk_widget_set_sensitive(find_posts_btn,
 			     find_feed_id(ctx, rec.id) ? true : false);
@@ -51,48 +111,21 @@ namespace gui {
     g_signal_connect(post_btn, "clicked", G_CALLBACK(on_post), this);
     gtk_container_add(GTK_CONTAINER(menu), post_btn);
     
-    gtk_container_add(GTK_CONTAINER(fields), new_label("Project"));
-    GtkWidget *project_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    gtk_container_add(GTK_CONTAINER(fields), project_box);
+    GtkWidget *tabs(gtk_notebook_new());
+    gtk_widget_set_vexpand(tabs, true);
+    g_signal_connect(tabs, "switch-page", G_CALLBACK(on_page), this);
+    gtk_container_add(GTK_CONTAINER(fields), tabs);
 
-    project_fld.on_change.emplace([this]() {
-	if (project_fld.selected) { set_project(rec, *project_fld.selected); }
-	set_str(GTK_ENTRY(tags_fld), join(rec.tags.begin(), rec.tags.end(), ' '));
-	auto sel(project_fld.selected ? true : false);
-	gtk_widget_set_sensitive(project_btn, sel);
-	refresh(*this);
-      });
+    gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
+			     init_general(*this),
+			     gtk_label_new_with_mnemonic("_1 General"));
     
-    gtk_container_add(GTK_CONTAINER(project_box), project_fld.ptr());
-    g_signal_connect(project_btn, "clicked", G_CALLBACK(on_project), this);
-    gtk_container_add(GTK_CONTAINER(project_box), project_btn);
-
-    if (rec.project_id != null_uid) {
-      select<Project>(project_fld, get_project_id(ctx, rec.project_id));
-    }
+    GtkWidget *lbl(gtk_label_new_with_mnemonic("_2 Post History"));
+    if (!find_feed_id(ctx, rec.id)) { gtk_widget_set_sensitive(lbl, false); }
+    gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
+			     post_lst.ptr(),
+			     lbl);
     
-    GtkWidget *lbl;
-    lbl = new_label("Name");
-    gtk_widget_set_margin_top(lbl, 5);
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
-    GtkWidget *name_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    gtk_container_add(GTK_CONTAINER(fields), name_box);
-    gtk_widget_set_hexpand(name_fld, true);
-    gtk_container_add(GTK_CONTAINER(name_box), name_fld);
-    set_str(GTK_ENTRY(name_fld), rec.name);
-    gtk_container_add(GTK_CONTAINER(name_box), done_fld);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(done_fld), rec.done);
-
-    gtk_container_add(GTK_CONTAINER(fields), new_label("Tags"));
-    gtk_container_add(GTK_CONTAINER(fields), tags_fld);
-    set_str(GTK_ENTRY(tags_fld), join(rec.tags.begin(), rec.tags.end(), ' '));
-    
-    lbl = new_label("Info");
-    gtk_widget_set_margin_top(lbl, 5);
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
-    gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(info_fld));
-    set_str(GTK_TEXT_VIEW(info_fld), rec.info);
-
     focused = project_fld.search_btn;
     refresh(*this);
   }

@@ -72,6 +72,10 @@ GtkLabel {
     font-size: 105%;
 }
 
+GtkLabel:insensitive {
+    color: #888888;
+}
+
 GtkNotebook {
     background: #333333;
     border: none;

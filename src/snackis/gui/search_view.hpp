@@ -70,6 +70,7 @@ namespace gui {
     g_signal_connect(find_btn, "clicked", G_CALLBACK(on_search_find<RecT>), this);
     gtk_container_add(GTK_CONTAINER(panel), find_btn);
 
+    gtk_widget_set_margin_top(list, 5);
     g_signal_connect(list,
 		     "row-activated",
 		     G_CALLBACK(on_search_activate<RecT>),

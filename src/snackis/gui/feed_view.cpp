@@ -9,7 +9,9 @@
 namespace snackis {
 namespace gui {
   static void on_page(GtkNotebook *w, GtkWidget *p, guint pn, FeedView *v) {
-    if (pn == 1) { load(v->post_lst, v->rec, now()); }
+    if (pn == 1 && !post_count(v->post_lst)) {
+      load(v->post_lst, v->rec, now());
+    }
   }
   
   static void on_find_posts(gpointer *_, FeedView *v) {

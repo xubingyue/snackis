@@ -3,8 +3,10 @@
 ** add field to task view
 ** add field to task search
 *** search < specified
-* add post history tab to task view
-* add post history tab to project view
+* add project view post history tab
+* add peer view post history tab
+** load all peer posts
+*** add custom load-fn to feed history
 * add automagic inbox update
 ** register inbox.on_insert
 ** use g_idle_add like console to update lst
