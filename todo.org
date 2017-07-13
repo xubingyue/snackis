@@ -1,6 +1,3 @@
-* add feed peers tab
-* add project view post history tab
-** add peers tab
 * enable accept encryption
 ** create peer on accept receive
 * add task prio
