@@ -35,7 +35,7 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(box), gtk_widget_get_parent(lst));
 
     gtk_container_add(GTK_CONTAINER(box),
-		      gtk_label_new("Press Return or double-click to edit Post"));
+		      gtk_label_new("Press Return or double-click to view Post"));
 
   }
 

@@ -46,19 +46,22 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(top_box), active_fld);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active_fld), true);
     
-    auto text_box(new_grid());
-    gtk_container_add(GTK_CONTAINER(fields), text_box);
-    
-    gtk_grid_attach(GTK_GRID(text_box), new_label("Tags"), 0, 0, 1, 1);
+    auto frm(new_grid());
+    gtk_grid_set_column_homogeneous(GTK_GRID(frm), true);
+    gtk_container_add(GTK_CONTAINER(fields), frm);
+
+    int row(0);
+    gtk_grid_attach(GTK_GRID(frm), new_label("Tags"), 0, row, 1, 1);
     gtk_widget_set_hexpand(tags_fld, true);
-    gtk_grid_attach(GTK_GRID(text_box), tags_fld, 0, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), tags_fld, 0, row+1, 1, 1);
 
-    gtk_grid_attach(GTK_GRID(text_box), new_label("Text"), 1, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label("Text"), 1, row, 1, 1);
     gtk_widget_set_hexpand(text_fld, true);
-    gtk_grid_attach(GTK_GRID(text_box), text_fld, 1, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), text_fld, 1, row+1, 1, 1);
 
-    gtk_container_add(GTK_CONTAINER(fields), new_label("Owner"));
-    gtk_container_add(GTK_CONTAINER(fields), peer_fld.ptr());
+    row += 2;
+    gtk_grid_attach(GTK_GRID(frm), new_label("Owner"), 0, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), peer_fld.ptr(), 0, row+1, 1, 1);
 
     add_col(GTK_TREE_VIEW(list), "Id", COL_ID);
     add_col(GTK_TREE_VIEW(list), "Created", COL_CREATED);
