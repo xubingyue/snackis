@@ -103,7 +103,7 @@ Type ```feed-search``` in the reader and press ```Return``` to search feeds. A s
 ![feed search example](images/feed_search.png?raw=true)
 
 ### Posts
-Type ```post-new``` in the reader and press ```Return``` to post in existing feed.
+Type ```post-new``` in the reader and press ```Return``` to post in existing feed. The same view is used for showing existing posts. ```New Post``` opens a new post in the same feed, while ```New Reply``` opens a new post in a separate feed dedicated to this specific post.
 
 ![post example](images/post.png?raw=true)
 

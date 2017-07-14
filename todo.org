@@ -1,5 +1,3 @@
-* add View Project/Task/Post btns to feed view
-** copy post view
 * add task prio
 ** add to tasks_sort
 ** add field to task view

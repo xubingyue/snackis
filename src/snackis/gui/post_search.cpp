@@ -68,7 +68,7 @@ namespace gui {
     gtk_grid_attach(GTK_GRID(frm), new_label("Feed"), 0, row, 1, 1);
     gtk_grid_attach(GTK_GRID(frm), feed_fld.ptr(), 0, row+1, 1, 1);
     
-    gtk_grid_attach(GTK_GRID(frm), new_label("Owner"), 1, row, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), new_label("Peer"), 1, row, 1, 1);
     gtk_grid_attach(GTK_GRID(frm), peer_fld.ptr(), 1, row+1, 1, 1);
     
     add_col(GTK_TREE_VIEW(list), "Id", COL_ID);
@@ -106,6 +106,8 @@ namespace gui {
       return;
     }
 
+    auto me(whoami(ctx));
+    
     for (auto key = ctx.db.posts_sort.recs.rbegin();
 	 key != ctx.db.posts_sort.recs.rend();
 	 key++) {
@@ -139,7 +141,12 @@ namespace gui {
       
       if (feed_sel && post.feed_id != feed_sel->id) { continue; }
 
-      if (peer_sel && post.owner_id != peer_sel->id) { continue; }
+      if (peer_sel &&
+	  post.owner_id != peer_sel->id &&
+	  (post.owner_id != me.id ||
+	   post.peer_ids.find(peer_sel->id) == post.peer_ids.end())) {
+	continue;
+      }
       
       Peer peer(get_peer_id(ctx, post.owner_id));
       GtkTreeIter iter;
