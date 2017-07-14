@@ -4,7 +4,7 @@
 #### secure, distributed co-creation
 
 ### Introduction
-Snackis is aiming for something that might be described as a post-modern enigma-device; a tool that covers most secure communication needs using any regular email-account as transport. Peers, encryption keys, messages and and settings are stored locally, encrypted using a master password. At present; Snackis supports key-exchange via invites/accepts, encryption/decryption of files, feeds/posts and projects/tasks.
+Snackis is aiming for something that might be described as a post-modern enigma-device; an effective tool that covers most secure communication needs using any regular email-account as transport. Peers, encryption keys, messages and and settings are stored locally, encrypted using a master password. At present; Snackis supports key-exchange via invites/accepts, encryption/decryption of files, threaded feeds/posts and projects/tasks.
 
 ### Dependencies
 Snackis requires a ```C++1z```-capable compiler and standard library to build, and defaults to using [clang](http://releases.llvm.org/download.html#4.0.0) with ```libc++```. This unfortunately often means downloading and manually installing [clang](http://releases.llvm.org/download.html#4.0.0) to even run the application, but will improve over time. Snackis further depends on ```libcurl```, ```libpthread```, ```libsodium``` and ```libuuid``` for core functionality, as well as ```GTK+ 3``` for the UI.
@@ -13,8 +13,6 @@ Snackis requires a ```C++1z```-capable compiler and standard library to build, a
 tar -xzf clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
 cd clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04
 sudo cp -R * /usr/local/
-
-sudo apt-get install libcurl4-openssl-dev libsodium-dev libuuid1 libgtk-3-dev
 ```
 
 ### Getting started
@@ -24,6 +22,8 @@ If you're running ```Linux/64```, copy [/dist](https://github.com/andreas-gone-w
 Once all dependencies are in place, execute the following commands to build Snackis:
 
 ```
+sudo apt-get install libcurl4-openssl-dev libsodium-dev libuuid1 libgtk-3-dev
+
 git clone https://github.com/andreas-gone-wild/snackis.git
 mkdir snackis/build
 cd snackis/build
@@ -32,15 +32,15 @@ make snackis
 ```
 
 ### Master Password
-Each snackis installation is protected by a master password that is used to encrypt the database; pick a good one, because changing it means re-encrypting the entire database.
+Each snackis installation is protected by a master password that is used to encrypt the database.
 
 ![login example](images/login.png?raw=true)
 
 ### UI
-Snackis UI is divided into three parts; to the left is the read-only console, where output is printed; below is the auto-completed reader, where commands may be given; and to the right is an optional stack of open views. Each new view is pushed onto the stack when opened and popped when closed. Many buttons have mnemonics that may be revealed by pressing ```Alt```. Pressing ```Escape``` moves focus between current view and reader, and ```Ctrl-Tab``` switches between open views.
+Snackis UI is divided into three parts; to the left is the read-only console, where output is printed; below is the reader, where commands may be given; and to the right is an optional stack of open views. Despite it's graphical appearance, Snackis has been designed from the ground up to be effectively keyboard-driven. Each new view is pushed onto the stack when opened and popped when closed. Many buttons have mnemonics that may be revealed by pressing ```Alt```. Pressing ```Escape``` moves focus between current view and reader, and ```Ctrl-Tab``` switches between open views.
 
 #### Style
-The entire UI may be styled to your taste by editing ```gui.css``` in the root.
+The entire UI may be styled by editing ```/gui.css```, running the application with an empty file will display the default GTK-style.
 
 ### Setup
 Once inside, the first thing you probably want to do is to have a look at the setup. Type ```setup``` and press ```Return``` in the reader to open the setup view. Imap/Smtp are currently required to do anything beyond encrypting/decrypting data for personal use.
