@@ -13,6 +13,7 @@ Snackis requires a ```C++1z```-capable compiler and standard library to build, a
 tar -xzf clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
 cd clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04
 sudo cp -R * /usr/local/
+sudo ldconfig
 ```
 
 ### Getting started
