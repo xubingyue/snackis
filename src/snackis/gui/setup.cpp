@@ -40,7 +40,7 @@ namespace gui {
     gtk_grid_attach(GTK_GRID(box), poll, 2, row+1, 1, 1);
 
     row += 2;
-    GtkWidget *btn = gtk_button_new_with_label("Connect");
+    GtkWidget *btn = gtk_button_new_with_mnemonic("_Test Connection");
     g_signal_connect(btn, "clicked", G_CALLBACK(fn), this);
     gtk_grid_attach(GTK_GRID(box), btn, 2, row, 1, 1);
   }

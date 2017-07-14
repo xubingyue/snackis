@@ -4,7 +4,7 @@
 #### secure, distributed co-creation
 
 ### Introduction
-Snackis is aiming for something that might be described as a post-modern enigma-device; an effective tool that covers most secure communication needs using any regular email-account as transport. Peers, encryption keys, messages and and settings are stored locally, encrypted using a master password. At present; Snackis supports key-exchange via invites/accepts, encryption/decryption of files, threaded feeds/posts and projects/tasks.
+Snackis is aiming for something that might be described as a post-modern enigma-device; an effective tool that covers most secure communication needs using any regular email-account as transport. Peers, encryption-keys, messages and and settings are stored locally, encrypted using a master password. At present; Snackis supports key-exchange via invites/accepts, encryption/decryption of files, threaded feeds/posts and projects/tasks.
 
 ### Dependencies
 Snackis requires a ```C++1z```-capable compiler and standard library to build, and defaults to using [clang](http://releases.llvm.org/download.html#4.0.0) with ```libc++```. This unfortunately often means downloading and manually installing [clang](http://releases.llvm.org/download.html#4.0.0) to even run the application, but will improve over time. Snackis further depends on ```libcurl```, ```libpthread```, ```libsodium``` and ```libuuid``` for core functionality, as well as ```GTK+ 3``` for the UI.
@@ -19,10 +19,10 @@ sudo cp -R * /usr/local/
 If you're running ```Linux/64```, copy [/dist](https://github.com/andreas-gone-wild/snackis/tree/master/dist) to where you want to keep Snackis; otherwise you'll have to build the ```snackis```-executable yourself. Snackis is designed to run completely self-contained and will create everything it needs in the directory where it's started.
 
 ### Building
-Once all dependencies are in place, execute the following commands to build Snackis:
+Once a modern enough compiler is in place, execute the following commands to build Snackis:
 
 ```
-sudo apt-get install libcurl4-openssl-dev libsodium-dev libuuid1 libgtk-3-dev
+sudo apt-get install cmake libcurl4-openssl-dev libsodium-dev libuuid1 libgtk-3-dev
 
 git clone https://github.com/andreas-gone-wild/snackis.git
 mkdir snackis/build
@@ -32,18 +32,18 @@ make snackis
 ```
 
 ### Master Password
-Each snackis installation is protected by a master password that is used to encrypt the database.
+Each Snackis installation is protected by a master password that is used to encrypt the database. When started with a fresh database, the first thing Snackis will do is ask for a new password.
 
 ![login example](images/login.png?raw=true)
 
 ### UI
-Snackis UI is divided into three parts; to the left is the read-only console, where output is printed; below is the reader, where commands may be given; and to the right is an optional stack of open views. Despite it's graphical appearance, Snackis has been designed from the ground up to be effectively keyboard-driven. Each new view is pushed onto the stack when opened and popped when closed. Many buttons have mnemonics that may be revealed by pressing ```Alt```. Pressing ```Escape``` moves focus between current view and reader, and ```Ctrl-Tab``` switches between open views.
+Snackis UI is divided into three parts; to the left is the read-only console, where output is printed; below is the reader, where commands may be given; and to the right is a stack of open views. Despite it's graphical appearance, Snackis is designed from the ground up to be effectively keyboard-driven. Each new view is pushed onto the stack when opened and popped when closed. Many buttons have mnemonics that may be revealed by pressing ```Alt```. Pressing ```Escape``` moves focus between current view and reader, and ```Ctrl-Tab``` switches between open views.
 
 #### Style
-The entire UI may be styled by editing ```/gui.css```, running the application with an empty file will display the default GTK-style.
+The entire UI may be styled by editing ```/gui.css```, running the application with an empty file displays the default GTK-style.
 
 ### Setup
-Once inside, the first thing you probably want to do is to have a look at the setup. Type ```setup``` and press ```Return``` in the reader to open the setup view. Imap/Smtp are currently required to do anything beyond encrypting/decrypting data for personal use.
+Once inside, the first thing you probably want to do is to have a look at the setup. Type ```setup``` and press ```Return``` in the reader to open the setup view. Imap/Smtp are required to do anything beyond local/personal use.
 
 ![setup example](images/setup.png?raw=true)
 
@@ -66,10 +66,10 @@ Type ```decrypt``` and press ```Return``` in the reader to open the decryption v
 ![decrypt example](images/decrypt.png?raw=true)
 
 ### Invites
-Type ```invite foo@bar.com``` in the reader and press ```Return``` to create a new invite. Snackis will send an email containing your public encryption key to the specified address. When an invite is accepted/rejected, a reply is sent to inform the inviting peer. The easiest way to see how it works is to try with your own address.
+Type ```invite foo@bar.com``` in the reader and press ```Return``` to create a new invite. Snackis will send an email containing your public encryption-key to the specified address. When an invite is accepted/rejected, a reply is sent to inform the inviting peer. The easiest way to see how it works is to send an invite to your own address.
 
 ### Peers
-Type ```peer-search``` in the reader and press ```Return``` to search Peers locally. Peers are sorted by name. A short-cut is provided to find peers by id, execute ```peer id``` to open the specified peer.
+Type ```peer-search``` in the reader and press ```Return``` to search Peers locally. Peers are sorted by name. A short-cut is provided to find peers by id; execute ```peer id``` to open the specified peer, any unique part of the id will do.
 
 ![peer search example](images/peer_search.png?raw=true)
 
@@ -113,7 +113,7 @@ Type ```post-search``` in the reader and press ```Return``` to search posts. By 
 ![post search example](images/post_search.png?raw=true)
 
 ### Projects
-Projects are sets of tasks that may be shared among a set of peers. Each task has its own feed that members may post to. Type ```project-new``` in the reader and press ```Return``` to create a new project.
+Projects are sets of tasks that may be shared among a set of peers. Each project has its own feed that members may post to. Type ```project-new``` in the reader and press ```Return``` to create a new project.
 
 ![project example](images/project.png?raw=true)
 
@@ -123,7 +123,7 @@ Type ```project-search``` in the reader and press ```Return``` to search project
 ![project search example](images/project_search.png?raw=true)
 
 ### Tasks
-A Task belongs to a project and changes are automatically propagated to all project members. Each task has its own feed that members may post to. Type ```task-new``` in the reader and press ```Return``` to create a new task. A short-cut is provided to find tasks by id, execute ```task id``` to open the specified task, any unique part of the id will do.
+Each Task belongs to a project and changes are automatically propagated to all project members. Like projects, tasks have their own feeds. Type ```task-new``` in the reader and press ```Return``` to create a new task. A short-cut is provided to find tasks by id, execute ```task id``` to open the specified task, any unique part of the id will do.
 
 ![task example](images/task.png?raw=true)
 

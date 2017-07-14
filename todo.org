@@ -7,3 +7,5 @@
 * add password tab to settings
 ** current pass, new pass and repeat
 ** login, re-create pass file and defrag with new secret
+* add support for multi-add in rec_list
+** add multi support to search_view
