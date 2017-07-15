@@ -43,10 +43,9 @@ namespace gui {
   void on_search_find(gpointer *_, SearchView<RecT> *v) {
     find(*v);
   }
-  
+
   template <typename RecT>
-  gboolean on_search_key(gpointer _, GdkEventKey *ev, SearchView<RecT> *v) {
-    if (ev->keyval != GDK_KEY_Return) { return false; }    
+  void activate(SearchView<RecT> *v) {
     TRY(try_activate);
 
     each_sel(GTK_TREE_VIEW(v->list), [v](auto it) {
@@ -59,8 +58,21 @@ namespace gui {
       pop_view(v);
       delete v;
     }
-    
+  }
+  
+  template <typename RecT>
+  gboolean on_search_key(gpointer _, GdkEventKey *ev, SearchView<RecT> *v) {
+    if (ev->keyval != GDK_KEY_Return) { return false; }    
+    activate(v);
     return true;
+  }
+
+  template <typename RecT>
+  void on_search_activate(GtkTreeView *treeview,
+			  GtkTreePath *path,
+			  GtkTreeViewColumn *col,
+			  SearchView<RecT> *v) {
+    activate(v);
   }
   
   template <typename RecT>
@@ -96,8 +108,12 @@ namespace gui {
 		     "key_press_event",
 		     G_CALLBACK(on_search_key<RecT>),
 		     this);
+    g_signal_connect(list,
+		     "row-activated",
+		     G_CALLBACK(on_search_activate<RecT>),
+		     this);
     gtk_container_add(GTK_CONTAINER(panel), gtk_widget_get_parent(list));
-    lbl = gtk_label_new(fmt("Press Return to select %0",
+    lbl = gtk_label_new(fmt("Press Return or double-click to select %0",
 			    type).c_str());
     gtk_container_add(GTK_CONTAINER(panel), lbl);
 

@@ -51,9 +51,7 @@ namespace gui {
   }
 
   template <typename RecT>
-  gboolean on_remove_rec(gpointer _, GdkEventKey *ev, RecList<RecT> *w) {
-    if (ev->keyval != GDK_KEY_Return) { return false; }
-    
+  void activate(RecList<RecT> *w) {
     each_sel(GTK_TREE_VIEW(w->list), [w](auto it) {
 	auto rec(get_rec<RecT>(GTK_TREE_VIEW(w->list), it));
 	CHECK(rec, _);
@@ -61,8 +59,21 @@ namespace gui {
 	w->ids.erase(obj.id);
 	gtk_list_store_remove(w->store, &it);
       });
-
+  }
+  
+  template <typename RecT>
+  gboolean on_rec_key(gpointer _, GdkEventKey *ev, RecList<RecT> *w) {
+    if (ev->keyval != GDK_KEY_Return) { return false; }
+    activate(w);
     return true;
+  }
+
+  template <typename RecT>
+  void on_rec_activate(GtkTreeView *treeview,
+		       GtkTreePath *path,
+		       GtkTreeViewColumn *col,
+		       RecList<RecT> *w) {
+    activate(w);
   }
   
   template <typename RecT>
@@ -81,9 +92,13 @@ namespace gui {
     add_col(GTK_TREE_VIEW(list), fmt("%0s", lbl), COL_REC_ID);
     add_col(GTK_TREE_VIEW(list), "", COL_REC_NAME);
 
-    g_signal_connect(list, "key_press_event", G_CALLBACK(on_remove_rec<RecT>), this);
+    g_signal_connect(list, "key_press_event", G_CALLBACK(on_rec_key<RecT>), this);
     
     enable_multi_sel(GTK_TREE_VIEW(list));
+    g_signal_connect(list,
+		     "row-activated",
+		     G_CALLBACK(on_rec_activate<RecT>),
+		     this);    
     gtk_container_add(GTK_CONTAINER(box), gtk_widget_get_parent(list));
 
     GtkWidget *btn_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
@@ -93,8 +108,8 @@ namespace gui {
     g_signal_connect(add_btn, "clicked", G_CALLBACK(on_add_rec<RecT>), this);
     gtk_container_add(GTK_CONTAINER(btn_box), add_btn);
 
-    GtkWidget *l(gtk_label_new(fmt("Press Return to remove selected %0s",
-				   lbl).c_str()));
+    GtkWidget *l(gtk_label_new(fmt("Press Return or double-click "
+				   "to remove selected %0s", lbl).c_str()));
     gtk_widget_set_hexpand(l, true);
     gtk_container_add(GTK_CONTAINER(btn_box), l);
   }
