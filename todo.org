@@ -9,4 +9,8 @@
 ** login, re-create pass file and defrag with new secret
 * protect gui inbox reading with ctx lock
 ** add Ctx::RLock/WLock
-* add peer tags + search
+* add peer active & tags
+** copy project
+** peer view
+** peer search
+*** add field & filter
