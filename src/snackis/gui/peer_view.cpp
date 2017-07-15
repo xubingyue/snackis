@@ -17,6 +17,8 @@ namespace gui {
     created_at_fld(gtk_entry_new()),
     changed_at_fld(gtk_entry_new()),
     name_fld(gtk_entry_new()),
+    active_fld(gtk_check_button_new_with_label("Active")),
+    tags_fld(gtk_entry_new()),
     email_fld(gtk_entry_new())
   {
     g_signal_connect(find_posts_btn, "clicked", G_CALLBACK(on_find_posts), this);
@@ -37,23 +39,39 @@ namespace gui {
     set_str(GTK_ENTRY(changed_at_fld), fmt(pr.changed_at, "%a %b %d, %H:%M"));
 
     frm = new_grid();
+    gtk_grid_set_column_homogeneous(GTK_GRID(frm), true);
     gtk_container_add(GTK_CONTAINER(fields), frm);
+    int row(0);
     
-    gtk_grid_attach(GTK_GRID(frm), new_label("Name"), 0, 0, 1, 1);
+    gtk_widget_set_halign(active_fld, GTK_ALIGN_END);
+    gtk_grid_attach(GTK_GRID(frm), active_fld, 1, row, 1, 1);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active_fld), rec.active);
+
+    row++;
+    gtk_grid_attach(GTK_GRID(frm), new_label("Name"), 0, row, 1, 1);
     gtk_widget_set_hexpand(name_fld, true);
-    gtk_grid_attach(GTK_GRID(frm), name_fld, 0, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(frm), name_fld, 0, row+1, 1, 1);
     set_str(GTK_ENTRY(name_fld), pr.name);
-    
-    gtk_grid_attach(GTK_GRID(frm), new_label("Email"), 1, 0, 1, 1);
+
+    gtk_grid_attach(GTK_GRID(frm), new_label("Email"), 1, row, 1, 1);
     gtk_widget_set_hexpand(email_fld, true);
-    gtk_grid_attach(GTK_GRID(frm), email_fld, 1, 1, 1, 1);    
+    gtk_grid_attach(GTK_GRID(frm), email_fld, 1, row+1, 1, 1);    
     set_str(GTK_ENTRY(email_fld), pr.email);
+
+    row += 2;
+    gtk_grid_attach(GTK_GRID(frm), new_label("Tags"), 0, row, 2, 1);
+    gtk_widget_set_hexpand(tags_fld, true);
+    gtk_grid_attach(GTK_GRID(frm), tags_fld, 0, row+1, 2, 1);    
+    gtk_entry_set_text(GTK_ENTRY(tags_fld),
+		       join(rec.tags.begin(), rec.tags.end(), ' ').c_str());
 
     focused = name_fld;
   }
 
   bool PeerView::save() {
     rec.name = gtk_entry_get_text(GTK_ENTRY(name_fld));
+    rec.active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(active_fld));
+    rec.tags = word_set(get_str(GTK_ENTRY(tags_fld)));
     rec.email = gtk_entry_get_text(GTK_ENTRY(email_fld));    
     db::upsert(ctx.db.peers, rec);
     return true;

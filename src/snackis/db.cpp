@@ -28,11 +28,13 @@ namespace snackis {
     peer_changed_at("changed_at", time_type,           &Peer::changed_at),
     peer_name(      "name",       str_type,            &Peer::name),
     peer_email(     "email",      str_type,            &Peer::email),
+    peer_tags(      "tags",       str_set_type,        &Peer::tags),
     peer_crypt_key( "crypt_key",  crypt::pub_key_type, &Peer::crypt_key),
+    peer_active(    "active",     bool_type,           &Peer::active),
 
     peers(ctx, "peers", {&peer_id},
 	  {&peer_created_at, &peer_changed_at, &peer_name, &peer_email,
-	      &peer_crypt_key}),
+	      &peer_tags, &peer_crypt_key, &peer_active}),
 
     peers_sort(ctx, "peers_sort", {&peer_name, &peer_id}, {}),
     

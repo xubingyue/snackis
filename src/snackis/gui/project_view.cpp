@@ -134,6 +134,7 @@ namespace gui {
 
   bool ProjectView::save() {
     rec.name = gtk_entry_get_text(GTK_ENTRY(name_fld));
+    rec.active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(active_fld));
     rec.tags = word_set(get_str(GTK_ENTRY(tags_fld)));
     rec.info = get_str(GTK_TEXT_VIEW(info_fld));
     db::upsert(ctx.db.projects, rec);

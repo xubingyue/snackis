@@ -63,7 +63,6 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(project_box), v.project_fld.ptr());
     g_signal_connect(v.project_btn, "clicked", G_CALLBACK(on_project), &v);
     gtk_container_add(GTK_CONTAINER(project_box), v.project_btn);
-
     
     GtkWidget *name_box(new_grid());
     gtk_widget_set_margin_top(name_box, 5);

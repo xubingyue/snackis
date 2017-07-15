@@ -2,10 +2,17 @@
 #include "snackis/peer.hpp"
 
 namespace snackis {
-  Peer::Peer(Ctx &ctx): IdRec(ctx), created_at(now()), changed_at(created_at)
+  Peer::Peer(Ctx &ctx):
+    IdRec(ctx),
+    created_at(now()),
+    changed_at(created_at),
+    active(true)
   { }
 
-  Peer::Peer(Ctx &ctx, const db::Rec<Peer> &src): IdRec(ctx, null_uid) {
+  Peer::Peer(Ctx &ctx, const db::Rec<Peer> &src):
+    IdRec(ctx, null_uid),
+    active(true)
+  {
     copy(*this, src);
   }
   
@@ -19,6 +26,7 @@ namespace snackis {
       changed_at = created_at;
       name = msg.peer_name;
       email = msg.from;
+      active = true;
     }
     
     crypt_key = msg.crypt_key;

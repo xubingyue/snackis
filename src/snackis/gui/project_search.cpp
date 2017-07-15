@@ -26,6 +26,7 @@ namespace gui {
 					G_TYPE_STRING),
 		     [&ctx](auto &rec) { edit(ctx, rec); }),
     id_fld(new_id_field()),
+    active_fld(gtk_check_button_new_with_label("Active")),
     tags_fld(gtk_entry_new()),
     text_fld(gtk_entry_new()),
     peer_fld(ctx)
@@ -37,7 +38,10 @@ namespace gui {
     gtk_grid_attach(GTK_GRID(frm), new_label("Id"), 0, row, 1, 1);
     gtk_widget_set_halign(id_fld, GTK_ALIGN_START);
     gtk_grid_attach(GTK_GRID(frm), id_fld, 0, row+1, 1, 1);
-
+    gtk_widget_set_halign(active_fld, GTK_ALIGN_END);
+    gtk_grid_attach(GTK_GRID(frm), active_fld, 1, row+1, 1, 1);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(active_fld), true);
+    
     row += 2;
     gtk_grid_attach(GTK_GRID(frm), new_label("Tags"), 0, row, 1, 1);
     gtk_widget_set_hexpand(tags_fld, true);
@@ -65,6 +69,7 @@ namespace gui {
     size_t cnt(0);
     
     str id_sel(trim(gtk_entry_get_text(GTK_ENTRY(id_fld))));
+    bool active_sel(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(active_fld)));
     str tags_str(trim(gtk_entry_get_text(GTK_ENTRY(tags_fld))));
     std::set<str> tags_sel(word_set(tags_str));
     str text_sel(trim(gtk_entry_get_text(GTK_ENTRY(text_fld)))); 
@@ -79,6 +84,8 @@ namespace gui {
       if (!id_sel.empty() && find_ci(id_str(project), id_sel) == str::npos) {
 	continue;
       }
+
+      if (project.active != active_sel) { continue; }
 
       if (!tags_sel.empty()) {
 	std::vector<str> diff;
