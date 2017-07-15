@@ -14,6 +14,7 @@ namespace snackis {
     Time created_at, changed_at;
     str name, info;
     std::set<str> tags;
+    int64_t prio;
     bool done;
     std::set<UId> peer_ids;
     

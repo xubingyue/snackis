@@ -13,7 +13,7 @@ namespace gui {
   std::unique_ptr<Undo> undo;
 
   str get_str(GtkEntry *w) {
-    return gtk_entry_get_text(w);
+    return trim(gtk_entry_get_text(w));
   }
 
   str get_str(GtkTextView *w) {
@@ -21,7 +21,7 @@ namespace gui {
     GtkTextIter start, end;
     gtk_text_buffer_get_start_iter(buf, &start);
     gtk_text_buffer_get_end_iter(buf, &end);
-    return gtk_text_buffer_get_text(buf, &start, &end, true);
+    return trim(gtk_text_buffer_get_text(buf, &start, &end, true));
   }
 
   void set_str(GtkEntry *w, const str &in) {

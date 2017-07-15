@@ -118,14 +118,16 @@ namespace snackis {
     task_name(      "name",       str_type,     &Task::name),
     task_info(      "info",       str_type,     &Task::info),
     task_tags(      "tags",       str_set_type, &Task::tags),
+    task_prio(      "prio",       int64_type,   &Task::prio),
     task_done(      "done",       bool_type,    &Task::done),
     task_peer_ids(  "peer_ids",   uid_set_type, &Task::peer_ids),
     
     tasks(ctx, "tasks", {&task_id},
 	  {&task_project_id, &task_owner_id, &task_created_at, &task_changed_at,
-	      &task_name, &task_info, &task_tags, &task_done, &task_peer_ids}),
+	      &task_name, &task_info, &task_tags, &task_prio, &task_done,
+	      &task_peer_ids}),
 
-    tasks_sort(ctx, "tasks_sort", {&task_created_at, &task_id}, {})
+    tasks_sort(ctx, "tasks_sort", {&task_prio, &task_created_at, &task_id}, {})
   {
     peers.indexes.insert(&peers_sort);
     inbox.indexes.insert(&inbox_sort);

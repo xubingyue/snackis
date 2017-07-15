@@ -64,31 +64,26 @@ namespace gui {
     g_signal_connect(v.project_btn, "clicked", G_CALLBACK(on_project), &v);
     gtk_container_add(GTK_CONTAINER(project_box), v.project_btn);
 
-    if (v.rec.project_id != null_uid) {
-      select<Project>(v.project_fld, get_project_id(v.ctx, v.rec.project_id));
-    }
     
-    GtkWidget *lbl;
-    lbl = new_label("Name");
-    gtk_widget_set_margin_top(lbl, 5);
-    gtk_container_add(GTK_CONTAINER(frm), lbl);
-    GtkWidget *name_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    GtkWidget *name_box(new_grid());
+    gtk_widget_set_margin_top(name_box, 5);
+    gtk_grid_set_column_homogeneous(GTK_GRID(name_box), true);
     gtk_container_add(GTK_CONTAINER(frm), name_box);
+
+    gtk_grid_attach(GTK_GRID(name_box), new_label("Name"), 0, 0, 2, 1);
     gtk_widget_set_hexpand(v.name_fld, true);
-    gtk_container_add(GTK_CONTAINER(name_box), v.name_fld);
-    set_str(GTK_ENTRY(v.name_fld), v.rec.name);
-    gtk_container_add(GTK_CONTAINER(name_box), v.done_fld);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(v.done_fld), v.rec.done);
+    gtk_grid_attach(GTK_GRID(name_box), v.name_fld, 0, 1, 2, 1);		    
+  
+    gtk_grid_attach(GTK_GRID(name_box), new_label("Prio"), 2, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(name_box), v.prio_fld, 2, 1, 1, 1);		    
+    gtk_widget_set_halign(v.done_fld, GTK_ALIGN_END);
+    gtk_grid_attach(GTK_GRID(name_box), v.done_fld, 3, 1, 1, 1);		    
 
     gtk_container_add(GTK_CONTAINER(frm), new_label("Tags"));
     gtk_container_add(GTK_CONTAINER(frm), v.tags_fld);
-    set_str(GTK_ENTRY(v.tags_fld), join(v.rec.tags.begin(), v.rec.tags.end(), ' '));
     
-    lbl = new_label("Info");
-    gtk_widget_set_margin_top(lbl, 5);
-    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    gtk_container_add(GTK_CONTAINER(frm), new_label("Info"));
     gtk_container_add(GTK_CONTAINER(frm), gtk_widget_get_parent(v.info_fld));
-    set_str(GTK_TEXT_VIEW(v.info_fld), v.rec.info);
     return frm;
   }
   
@@ -98,6 +93,7 @@ namespace gui {
     post_btn(gtk_button_new_with_mnemonic("New _Post")),
     project_btn(gtk_button_new_with_mnemonic("_View Project")),
     name_fld(gtk_entry_new()),
+    prio_fld(gtk_entry_new()),
     done_fld(gtk_check_button_new_with_mnemonic("_Done")),
     tags_fld(gtk_entry_new()),    
     info_fld(new_text_view()),
@@ -134,8 +130,21 @@ namespace gui {
     return project_fld.selected ? true : false;
   }
 
+  void TaskView::load() {
+    if (rec.project_id != null_uid) {
+      select<Project>(project_fld, get_project_id(ctx, rec.project_id));
+    }
+    
+    set_str(GTK_ENTRY(name_fld), rec.name);
+    set_str(GTK_ENTRY(prio_fld), to_str(rec.prio));
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(done_fld), rec.done);
+    set_str(GTK_ENTRY(tags_fld), join(rec.tags.begin(), rec.tags.end(), ' '));
+    set_str(GTK_TEXT_VIEW(info_fld), rec.info);
+  }
+  
   bool TaskView::save() {
     rec.name = get_str(GTK_ENTRY(name_fld));
+    rec.prio = to_int64(get_str(GTK_ENTRY(prio_fld)));
     rec.done = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(done_fld));
     rec.tags = word_set(get_str(GTK_ENTRY(tags_fld)));    
     rec.info = get_str(GTK_TEXT_VIEW(info_fld));

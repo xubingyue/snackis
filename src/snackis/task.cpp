@@ -10,10 +10,14 @@ namespace snackis {
     owner_id(whoami(ctx).id),
     created_at(now()),
     changed_at(created_at),
+    prio(0),
     done(false)
   { }
 
-  Task::Task(Ctx &ctx, const db::Rec<Task> &rec): IdRec(ctx, false) {
+  Task::Task(Ctx &ctx, const db::Rec<Task> &rec):
+    IdRec(ctx, false),
+    prio(0)
+  {
     db::copy(*this, rec);
   }
 
@@ -21,7 +25,8 @@ namespace snackis {
     IdRec(msg.ctx, *db::get(msg.task, msg.ctx.db.task_id)),
     owner_id(msg.from_id),
     created_at(now()),
-    changed_at(created_at)
+    changed_at(created_at),
+    prio(0)
   {
     copy(*this, msg);
   }
