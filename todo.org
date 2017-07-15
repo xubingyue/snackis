@@ -1,6 +1,3 @@
 * refactor folder selection in encrypt/decrypt
-* add password tab to settings
-** current pass, new pass and repeat
-** login, re-create pass file and defrag with new secret
 * protect gui inbox reading with ctx lock
 ** add Ctx::RLock/WLock

@@ -129,7 +129,7 @@ Each Task belongs to a project and changes are automatically propagated to all p
 ![task example](images/task.png?raw=true)
 
 #### Searching
-Type ```task-search``` in the reader and press ```Return``` to search tasks. Tasks are sorted by time of creation.
+Type ```task-search``` in the reader and press ```Return``` to search tasks. Tasks are sorted by priority and time of creation.
 
 ![task search example](images/task_search.png?raw=true)
 

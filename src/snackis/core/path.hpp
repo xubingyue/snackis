@@ -9,6 +9,7 @@ namespace snackis {
   
   bool create_path(const Path &p);
   bool path_exists(const Path &p);
+  bool remove_path(const Path &p);
 }
 
 #endif

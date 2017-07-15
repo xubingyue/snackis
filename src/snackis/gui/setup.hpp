@@ -18,6 +18,7 @@ namespace gui {
 
   struct Setup: View {
     GtkWidget *name, *email,
+      *pass, *pass_repeat,
       *load_folder, *save_folder,
       *save, *cancel;
     Server imap, smtp;

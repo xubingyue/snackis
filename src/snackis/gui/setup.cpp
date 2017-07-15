@@ -41,6 +41,7 @@ namespace gui {
 
     row += 2;
     GtkWidget *btn = gtk_button_new_with_mnemonic("_Test Connection");
+    gtk_widget_set_margin_top(btn, 5);
     g_signal_connect(btn, "clicked", G_CALLBACK(fn), this);
     gtk_grid_attach(GTK_GRID(box), btn, 2, row, 1, 1);
   }
@@ -105,6 +106,23 @@ namespace gui {
     me.email = gtk_entry_get_text(GTK_ENTRY(v->email));
     update(ctx.db.peers, me);
 
+    if (!try_save.errors.empty()) { return; }
+    auto pass(get_str(GTK_ENTRY(v->pass)));
+    
+    if (!pass.empty()) {
+      if (get_str(GTK_ENTRY(v->pass_repeat)) != pass) {
+	log(ctx, "Password mismatch");
+	return;
+      }
+
+      log(ctx, "Rewriting database...");
+      remove_path(get_path(ctx, "pass"));
+      init_pass(ctx, pass);
+      db::defrag(ctx);
+      if (!try_save.errors.empty()) { return; }
+      log(ctx, "Password changed");
+    }
+    
     set_val(ctx.settings.load_folder,
 	    str(gtk_entry_get_text(GTK_ENTRY(v->load_folder))));
     set_val(ctx.settings.save_folder,
@@ -152,7 +170,6 @@ namespace gui {
 				GCallback fn,
 				const str &lbl) {
     GtkWidget *frm(new_grid());
-    gtk_widget_set_margin_top(frm, 5);
 
     gtk_grid_attach(GTK_GRID(frm), new_label(fmt("%0 Folder", lbl)), 0, 0, 1, 1);
     gtk_widget_set_hexpand(e, true);
@@ -166,21 +183,38 @@ namespace gui {
   }
   
   static GtkWidget *init_general(Setup &v) {
-    GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+    GtkWidget *frm(new_grid());
     gtk_widget_set_margin_top(frm, 5);
-
-    gtk_container_add(GTK_CONTAINER(frm), new_label("Name"));
-    gtk_widget_set_hexpand(v.name, true);
-    gtk_container_add(GTK_CONTAINER(frm), v.name);
+    int row(0);
     
-    gtk_container_add(GTK_CONTAINER(frm), new_label("Email"));
+    gtk_grid_attach(GTK_GRID(frm), new_label("Name"), 0, row, 1, 1);
+    gtk_widget_set_hexpand(v.name, true);
+    gtk_grid_attach(GTK_GRID(frm), v.name, 0, row+1, 1, 1);
+    
+    gtk_grid_attach(GTK_GRID(frm), new_label("Email"), 1, row, 1, 1);
     gtk_widget_set_hexpand(v.email, true);
-    gtk_container_add(GTK_CONTAINER(frm), v.email);
+    gtk_grid_attach(GTK_GRID(frm), v.email, 1, row+1, 1, 1);
 
-    gtk_container_add(GTK_CONTAINER(frm),
-		      init_folder(v, v.load_folder, G_CALLBACK(on_lfolder), "Load"));
-    gtk_container_add(GTK_CONTAINER(frm),
-		      init_folder(v, v.save_folder, G_CALLBACK(on_sfolder), "Save"));
+    row += 2;
+    auto lbl(new_label("Change Password"));
+    gtk_widget_set_margin_top(lbl, 5);
+    gtk_grid_attach(GTK_GRID(frm), lbl, 0, row, 1, 1);
+    gtk_entry_set_visibility(GTK_ENTRY(v.pass), false);
+    gtk_grid_attach(GTK_GRID(frm), v.pass, 0, row+1, 1, 1);    
+    lbl = new_label("Repeat");
+    gtk_widget_set_margin_top(lbl, 5);
+    gtk_grid_attach(GTK_GRID(frm), lbl, 1, row, 1, 1);
+    gtk_entry_set_visibility(GTK_ENTRY(v.pass_repeat), false);
+    gtk_grid_attach(GTK_GRID(frm), v.pass_repeat, 1, row+1, 1, 1);
+
+    row += 2;
+    auto lf(init_folder(v, v.load_folder, G_CALLBACK(on_lfolder), "Load"));
+    gtk_widget_set_margin_top(lf, 10);
+    gtk_grid_attach(GTK_GRID(frm), lf, 0, row, 1, 1);
+    auto sf(init_folder(v, v.save_folder, G_CALLBACK(on_sfolder), "Save"));
+    gtk_widget_set_margin_top(sf, 10);
+    gtk_grid_attach(GTK_GRID(frm), sf, 1, row, 1, 1);
+    
     return frm;
   }
       
@@ -188,6 +222,8 @@ namespace gui {
     View(ctx, "Setup"),
     name(gtk_entry_new()),
     email(gtk_entry_new()),
+    pass(gtk_entry_new()),
+    pass_repeat(gtk_entry_new()),
     load_folder(gtk_entry_new()),
     save_folder(gtk_entry_new()),
     save(gtk_button_new_with_mnemonic("_Save Setup")),
