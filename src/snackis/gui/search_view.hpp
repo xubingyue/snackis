@@ -97,7 +97,7 @@ namespace gui {
 		     G_CALLBACK(on_search_key<RecT>),
 		     this);
     gtk_container_add(GTK_CONTAINER(panel), gtk_widget_get_parent(list));
-    lbl = gtk_label_new(fmt("Press Return or double-click to select %0",
+    lbl = gtk_label_new(fmt("Press Return to select %0",
 			    type).c_str());
     gtk_container_add(GTK_CONTAINER(panel), lbl);
 
