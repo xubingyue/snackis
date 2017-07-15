@@ -1,6 +1,3 @@
-* debug post peers multi-sel
-** use return key event instead of activate?
-** commit
 * add task prio
 ** add to tasks_sort
 ** add field to task view
