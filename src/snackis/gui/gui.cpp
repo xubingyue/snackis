@@ -41,6 +41,34 @@ namespace gui {
     return iter;
   }
 
+  void each_sel(GtkTreeView *w, func<void (GtkTreeIter &)> fn) {
+    std::vector<GtkTreeRowReference *> refs;
+    GtkTreeModel *mod;
+    auto sel(gtk_tree_selection_get_selected_rows(gtk_tree_view_get_selection(w),
+						  &mod));
+    
+    while (sel) {
+      auto pth(static_cast<GtkTreePath *>(sel->data));
+      refs.push_back(gtk_tree_row_reference_new(mod, pth));
+      sel = sel->next;
+    }
+    
+    g_list_free_full(sel, (GDestroyNotify)gtk_tree_path_free);
+
+    for (auto ref: refs) {
+      auto pth(gtk_tree_row_reference_get_path(ref));
+      GtkTreeIter it;
+      gtk_tree_model_get_iter(mod, &it, pth);
+      fn(it);
+      gtk_tree_row_reference_free(ref);
+    }
+  }
+
+  void enable_multi_sel(GtkTreeView *w) {
+    gtk_tree_selection_set_mode(gtk_tree_view_get_selection(w),
+				GTK_SELECTION_MULTIPLE);
+  }
+  
   GtkWidget *new_grid() {
     GtkWidget *w(gtk_grid_new());
     gtk_grid_set_row_spacing(GTK_GRID(w), 5);

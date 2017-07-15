@@ -26,6 +26,9 @@ namespace gui {
     Ctx &ctx(w->ctx);
 
     auto sv(w->search());
+    sv->close_on_activate = true;
+    enable_multi_sel(GTK_TREE_VIEW(sv->list));
+
     sv->on_activate = [w, sv, &ctx](auto &rec) {
       RecT obj(ctx, rec);    
 
@@ -37,34 +40,24 @@ namespace gui {
 			   COL_REC_ID, id_str(obj).c_str(),
 			   COL_REC_NAME, obj.name.c_str(),
 			   -1);
-	auto sel(gtk_tree_view_get_selection(GTK_TREE_VIEW(w->list)));
-	gtk_tree_selection_select_iter(sel, &iter);
       }
-      
-      pop_view(sv);
-      delete sv;
-      gtk_widget_grab_focus(w->add_btn);
     };
     
     push_view(sv);
   }
 
   template <typename RecT>
-  void on_remove_rec(GtkTreeView *treeview,
+  void on_remove_rec(GtkTreeView *t,
 		     GtkTreePath *path,
 		     GtkTreeViewColumn *col,
 		     RecList<RecT> *w) {
-    Ctx &ctx(w->ctx);
-    auto iter(get_sel_iter(GTK_TREE_VIEW(w->list)));
-
-    if (iter) {
-      auto it(*iter);
-      auto rec(get_rec<RecT>(GTK_TREE_VIEW(w->list), it));
-      CHECK(rec ? true : false, _);
-      RecT obj(ctx, *rec);
-      w->ids.erase(obj.id);
-      gtk_list_store_remove(w->store, &it);
-    }
+    each_sel(t, [w](auto it) {
+	auto rec(get_rec<RecT>(GTK_TREE_VIEW(w->list), it));
+	CHECK(rec, _);
+	RecT obj(w->ctx, *rec);
+	w->ids.erase(obj.id);
+	gtk_list_store_remove(w->store, &it);
+      });
   }
   
   template <typename RecT>
@@ -83,6 +76,7 @@ namespace gui {
     add_col(GTK_TREE_VIEW(list), fmt("%0s", lbl), COL_REC_ID);
     add_col(GTK_TREE_VIEW(list), "", COL_REC_NAME);
     g_signal_connect(list, "row-activated", G_CALLBACK(on_remove_rec<RecT>), this);
+    enable_multi_sel(GTK_TREE_VIEW(list));
     gtk_container_add(GTK_CONTAINER(box), gtk_widget_get_parent(list));
 
     GtkWidget *btn_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));

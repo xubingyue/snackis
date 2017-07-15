@@ -57,6 +57,9 @@ namespace gui {
     return get_rec<RecT>(w, *iter);
   }
 
+  void each_sel(GtkTreeView *w, func<void (GtkTreeIter &)> fn);
+  void enable_multi_sel(GtkTreeView *w);
+  
   GtkWidget *new_grid();
   GtkWidget *new_label(const str &txt);
   GtkWidget *new_id_field();

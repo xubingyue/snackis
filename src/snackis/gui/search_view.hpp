@@ -14,6 +14,7 @@ namespace gui {
     GtkListStore *store;
     GtkWidget *fields, *find_btn, *list, *cancel_btn;
     OnActivate on_activate;
+    bool close_on_activate;
     
     SearchView(Ctx &ctx, const str &type, GtkListStore *store, OnActivate act);
     virtual void find()=0;
@@ -33,14 +34,22 @@ namespace gui {
   }
   
   template <typename RecT>
-  void on_search_activate(GtkTreeView *treeview,
+  void on_search_activate(GtkTreeView *t,
 			  GtkTreePath *path,
 			  GtkTreeViewColumn *col,
 			  SearchView<RecT> *v) {
     TRY(try_activate);
-    auto rec(get_sel_rec<RecT>(GTK_TREE_VIEW(v->list)));
-    CHECK(rec != nullptr, _);
-    v->on_activate(*rec);
+
+    each_sel(t, [t, v](auto it) {
+	auto rec(get_rec<RecT>(t, it));
+	CHECK(rec, _);
+	v->on_activate(*rec);
+      });
+
+    if (v->close_on_activate) {
+      pop_view(v);
+      delete v;
+    }
   }
   
   template <typename RecT>
@@ -60,7 +69,8 @@ namespace gui {
     find_btn(gtk_button_new_with_mnemonic(fmt("_Find %0s", type).c_str())),
     list(new_tree_view(GTK_TREE_MODEL(store))),
     cancel_btn(gtk_button_new_with_mnemonic("_Cancel")),
-    on_activate(act)
+    on_activate(act),
+    close_on_activate(false)
   {
     GtkWidget *lbl;
     gtk_box_pack_start(GTK_BOX(panel), fields, false, false, 0);

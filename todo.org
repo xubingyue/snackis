@@ -1,3 +1,6 @@
+* debug post peers multi-sel
+** use return key event instead of activate?
+** commit
 * add task prio
 ** add to tasks_sort
 ** add field to task view
@@ -7,5 +10,6 @@
 * add password tab to settings
 ** current pass, new pass and repeat
 ** login, re-create pass file and defrag with new secret
-* add support for multi-add in rec_list
-** add multi support to search_view
+* protect gui inbox reading with ctx lock
+** add Ctx::RLock/WLock
+* add peer tags + search
