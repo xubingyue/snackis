@@ -155,9 +155,12 @@ namespace gui {
 	  return false;
 	}
 
-	if (ctx.db.inbox.recs.empty()) {
-	  log(ctx, "Inbox is empty");
-	  return true;
+	{
+	  Ctx::Lock lock(ctx.mutex);
+	  if (ctx.db.inbox.recs.empty()) {
+	    log(ctx, "Inbox is empty");
+	    return true;
+	  }
 	}
 
 	if (!inbox) { inbox.reset(new Inbox(ctx)); }

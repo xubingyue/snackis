@@ -19,7 +19,8 @@ namespace db {
   
   struct Ctx {
     using Log = func<void (const str &)>;
-
+    using Lock = std::unique_lock<std::recursive_mutex>;
+    
     Path path;
     opt<crypt::Secret> secret;
     opt<Log> log;

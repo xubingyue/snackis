@@ -140,6 +140,7 @@ namespace gui {
 
   void Inbox::load() {
     View::load();
+    Ctx::Lock lock(ctx.mutex);
     gtk_list_store_clear(store);
     
     for(auto key = ctx.db.inbox_sort.recs.begin();

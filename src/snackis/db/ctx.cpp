@@ -102,20 +102,20 @@ namespace db {
 
   void flush(Ctx &ctx) {
     TRACE("Flushing database");
-    std::unique_lock<std::recursive_mutex> lock(ctx.mutex);
+    Ctx::Lock lock(ctx.mutex);
     for (auto f: ctx.dirty_files) { f->flush(); }
     ctx.dirty_files.clear();
   }
 
   void slurp(Ctx &ctx) {
     TRACE("Slurping database");
-    std::unique_lock<std::recursive_mutex> lock(ctx.mutex);
+    Ctx::Lock lock(ctx.mutex);
     for (auto t: ctx.tables) { t->slurp(); }
   }
 
   int64_t defrag(Ctx &ctx) {
     TRACE("Defragmenting database");
-    std::unique_lock<std::recursive_mutex> lock(ctx.mutex);
+    Ctx::Lock lock(ctx.mutex);
     int64_t res(0);
     
     for (auto t: ctx.tables) {

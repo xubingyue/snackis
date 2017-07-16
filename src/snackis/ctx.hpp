@@ -12,6 +12,7 @@
 
 namespace snackis {
   struct Ctx: db::Ctx {
+    using LoopLock = std::unique_lock<std::mutex>;
     Db db;
     Settings settings;
     Peer whoami;

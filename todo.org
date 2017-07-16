@@ -1,3 +1,1 @@
 * refactor folder selection in encrypt/decrypt
-* protect gui inbox reading with ctx lock
-** add Ctx::RLock/WLock

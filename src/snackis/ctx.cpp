@@ -12,11 +12,11 @@ namespace snackis {
 
     while (!ctx->is_closing) {
       TRY(try_imap);
-      std::unique_lock<std::mutex> lock(ctx->loop_mutex);
+      Ctx::LoopLock lock(ctx->loop_mutex);
       int64_t poll(0);
       
       {
-	std::unique_lock<std::recursive_mutex> lock(ctx->mutex);
+	Ctx::Lock lock(ctx->mutex);
 	poll = *get_val(ctx->settings.imap.poll);
       }
       
@@ -40,11 +40,11 @@ namespace snackis {
 
     while (!ctx->is_closing) {
       TRY(try_smtp);
-      std::unique_lock<std::mutex> send_lock(ctx->loop_mutex);
+      Ctx::LoopLock send_lock(ctx->loop_mutex);
       int64_t poll(0);
       
       {
-	std::unique_lock<std::recursive_mutex> lock(ctx->mutex);
+	Ctx::Lock lock(ctx->mutex);
 	poll = *get_val(ctx->settings.smtp.poll);
       }
       
@@ -54,7 +54,7 @@ namespace snackis {
 	ctx->send_cond.wait(send_lock);
       }
 
-      std::unique_lock<std::recursive_mutex> lock(ctx->mutex);
+      Ctx::Lock lock(ctx->mutex);
       if (!ctx->is_closing && !ctx->db.outbox.recs.empty()) {
 	Smtp smtp(*ctx);
 	send(smtp);
