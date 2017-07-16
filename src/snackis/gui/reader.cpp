@@ -50,6 +50,33 @@ namespace gui {
     gtk_editable_set_position(GTK_EDITABLE(rdr->entry), i);
     return true;
   }
+
+  template <typename SearchT, typename ViewT, typename RecT>
+  static void init_id_search(Reader &rdr, const str &id) {
+    Ctx &ctx(rdr.ctx);
+    
+    rdr.cmds.emplace(id, [&ctx, id](auto args) {
+	if (args.size() != 1) {
+	  log(ctx, "Invalid number of arguments, syntax: %0 ea362b58", id);
+	  return false;
+	}
+	
+	auto *v(new SearchT(ctx));
+	auto id(args.back());
+	gui::set_str(GTK_ENTRY(v->id_fld), id);
+
+	if (find(*v) == 1) {
+	  auto rec(first_rec(*v));
+	  CHECK(rec != nullptr, _);
+	  push_view(new ViewT(RecT(ctx, *rec)));
+	  delete v;
+	} else {
+	  push_view(v);
+	}
+	
+	return true;
+      });
+  }
   
   static void init_cmds(Reader &rdr) {
     Ctx &ctx(rdr.ctx);
@@ -97,27 +124,7 @@ namespace gui {
 	return true;
       });
 
-    rdr.cmds.emplace("feed", [&ctx](auto args) {
-	if (args.size() != 1) {
-	  log(ctx, "Invalid number of arguments, syntax: feed ea362b58");
-	  return false;
-	}
-	
-	FeedSearch *v = new FeedSearch(ctx);
-	auto id(args.back());
-	gui::set_str(GTK_ENTRY(v->id_fld), id);
-
-	if (find(*v) == 1) {
-	  auto rec(first_rec(*v));
-	  CHECK(rec != nullptr, _);
-	  push_view(new FeedView(Feed(ctx, *rec)));
-	  delete v;
-	} else {
-	  push_view(v);
-	}
-	
-	return true;
-      });
+    init_id_search<FeedSearch, FeedView, Feed>(rdr, "feed");
 
     rdr.cmds.emplace("feed-new", [&ctx](auto args) {
 	if (!args.empty()) {
@@ -195,28 +202,8 @@ namespace gui {
 	return true;
       });
 
-    rdr.cmds.emplace("peer", [&ctx](auto args) {
-	if (args.size() != 1) {
-	  log(ctx, "Invalid number of arguments, syntax: peer ea362b58");
-	  return false;
-	}
-	
-	PeerSearch *v = new PeerSearch(ctx);
-	auto id(args.back());
-	gui::set_str(GTK_ENTRY(v->id_fld), id);
+    init_id_search<PeerSearch, PeerView, Peer>(rdr, "peer");
 
-	if (find(*v) == 1) {
-	  auto rec(first_rec(*v));
-	  CHECK(rec != nullptr, _);
-	  push_view(new PeerView(Peer(ctx, *rec)));
-	  delete v;
-	} else {
-	  push_view(v);
-	}
-	
-	return true;
-      });
-    
     rdr.cmds.emplace("peer-search", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: peer-search");
@@ -227,28 +214,8 @@ namespace gui {
 	return true;
       });
 
-    rdr.cmds.emplace("post", [&ctx](auto args) {
-	if (args.size() != 1) {
-	  log(ctx, "Invalid number of arguments, syntax: post ea362b58");
-	  return false;
-	}
-	
-	PostSearch *v = new PostSearch(ctx);
-	auto id(args.back());
-	gui::set_str(GTK_ENTRY(v->id_fld), id);
+    init_id_search<PostSearch, PostView, Post>(rdr, "post");
 
-	if (find(*v) == 1) {
-	  auto rec(first_rec(*v));
-	  CHECK(rec != nullptr, _);
-	  push_view(new PostView(Post(ctx, *rec)));
-	  delete v;
-	} else {
-	  push_view(v);
-	}
-	
-	return true;
-      });
-    
     rdr.cmds.emplace("post-new", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: post");
@@ -269,28 +236,8 @@ namespace gui {
 	return true;
       });
 
-    rdr.cmds.emplace("project", [&ctx](auto args) {
-	if (args.size() != 1) {
-	  log(ctx, "Invalid number of arguments, syntax: project ea362b58");
-	  return false;
-	}
-	
-	ProjectSearch *v = new ProjectSearch(ctx);
-	auto id(args.back());
-	gui::set_str(GTK_ENTRY(v->id_fld), id);
+    init_id_search<ProjectSearch, ProjectView, Project>(rdr, "project");
 
-	if (find(*v) == 1) {
-	  auto rec(first_rec(*v));
-	  CHECK(rec != nullptr, _);
-	  push_view(new ProjectView(Project(ctx, *rec)));
-	  delete v;
-	} else {
-	  push_view(v);
-	}
-	
-	return true;
-      });
-    
     rdr.cmds.emplace("project-new", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: project");
@@ -337,28 +284,8 @@ namespace gui {
 	return true;
       });
 
-    rdr.cmds.emplace("task", [&ctx](auto args) {
-	if (args.size() != 1) {
-	  log(ctx, "Invalid number of arguments, syntax: task ea362b58");
-	  return false;
-	}
-	
-	TaskSearch *v = new TaskSearch(ctx);
-	auto id(args.back());
-	gui::set_str(GTK_ENTRY(v->id_fld), id);
-
-	if (find(*v) == 1) {
-	  auto rec(first_rec(*v));
-	  CHECK(rec != nullptr, _);
-	  push_view(new TaskView(Task(ctx, *rec)));
-	  delete v;
-	} else {
-	  push_view(v);
-	}
-	
-	return true;
-      });
-
+    init_id_search<TaskSearch, TaskView, Task>(rdr, "task");
+    
     rdr.cmds.emplace("task-new", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: task");
@@ -379,21 +306,6 @@ namespace gui {
 	return true;
       });
     
-    rdr.cmds.emplace("todo", [&ctx](auto args) {
-	if (args.empty()) {
-	  auto v(new TaskSearch(ctx));
-	  set_str(GTK_ENTRY(v->tags_fld), "todo");
-	  push_view(v);
-	} else {
-	  Task task(ctx);
-	  task.tags.insert("todo");
-	  task.name = join(args.begin(), args.end(), ' ');
-	  push_view(new TaskView(task));
-	}
-	
-	return true;
-      });
-
     rdr.cmds.emplace("undo", [&ctx](auto args) {
 	if (!args.empty()) {
 	  log(ctx, "Invalid number of arguments, syntax: inbox");
