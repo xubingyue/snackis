@@ -27,7 +27,7 @@ namespace gui {
     Ctx &ctx(v->ctx);
     const str
       lbl(gtk_label_get_text(GTK_LABEL(v->label))),
-      msg(fmt("Cancelled %0 %1", lbl, id_str(v->rec)));
+      msg(fmt("Cancelled %0", lbl));
     
     if (!v->on_cancel.empty()) {
       TRY(try_save);
@@ -52,7 +52,7 @@ namespace gui {
     if (v->save() && try_save.errors.empty()) {
       const str
 	lbl(gtk_label_get_text(GTK_LABEL(v->label))),
-	msg(fmt("Saved %0 %1", lbl, id_str(v->rec)));
+	msg(fmt("Saved %0", lbl));
       pop_view(v);
       for (auto fn: v->on_save) { fn(); }
       log(ctx, msg);
