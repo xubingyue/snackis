@@ -1,2 +1,1 @@
-* compress edit/search cmd imps in reader
 * compress folder selection in encrypt/decrypt

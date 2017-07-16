@@ -77,6 +77,36 @@ namespace gui {
 	return true;
       });
   }
+
+  template <typename ViewT, typename RecT>
+  static void init_new(Reader &rdr, const str &id) {
+    Ctx &ctx(rdr.ctx);
+
+    rdr.cmds.emplace(fmt("%0-new", id), [&ctx, id](auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: %0-new", id);
+	  return false;
+	}
+	
+	push_view(new ViewT(RecT(ctx)));
+	return true;
+      });
+  }
+
+  template <typename ViewT>
+  static void init_search(Reader &rdr, const str &id) {
+    Ctx &ctx(rdr.ctx);
+
+    rdr.cmds.emplace(fmt("%0-search", id), [&ctx, id](auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: %0-search", id);
+	  return false;
+	}
+	
+	push_view(new ViewT(ctx));
+	return true;
+      });
+  }
   
   static void init_cmds(Reader &rdr) {
     Ctx &ctx(rdr.ctx);
@@ -102,15 +132,15 @@ namespace gui {
 	return true;
       });
 
-    rdr.cmds.emplace("defrag!", [&ctx](auto args) {
+    rdr.cmds.emplace("rewrite!", [&ctx](auto args) {
 	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: defrag!");
+	  log(ctx, "Invalid number of arguments, syntax: rewrite!");
 	  return false;
 	}
 
-	log(ctx, "Defragmenting database...");
-	log(ctx, fmt("Finished defragmenting, %0k reclaimed",
-		     db::defrag(ctx) / 1000));
+	log(ctx, "Rewriting database...");
+	log(ctx, fmt("Finished rewriting, %0k reclaimed",
+		     db::rewrite(ctx) / 1000));
 	return true;
       });
 
@@ -125,26 +155,8 @@ namespace gui {
       });
 
     init_id_search<FeedSearch, FeedView, Feed>(rdr, "feed");
-
-    rdr.cmds.emplace("feed-new", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: feed");
-	  return false;
-	}
-	
-	push_view(new FeedView(Feed(ctx)));
-	return true;
-      });
-
-    rdr.cmds.emplace("feed-search", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: feed-search");
-	  return false;
-	}
-	
-	push_view(new FeedSearch(ctx));
-	return true;
-      });
+    init_new<FeedView, Feed>(rdr, "feed");
+    init_search<FeedSearch>(rdr, "feed");
 
     rdr.cmds.emplace("fetch", [&ctx](auto args) {
 	if (!args.empty()) {
@@ -203,60 +215,15 @@ namespace gui {
       });
 
     init_id_search<PeerSearch, PeerView, Peer>(rdr, "peer");
-
-    rdr.cmds.emplace("peer-search", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: peer-search");
-	  return false;
-	}
-	
-	push_view(new PeerSearch(ctx));
-	return true;
-      });
+    init_search<PeerSearch>(rdr, "peer");
 
     init_id_search<PostSearch, PostView, Post>(rdr, "post");
-
-    rdr.cmds.emplace("post-new", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: post");
-	  return false;
-	}
-	
-	push_view(new PostView(Post(ctx)));
-	return true;
-      });
-
-    rdr.cmds.emplace("post-search", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: post-search");
-	  return false;
-	}
-	
-	push_view(new PostSearch(ctx));
-	return true;
-      });
+    init_new<PostView, Post>(rdr, "post");
+    init_search<PostSearch>(rdr, "post");
 
     init_id_search<ProjectSearch, ProjectView, Project>(rdr, "project");
-
-    rdr.cmds.emplace("project-new", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: project");
-	  return false;
-	}
-	
-	push_view(new ProjectView(Project(ctx)));
-	return true;
-      });
-
-    rdr.cmds.emplace("project-search", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: project-search");
-	  return false;
-	}
-	
-	push_view(new ProjectSearch(ctx));
-	return true;
-      });
+    init_new<ProjectView, Project>(rdr, "project");
+    init_search<ProjectSearch>(rdr, "project");
     
     rdr.cmds.emplace("send", [&ctx](auto args) {
 	if (!args.empty()) {
@@ -285,26 +252,8 @@ namespace gui {
       });
 
     init_id_search<TaskSearch, TaskView, Task>(rdr, "task");
-    
-    rdr.cmds.emplace("task-new", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: task");
-	  return false;
-	}
-	
-	push_view(new TaskView(Task(ctx)));
-	return true;
-      });
-
-    rdr.cmds.emplace("task-search", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: task-search");
-	  return false;
-	}
-	
-	push_view(new TaskSearch(ctx));
-	return true;
-      });
+    init_new<TaskView, Task>(rdr, "task");
+    init_search<TaskSearch>(rdr, "task");
     
     rdr.cmds.emplace("undo", [&ctx](auto args) {
 	if (!args.empty()) {

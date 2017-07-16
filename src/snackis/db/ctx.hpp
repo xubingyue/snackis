@@ -44,7 +44,7 @@ namespace db {
   void dirty_file(Ctx &ctx, std::ostream &file);
   void flush(Ctx &ctx);
   void slurp(Ctx &ctx);
-  int64_t defrag(Ctx &ctx);
+  int64_t rewrite(Ctx &ctx);
 
   template <typename...Args>
   void log(const Ctx &ctx, const str &spec, const Args &...args) {

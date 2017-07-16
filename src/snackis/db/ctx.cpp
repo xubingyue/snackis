@@ -113,13 +113,13 @@ namespace db {
     for (auto t: ctx.tables) { t->slurp(); }
   }
 
-  int64_t defrag(Ctx &ctx) {
-    TRACE("Defragmenting database");
+  int64_t rewrite(Ctx &ctx) {
+    TRACE("Rewritementing database");
     Ctx::Lock lock(ctx.mutex);
     int64_t res(0);
     
     for (auto t: ctx.tables) {
-      res += t->defrag();
+      res += t->rewrite();
       t->file.flush();
     }
 
