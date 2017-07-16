@@ -1,1 +1,2 @@
-* refactor folder selection in encrypt/decrypt
+* compress edit/search cmd imps in reader
+* compress folder selection in encrypt/decrypt

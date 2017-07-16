@@ -4,7 +4,7 @@
 #### secure, distributed co-creation
 
 ### Introduction
-Snackis is aiming for something that might be described as a post-modern enigma-device; an effective tool that covers most secure communication needs using any regular email-account as transport. Peers, encryption-keys, messages and and settings are stored locally, encrypted using a master password. At present; Snackis supports key-exchange via invites/accepts, encryption/decryption of files, threaded feeds/posts and projects/tasks.
+Snackis is aiming for something that might be described as a post-modern enigma-device; an effective tool that covers most secure communication needs using any regular email-account as transport. Peers, encryption-keys, messages and and settings are stored locally, encrypted using a master password. At present; Snackis supports key-exchange via invites/accepts, encryption/decryption of files, threaded feeds/posts and shared projects/tasks.
 
 ### Dependencies
 Snackis requires a ```C++1z```-capable compiler and standard library to build, and defaults to using [clang](http://releases.llvm.org/download.html#4.0.0) with ```libc++```. This unfortunately often means downloading and manually installing [clang](http://releases.llvm.org/download.html#4.0.0) to even run the application, but will improve over time. Snackis further depends on ```libcurl```, ```libpthread```, ```libsodium``` and ```libuuid``` for core functionality, as well as ```GTK+ 3``` for the UI.
@@ -17,7 +17,7 @@ sudo ldconfig
 ```
 
 ### Getting started
-If you're running ```Linux/64```, copy [/dist](https://github.com/andreas-gone-wild/snackis/tree/master/dist) to where you want to keep Snackis; otherwise you'll have to build the ```snackis```-executable yourself. Snackis is designed to run completely self-contained and will create everything it needs in the directory where it's started.
+If you're running ```Linux/64```, copy [/dist](https://github.com/andreas-gone-wild/snackis/tree/master/dist) to where you want to keep Snackis; otherwise you'll have to build the executable yourself. Snackis is designed to run completely self-contained and will create everything it needs in the directory where it's started.
 
 ### Building
 Once a modern enough compiler is in place, execute the following commands to build Snackis:

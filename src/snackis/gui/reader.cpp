@@ -102,9 +102,9 @@ namespace gui {
 	return true;
       });
 
-    rdr.cmds.emplace("defrag", [&ctx](auto args) {
+    rdr.cmds.emplace("defrag!", [&ctx](auto args) {
 	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: defrag");
+	  log(ctx, "Invalid number of arguments, syntax: defrag!");
 	  return false;
 	}
 
