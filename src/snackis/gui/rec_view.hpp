@@ -13,7 +13,7 @@ namespace gui {
     using Event = std::vector<EventFn>;
     
     RecT rec;
-    GtkWidget *menu, *fields, *save_btn, *cancel_btn;
+    GtkWidget *fields, *save_btn, *cancel_btn;
     Event on_save;
     Event on_cancel;
     
@@ -65,13 +65,10 @@ namespace gui {
   RecView<RecT>::RecView(const str &lbl, const RecT &rec):
     View(rec.ctx, fmt("%0 %1", lbl, id_str(rec))),
     rec(rec),
-    menu(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5)),
     fields(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5)),
     save_btn(gtk_button_new_with_mnemonic(fmt("_Save %0", lbl).c_str())),
     cancel_btn(gtk_button_new_with_mnemonic("_Cancel"))
   {
-    gtk_widget_set_margin_bottom(menu, 5);
-    gtk_container_add(GTK_CONTAINER(panel), menu);
     gtk_widget_set_vexpand(fields, true);
     gtk_container_add(GTK_CONTAINER(panel), fields);
     

@@ -11,6 +11,7 @@ namespace gui {
     ctx(ctx),
     panel(gtk_box_new(GTK_ORIENTATION_VERTICAL, 0)),
     label(new_label(lbl)),
+    menu(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5)),
     focused(panel) { 
     add_style(panel, "view");
     gtk_widget_set_margin_start(panel, 5);
@@ -18,9 +19,17 @@ namespace gui {
     gtk_widget_set_margin_top(panel, 5);
     gtk_widget_set_margin_bottom(panel, 5);
 
+    auto hdr(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
+    gtk_widget_set_margin_bottom(hdr, 10);
+    gtk_container_add(GTK_CONTAINER(panel), hdr);
+    
     add_style(label, "view_label");
-    gtk_widget_set_halign(label, GTK_ALIGN_END);
-    gtk_container_add(GTK_CONTAINER(panel), label);
+    gtk_widget_set_hexpand(label, true);
+    gtk_widget_set_valign(label, GTK_ALIGN_START);
+    gtk_container_add(GTK_CONTAINER(hdr), label);
+
+    gtk_widget_set_valign(menu, GTK_ALIGN_END);
+    gtk_container_add(GTK_CONTAINER(hdr), menu);
   }
 
   View::~View() {
