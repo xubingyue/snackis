@@ -103,13 +103,13 @@ namespace snackis {
     return true;
   }
 
-  bool receive(Msg &msg) {
+  void receive(Msg &msg) {
     Ctx &ctx(msg.ctx);
 
     if (msg.type == Msg::ACCEPT) {
-      if (!invite_accepted(msg)) { return false; }
+      if (!invite_accepted(msg)) { return; }
     } else if (msg.type == Msg::REJECT) {
-      if (!invite_rejected(msg)) { return false; }
+      if (!invite_rejected(msg)) { return; }
     } else if (msg.type == Msg::POST) {
       Feed fd(ctx, msg.feed);
       auto fd_fnd(find_feed_id(ctx, fd.id));
@@ -124,7 +124,7 @@ namespace snackis {
 	  
 	  if (db::compare(ctx.db.posts, prev, *ps_fnd) == 0) {
 	    log(ctx, "Skipped duplicate post update");
-	    return false;
+	    return;
 	  }
 	}
       }
@@ -142,13 +142,12 @@ namespace snackis {
 	  
 	  if (db::compare(ctx.db.tasks, tsk_prev, *tsk_fnd) == 0) {
 	    log(ctx, "Skipped duplicate task update");
-	    return false;
+	    return;
 	  }
 	}
       }
     }
     
     db::insert(ctx.db.inbox, msg);
-    return true;
   }
 }
