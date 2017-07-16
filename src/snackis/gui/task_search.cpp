@@ -45,6 +45,8 @@ namespace gui {
     gtk_grid_attach(GTK_GRID(frm), id_fld, 0, row+1, 2, 1);
 
     gtk_grid_attach(GTK_GRID(frm), new_label("Prio"), 2, 0, 1, 1);
+    set_width(GTK_ENTRY(prio_fld), 3);
+    gtk_widget_set_halign(prio_fld, GTK_ALIGN_START);
     gtk_grid_attach(GTK_GRID(frm), prio_fld, 2, 1, 1, 1);		    
     
     gtk_widget_set_halign(done_fld, GTK_ALIGN_END);

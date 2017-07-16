@@ -63,7 +63,7 @@ namespace gui {
   
   template <typename RecT>
   RecView<RecT>::RecView(const str &lbl, const RecT &rec):
-    View(rec.ctx, lbl, id_str(rec)),
+    View(rec.ctx, fmt("%0 %1", lbl, id_str(rec))),
     rec(rec),
     menu(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5)),
     fields(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5)),

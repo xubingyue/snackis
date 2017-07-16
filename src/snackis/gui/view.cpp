@@ -7,11 +7,10 @@ namespace snackis {
 namespace gui {
   std::list<View *> View::stack;
 
-  View::View(Ctx &ctx, const str &lbl, const str &inf): 
+  View::View(Ctx &ctx, const str &lbl): 
     ctx(ctx),
     panel(gtk_box_new(GTK_ORIENTATION_VERTICAL, 0)),
     label(new_label(lbl)),
-    info(new_label(inf)),
     focused(panel) { 
     add_style(panel, "view");
     gtk_widget_set_margin_start(panel, 5);
@@ -19,13 +18,9 @@ namespace gui {
     gtk_widget_set_margin_top(panel, 5);
     gtk_widget_set_margin_bottom(panel, 5);
 
-    auto hdr = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    gtk_container_add(GTK_CONTAINER(panel), hdr);
-    gtk_widget_set_hexpand(info, true);
-    gtk_container_add(GTK_CONTAINER(hdr), info);
     add_style(label, "view_label");
     gtk_widget_set_halign(label, GTK_ALIGN_END);
-    gtk_container_add(GTK_CONTAINER(hdr), label);
+    gtk_container_add(GTK_CONTAINER(panel), label);
   }
 
   View::~View() {
