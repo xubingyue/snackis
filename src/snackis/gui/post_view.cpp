@@ -67,6 +67,7 @@ namespace gui {
     feed_fld(ctx),
     post_lst(ctx)
   {
+    auto &me(whoami(ctx));
     g_signal_connect(post_btn, "clicked", G_CALLBACK(on_post), this);
     gtk_container_add(GTK_CONTAINER(menu), post_btn);
     gtk_widget_set_sensitive(find_replies_btn,
@@ -102,7 +103,8 @@ namespace gui {
 	gtk_widget_set_sensitive(feed_btn, sel);
 	refresh(*this);
       });
-    
+
+    gtk_widget_set_sensitive(feed_fld.ptr(), rec.owner_id == me.id);    
     gtk_container_add(GTK_CONTAINER(feed_box), feed_fld.ptr());
     g_signal_connect(feed_btn, "clicked", G_CALLBACK(on_feed), this);
     gtk_widget_set_sensitive(feed_btn, false);
@@ -111,10 +113,12 @@ namespace gui {
     GtkWidget *lbl(new_label("Tags"));
     gtk_widget_set_margin_top(lbl, 5);
     gtk_container_add(GTK_CONTAINER(fields), lbl);
+    gtk_widget_set_sensitive(tags_fld, rec.owner_id == me.id);    
     gtk_container_add(GTK_CONTAINER(fields), tags_fld);
     set_str(GTK_ENTRY(tags_fld), join(rec.tags.begin(), rec.tags.end(), ' '));
 
     gtk_container_add(GTK_CONTAINER(fields), new_label("Body"));
+    gtk_widget_set_sensitive(body_fld, rec.owner_id == me.id);    
     gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(body_fld));
     set_str(GTK_TEXT_VIEW(body_fld), rec.body);
 

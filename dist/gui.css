@@ -113,6 +113,11 @@ GtkTextView .view:selected:focused {
     color: #000000;
 }
 
+GtkTextView:insensitive {
+    color: #ffffff;
+    background: #333333;
+}
+
 GtkTreeView column-header .button {
     background: #333333;
     border: none;

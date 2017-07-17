@@ -15,6 +15,7 @@ namespace gui {
     FeedHistory post_lst;
 
     FeedView(const Feed &feed);
+    bool allow_save() const override;
     bool save() override;
   };
 }}

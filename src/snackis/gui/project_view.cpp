@@ -60,6 +60,7 @@ namespace gui {
   }
 
   static GtkWidget *init_general(ProjectView &v) {
+    auto &me(whoami(v.ctx));
     GtkWidget *frm(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
     gtk_widget_set_margin_top(frm, 5);
 
@@ -67,13 +68,16 @@ namespace gui {
     GtkWidget *name_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
     gtk_container_add(GTK_CONTAINER(frm), name_box);
     gtk_widget_set_hexpand(v.name_fld, true);    
+    gtk_widget_set_sensitive(v.name_fld, v.rec.owner_id == me.id);    
     gtk_container_add(GTK_CONTAINER(name_box), v.name_fld);
     gtk_entry_set_text(GTK_ENTRY(v.name_fld), v.rec.name.c_str());
+    gtk_widget_set_sensitive(v.active_fld, v.rec.owner_id == me.id);    
     gtk_container_add(GTK_CONTAINER(name_box), v.active_fld);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(v.active_fld), v.rec.active);
 
     gtk_container_add(GTK_CONTAINER(frm), new_label("Tags"));
     gtk_widget_set_hexpand(v.tags_fld, true);
+    gtk_widget_set_sensitive(v.tags_fld, v.rec.owner_id == me.id);
     gtk_container_add(GTK_CONTAINER(frm), v.tags_fld);    
     gtk_entry_set_text(GTK_ENTRY(v.tags_fld),
 		       join(v.rec.tags.begin(), v.rec.tags.end(), ' ').c_str());
@@ -81,6 +85,7 @@ namespace gui {
     GtkWidget *l(new_label("Info"));
     gtk_widget_set_margin_top(l, 5);    
     gtk_container_add(GTK_CONTAINER(frm), l);
+    gtk_widget_set_sensitive(v.info_fld, v.rec.owner_id == me.id);
     gtk_container_add(GTK_CONTAINER(frm), gtk_widget_get_parent(v.info_fld));
     set_str(GTK_TEXT_VIEW(v.info_fld), v.rec.info);
 
@@ -121,6 +126,7 @@ namespace gui {
 			     init_general(*this),
 			     gtk_label_new_with_mnemonic("_1 General"));
 
+    gtk_widget_set_sensitive(peer_lst.add_btn, rec.owner_id == whoami(ctx).id);
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
 			     peer_lst.ptr(),
 			     gtk_label_new_with_mnemonic("_2 Peers"));
@@ -130,6 +136,10 @@ namespace gui {
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs), post_lst.ptr(), l);
 
     focused = name_fld;
+  }
+
+  bool ProjectView::allow_save() const {
+    return rec.owner_id == whoami(ctx).id;
   }
 
   bool ProjectView::save() {

@@ -120,7 +120,7 @@ namespace snackis {
 
 	if (ps_fnd) {
 	  if (ps_fnd->owner_id != msg.from_id) {
-	    log(ctx, "Skipping unauthorized post update");
+	    log(ctx, "Skipping unauthorized update");
 	    return;
 	  }
 	}
@@ -135,7 +135,7 @@ namespace snackis {
 
 	if (tsk_fnd) {
 	  if (tsk_fnd->owner_id != msg.from_id) {
-	    log(ctx, "Skipping unauthorized task update");
+	    log(ctx, "Skipping unauthorized update");
 	    return;
 	  }
 	}

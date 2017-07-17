@@ -15,6 +15,7 @@ namespace gui {
     FeedHistory post_lst;
     
     ProjectView(const Project &rec);
+    bool allow_save() const override;
     bool save() override;
   };
 }}

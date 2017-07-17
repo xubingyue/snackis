@@ -1,2 +1,7 @@
 * add peer info
+* add todo view
+** show first 30 non-done, owned tasks 
+** add task done_at
+*** set in update_event
+** show tasks for 3 days after done
 * compress folder selection in encrypt/decrypt

@@ -41,6 +41,7 @@ namespace gui {
   }
 
   static GtkWidget *init_general(TaskView &v) {
+    auto &me(whoami(v.ctx));
     GtkWidget *frm(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
     gtk_widget_set_margin_top(frm, 5);
     
@@ -60,6 +61,7 @@ namespace gui {
 	refresh(v);
       });
     
+    gtk_widget_set_sensitive(v.project_fld.ptr(), v.rec.owner_id == me.id);
     gtk_container_add(GTK_CONTAINER(project_box), v.project_fld.ptr());
     g_signal_connect(v.project_btn, "clicked", G_CALLBACK(on_project), &v);
     gtk_container_add(GTK_CONTAINER(project_box), v.project_btn);
@@ -71,19 +73,24 @@ namespace gui {
 
     gtk_grid_attach(GTK_GRID(name_box), new_label("Name"), 0, 0, 2, 1);
     gtk_widget_set_hexpand(v.name_fld, true);
+    gtk_widget_set_sensitive(v.name_fld, v.rec.owner_id == me.id);
     gtk_grid_attach(GTK_GRID(name_box), v.name_fld, 0, 1, 2, 1);		    
   
     gtk_grid_attach(GTK_GRID(name_box), new_label("Prio"), 2, 0, 1, 1);
     set_width(GTK_ENTRY(v.prio_fld), 3);
     gtk_widget_set_halign(v.prio_fld, GTK_ALIGN_START);
+    gtk_widget_set_sensitive(v.prio_fld, v.rec.owner_id == me.id);
     gtk_grid_attach(GTK_GRID(name_box), v.prio_fld, 2, 1, 1, 1);		    
     gtk_widget_set_halign(v.done_fld, GTK_ALIGN_END);
+    gtk_widget_set_sensitive(v.done_fld, v.rec.owner_id == me.id);
     gtk_grid_attach(GTK_GRID(name_box), v.done_fld, 3, 1, 1, 1);		    
 
     gtk_container_add(GTK_CONTAINER(frm), new_label("Tags"));
+    gtk_widget_set_sensitive(v.tags_fld, v.rec.owner_id == me.id);
     gtk_container_add(GTK_CONTAINER(frm), v.tags_fld);
     
     gtk_container_add(GTK_CONTAINER(frm), new_label("Info"));
+    gtk_widget_set_sensitive(v.info_fld, v.rec.owner_id == me.id);
     gtk_container_add(GTK_CONTAINER(frm), gtk_widget_get_parent(v.info_fld));
     return frm;
   }
