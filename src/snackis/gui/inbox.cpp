@@ -64,11 +64,16 @@ namespace gui {
 	  copy(*ps_fnd, msg);
 	  push_view(new PostView(*ps_fnd));
 	} else {
-	  push_view(new PostView(Post(msg)));
+	  Post ps(msg);
+	  db::insert(ctx.db.posts, ps);
+	  push_view(new PostView(ps));
 	}
       } else {
 	db::insert(ctx.db.feeds, Feed(msg));
-	push_view(new PostView(Post(msg)));
+	
+	Post ps(msg);
+	db::insert(ctx.db.posts, ps);
+	push_view(new PostView(ps));
       }
     } else if (msg.type == Msg::TASK) {
       Project prj(ctx, msg.project);
@@ -87,11 +92,16 @@ namespace gui {
 	  copy(*tsk_fnd, msg);
 	  push_view(new TaskView(*tsk_fnd));
 	} else {
-	  push_view(new TaskView(Task(msg)));
+	  Task tsk(msg);
+	  db::insert(ctx.db.tasks, tsk);
+	  push_view(new TaskView(tsk));
 	}
       } else {
 	  db::insert(ctx.db.projects, Project(msg));
-	  push_view(new TaskView(Task(msg)));
+
+	  Task tsk(msg);
+	  db::insert(ctx.db.tasks, tsk);
+	  push_view(new TaskView(tsk));
       }
     } else {
 	log(ctx, fmt("Invalid message type: %0", msg.type));

@@ -29,6 +29,7 @@ namespace snackis {
     prio(0)
   {
     copy(*this, msg);
+    peer_ids.insert(msg.from_id);
   }
 
   void copy(Task &dst, const Msg &src) {
@@ -43,14 +44,6 @@ namespace snackis {
 
     std::copy(tsk.tags.begin(), tsk.tags.end(),
 	      std::inserter(dst.tags, dst.tags.end()));
-
-    auto my_pid(whoami(ctx).id);
-    std::copy_if(tsk.peer_ids.begin(), tsk.peer_ids.end(),
-		 std::inserter(dst.peer_ids, dst.peer_ids.end()),
-		 [&ctx, &my_pid](auto &pid) {
-		   return find_peer_id(ctx, pid) && pid != my_pid;
-		 });
-    dst.peer_ids.insert(src.from_id);
   }
   
   opt<Task> find_task_id(Ctx &ctx, UId id) {
