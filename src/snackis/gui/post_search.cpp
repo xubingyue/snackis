@@ -148,12 +148,14 @@ namespace gui {
 	continue;
       }
       
-      Peer peer(get_peer_id(ctx, post.owner_id));
+      auto pr(find_peer_id(ctx, post.owner_id));
+      if (!pr) { continue; }
+      
       GtkTreeIter iter;
       gtk_list_store_append(store, &iter);
-      const str by(fmt("%0\n%1",
-		       peer.name.c_str(),
-		       fmt(post.created_at, "%a %b %d, %H:%M").c_str()));
+      const str by(trim(fmt("%0\n%1",
+			    pr->name,
+			    fmt(post.created_at, "%a %b %d, %H:%M").c_str())));
       gtk_list_store_set(store, &iter,
 			 COL_PTR, &rec,
 			 COL_ID, id_str(post).c_str(),

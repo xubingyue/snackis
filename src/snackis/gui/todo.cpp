@@ -73,7 +73,7 @@ namespace gui {
 	  tsk.tags.find("todo") == tsk.tags.end()) { continue; }
 
       if (tsk.done &&
-	  tsk.done_at < now() - std::chrono::hours(3*24)) { continue; }
+	  tsk.done_at < now() - std::chrono::hours(TODO_MAX_AGE*24)) { continue; }
 	
       GtkTreeIter iter;
       gtk_list_store_append(store, &iter);
