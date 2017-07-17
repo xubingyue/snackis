@@ -77,7 +77,6 @@ namespace gui {
 
     gtk_container_add(GTK_CONTAINER(frm), new_label("Tags"));
     gtk_widget_set_hexpand(v.tags_fld, true);
-    gtk_widget_set_sensitive(v.tags_fld, v.rec.owner_id == me.id);
     gtk_container_add(GTK_CONTAINER(frm), v.tags_fld);    
     gtk_entry_set_text(GTK_ENTRY(v.tags_fld),
 		       join(v.rec.tags.begin(), v.rec.tags.end(), ' ').c_str());
@@ -126,7 +125,6 @@ namespace gui {
 			     init_general(*this),
 			     gtk_label_new_with_mnemonic("_1 General"));
 
-    gtk_widget_set_sensitive(peer_lst.add_btn, rec.owner_id == whoami(ctx).id);
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
 			     peer_lst.ptr(),
 			     gtk_label_new_with_mnemonic("_2 Peers"));
@@ -136,10 +134,6 @@ namespace gui {
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs), post_lst.ptr(), l);
 
     focused = name_fld;
-  }
-
-  bool ProjectView::allow_save() const {
-    return rec.owner_id == whoami(ctx).id;
   }
 
   bool ProjectView::save() {

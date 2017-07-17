@@ -86,7 +86,6 @@ namespace gui {
     gtk_grid_attach(GTK_GRID(name_box), v.done_fld, 3, 1, 1, 1);		    
 
     gtk_container_add(GTK_CONTAINER(frm), new_label("Tags"));
-    gtk_widget_set_sensitive(v.tags_fld, v.rec.owner_id == me.id);
     gtk_container_add(GTK_CONTAINER(frm), v.tags_fld);
     
     gtk_container_add(GTK_CONTAINER(frm), new_label("Info"));
@@ -135,9 +134,7 @@ namespace gui {
   }
 
   bool TaskView::allow_save() const {
-    return
-      rec.owner_id == whoami(ctx).id &&
-      project_fld.selected;
+    return project_fld.selected ? true : false;
   }
 
   void TaskView::load() {

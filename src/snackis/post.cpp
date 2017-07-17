@@ -30,11 +30,12 @@ namespace snackis {
 
     dst.id = ps.id;
     dst.feed_id = ps.feed_id;
-    dst.tags = ps.tags;
     dst.body = ps.body;
 
+    std::copy(ps.tags.begin(), ps.tags.end(),
+	      std::inserter(dst.tags, dst.tags.end()));
+
     auto my_pid(whoami(ctx).id);
-    dst.peer_ids.clear();
     std::copy_if(ps.peer_ids.begin(), ps.peer_ids.end(),
 		 std::inserter(dst.peer_ids, dst.peer_ids.end()),
 		 [&ctx, &my_pid](auto &pid) {

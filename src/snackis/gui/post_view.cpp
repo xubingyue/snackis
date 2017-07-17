@@ -59,9 +59,9 @@ namespace gui {
     post_btn(gtk_button_new_with_mnemonic("New _Post")),
     find_replies_btn(gtk_button_new_with_mnemonic("_Find Replies")),
     reply_btn(gtk_button_new_with_mnemonic("New _Reply")),
-    project_btn(gtk_button_new_with_mnemonic("_View Project")),
-    task_btn(gtk_button_new_with_mnemonic("_View Task")),
-    feed_btn(gtk_button_new_with_mnemonic("View Feed")),
+    project_btn(gtk_button_new_with_mnemonic("View Project")),
+    task_btn(gtk_button_new_with_mnemonic("View Task")),
+    feed_btn(gtk_button_new_with_mnemonic("_View Feed")),
     tags_fld(gtk_entry_new()),
     body_fld(new_text_view()),
     feed_fld(ctx),
@@ -113,7 +113,6 @@ namespace gui {
     GtkWidget *lbl(new_label("Tags"));
     gtk_widget_set_margin_top(lbl, 5);
     gtk_container_add(GTK_CONTAINER(fields), lbl);
-    gtk_widget_set_sensitive(tags_fld, rec.owner_id == me.id);    
     gtk_container_add(GTK_CONTAINER(fields), tags_fld);
     set_str(GTK_ENTRY(tags_fld), join(rec.tags.begin(), rec.tags.end(), ' '));
 
@@ -135,9 +134,7 @@ namespace gui {
   }
 
   bool PostView::allow_save() const {
-    return
-      rec.owner_id == whoami(ctx).id &&
-      feed_fld.selected ? true : false;
+    return feed_fld.selected ? true : false;
   }
 
   bool PostView::save() {
