@@ -6,7 +6,7 @@
 
 namespace snackis {
 namespace gui {
-  enum FeedCol {COL_PTR=0, COL_ID, COL_CREATED, COL_OWNER, COL_NAME, COL_TAGS,
+  enum FeedCol {COL_PTR=0, COL_ID, COL_CREATED, COL_OWNER, COL_TAGS,
 		COL_INFO};
 
   static void edit(Ctx &ctx, const db::Rec<Feed> &rec) {
@@ -17,9 +17,8 @@ namespace gui {
   FeedSearch::FeedSearch(Ctx &ctx):
     SearchView<Feed>(ctx,
 		     "Feed",
-		     gtk_list_store_new(7,
+		     gtk_list_store_new(6,
 					G_TYPE_POINTER,
-					G_TYPE_STRING,
 					G_TYPE_STRING,
 					G_TYPE_STRING,
 					G_TYPE_STRING,
@@ -66,7 +65,6 @@ namespace gui {
     add_col(GTK_TREE_VIEW(list), "Id", COL_ID);
     add_col(GTK_TREE_VIEW(list), "Created", COL_CREATED);
     add_col(GTK_TREE_VIEW(list), "Owner", COL_OWNER);
-    add_col(GTK_TREE_VIEW(list), "Name", COL_NAME, true);
     add_col(GTK_TREE_VIEW(list), "Tags", COL_TAGS);
     add_col(GTK_TREE_VIEW(list), "Info", COL_INFO, true);
 
@@ -126,10 +124,9 @@ namespace gui {
 			 COL_CREATED,
 			 fmt(feed.created_at, "%a %b %d, %H:%M").c_str(),
 			 COL_OWNER, own.name.c_str(),
-			 COL_NAME, feed.name.c_str(),
 			 COL_TAGS,
 			 join(feed.tags.begin(), feed.tags.end(), '\n').c_str(),
-			 COL_INFO, feed.info.c_str(),
+			 COL_INFO, trim(fmt("%0\n%1", feed.name, feed.info)).c_str(),
 			 -1);
       cnt++;
     }

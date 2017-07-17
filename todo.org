@@ -1,5 +1,3 @@
-* add peer info
-** add search support
 * add todo view
 ** show first 21 non-done, owned tasks 
 ** add task done_at

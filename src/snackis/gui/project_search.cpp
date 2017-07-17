@@ -6,8 +6,7 @@
 
 namespace snackis {
 namespace gui {
-  enum ProjectCol {COL_PTR=0, COL_ID, COL_CREATED, COL_OWNER, COL_NAME, COL_TAGS,
-		   COL_INFO};
+  enum ProjectCol {COL_PTR=0, COL_ID, COL_CREATED, COL_OWNER, COL_TAGS, COL_INFO};
 
   static void edit(Ctx &ctx, const db::Rec<Project> &rec) {
     push_view(new ProjectView(Project(ctx, rec)));
@@ -16,9 +15,8 @@ namespace gui {
   ProjectSearch::ProjectSearch(Ctx &ctx):
     SearchView<Project>(ctx,
 		     "Project",
-		     gtk_list_store_new(7,
+		     gtk_list_store_new(6,
 					G_TYPE_POINTER,
-					G_TYPE_STRING,
 					G_TYPE_STRING,
 					G_TYPE_STRING,
 					G_TYPE_STRING,
@@ -58,7 +56,6 @@ namespace gui {
     add_col(GTK_TREE_VIEW(list), "Id", COL_ID);
     add_col(GTK_TREE_VIEW(list), "Created", COL_CREATED);
     add_col(GTK_TREE_VIEW(list), "Owner", COL_OWNER);
-    add_col(GTK_TREE_VIEW(list), "Name", COL_NAME, true);
     add_col(GTK_TREE_VIEW(list), "Tags", COL_TAGS);    
     add_col(GTK_TREE_VIEW(list), "Info", COL_INFO, true);
 
@@ -117,10 +114,10 @@ namespace gui {
 			 COL_CREATED,
 			 fmt(project.created_at, "%a %b %d, %H:%M").c_str(),
 			 COL_OWNER, own.name.c_str(),
-			 COL_NAME, project.name.c_str(),
 			 COL_TAGS,
 			 join(project.tags.begin(), project.tags.end(), '\n').c_str(),
-			 COL_INFO, project.info.c_str(),			 
+			 COL_INFO, trim(fmt("%0\n%1",
+					    project.name, project.info)).c_str(), 
 			 -1);
       cnt++;
     }

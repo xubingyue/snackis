@@ -6,7 +6,7 @@
 
 namespace snackis {
 namespace gui {
-  enum PeerCol {COL_PTR=0, COL_ID, COL_NAME, COL_TAGS, COL_EMAIL};
+  enum PeerCol {COL_PTR=0, COL_ID, COL_NAME, COL_TAGS, COL_INFO};
 
   static void edit(Ctx &ctx, const db::Rec<Peer> &rec) {
     push_view(new PeerView(Peer(ctx, rec)));
@@ -49,7 +49,7 @@ namespace gui {
     add_col(GTK_TREE_VIEW(list), "Id", COL_ID);
     add_col(GTK_TREE_VIEW(list), "Name", COL_NAME);
     add_col(GTK_TREE_VIEW(list), "Tags", COL_TAGS);
-    add_col(GTK_TREE_VIEW(list), "Email", COL_EMAIL, true);
+    add_col(GTK_TREE_VIEW(list), "Info", COL_INFO, true);
 
     focused = id_fld;
   }
@@ -84,7 +84,8 @@ namespace gui {
       
       if (!text_sel.empty() &&
 	  find_ci(peer.name, text_sel) == str::npos &&
-	  find_ci(peer.email, text_sel) == str::npos) {
+	  find_ci(peer.email, text_sel) == str::npos &&
+	  find_ci(peer.info, text_sel) == str::npos) {
 	continue;
       }
 
@@ -93,10 +94,10 @@ namespace gui {
       gtk_list_store_set(store, &iter,
 			 COL_PTR, &rec,
 			 COL_ID, id_str(peer).c_str(),
-			 COL_NAME, peer.name.c_str(),
+			 COL_NAME, fmt("%0\n%1", peer.name, peer.email).c_str(),
 			 COL_TAGS,
 			 join(peer.tags.begin(), peer.tags.end(), '\n').c_str(),
-			 COL_EMAIL, peer.email.c_str(),
+			 COL_INFO, peer.info.c_str(),
 			 -1);
       cnt++;
     }

@@ -19,7 +19,8 @@ namespace gui {
     name_fld(gtk_entry_new()),
     active_fld(gtk_check_button_new_with_label("Active")),
     tags_fld(gtk_entry_new()),
-    email_fld(gtk_entry_new())
+    email_fld(gtk_entry_new()),
+    info_fld(new_text_view())
   {
     g_signal_connect(find_posts_btn, "clicked", G_CALLBACK(on_find_posts), this);
     gtk_container_add(GTK_CONTAINER(menu), find_posts_btn);
@@ -65,14 +66,20 @@ namespace gui {
     gtk_entry_set_text(GTK_ENTRY(tags_fld),
 		       join(rec.tags.begin(), rec.tags.end(), ' ').c_str());
 
+    row += 2;
+    gtk_grid_attach(GTK_GRID(frm), new_label("Info"), 0, row, 2, 1);
+    gtk_grid_attach(GTK_GRID(frm), gtk_widget_get_parent(info_fld), 0, row+1, 2, 1);
+    set_str(GTK_TEXT_VIEW(info_fld), rec.info);
+    
     focused = name_fld;
   }
 
   bool PeerView::save() {
-    rec.name = gtk_entry_get_text(GTK_ENTRY(name_fld));
+    rec.name = get_str(GTK_ENTRY(name_fld));
     rec.active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(active_fld));
     rec.tags = word_set(get_str(GTK_ENTRY(tags_fld)));
-    rec.email = gtk_entry_get_text(GTK_ENTRY(email_fld));    
+    rec.email = get_str(GTK_ENTRY(email_fld));
+    rec.info = get_str(GTK_TEXT_VIEW(info_fld));
     db::upsert(ctx.db.peers, rec);
     return true;
   }

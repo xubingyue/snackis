@@ -6,8 +6,8 @@
 
 namespace snackis {
 namespace gui {
-  enum TaskCol {COL_PTR=0, COL_ID, COL_CREATED, COL_OWNER,
-		COL_PROJECT, COL_PRIO, COL_NAME, COL_TAGS, COL_INFO};
+  enum TaskCol {COL_PTR=0, COL_ID, COL_CREATED, COL_OWNER, COL_PROJECT, COL_PRIO,
+		COL_TAGS, COL_INFO};
 
   static void edit(Ctx &ctx, const db::Rec<Task> &rec) {
     Task task(ctx, rec);
@@ -17,8 +17,7 @@ namespace gui {
   TaskSearch::TaskSearch(Ctx &ctx):
     SearchView<Task>(ctx,
 		     "Task",
-		     gtk_list_store_new(9, G_TYPE_POINTER,
-					G_TYPE_STRING,
+		     gtk_list_store_new(8, G_TYPE_POINTER,
 					G_TYPE_STRING,
 					G_TYPE_STRING,
 					G_TYPE_STRING,
@@ -74,7 +73,6 @@ namespace gui {
     add_col(GTK_TREE_VIEW(list), "Project", COL_PROJECT);
     add_col(GTK_TREE_VIEW(list), "Prio", COL_PRIO);
     add_col(GTK_TREE_VIEW(list), "Tags", COL_TAGS);
-    add_col(GTK_TREE_VIEW(list), "Name", COL_NAME, true);
     add_col(GTK_TREE_VIEW(list), "Info", COL_INFO, true);
     focused = id_fld;
   }
@@ -132,10 +130,9 @@ namespace gui {
 			 COL_PROJECT, id_str(prj).c_str(),
 			 COL_OWNER, own.name.c_str(),
 			 COL_PRIO, to_str(tsk.prio).c_str(),
-			 COL_NAME, tsk.name.c_str(),
 			 COL_TAGS,
 			 join(tsk.tags.begin(), tsk.tags.end(), '\n').c_str(),
-			 COL_INFO, tsk.info.c_str(),			 
+			 COL_INFO, trim(fmt("%0\n%1", tsk.name, tsk.info)).c_str(),
 			 -1);
       
       cnt++;
