@@ -11,6 +11,7 @@
 #include "snackis/gui/reader.hpp"
 #include "snackis/gui/root_view.hpp"
 #include "snackis/gui/setup.hpp"
+#include "snackis/gui/todo.hpp"
 #include "snackis/gui/undo.hpp"
 
 namespace snackis {
@@ -24,6 +25,7 @@ namespace gui {
   extern std::unique_ptr<RootView> root_view;
   extern std::unique_ptr<Setup> setup;
   extern std::unique_ptr<Inbox> inbox;
+  extern std::unique_ptr<Todo> todo;
   extern std::unique_ptr<Undo> undo;
   
   str get_str(GtkEntry *w);
@@ -59,7 +61,8 @@ namespace gui {
 
   void each_sel(GtkTreeView *w, func<void (GtkTreeIter &)> fn);
   void enable_multi_sel(GtkTreeView *w);
-  
+  bool sel_first(GtkTreeView *w);
+
   GtkWidget *new_grid();
   GtkWidget *new_label(const str &txt);
   void set_width(GtkEntry *e, int w);
@@ -68,8 +71,12 @@ namespace gui {
   GtkWidget *new_text_view();
   GtkWidget *new_tree_view(GtkTreeModel *mod);
 
-  GtkTreeViewColumn *add_col(GtkTreeView *w, const str &lbl, int idx,
+  std::pair<GtkTreeViewColumn *, GtkCellRenderer *>
+  add_col(GtkTreeView *w, const str &lbl, int idx,
 			     bool exp=false);
+
+  std::pair<GtkTreeViewColumn *, GtkCellRenderer *>
+  add_check_col(GtkTreeView *w, const str &lbl, int idx);
 }}
 
 #endif

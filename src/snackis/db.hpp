@@ -80,6 +80,7 @@ namespace snackis {
     db::Col<Task, std::set<str>> task_tags;
     db::Col<Task, int64_t>       task_prio;
     db::Col<Task, bool>          task_done;
+    db::Col<Task, Time>          task_done_at;
     db::Col<Task, std::set<UId>> task_peer_ids;
     db::Table<Task> tasks, tasks_sort;
 

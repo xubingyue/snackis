@@ -11,6 +11,7 @@ namespace gui {
   std::unique_ptr<Setup> setup;
   std::unique_ptr<Inbox> inbox;
   std::unique_ptr<Undo> undo;
+  std::unique_ptr<Todo> todo;
 
   str get_str(GtkEntry *w) {
     return trim(gtk_entry_get_text(w));
@@ -67,6 +68,17 @@ namespace gui {
   void enable_multi_sel(GtkTreeView *w) {
     gtk_tree_selection_set_mode(gtk_tree_view_get_selection(w),
 				GTK_SELECTION_MULTIPLE);
+  }
+
+  bool sel_first(GtkTreeView *w) {
+      auto sel(gtk_tree_view_get_selection(w));
+      gtk_tree_selection_unselect_all(sel);
+      GtkTreeIter it;
+
+      auto mod(gtk_tree_view_get_model(w));
+      if (!gtk_tree_model_get_iter_first(mod, &it)) { return false; }
+      gtk_tree_selection_select_iter(sel, &it);
+      return true;
   }
   
   GtkWidget *new_grid() {
@@ -136,7 +148,8 @@ namespace gui {
     return w;
   }
   
-  GtkTreeViewColumn *add_col(GtkTreeView *w, const str &lbl, int idx, bool exp) {
+  std::pair<GtkTreeViewColumn *, GtkCellRenderer *>
+  add_col(GtkTreeView *w, const str &lbl, int idx, bool exp) {
     auto rnd(gtk_cell_renderer_text_new());
 
     if (exp) {
@@ -151,7 +164,18 @@ namespace gui {
 						      nullptr));
     if (exp) { gtk_tree_view_column_set_expand(col, true); }	    
     gtk_tree_view_append_column(GTK_TREE_VIEW(w), col);
-    return col;
+    return std::make_pair(col, rnd);
   }
 
+  std::pair<GtkTreeViewColumn *, GtkCellRenderer *>
+  add_check_col(GtkTreeView *w, const str &lbl, int idx) {
+    auto rnd(gtk_cell_renderer_toggle_new());
+
+    auto col(gtk_tree_view_column_new_with_attributes(lbl.c_str(),
+						      rnd,
+						      "active", idx,
+						      nullptr));
+    gtk_tree_view_append_column(GTK_TREE_VIEW(w), col);
+    return std::make_pair(col, rnd);
+  }
 }}

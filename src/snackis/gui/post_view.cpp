@@ -117,7 +117,7 @@ namespace gui {
     set_str(GTK_ENTRY(tags_fld), join(rec.tags.begin(), rec.tags.end(), ' '));
 
     gtk_container_add(GTK_CONTAINER(fields), new_label("Body"));
-    gtk_widget_set_sensitive(body_fld, rec.owner_id == me.id);    
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(body_fld), rec.owner_id == me.id);
     gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(body_fld));
     set_str(GTK_TEXT_VIEW(body_fld), rec.body);
 

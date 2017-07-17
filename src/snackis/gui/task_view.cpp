@@ -73,13 +73,13 @@ namespace gui {
 
     gtk_grid_attach(GTK_GRID(name_box), new_label("Name"), 0, 0, 2, 1);
     gtk_widget_set_hexpand(v.name_fld, true);
-    gtk_widget_set_sensitive(v.name_fld, v.rec.owner_id == me.id);
+    gtk_editable_set_editable(GTK_EDITABLE(v.name_fld), v.rec.owner_id == me.id);
     gtk_grid_attach(GTK_GRID(name_box), v.name_fld, 0, 1, 2, 1);		    
   
     gtk_grid_attach(GTK_GRID(name_box), new_label("Prio"), 2, 0, 1, 1);
     set_width(GTK_ENTRY(v.prio_fld), 3);
     gtk_widget_set_halign(v.prio_fld, GTK_ALIGN_START);
-    gtk_widget_set_sensitive(v.prio_fld, v.rec.owner_id == me.id);
+    gtk_editable_set_editable(GTK_EDITABLE(v.prio_fld), v.rec.owner_id == me.id);
     gtk_grid_attach(GTK_GRID(name_box), v.prio_fld, 2, 1, 1, 1);		    
     gtk_widget_set_halign(v.done_fld, GTK_ALIGN_END);
     gtk_widget_set_sensitive(v.done_fld, v.rec.owner_id == me.id);
@@ -89,7 +89,7 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(frm), v.tags_fld);
     
     gtk_container_add(GTK_CONTAINER(frm), new_label("Info"));
-    gtk_widget_set_sensitive(v.info_fld, v.rec.owner_id == me.id);
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(v.info_fld), v.rec.owner_id == me.id);
     gtk_container_add(GTK_CONTAINER(frm), gtk_widget_get_parent(v.info_fld));
     return frm;
   }

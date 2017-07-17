@@ -68,7 +68,7 @@ namespace gui {
     GtkWidget *name_box(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
     gtk_container_add(GTK_CONTAINER(frm), name_box);
     gtk_widget_set_hexpand(v.name_fld, true);    
-    gtk_widget_set_sensitive(v.name_fld, v.rec.owner_id == me.id);    
+    gtk_editable_set_editable(GTK_EDITABLE(v.name_fld), v.rec.owner_id == me.id);    
     gtk_container_add(GTK_CONTAINER(name_box), v.name_fld);
     gtk_entry_set_text(GTK_ENTRY(v.name_fld), v.rec.name.c_str());
     gtk_widget_set_sensitive(v.active_fld, v.rec.owner_id == me.id);    
@@ -84,7 +84,7 @@ namespace gui {
     GtkWidget *l(new_label("Info"));
     gtk_widget_set_margin_top(l, 5);    
     gtk_container_add(GTK_CONTAINER(frm), l);
-    gtk_widget_set_sensitive(v.info_fld, v.rec.owner_id == me.id);
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(v.info_fld), v.rec.owner_id == me.id);
     gtk_container_add(GTK_CONTAINER(frm), gtk_widget_get_parent(v.info_fld));
     set_str(GTK_TEXT_VIEW(v.info_fld), v.rec.info);
 

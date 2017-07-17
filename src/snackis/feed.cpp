@@ -21,22 +21,8 @@ namespace snackis {
     created_at(now()),
     changed_at(created_at)
   {
-    copy(*this, msg);
+    db::copy(*this, msg.feed);
     peer_ids.insert(msg.from_id);
-  }
-
-  void copy(Feed &dst, const Msg &src) {
-    Ctx &ctx(src.ctx);
-    Feed fd(ctx, src.feed);
-
-    dst.id = fd.id;
-    dst.name = fd.name;
-    dst.info = fd.info;
-    dst.active = fd.active;
-    dst.visible = fd.visible;
-
-    std::copy(fd.tags.begin(), fd.tags.end(),
-	      std::inserter(dst.tags, dst.tags.end()));
   }
 
   opt<Feed> find_feed_id(Ctx &ctx, UId id) {

@@ -10,7 +10,7 @@ namespace snackis {
   struct Feed;
   
 namespace gui {
-  const int POST_HISTORY_MAX(21);
+  const int FEED_HISTORY_MAX(21);
   
   struct FeedHistory: Widget {
     Ctx &ctx;

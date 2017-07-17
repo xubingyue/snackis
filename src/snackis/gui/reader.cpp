@@ -17,6 +17,7 @@
 #include "snackis/gui/reader.hpp"
 #include "snackis/gui/task_search.hpp"
 #include "snackis/gui/task_view.hpp"
+#include "snackis/gui/todo.hpp"
 #include "snackis/gui/undo.hpp"
 #include "snackis/gui/widget.hpp"
 
@@ -254,6 +255,17 @@ namespace gui {
     init_id_search<TaskSearch, TaskView, Task>(rdr, "task");
     init_new<TaskView, Task>(rdr, "task");
     init_search<TaskSearch>(rdr, "task");
+
+    rdr.cmds.emplace("todo", [&ctx](auto args) {
+	if (!args.empty()) {
+	  log(ctx, "Invalid number of arguments, syntax: todo");
+	  return false;
+	}
+
+	if (!todo) { todo.reset(new Todo(ctx)); }
+	push_view(todo.get());
+	return true;
+      });
     
     rdr.cmds.emplace("undo", [&ctx](auto args) {
 	if (!args.empty()) {

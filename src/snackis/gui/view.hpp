@@ -11,6 +11,7 @@ namespace gui {
     static std::list<View *> stack;
     Ctx &ctx;
     GtkWidget *panel, *label, *menu, *focused;
+    bool visible;
     
     View(Ctx &ctx, const str &lbl);
     virtual ~View();

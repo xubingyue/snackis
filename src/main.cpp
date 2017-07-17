@@ -48,7 +48,7 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
   gtk_window_set_icon_from_file(GTK_WINDOW(gui::window), "snackis.ico", nullptr);
  
   g_signal_connect(G_OBJECT(gui::window),
-		   "key_press_event",
+		   "key_release_event",
 		   G_CALLBACK(on_key),
 		   nullptr);
   

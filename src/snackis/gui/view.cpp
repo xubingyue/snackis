@@ -7,12 +7,24 @@ namespace snackis {
 namespace gui {
   std::list<View *> View::stack;
 
+  static gboolean on_key(gpointer _, GdkEventKey *ev, View *v) {
+    if (ev->keyval == GDK_KEY_F5) {
+      v->load();
+      const str lbl(gtk_label_get_text(GTK_LABEL(v->label)));
+      log(v->ctx, fmt("Refreshed %0", lbl));
+      return true;
+    }
+    
+    return false;
+  }
+  
   View::View(Ctx &ctx, const str &lbl): 
     ctx(ctx),
     panel(gtk_box_new(GTK_ORIENTATION_VERTICAL, 0)),
     label(new_label(lbl)),
     menu(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5)),
-    focused(panel) { 
+    focused(panel),
+    visible(false) { 
     add_style(panel, "view");
     gtk_widget_set_margin_start(panel, 5);
     gtk_widget_set_margin_end(panel, 5);
@@ -30,10 +42,15 @@ namespace gui {
 
     gtk_widget_set_valign(menu, GTK_ALIGN_END);
     gtk_container_add(GTK_CONTAINER(hdr), menu);
+    
+    g_signal_connect(G_OBJECT(panel),
+		     "key_release_event",
+		     G_CALLBACK(on_key),
+		     this);
   }
 
   View::~View() {
-    gtk_widget_destroy(panel);
+    if (!visible) { gtk_widget_destroy(panel); }
   }
 
   void View::load()
@@ -48,11 +65,13 @@ namespace gui {
       View *prev(View::stack.back());
       prev->focused = gtk_window_get_focus(GTK_WINDOW(window));
       g_object_ref(prev->panel);
+      prev->visible = false;
       gtk_container_remove(GTK_CONTAINER(panels), prev->panel);
     }
 
     v->load();
     View::stack.push_back(v);    
+    v->visible = true;
     gtk_container_add(GTK_CONTAINER(panels), v->panel);  
     gtk_widget_show_all(v->ptr());
     gtk_widget_grab_focus(v->focused);
@@ -62,6 +81,7 @@ namespace gui {
     assert(View::stack.back() == v);
     View::stack.pop_back();
     g_object_ref(v->panel);
+    v->visible = false;
     gtk_container_remove(GTK_CONTAINER(panels), v->panel);
     
     auto next(View::stack.back());
@@ -71,6 +91,7 @@ namespace gui {
       gtk_widget_grab_focus(reader->entry);
     } else if (next->focused) {
       gtk_widget_grab_focus(next->focused);
+      next->visible = true;
     }
   }
 
@@ -85,6 +106,7 @@ namespace gui {
       gtk_container_add(GTK_CONTAINER(panels), next->panel);  
       gtk_widget_show_all(next->panel);
       gtk_widget_grab_focus(next->focused);
+      next->visible = true;
     }
   }
 }}

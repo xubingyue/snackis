@@ -10,8 +10,7 @@ namespace gui {
 		COL_TAGS, COL_INFO};
 
   static void edit(Ctx &ctx, const db::Rec<Task> &rec) {
-    Task task(ctx, rec);
-    push_view(new TaskView(task));
+    push_view(new TaskView(Task(ctx, rec)));
   }
 
   TaskSearch::TaskSearch(Ctx &ctx):

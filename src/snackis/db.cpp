@@ -123,12 +123,13 @@ namespace snackis {
     task_tags(      "tags",       str_set_type, &Task::tags),
     task_prio(      "prio",       int64_type,   &Task::prio),
     task_done(      "done",       bool_type,    &Task::done),
+    task_done_at(   "done_at",    time_type,    &Task::done_at),
     task_peer_ids(  "peer_ids",   uid_set_type, &Task::peer_ids),
     
     tasks(ctx, "tasks", {&task_id},
 	  {&task_project_id, &task_owner_id, &task_created_at, &task_changed_at,
 	      &task_name, &task_info, &task_tags, &task_prio, &task_done,
-	      &task_peer_ids}),
+	      &task_done_at, &task_peer_ids}),
 
     tasks_sort(ctx, "tasks_sort", {&task_prio, &task_created_at, &task_id}, {})
   {
@@ -151,13 +152,13 @@ namespace snackis {
     posts.on_insert.push_back([&](auto &rec) {
 	Post ps(ctx, rec);
 	if (ps.owner_id == whoami(ctx).id) { send(ps); }
+	db::copy(posts, rec, ps);
       });
 
     posts.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
 	Post curr(ctx, curr_rec);
 	curr.peer_ids = get_feed_id(ctx, curr.feed_id).peer_ids;
 	curr.changed_at = now();
-	db::copy(posts, curr_rec, curr);
 
 	auto fd(find_feed_id(ctx, curr.id));
 	if (fd && (fd->tags != curr.tags ||
@@ -168,6 +169,7 @@ namespace snackis {
 	}
 
 	if (curr.owner_id == whoami(ctx).id) { send(curr); }
+	db::copy(posts, curr_rec, curr);
       });
 
     projects.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
@@ -186,13 +188,15 @@ namespace snackis {
     tasks.on_insert.push_back([&](auto &rec) {
 	Task tsk(ctx, rec);
 	if (tsk.owner_id == whoami(ctx).id) { send(tsk); }
+	if (tsk.done) { tsk.done_at = now(); }
+	db::copy(tasks, rec, tsk);
       });
 
     tasks.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
-	Task curr(ctx, curr_rec);
+	Task curr(ctx, curr_rec), prev(ctx, prev_rec);
 	curr.peer_ids = get_project_id(ctx, curr.project_id).peer_ids;
 	curr.changed_at = now();
-	db::copy(tasks, curr_rec, curr);
+	if (curr.done && !prev.done) { curr.done_at = now(); }
 	
 	auto fd(find_feed_id(ctx, curr.id));
 	if (fd && (fd->tags != curr.tags ||
@@ -202,6 +206,7 @@ namespace snackis {
 	}
 	
 	if (curr.owner_id == whoami(ctx).id) { send(curr); }
+	db::copy(tasks, curr_rec, curr);
       });
   }
 }

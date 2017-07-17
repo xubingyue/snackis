@@ -53,7 +53,7 @@ namespace gui {
       
       if (fd_fnd) {	
 	if (fd_fnd->owner_id == msg.from_id) {
-	  copy(*fd_fnd, msg);
+	  db::copy(*fd_fnd, msg.feed);
 	  db::update(ctx.db.feeds, *fd_fnd);
 	}
 	
@@ -61,7 +61,7 @@ namespace gui {
 	auto ps_fnd(find_post_id(ctx, ps.id));
 
 	if (ps_fnd) {
-	  copy(*ps_fnd, msg);
+	  db::copy(*ps_fnd, msg.post);
 	  push_view(new PostView(*ps_fnd));
 	} else {
 	  Post ps(msg);
@@ -81,7 +81,7 @@ namespace gui {
       
       if (prj_fnd) {
 	if (prj_fnd->owner_id == msg.from_id) {
-	  copy(*prj_fnd, msg);
+	  db::copy(*prj_fnd, msg.project);
 	  db::update(ctx.db.projects, *prj_fnd);
 	}
 	
@@ -89,7 +89,7 @@ namespace gui {
 	auto tsk_fnd(find_task_id(ctx, *db::get(msg.task, ctx.db.task_id)));
 
 	if (tsk_fnd) {
-	  copy(*tsk_fnd, msg);
+	  db::copy(*tsk_fnd, msg.task);
 	  push_view(new TaskView(*tsk_fnd));
 	} else {
 	  Task tsk(msg);
@@ -142,6 +142,7 @@ namespace gui {
     View::load();
     Ctx::Lock lock(ctx.mutex);
     gtk_list_store_clear(store);
+    size_t cnt(0);
     
     for(auto key = ctx.db.inbox_sort.recs.begin();
 	key != ctx.db.inbox_sort.recs.end();
@@ -225,6 +226,13 @@ namespace gui {
 			   fmt("Invalid message type: %0", msg.type).c_str(),
 			   -1);
       }
-    }    
+
+      cnt++;
+    }
+
+    if (cnt) {
+      sel_first(GTK_TREE_VIEW(lst));
+      gtk_widget_grab_focus(lst);
+    }
   }
 }}

@@ -68,7 +68,7 @@ namespace gui {
     if (ps.id != fd.id) {
       auto ps_fd(find_feed_id(w.ctx, ps.id));
       if (ps_fd) {
-	for (auto r: last_posts(*ps_fd, start, POST_HISTORY_MAX)) {
+	for (auto r: last_posts(*ps_fd, start, FEED_HISTORY_MAX)) {
 	  add_post(w, *ps_fd, r, start, &it);
 	}
       }
@@ -85,7 +85,7 @@ namespace gui {
       add_post(w, fd, &pst, start, nullptr);
     }
 
-    for (auto r: last_posts(fd, start, POST_HISTORY_MAX)) {
+    for (auto r: last_posts(fd, start, FEED_HISTORY_MAX)) {
       add_post(w, fd, r, start, nullptr);
     }
   }

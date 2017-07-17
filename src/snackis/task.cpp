@@ -28,24 +28,10 @@ namespace snackis {
     changed_at(created_at),
     prio(0)
   {
-    copy(*this, msg);
+    db::copy(*this, msg.task);
     peer_ids.insert(msg.from_id);
   }
 
-  void copy(Task &dst, const Msg &src) {
-    Ctx &ctx(src.ctx);
-    const Task tsk(ctx, src.task);
-
-    dst.id = tsk.id;
-    dst.project_id = tsk.project_id;
-    dst.name = tsk.name;
-    dst.info = tsk.info;
-    dst.done = tsk.done;
-
-    std::copy(tsk.tags.begin(), tsk.tags.end(),
-	      std::inserter(dst.tags, dst.tags.end()));
-  }
-  
   opt<Task> find_task_id(Ctx &ctx, UId id) {
     db::Rec<Task> rec;
     set(rec, ctx.db.task_id, id);
@@ -99,16 +85,15 @@ namespace snackis {
     ctx.db.project_id.copy(msg.project, prj);
     ctx.db.project_name.copy(msg.project, prj);
     ctx.db.project_info.copy(msg.project, prj);
-    ctx.db.project_tags.copy(msg.project, prj);
     ctx.db.project_active.copy(msg.project, prj);
     
     ctx.db.task_id.copy(msg.task, tsk);
     ctx.db.task_project_id.copy(msg.task, tsk);
     ctx.db.task_name.copy(msg.task, tsk);
     ctx.db.task_info.copy(msg.task, tsk);
-    ctx.db.task_tags.copy(msg.task, tsk);
     ctx.db.task_prio.copy(msg.task, tsk);
     ctx.db.task_done.copy(msg.task, tsk);
+    ctx.db.task_done_at.copy(msg.task, tsk);
 
     insert(ctx.db.outbox, msg);
   }

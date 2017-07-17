@@ -22,21 +22,8 @@ namespace snackis {
     created_at(now()),
     changed_at(created_at)
   {
-    copy(*this, msg);
+    db::copy(*this, msg.project);
     peer_ids.insert(msg.from_id);
-  }
-
-  void copy(Project &dst, const Msg &src) {
-    Ctx &ctx(src.ctx);
-    const Project prj(ctx, src.project);
-
-    dst.id = prj.id;
-    dst.name = prj.name;
-    dst.info = prj.info;
-    dst.active = prj.active;
-
-    std::copy(prj.tags.begin(), prj.tags.end(),
-	      std::inserter(dst.tags, dst.tags.end()));    
   }
 
   opt<Project> find_project_id(Ctx &ctx, UId id) {

@@ -27,15 +27,7 @@ namespace gui {
     v.find();
 
     auto cnt(gtk_tree_model_iter_n_children(GTK_TREE_MODEL(v.store), nullptr));
-
-    if (cnt) {
-      auto sel(gtk_tree_view_get_selection(GTK_TREE_VIEW(v.list)));
-      gtk_tree_selection_unselect_all(sel);
-      GtkTreeIter it;
-      CHECK(gtk_tree_model_get_iter_first(GTK_TREE_MODEL(v.store), &it), _);
-      gtk_tree_selection_select_iter(sel, &it);
-    }
-    
+    if (cnt) { sel_first(GTK_TREE_VIEW(v.list)); }
     return cnt;
   }
   

@@ -16,6 +16,7 @@ namespace snackis {
     std::set<str> tags;
     int64_t prio;
     bool done;
+    Time done_at;
     std::set<UId> peer_ids;
     
     Task(Ctx &ctx);
@@ -23,7 +24,6 @@ namespace snackis {
     Task(const Msg &msg);
   };
 
-  void copy(Task &dst, const Msg &src);
   opt<Task> find_task_id(Ctx &ctx, UId id);
   Task get_task_id(Ctx &ctx, UId id);
   Feed get_feed(const Task &tsk);

@@ -1,8 +1,0 @@
-* disable peer tab/fld for projects/feeds
-* add todo view
-** show first 21 non-done, owned tasks 
-** add task done_at
-*** set in update_event if owned
-** show tasks for 3 days after done
-* hide specified search cols
-* compress folder selection in encrypt/decrypt
