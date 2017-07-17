@@ -39,12 +39,11 @@ namespace snackis {
     dst.project_id = tsk.project_id;
     dst.name = tsk.name;
     dst.info = tsk.info;
+    dst.tags = tsk.tags;
     dst.done = tsk.done;
 
-    std::copy(tsk.tags.begin(), tsk.tags.end(),
-	      std::inserter(dst.tags, dst.tags.end()));
-
     auto my_pid(whoami(ctx).id);
+    dst.peer_ids.clear();
     std::copy_if(tsk.peer_ids.begin(), tsk.peer_ids.end(),
 		 std::inserter(dst.peer_ids, dst.peer_ids.end()),
 		 [&ctx, &my_pid](auto &pid) {
@@ -108,13 +107,9 @@ namespace snackis {
 
   void send(const Task &tsk) {
     Ctx &ctx(tsk.ctx);
-    if (tsk.owner_id == whoami(ctx).id) {
-      for (auto &pid: tsk.peer_ids) {
-	auto pr(find_peer_id(ctx, pid));
-	if (pr) { send(tsk, *pr); }
-      }
-    } else {
-      send(tsk, get_peer_id(ctx, tsk.owner_id));
+    for (auto &pid: tsk.peer_ids) {
+      auto pr(find_peer_id(ctx, pid));
+      if (pr) { send(tsk, *pr); }
     }
   }
 }

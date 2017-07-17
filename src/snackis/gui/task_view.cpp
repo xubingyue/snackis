@@ -128,7 +128,9 @@ namespace gui {
   }
 
   bool TaskView::allow_save() const {
-    return project_fld.selected ? true : false;
+    return
+      rec.owner_id == whoami(ctx).id &&
+      project_fld.selected;
   }
 
   void TaskView::load() {

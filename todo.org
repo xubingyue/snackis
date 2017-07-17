@@ -1,10 +1,2 @@
-* disable editing of anything but tags in non-owned recs
-** disable sending updates for non-owned recs
 * add peer info
-* add todo view
-** show todo-tagged
-** add task done_at
-*** update in on_update event
-** tags, name + info + done
-** show done for 1 day after done
 * compress folder selection in encrypt/decrypt

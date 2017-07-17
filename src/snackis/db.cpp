@@ -165,8 +165,8 @@ namespace snackis {
 	  fd->peer_ids = curr.peer_ids;
 	  db::update(feeds, *fd);
 	}
-	
-	send(curr);
+
+	if (curr.owner_id == whoami(ctx).id) { send(curr); }
       });
 
     projects.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
@@ -200,7 +200,7 @@ namespace snackis {
 	  db::update(feeds, *fd);
 	}
 	
-	send(curr);
+	if (curr.owner_id == whoami(ctx).id) { send(curr); }
       });
   }
 }

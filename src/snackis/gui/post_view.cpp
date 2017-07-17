@@ -102,7 +102,7 @@ namespace gui {
 	gtk_widget_set_sensitive(feed_btn, sel);
 	refresh(*this);
       });
-
+    
     gtk_container_add(GTK_CONTAINER(feed_box), feed_fld.ptr());
     g_signal_connect(feed_btn, "clicked", G_CALLBACK(on_feed), this);
     gtk_widget_set_sensitive(feed_btn, false);
@@ -131,7 +131,9 @@ namespace gui {
   }
 
   bool PostView::allow_save() const {
-    return feed_fld.selected ? true : false;
+    return
+      rec.owner_id == whoami(ctx).id &&
+      feed_fld.selected ? true : false;
   }
 
   bool PostView::save() {

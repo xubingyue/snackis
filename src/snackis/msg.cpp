@@ -119,11 +119,8 @@ namespace snackis {
 	auto ps_fnd(find_post_id(ctx, ps.id));
 
 	if (ps_fnd) {
-	  Post prev(*ps_fnd);
-	  copy(*ps_fnd, msg);
-	  
-	  if (db::compare(ctx.db.posts, prev, *ps_fnd) == 0) {
-	    log(ctx, "Skipped duplicate post update");
+	  if (ps_fnd->owner_id != msg.from_id) {
+	    log(ctx, "Skipping unauthorized post update");
 	    return;
 	  }
 	}
@@ -137,11 +134,8 @@ namespace snackis {
 	auto tsk_fnd(find_task_id(ctx, tsk.id));
 
 	if (tsk_fnd) {
-	  Task tsk_prev(*tsk_fnd);
-	  copy(*tsk_fnd, msg);
-	  
-	  if (db::compare(ctx.db.tasks, tsk_prev, *tsk_fnd) == 0) {
-	    log(ctx, "Skipped duplicate task update");
+	  if (tsk_fnd->owner_id != msg.from_id) {
+	    log(ctx, "Skipping unauthorized task update");
 	    return;
 	  }
 	}

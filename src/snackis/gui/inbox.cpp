@@ -52,6 +52,11 @@ namespace gui {
       auto fd_fnd(find_feed_id(ctx, fd.id));
       
       if (fd_fnd) {	
+	if (fd_fnd->owner_id == msg.from_id) {
+	  copy(*fd_fnd, msg);
+	  db::update(ctx.db.feeds, *fd_fnd);
+	}
+	
 	Post ps(ctx, msg.post);
 	auto ps_fnd(find_post_id(ctx, ps.id));
 
@@ -61,25 +66,20 @@ namespace gui {
 	} else {
 	  push_view(new PostView(Post(msg)));
 	}
-
-	Feed fd_prev(*fd_fnd);
-	copy(*fd_fnd, msg);
-	
-	if (db::compare(ctx.db.feeds, *fd_fnd, fd_prev) != 0) {
-	  push_view(new FeedView(*fd_fnd));
-	}
       } else {
-	auto fv(new FeedView(Feed(msg)));
-	fv->on_save.push_back([msg]() {
-	    push_view(new PostView(Post(msg)));
-	  });
-	push_view(fv);
+	db::insert(ctx.db.feeds, Feed(msg));
+	push_view(new PostView(Post(msg)));
       }
     } else if (msg.type == Msg::TASK) {
       Project prj(ctx, msg.project);
       auto prj_fnd(find_project_id(ctx, prj.id));
       
       if (prj_fnd) {
+	if (prj_fnd->owner_id == msg.from_id) {
+	  copy(*prj_fnd, msg);
+	  db::update(ctx.db.projects, *prj_fnd);
+	}
+	
 	Task tsk(ctx, msg.task);
 	auto tsk_fnd(find_task_id(ctx, *db::get(msg.task, ctx.db.task_id)));
 
@@ -89,19 +89,9 @@ namespace gui {
 	} else {
 	  push_view(new TaskView(Task(msg)));
 	}
-
-	Project prj_prev(*prj_fnd);
-	copy(*prj_fnd, msg);
-	
-	if (db::compare(ctx.db.projects, *prj_fnd, prj_prev) != 0) {
-	  push_view(new ProjectView(*prj_fnd));
-	}
       } else {
-	auto pv(new ProjectView(Project(msg)));
-	pv->on_save.push_back([msg]() {
-	    push_view(new TaskView(Task(msg)));
-	  });
-	push_view(pv);
+	  db::insert(ctx.db.projects, Project(msg));
+	  push_view(new TaskView(Task(msg)));
       }
     } else {
 	log(ctx, fmt("Invalid message type: %0", msg.type));
