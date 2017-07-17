@@ -94,8 +94,22 @@ namespace snackis {
     Msg msg(ctx, Msg::TASK);
     msg.to = pr.email;
     msg.to_id = pr.id;
-    db::copy(ctx.db.projects, msg.project, get_project_id(ctx, tsk.project_id));
-    db::copy(ctx.db.tasks, msg.task, tsk);
+
+    auto prj(get_project_id(ctx, tsk.project_id));
+    ctx.db.project_id.copy(msg.project, prj);
+    ctx.db.project_name.copy(msg.project, prj);
+    ctx.db.project_info.copy(msg.project, prj);
+    ctx.db.project_tags.copy(msg.project, prj);
+    ctx.db.project_active.copy(msg.project, prj);
+    
+    ctx.db.task_id.copy(msg.task, tsk);
+    ctx.db.task_project_id.copy(msg.task, tsk);
+    ctx.db.task_name.copy(msg.task, tsk);
+    ctx.db.task_info.copy(msg.task, tsk);
+    ctx.db.task_tags.copy(msg.task, tsk);
+    ctx.db.task_prio.copy(msg.task, tsk);
+    ctx.db.task_done.copy(msg.task, tsk);
+
     insert(ctx.db.outbox, msg);
   }
 

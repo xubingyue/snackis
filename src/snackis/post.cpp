@@ -85,8 +85,20 @@ namespace snackis {
     Msg msg(ctx, Msg::POST);
     msg.to = pr.email;
     msg.to_id = pr.id;
-    db::copy(ctx.db.feeds, msg.feed, get_feed_id(ctx, ps.feed_id));
-    db::copy(ctx.db.posts, msg.post, ps);
+
+    auto fd(get_feed_id(ctx, ps.feed_id));
+    ctx.db.feed_id.copy(msg.feed, fd);
+    ctx.db.feed_name.copy(msg.feed, fd);
+    ctx.db.feed_info.copy(msg.feed, fd);
+    ctx.db.feed_active.copy(msg.feed, fd);
+    ctx.db.feed_visible.copy(msg.feed, fd);
+    ctx.db.feed_tags.copy(msg.feed, fd);
+    
+    ctx.db.post_id.copy(msg.post, ps);
+    ctx.db.post_feed_id.copy(msg.post, ps);
+    ctx.db.post_body.copy(msg.post, ps);
+    ctx.db.post_tags.copy(msg.post, ps);
+
     insert(ctx.db.outbox, msg);
   }
   

@@ -128,9 +128,13 @@ namespace gui {
 			     init_general(*this),
 			     gtk_label_new_with_mnemonic("_1 General"));
 
+    auto peers_lbl(gtk_label_new_with_mnemonic("_2 Peers"));
+    auto &me(whoami(ctx));
+    gtk_widget_set_sensitive(peers_lbl, rec.owner_id == me.id);
+    gtk_widget_set_sensitive(peer_lst.ptr(), rec.owner_id == me.id);
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
 			     peer_lst.ptr(),
-			     gtk_label_new_with_mnemonic("_2 Peers"));
+			     peers_lbl);
 
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
 			     post_lst.ptr(),
