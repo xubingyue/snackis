@@ -2,7 +2,8 @@
 
 namespace snackis {
 namespace db {
-  Loop::Loop(size_t max_buf):
+  Loop::Loop(Proc &proc, size_t max_buf):
+    proc(proc),
     inbox(max_buf)
   { }
 }}

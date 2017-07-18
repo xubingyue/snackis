@@ -5,9 +5,12 @@
 
 namespace snackis {
 namespace db {
+  struct Proc;
+  
   struct Loop {
+    Proc &proc;
     Chan<Msg> inbox;
-    Loop(size_t max_buf);
+    Loop(Proc &proc, size_t max_buf);
   };
 }}
 
