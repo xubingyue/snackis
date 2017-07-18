@@ -120,32 +120,15 @@ namespace snackis {
     CHECK(load(ctx.db.peers, ctx.whoami), _);
     return ctx.whoami;
   }
-
+  
   int64_t rewrite_db(Ctx &ctx) {
-    for (auto i(ctx.db.feeds.recs.begin()); i != ctx.db.feeds.recs.end();) {
-      Feed fd(ctx, *i);
-      if (fd.owner_id == null_uid) { ctx.db.feeds.recs.erase(i); }
-      else { i++; }
-    }
-
-    for (auto i(ctx.db.posts.recs.begin()); i != ctx.db.posts.recs.end();) {
-      Post ps(ctx, *i);
-      if (ps.owner_id == null_uid) { ctx.db.posts.recs.erase(i); }
-      else { i++; }
-    }
-
-    for (auto i(ctx.db.projects.recs.begin()); i != ctx.db.projects.recs.end();) {
-      Project prj(ctx, *i);
-      if (prj.owner_id == null_uid) { ctx.db.projects.recs.erase(i); }
-      else { i++; }
-    }
-
-    for (auto i(ctx.db.tasks.recs.begin()); i != ctx.db.tasks.recs.end();) {
-      Task tsk(ctx, *i);
-      if (tsk.owner_id == null_uid) { ctx.db.tasks.recs.erase(i); }
-      else { i++; }
-    }
-
-    return db::rewrite(ctx);
+    db::Trans trans(ctx);
+    rewrite_table(ctx.db.feeds);
+    rewrite_table(ctx.db.posts);
+    rewrite_table(ctx.db.projects);
+    rewrite_table(ctx.db.tasks);
+    auto out(db::rewrite(ctx));
+    db::commit(trans, nullopt);
+    return out;
   }
 }
