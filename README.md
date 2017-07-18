@@ -134,7 +134,7 @@ Type ```task-search``` in the reader and press ```Return``` to search tasks. Tas
 ![task search example](images/task_search.png?raw=true)
 
 ### Todo
-Type ```todo``` in the reader and press ```Return``` to show a list of the current top-priority tasks sorted by priority and time of creation.
+Type ```todo``` in the reader and press ```Return``` to show a list of the current top-priority tasks sorted by priority and time of creation. The list includes tasks that are owned or tagged with ```todo```. Finished tasks remain in the list for a specified time period.
 
 ![todo example](images/todo.png?raw=true)
 

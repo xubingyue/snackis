@@ -73,7 +73,7 @@ namespace gui {
 	  tsk.tags.find("todo") == tsk.tags.end()) { continue; }
 
       if (tsk.done &&
-	  tsk.done_at < now() - std::chrono::hours(TODO_DONE_MAX*24)) {
+	  tsk.done_at < now() - std::chrono::hours(TODO_DONE_DAYS*24)) {
 	continue;
       }
 	
