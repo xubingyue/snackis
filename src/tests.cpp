@@ -15,6 +15,7 @@
 #include "snackis/crypt/key.hpp"
 #include "snackis/crypt/secret.hpp"
 #include "snackis/db/col.hpp"
+#include "snackis/db/proc.hpp"
 #include "snackis/db/table.hpp"
 #include "snackis/net/imap.hpp"
 
@@ -61,6 +62,7 @@ static void chan_tests() {
   CHECK(put(c, 42, false), !_);
   for (int i = 0; i < MAX; i++) { CHECK(get(c), *_ == i); }
   CHECK(get(c, false), !_);
+  drain(c);
   CHECK(put(c, 42), _);
 
   close(c);
@@ -116,8 +118,11 @@ const Col<Foo, std::set<int64_t>> set_col("set",
 					  int64_set,
 					  &Foo::fset); 
 
+opt<db::Proc> proc;
+const size_t MAX_BUF(32);
+
 void table_insert_tests() {
-  db::Ctx ctx("testdb/");
+  db::Ctx ctx(*proc, MAX_BUF);
   Table<Foo> tbl(ctx, "insert_tests", {&uid_col},
 		 {&int64_col, &str_col, &time_col});
   open(tbl);
@@ -132,7 +137,7 @@ void table_insert_tests() {
 }
 
 static void table_slurp_tests() {
-  db::Ctx ctx("testdb/");
+  db::Ctx ctx(*proc, MAX_BUF);
   Table<Foo> tbl(ctx, "slurp_tests", {&uid_col},
 		 {&int64_col, &str_col, &time_col});
   open(tbl);
@@ -152,7 +157,7 @@ static void table_slurp_tests() {
 }
 
 static void read_write_tests() {
-  db::Ctx ctx("testdb/");
+  db::Ctx ctx(*proc, MAX_BUF);
   Table<Foo> tbl(ctx, "read_write_tests", {&uid_col},
 		 {&int64_col, &str_col, &time_col, &set_col});
   open(tbl);
@@ -180,7 +185,7 @@ static void read_write_tests() {
 
 static void email_tests() {
   TRACE("Running email_tests");
-  snackis::Ctx ctx("testdb/");
+  snackis::Ctx ctx(*proc, MAX_BUF);
   ctx.db.inbox.recs.clear();
   
   Imap imap(ctx);
@@ -190,7 +195,8 @@ static void email_tests() {
 int main() {
   TRY(try_tests);
   std::cout << "Snackis v" << version_str() << std::endl;
-
+  proc.emplace("testdb/", MAX_BUF);
+  
   str_tests();
   fmt_tests();
   crypt_secret_tests();

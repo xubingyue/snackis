@@ -4,7 +4,7 @@ set(CMAKE_CXX_COMPILER clang++)
 
 project(snackis)
 
-add_compile_options(-std=c++1z -stdlib=libc++ -fno-exceptions -Wall -Werror -O2)
+add_compile_options(-std=c++1z -stdlib=libc++ -fno-exceptions -Wall -Werror -Wno-unused-command-line-argument -O2)
 set(CMAKE_EXE_LINKER_FLAGS "-stdlib=libc++")
 
 file(GLOB_RECURSE core_src src/snackis/core/*.cpp)

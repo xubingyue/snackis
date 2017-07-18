@@ -67,6 +67,15 @@ namespace snackis {
     c.put_ok.notify_one();
     return out;
   }
+
+  template <typename T>
+  void drain(Chan<T> &c) {
+    ChanWLock lock(c.mutex);
+
+    if (!c.buf.empty()) {
+      c.put_ok.wait(lock, [&c](){ return c.buf.empty(); });
+    }
+  }
 }
 
 #endif
