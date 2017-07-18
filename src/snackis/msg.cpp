@@ -107,9 +107,9 @@ namespace snackis {
     Ctx &ctx(msg.ctx);
 
     if (msg.type == Msg::ACCEPT) {
-      if (!invite_accepted(msg)) { return; }
+      if (!invited(msg)) { return; }
     } else if (msg.type == Msg::REJECT) {
-      if (!invite_rejected(msg)) { return; }
+      if (!invited(msg)) { return; }
     } else if (msg.type == Msg::POST) {
       Feed fd(ctx, msg.feed);
       auto fd_fnd(find_feed_id(ctx, fd.id));

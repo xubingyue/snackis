@@ -44,9 +44,10 @@ namespace gui {
 
       push_view(pv);
     } else if (msg.type == Msg::ACCEPT) {
-      push_view(new PeerView(Peer(msg)));
+      invite_accepted(msg);
+      push_view(new PeerView(get_peer_id(ctx, msg.from_id)));
     } else if (msg.type == Msg::REJECT) {
-      // Nothing to do here
+      invite_rejected(msg);
     } else if (msg.type == Msg::POST) {
       Feed fd(ctx, msg.feed);
       auto fd_fnd(find_feed_id(ctx, fd.id));
