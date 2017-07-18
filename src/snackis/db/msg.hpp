@@ -10,13 +10,34 @@
 
 namespace snackis {
 namespace db {
+  template <typename T>
+  struct Chan {
+  };
+
+  struct BasicMsgFld {
+    const str id;
+    BasicMsgFld(const str id);
+  };
+
+  template <typename ValT>
+  struct MsgFld: BasicMsgFld {
+    MsgFld(const str id);
+  };
+
+  template <typename ValT>
+  MsgFld<ValT>::MsgFld(const str id):
+    BasicMsgFld(id)
+  { }
+
   struct Msg {
-    enum Type { MSG_CONNECT, MSG_DISCONNECT };
-    enum Field { MSG_CHAN, MSG_CHANGES };
-    using Value = std::variant<UId, ChangeSet>;
-    
+    enum Type { MSG_CONNECT, MSG_DISCONNECT, MSG_COMMIT };
+    using Val = std::variant<Chan<Msg>, Changes>;
+
+    static MsgFld<Chan<Msg>> CHAN;
+    static MsgFld<Changes> CHANGES;
+
     const Type type;
-    std::map<Field, Value> values;
+    std::map<BasicMsgFld *, Val> vals;
     
     Msg(Type t);
   };
