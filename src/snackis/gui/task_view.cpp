@@ -79,7 +79,6 @@ namespace gui {
     gtk_grid_attach(GTK_GRID(name_box), new_label("Prio"), 2, 0, 1, 1);
     set_width(GTK_ENTRY(v.prio_fld), 3);
     gtk_widget_set_halign(v.prio_fld, GTK_ALIGN_START);
-    gtk_editable_set_editable(GTK_EDITABLE(v.prio_fld), v.rec.owner_id == me.id);
     gtk_grid_attach(GTK_GRID(name_box), v.prio_fld, 2, 1, 1, 1);		    
     gtk_widget_set_halign(v.done_fld, GTK_ALIGN_END);
     gtk_widget_set_sensitive(v.done_fld, v.rec.owner_id == me.id);

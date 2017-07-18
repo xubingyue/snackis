@@ -38,7 +38,6 @@ namespace snackis {
     ctx.db.task_project_id.copy(tsk, msg.task);
     ctx.db.task_name.copy(tsk, msg.task);
     ctx.db.task_info.copy(tsk, msg.task);
-    ctx.db.task_prio.copy(tsk, msg.task);
     ctx.db.task_done.copy(tsk, msg.task);
     ctx.db.task_done_at.copy(tsk, msg.task);
   }
@@ -102,7 +101,6 @@ namespace snackis {
     ctx.db.task_project_id.copy(msg.task, tsk);
     ctx.db.task_name.copy(msg.task, tsk);
     ctx.db.task_info.copy(msg.task, tsk);
-    ctx.db.task_prio.copy(msg.task, tsk);
     ctx.db.task_done.copy(msg.task, tsk);
     ctx.db.task_done_at.copy(msg.task, tsk);
 

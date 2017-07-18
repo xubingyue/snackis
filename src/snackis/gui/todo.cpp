@@ -58,7 +58,6 @@ namespace gui {
 
   void Todo::load() {
     View::load();
-    auto &me(whoami(ctx));
     Ctx::Lock lock(ctx.mutex);
     gtk_list_store_clear(store);
     size_t cnt(0);
@@ -69,8 +68,7 @@ namespace gui {
       auto &rec(db::get(ctx.db.tasks, *key));
       Task tsk(ctx, rec);
       
-      if (tsk.owner_id != me.id &&
-	  tsk.tags.find("todo") == tsk.tags.end()) { continue; }
+      if (tsk.tags.find("todo") == tsk.tags.end()) { continue; }
 
       if (tsk.done &&
 	  tsk.done_at < now() - std::chrono::hours(TODO_DONE_DAYS*24)) {

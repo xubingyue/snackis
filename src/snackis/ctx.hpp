@@ -27,6 +27,7 @@ namespace snackis {
   void open(Ctx &ctx);
   void log(const Ctx &ctx, const str &msg);
   Peer &whoami(Ctx &ctx);
+  int64_t rewrite_db(Ctx &ctx);
 }
 
 #endif

@@ -148,13 +148,12 @@ namespace gui {
 	continue;
       }
       
-      auto pr(find_peer_id(ctx, post.owner_id));
-      if (!pr) { continue; }
+      auto pr(get_peer_id(ctx, post.owner_id));
       
       GtkTreeIter iter;
       gtk_list_store_append(store, &iter);
       const str by(trim(fmt("%0\n%1",
-			    pr->name,
+			    pr.name,
 			    fmt(post.created_at, "%a %b %d, %H:%M").c_str())));
       gtk_list_store_set(store, &iter,
 			 COL_PTR, &rec,

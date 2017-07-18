@@ -141,7 +141,7 @@ namespace gui {
 
 	log(ctx, "Rewriting database...");
 	log(ctx, fmt("Finished rewriting, %0k reclaimed",
-		     db::rewrite(ctx) / 1000));
+		     rewrite_db(ctx) / 1000));
 	return true;
       });
 
