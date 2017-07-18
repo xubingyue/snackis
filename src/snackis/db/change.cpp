@@ -4,19 +4,12 @@
 
 namespace snackis {
 namespace db {
-  Change::~Change()
-  { }
-
-  ChangeSet::ChangeSet(Ctx &ctx, const str &lbl, std::vector<Change *> &chs):
+  ChangeSet::ChangeSet(Ctx &ctx, const str &lbl, Changes &chs):
     ctx(ctx), label(lbl), committed_at(now())
   {
     changes.swap(chs);
   }
   
-  ChangeSet::~ChangeSet() {
-    for (auto c: changes) { delete c; }
-  }
-
   void undo(ChangeSet &cs) {
     db::Trans trans(cs.ctx);
     TRY(try_undo);

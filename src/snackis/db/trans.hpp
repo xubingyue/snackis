@@ -2,17 +2,16 @@
 #define SNACKIS_DB_TRANS_HPP
 
 #include <vector>
+#include "snackis/db/change.hpp"
 #include "snackis/db/ctx.hpp"
 
 namespace snackis {
 namespace db {
-  struct Change;
-  
   struct Trans {
     Ctx &ctx;
     Trans *super;
     Ctx::Lock lock; 
-    std::vector<Change *> changes;
+    Changes changes;
     Trans(Ctx &ctx);
     ~Trans();
   };

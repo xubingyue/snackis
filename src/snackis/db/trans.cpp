@@ -17,17 +17,16 @@ namespace db {
   }
   
   void log_change(Trans &trans, Change *change) {
-    trans.changes.push_back(change);
+    trans.changes.push_back(std::shared_ptr<Change>(change));
   }
 
   static void clear(Trans &trans) {
-    for (auto c: trans.changes) { delete c; }
     trans.changes.clear();
   }
   
   void commit(Trans &trans, const opt<str> &lbl) {
     if (trans.changes.empty()) { return; }
-    for (const Change *c: trans.changes) { c->commit(); }
+    for (auto &c: trans.changes) { c->commit(); }
     flush(trans.ctx);
     
     if (lbl) {
@@ -38,7 +37,7 @@ namespace db {
   }
   
   void rollback(Trans &trans) {
-    for (const Change *c: trans.changes) { c->rollback(); }
+    for (auto &c: trans.changes) { c->rollback(); }
     clear(trans);
   }
 }}
