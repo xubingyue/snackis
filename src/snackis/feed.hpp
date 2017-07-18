@@ -24,6 +24,7 @@ namespace snackis {
     Feed(const Msg &msg);
   };
 
+  void copy(Feed &fd, const Msg &msg);
   opt<Feed> find_feed_id(Ctx &ctx, UId id);
   Feed get_feed_id(Ctx &ctx, UId id);
   std::vector<const db::Rec<Post> *> last_posts(const Feed &fd,

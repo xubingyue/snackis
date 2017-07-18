@@ -48,8 +48,8 @@ namespace db {
       auto yi = y.find(c);
 
       if (xi == x.end() && yi == y.end()) { continue; }
-      if (xi == x.end()) { return -1; }
-      if (yi == y.end()) { return 1; }
+      if (xi == x.end()) { return 1; }
+      if (yi == y.end()) { return -1; }
 
       if (*xi < *yi) { return -1; }
       if (*yi < *xi) { return 1; }

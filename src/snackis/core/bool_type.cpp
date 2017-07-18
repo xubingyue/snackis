@@ -6,10 +6,6 @@ namespace snackis {
   BoolType::BoolType(): Type<bool>("Bool")
   { }
 
-  bool BoolType::is_null(const bool &val) const {
-    return false; 
-  }
-
   bool BoolType::from_val(const Val &in) const { return get<bool>(in); }
 
   Val BoolType::to_val(const bool &in) const { return in; }

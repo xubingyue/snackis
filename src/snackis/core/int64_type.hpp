@@ -7,7 +7,6 @@
 namespace snackis {
   struct Int64Type: Type<int64_t> {
     Int64Type();
-    bool is_null(const int64_t &val) const override;
     int64_t from_val(const Val &in) const override;
     Val to_val(const int64_t &in) const override;
     int64_t read(std::istream &in) const override;

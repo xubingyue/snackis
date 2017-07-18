@@ -7,10 +7,6 @@ namespace snackis {
   Int64Type::Int64Type(): Type<int64_t>("Int64")
   { }
 
-  bool Int64Type::is_null(const int64_t &val) const {
-    return val == 0; 
-  }
-
   int64_t Int64Type::from_val(const Val &in) const { return get<int64_t>(in); }
 
   Val Int64Type::to_val(const int64_t &in) const { return in; }

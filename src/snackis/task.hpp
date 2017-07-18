@@ -24,6 +24,7 @@ namespace snackis {
     Task(const Msg &msg);
   };
 
+  void copy(Task &tsk, const Msg &msg);
   opt<Task> find_task_id(Ctx &ctx, UId id);
   Task get_task_id(Ctx &ctx, UId id);
   Feed get_feed(const Task &tsk);

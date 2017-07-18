@@ -21,8 +21,15 @@ namespace snackis {
     created_at(now()),
     changed_at(created_at)
   {
-    db::copy(*this, msg.post);
+    copy(*this, msg);
     peer_ids.insert(msg.from_id);
+  }
+
+  void copy(Post &ps, const Msg &msg) {
+    Ctx &ctx(ps.ctx);
+    ctx.db.post_id.copy(ps, msg.post);
+    ctx.db.post_feed_id.copy(ps, msg.post);
+    ctx.db.post_body.copy(ps, msg.post);
   }
 
   opt<Post> find_post_id(Ctx &ctx, UId id) {
@@ -84,7 +91,6 @@ namespace snackis {
     ctx.db.post_id.copy(msg.post, ps);
     ctx.db.post_feed_id.copy(msg.post, ps);
     ctx.db.post_body.copy(msg.post, ps);
-
     insert(ctx.db.outbox, msg);
   }
   

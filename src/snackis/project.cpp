@@ -22,10 +22,18 @@ namespace snackis {
     created_at(now()),
     changed_at(created_at)
   {
-    db::copy(*this, msg.project);
+    copy(*this, msg);
     peer_ids.insert(msg.from_id);
   }
 
+  void copy(Project &prj, const Msg &msg) {
+    Ctx &ctx(prj.ctx);
+    ctx.db.project_id.copy(prj, msg.project);
+    ctx.db.project_name.copy(prj, msg.project);
+    ctx.db.project_info.copy(prj, msg.project);
+    ctx.db.project_active.copy(prj, msg.project);
+  }
+  
   opt<Project> find_project_id(Ctx &ctx, UId id) {
     db::Rec<Project> rec;
     set(rec, ctx.db.project_id, id);

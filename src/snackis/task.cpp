@@ -28,8 +28,19 @@ namespace snackis {
     changed_at(created_at),
     prio(0)
   {
-    db::copy(*this, msg.task);
+    copy(*this, msg);
     peer_ids.insert(msg.from_id);
+  }
+
+  void copy(Task &tsk, const Msg &msg) {
+    Ctx &ctx(tsk.ctx);
+    ctx.db.task_id.copy(tsk, msg.task);
+    ctx.db.task_project_id.copy(tsk, msg.task);
+    ctx.db.task_name.copy(tsk, msg.task);
+    ctx.db.task_info.copy(tsk, msg.task);
+    ctx.db.task_prio.copy(tsk, msg.task);
+    ctx.db.task_done.copy(tsk, msg.task);
+    ctx.db.task_done_at.copy(tsk, msg.task);
   }
 
   opt<Task> find_task_id(Ctx &ctx, UId id) {

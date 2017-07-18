@@ -17,7 +17,7 @@ namespace snackis {
   template <typename ValT>
   struct Type: BasicType {
     Type(const str &name);
-    virtual bool is_null(const ValT &val) const = 0;
+    virtual bool is_null(const ValT &val) const;
     virtual ValT from_val(const Val &in) const = 0;
     virtual Val to_val(const ValT &in) const = 0;
     Val read_val(std::istream &in) const override;
@@ -29,6 +29,11 @@ namespace snackis {
   template <typename ValT>
   Type<ValT>::Type(const str &name): BasicType(name) { }
 
+  template <typename ValT>
+  bool Type<ValT>::is_null(const ValT &val) const {
+    return false; 
+  }
+  
   template <typename ValT>
   Val Type<ValT>::read_val(std::istream &in) const {
     return to_val(read(in));

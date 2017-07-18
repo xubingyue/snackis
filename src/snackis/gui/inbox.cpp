@@ -53,7 +53,7 @@ namespace gui {
       
       if (fd_fnd) {	
 	if (fd_fnd->owner_id == msg.from_id) {
-	  db::copy(*fd_fnd, msg.feed);
+	  copy(*fd_fnd, msg);
 	  db::update(ctx.db.feeds, *fd_fnd);
 	}
 	
@@ -61,7 +61,7 @@ namespace gui {
 	auto ps_fnd(find_post_id(ctx, ps.id));
 
 	if (ps_fnd) {
-	  db::copy(*ps_fnd, msg.post);
+	  copy(*ps_fnd, msg);
 	  push_view(new PostView(*ps_fnd));
 	} else {
 	  Post ps(msg);
@@ -81,7 +81,7 @@ namespace gui {
       
       if (prj_fnd) {
 	if (prj_fnd->owner_id == msg.from_id) {
-	  db::copy(*prj_fnd, msg.project);
+	  copy(*prj_fnd, msg);
 	  db::update(ctx.db.projects, *prj_fnd);
 	}
 	
@@ -89,7 +89,7 @@ namespace gui {
 	auto tsk_fnd(find_task_id(ctx, *db::get(msg.task, ctx.db.task_id)));
 
 	if (tsk_fnd) {
-	  db::copy(*tsk_fnd, msg.task);
+	  copy(*tsk_fnd, msg);
 	  push_view(new TaskView(*tsk_fnd));
 	} else {
 	  Task tsk(msg);
