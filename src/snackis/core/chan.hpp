@@ -11,13 +11,12 @@ namespace snackis {
     std::deque<T> buf;
     std::mutex mutex;
     std::condition_variable get_ok, put_ok;
-    bool closed;
+    std::atomic<bool> closed;
 
     Chan(size_t max);
   };
 
-  using ChanRLock = std::shared_lock<std::mutex>;
-  using ChanWLock = std::unique_lock<std::mutex>;
+  using ChanLock = std::unique_lock<std::mutex>;
   
   template <typename T>
   Chan<T>::Chan(size_t max):
@@ -25,26 +24,18 @@ namespace snackis {
   { }
 
   template <typename T>
-  void close(Chan<T> &c) {
-    ChanWLock lock(c.mutex);
-    CHECK(!c.closed, _);
-    c.closed = true;
+  void close(Chan<T> &c) {    
+    CHECK(c.closed.exchange(true), !_);
     c.get_ok.notify_all();
     c.put_ok.notify_all();
   }
 
   template <typename T>
-  bool closed(Chan<T> &c) {
-    ChanRLock lock(c.mutex);
-    return c.closed;
-  }
-
-  template <typename T>
   bool put(Chan<T> &c, const T &it, bool wait=true) {
-    ChanWLock lock(c.mutex);
+    ChanLock lock(c.mutex);
 
     if (wait && c.buf.size() == c.max) {
-      c.put_ok.wait(lock, [&c](){ return c.closed || c.buf.size() < c.max; });
+      c.put_ok.wait(lock, [&c](){ return c.buf.size() < c.max || c.closed.load(); });
     }
 
     if (c.buf.size() == c.max) { return false; }
@@ -55,10 +46,10 @@ namespace snackis {
 
   template <typename T>
   opt<T> get(Chan<T> &c, bool wait=true) {
-    ChanWLock lock(c.mutex);
+    ChanLock lock(c.mutex);
     
     if (wait && c.buf.empty()) {
-      c.get_ok.wait(lock, [&c](){ return c.closed || !c.buf.empty(); });
+      c.get_ok.wait(lock, [&c](){ return !c.buf.empty() || c.closed.load(); });
     }
     
     if (c.buf.empty()) { return nullopt; }
@@ -70,7 +61,7 @@ namespace snackis {
 
   template <typename T>
   void drain(Chan<T> &c) {
-    ChanWLock lock(c.mutex);
+    ChanLock lock(c.mutex);
 
     if (!c.buf.empty()) {
       c.put_ok.wait(lock, [&c](){ return c.buf.empty(); });
