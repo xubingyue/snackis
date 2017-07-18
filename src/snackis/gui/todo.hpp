@@ -5,7 +5,7 @@
 
 namespace snackis {
 namespace gui {
-  const int TODO_MAX(21), TODO_MAX_AGE(3);
+  const int TODO_DONE_MAX(3);
 
   struct Todo: View {
     GtkListStore *store;
