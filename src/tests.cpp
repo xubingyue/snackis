@@ -2,8 +2,10 @@
 
 #include "snackis/ctx.hpp"
 #include "snackis/snackis.hpp"
+#include "snackis/core/chan.hpp"
 #include "snackis/core/data.hpp"
-#include "snackis/core/prim_type.hpp"
+#include "snackis/core/bool_type.hpp"
+#include "snackis/core/int64_type.hpp"
 #include "snackis/core/set_type.hpp"
 #include "snackis/core/str_type.hpp"
 #include "snackis/core/str.hpp"
@@ -50,6 +52,20 @@ static void crypt_key_tests() {
   CHECK(str(dmsg.begin(), dmsg.end()), _ == msg);
 }
 
+static void chan_tests() {
+  const int MAX(100);
+  Chan<int> c(MAX);
+
+  CHECK(get(c, false), !_);
+  for (int i = 0; i < MAX; i++) { CHECK(put(c, i), _); }
+  CHECK(put(c, 42, false), !_);
+  for (int i = 0; i < MAX; i++) { CHECK(get(c), *_ == i); }
+  CHECK(get(c, false), !_);
+  CHECK(put(c, 42), _);
+
+  close(c);
+}
+
 struct Foo {
   int64_t fint64;
   str fstr;
@@ -82,7 +98,7 @@ static void schema_tests() {
 
   Rec<Foo> foo, bar;
   set(foo, col, int64_t(42));
-  CHECK(compare(scm, foo, bar), _ == 1);
+  CHECK(compare(scm, foo, bar), _ == -1);
 
   set(bar, col, int64_t(42));
   CHECK(compare(scm, foo, bar), _ == 0);
@@ -110,7 +126,7 @@ void table_insert_tests() {
   CHECK(insert(tbl, foo), _);
   CHECK(load(tbl, foo) ? true : false, _);
   CHECK(insert(tbl, foo), !_);
-  commit(trans);
+  commit(trans, nullopt);
   CHECK(load(tbl, foo) ? true : false, _);
   close(tbl);
 }
@@ -125,13 +141,13 @@ static void table_slurp_tests() {
   Trans trans(ctx);
   CHECK(insert(tbl, foo), _);
   CHECK(insert(tbl, bar), _);
-  commit(trans);
+  commit(trans, nullopt);
   
   tbl.recs.clear();
   slurp(tbl);
   
-  CHECK(load(tbl, foo) ? true : false, _);
-  CHECK(load(tbl, bar) ? true : false, _);
+  CHECK(load(tbl, foo), _);
+  CHECK(load(tbl, bar), _);
   close(tbl);
 }
 
@@ -172,21 +188,19 @@ static void email_tests() {
 }
 
 int main() {
+  TRY(try_tests);
   std::cout << "Snackis v" << version_str() << std::endl;
 
-  try {
-    str_tests();
-    fmt_tests();
-    crypt_secret_tests();
-    crypt_key_tests();
-    schema_tests();
-    table_insert_tests();
-    table_slurp_tests();
-    read_write_tests();
-    email_tests();
-  } catch (const std::exception &e) {
-    std::cerr << e.what() << std::endl;
-  }
+  str_tests();
+  fmt_tests();
+  crypt_secret_tests();
+  crypt_key_tests();
+  chan_tests();
+  schema_tests();
+  table_insert_tests();
+  table_slurp_tests();
+  read_write_tests();
+  email_tests();
   
   return 0;
 }
