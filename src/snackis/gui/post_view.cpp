@@ -130,7 +130,9 @@ namespace gui {
       select<Feed>(feed_fld, get_feed_id(ctx, rec.feed_id));
     }
 
-    focused = feed_fld.search_btn;
+    focused = (rec.owner_id == whoami(ctx).id)
+      ? feed_fld.search_btn
+      : tags_fld;
   }
 
   bool PostView::allow_save() const {

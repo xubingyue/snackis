@@ -129,7 +129,10 @@ namespace gui {
 			     post_lst.ptr(),
 			     lbl);
     
-    focused = project_fld.search_btn;
+    focused = (rec.owner_id == whoami(ctx).id)
+      ? project_fld.search_btn
+      : name_fld;
+    
     refresh(*this);
   }
 
