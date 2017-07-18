@@ -1,5 +1,6 @@
 #include "snackis/ctx.hpp"
 #include "snackis/snackis.hpp"
+#include "snackis/db/proc.hpp"
 #include "snackis/gui/console.hpp"
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/reader.hpp"
@@ -41,6 +42,8 @@ static void load_style() {
   gtk_css_provider_load_from_file(provider, g_file_new_for_path("gui.css"), &error);
 }
 
+opt<db::Proc> proc;
+
 static void on_activate(GtkApplication *app, gpointer user_data) {
   load_style();
   gui::window = gtk_application_window_new(app);
@@ -64,7 +67,7 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
   gtk_box_set_homogeneous(GTK_BOX(gui::panels), true);
   gtk_box_pack_start(GTK_BOX(gui::main_panel), gui::panels, true, true, 0);
 
-  Ctx *ctx = new Ctx("db/");
+  Ctx *ctx = new Ctx(*proc, 32);
 
   gui::left_panel = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_container_add(GTK_CONTAINER(gui::panels), gui::left_panel);
@@ -86,6 +89,7 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
 }
 
 int main(int argc, char **argv) {
+  proc.emplace("db/", 32);
   GtkApplication *app;
   int status;
   app = gtk_application_new("foo.bar.snackis", G_APPLICATION_FLAGS_NONE);

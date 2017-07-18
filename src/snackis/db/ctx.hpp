@@ -11,17 +11,20 @@
 #include "snackis/core/str.hpp"
 #include "snackis/crypt/secret.hpp"
 #include "snackis/db/change.hpp"
+#include "snackis/db/msg.hpp"
 
 namespace snackis {
 namespace db {
   struct BasicTable;
+  struct Proc;
   struct Trans;
   
   struct Ctx {
     using Log = func<void (const str &)>;
     using Lock = std::unique_lock<std::recursive_mutex>;
     
-    Path path;
+    Proc &proc;
+    Chan<Msg> inbox;
     opt<crypt::Secret> secret;
     opt<Log> log;
     std::set<BasicTable *> tables;
@@ -29,8 +32,8 @@ namespace db {
     std::set<std::ostream *> dirty_files;
     std::list<ChangeSet> undo_stack;
     std::recursive_mutex mutex;
-
-    Ctx(const Path &path);
+    
+    Ctx(Proc &p, size_t max_buf);
     virtual ~Ctx();
   };
 

@@ -1,18 +1,19 @@
 #include <fstream>
+#include "snackis/ctx.hpp"
 #include "snackis/snackis.hpp"
 #include "snackis/crypt/error.hpp"
-#include "snackis/ctx.hpp"
+#include "snackis/db/proc.hpp"
 
 namespace snackis {
 namespace db {
-  Ctx::Ctx(const Path &path): path(path), trans(nullptr) {
-    create_path(path);
-  }
+  Ctx::Ctx(Proc &p, size_t max_buf):
+    proc(p), inbox(max_buf), trans(nullptr)
+  { }
 
   Ctx::~Ctx() { }
 
   Path get_path(const Ctx &ctx, const str &fname) {
-    return ctx.path / fname; 
+    return ctx.proc.path / fname; 
   }
 
   Trans &get_trans(Ctx &ctx) {

@@ -5,15 +5,11 @@
 #include <variant>
 #include <vector>
 
-#include "snackis/core/uid.hpp"
+#include "snackis/core/chan.hpp"
 #include "snackis/db/change.hpp"
 
 namespace snackis {
 namespace db {
-  template <typename T>
-  struct Chan {
-  };
-
   struct BasicMsgFld {
     const str id;
     BasicMsgFld(const str id);

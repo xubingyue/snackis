@@ -2,6 +2,7 @@
 #define SNACKIS_CHAN_HPP
 
 #include <shared_mutex>
+#include "snackis/core/error.hpp"
 
 namespace snackis {  
   template <typename T>

@@ -19,8 +19,8 @@ namespace snackis {
     std::mutex loop_mutex;
     std::condition_variable fetch_cond, send_cond;
     opt<std::thread> fetcher, sender;
-    bool is_closing;
-    Ctx(const Path &path);
+    bool closing;
+    Ctx(db::Proc &p, size_t max_buf);
     virtual ~Ctx();
   };
 

@@ -10,7 +10,7 @@ namespace snackis {
       for (auto e: errors) { log(*ctx, e->what); }
     };
 
-    while (!ctx->is_closing) {
+    while (!ctx->closing) {
       TRY(try_imap);
       Ctx::LoopLock lock(ctx->loop_mutex);
       int64_t poll(0);
@@ -26,7 +26,7 @@ namespace snackis {
 	ctx->fetch_cond.wait(lock);
       }
 
-      if (!ctx->is_closing) {
+      if (!ctx->closing) {
 	Imap imap(*ctx);
 	fetch(imap);
       }
@@ -38,7 +38,7 @@ namespace snackis {
       for (auto e: errors) { log(*ctx, e->what); }
     };
 
-    while (!ctx->is_closing) {
+    while (!ctx->closing) {
       TRY(try_smtp);
       Ctx::LoopLock send_lock(ctx->loop_mutex);
       int64_t poll(0);
@@ -55,19 +55,19 @@ namespace snackis {
       }
 
       Ctx::Lock lock(ctx->mutex);
-      if (!ctx->is_closing && !ctx->db.outbox.recs.empty()) {
+      if (!ctx->closing && !ctx->db.outbox.recs.empty()) {
 	Smtp smtp(*ctx);
 	send(smtp);
       }
     }
   }
 
-  Ctx::Ctx(const Path &path):
-    db::Ctx(path), db(*this), settings(*this), whoami(*this), is_closing(false)
+  Ctx::Ctx(db::Proc &p, size_t max_buf):
+    db::Ctx(p, max_buf), db(*this), settings(*this), whoami(*this), closing(false)
   { }
 
   Ctx::~Ctx() {
-    is_closing = true;
+    closing = true;
 
     if (fetcher) {
       fetch_cond.notify_one();
