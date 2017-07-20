@@ -8,18 +8,15 @@
 
 namespace snackis {
   const str
-  Msg::INVITE("invite"), Msg::ACCEPT("accept"), Msg::REJECT("reject"),
+  Msg::INVITE("invite"), Msg::ACCEPT("accept"),
     Msg::POST("post"), Msg::TASK("task");
 
   Msg::Msg(Ctx &ctx, const str &type): IdRec(ctx), type(type) {
     Peer &me(whoami(ctx));
     from = me.email;
-    
-    if (type != Msg::REJECT) {
-      from_id = me.id;
-      peer_name = me.name;
-      crypt_key = me.crypt_key;
-    }
+    from_id = me.id;
+    peer_name = me.name;
+    crypt_key = me.crypt_key;
   }
 
   Msg::Msg(Ctx &ctx, const db::Rec<Msg> &src): IdRec(ctx, null_uid) {
@@ -29,8 +26,7 @@ namespace snackis {
   str encode(Msg &msg) {
     TRACE("Encoding message");
     Ctx &ctx(msg.ctx);
-    const bool encrypt(msg.type != Msg::INVITE &&
-		       msg.type != Msg::REJECT);
+    const bool encrypt(msg.type != Msg::INVITE);
     
     Stream buf;
     db::Rec<Msg> rec;
@@ -77,8 +73,7 @@ namespace snackis {
     }
 
     msg.type = str_type.read(in_buf);
-    const bool decrypt(msg.type != Msg::INVITE &&
-		       msg.type != Msg::REJECT);
+    const bool decrypt(msg.type != Msg::INVITE);
     
     if (decrypt) {
       if (msg.type == Msg::ACCEPT) {
@@ -106,30 +101,50 @@ namespace snackis {
   void receive(Msg &msg) {
     Ctx &ctx(msg.ctx);
 
-    if (msg.type == Msg::ACCEPT) {
-      if (!invited(msg)) { return; }
-    } else if (msg.type == Msg::REJECT) {
-      if (!invited(msg)) { return; }
+    if (msg.type == Msg::INVITE) {
+      db::insert(ctx.db.inbox, msg);
+    } else if (msg.type == Msg::ACCEPT) {
+      if (invite_accepted(msg)) { db::insert(ctx.db.inbox, msg); }
     } else if (msg.type == Msg::POST) {
       Feed fd(ctx, msg.feed);
       auto fd_fnd(find_feed_id(ctx, fd.id));
       
       if (fd_fnd) {
+	if (fd_fnd->owner_id == msg.from_id) {
+	  copy(*fd_fnd, msg);
+	  db::update(ctx.db.feeds, *fd_fnd);
+	}
+	
 	Post ps(ctx, msg.post);
 	auto ps_fnd(find_post_id(ctx, ps.id));
-
+	
 	if (ps_fnd) {
 	  if (ps_fnd->owner_id != msg.from_id) {
 	    log(ctx, "Skipping unauthorized update");
 	    return;
 	  }
+
+	  copy(*ps_fnd, msg);
+	  db::update(ctx.db.posts, *ps_fnd);
+	} else {
+	  db::insert(ctx.db.posts, Post(msg));
+	  db::insert(ctx.db.inbox, msg);
 	}
+      } else {
+	db::insert(ctx.db.feeds, Feed(msg));
+	db::insert(ctx.db.posts, Post(msg));
+	db::insert(ctx.db.inbox, msg);
       }
     } else if (msg.type == Msg::TASK) {
       Project prj(ctx, msg.project);
       auto prj_fnd(find_project_id(ctx, prj.id));
       
       if (prj_fnd) {
+	if (prj_fnd->owner_id == msg.from_id) {
+	  copy(*prj_fnd, msg);
+	  db::update(ctx.db.projects, *prj_fnd);
+	}
+	
 	Task tsk(ctx, msg.task);
 	auto tsk_fnd(find_task_id(ctx, tsk.id));
 
@@ -138,10 +153,20 @@ namespace snackis {
 	    log(ctx, "Skipping unauthorized update");
 	    return;
 	  }
+
+	  copy(*tsk_fnd, msg);
+	  db::update(ctx.db.tasks, *tsk_fnd);
+	} else {
+	  db::insert(ctx.db.tasks, Task(msg));
+	  db::insert(ctx.db.inbox, msg);
 	}
+      } else {
+	db::insert(ctx.db.projects, Project(msg));
+	db::insert(ctx.db.tasks, Task(msg));
+	db::insert(ctx.db.inbox, msg);
       }
+    } else {
+      log(ctx, "Invalid message type: %0", msg.type);
     }
-    
-    db::insert(ctx.db.inbox, msg);
   }
 }

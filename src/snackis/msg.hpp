@@ -11,7 +11,7 @@
 
 namespace snackis {
   struct Msg: IdRec {
-    static const str INVITE, ACCEPT, REJECT, POST, TASK;
+    static const str INVITE, ACCEPT, POST, TASK;
     
     str type;
     Time fetched_at;

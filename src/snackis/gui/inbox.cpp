@@ -13,112 +13,77 @@ namespace snackis {
 namespace gui {
   enum Cols { COL_PTR=0, COL_FROM, COL_INFO };
   
+  static void on_sel_change(gpointer *_, Inbox *v) {
+    gtk_widget_set_sensitive(v->delete_btn, sel_count(GTK_TREE_VIEW(v->lst)) > 0);
+  }
+  
   static void on_cancel(gpointer *_, Inbox *v) {
     pop_view(v);
+  }
+
+  static void on_delete(gpointer *_, Inbox *v) {
+    each_sel(GTK_TREE_VIEW(v->lst), [v](auto &it) {
+	TRY(try_delete);
+	db::Trans trans(v->ctx);
+	auto rec(get_rec<Msg>(GTK_TREE_VIEW(v->lst), it));
+	db::erase(v->ctx.db.inbox, *rec);
+	
+	if (try_delete.errors.empty()) {
+	  db::commit(trans, nullopt);
+	  gtk_list_store_remove(v->store, &it);
+	}
+      });
   }
 
   static void on_activate(GtkTreeView *treeview,
 			  GtkTreePath *path,
 			  GtkTreeViewColumn *col,
 			  Inbox *v) {
-    TRY(try_activate);
-    Ctx &ctx(v->ctx);
-    db::Trans trans(ctx);
-    auto it(*get_sel_iter(GTK_TREE_VIEW(v->lst)));
-    auto rec(get_rec<Msg>(GTK_TREE_VIEW(v->lst), it));
-    CHECK(rec != nullptr, _);
-    Msg msg(ctx, *rec);
-
-    if (msg.type == Msg::INVITE) {
-      auto pv(new PeerView(Peer(msg)));
-
-      pv->on_save.push_back([&ctx, msg, rec]() {
+    each_sel(treeview, [v](auto &it) {
+	Ctx &ctx(v->ctx);
+	db::Trans trans(ctx);
+	TRY(try_activate);
+	auto rec(get_rec<Msg>(GTK_TREE_VIEW(v->lst), it));
+	Msg msg(ctx, *rec);
+	
+	if (msg.type == Msg::INVITE) {
+	  const str log_msg(fmt("Accepted invite from %0", msg.from));
+	  log(ctx, log_msg);
 	  send_accept(msg);
-	  log(ctx, fmt("Invite accepted: %0", msg.from));
-	});
-
-      pv->on_cancel.push_back([&ctx, msg, rec]() {
-	  send_reject(msg);
-	  log(ctx, fmt("Invite rejected: %0", msg.from));
-	});
-
-      push_view(pv);
-    } else if (msg.type == Msg::ACCEPT) {
-      invite_accepted(msg);
-      push_view(new PeerView(get_peer_id(ctx, msg.from_id)));
-    } else if (msg.type == Msg::REJECT) {
-      invite_rejected(msg);
-    } else if (msg.type == Msg::POST) {
-      Feed fd(ctx, msg.feed);
-      auto fd_fnd(find_feed_id(ctx, fd.id));
-      
-      if (fd_fnd) {	
-	if (fd_fnd->owner_id == msg.from_id) {
-	  copy(*fd_fnd, msg);
-	  db::update(ctx.db.feeds, *fd_fnd);
-	}
-	
-	Post ps(ctx, msg.post);
-	auto ps_fnd(find_post_id(ctx, ps.id));
-
-	if (ps_fnd) {
-	  copy(*ps_fnd, msg);
-	  push_view(new PostView(*ps_fnd));
+	  
+	  db::Trans trans(ctx);
+	  Peer pr(msg);
+	  db::upsert(ctx.db.peers, pr);
+	  
+	  auto pv(new PeerView(pr));
+	  push_view(pv);
+	} else if (msg.type == Msg::ACCEPT) {
+	  push_view(new PeerView(get_peer_id(ctx, msg.from_id)));
+	} else if (msg.type == Msg::POST) {
+	  Post ps(ctx, msg.post);
+	  push_view(new PostView(get_post_id(ctx, ps.id)));
+	} else if (msg.type == Msg::TASK) {
+	  Task tsk(ctx, msg.task);      
+	  push_view(new TaskView(get_task_id(ctx, tsk.id)));
 	} else {
-	  Post ps(msg);
-	  db::insert(ctx.db.posts, ps);
-	  push_view(new PostView(ps));
+	  log(ctx, fmt("Invalid message type: %0", msg.type));
 	}
-      } else {
-	db::insert(ctx.db.feeds, Feed(msg));
-	
-	Post ps(msg);
-	db::insert(ctx.db.posts, ps);
-	push_view(new PostView(ps));
-      }
-    } else if (msg.type == Msg::TASK) {
-      Project prj(ctx, msg.project);
-      auto prj_fnd(find_project_id(ctx, prj.id));
-      
-      if (prj_fnd) {
-	if (prj_fnd->owner_id == msg.from_id) {
-	  copy(*prj_fnd, msg);
-	  db::update(ctx.db.projects, *prj_fnd);
-	}
-	
-	Task tsk(ctx, msg.task);
-	auto tsk_fnd(find_task_id(ctx, *db::get(msg.task, ctx.db.task_id)));
 
-	if (tsk_fnd) {
-	  copy(*tsk_fnd, msg);
-	  push_view(new TaskView(*tsk_fnd));
-	} else {
-	  Task tsk(msg);
-	  db::insert(ctx.db.tasks, tsk);
-	  push_view(new TaskView(tsk));
+	if (try_activate.errors.empty()) {
+	  gtk_list_store_remove(v->store, &it);
+	  db::erase(ctx.db.inbox, msg);
+	  db::commit(trans, nullopt);
 	}
-      } else {
-	  db::insert(ctx.db.projects, Project(msg));
-
-	  Task tsk(msg);
-	  db::insert(ctx.db.tasks, tsk);
-	  push_view(new TaskView(tsk));
-      }
-    } else {
-	log(ctx, fmt("Invalid message type: %0", msg.type));
-    }
-    
-    gtk_list_store_remove(v->store, &it);
-    db::erase(ctx.db.inbox, *rec);
-    db::commit(trans, fmt("Handled Message: %0", id_str(msg)));
+      });
   }
-  
+
   Inbox::Inbox(Ctx &ctx):
     View(ctx, "Inbox"),
     store(gtk_list_store_new(3,
 			     G_TYPE_POINTER,
 			     G_TYPE_STRING, G_TYPE_STRING)),
     lst(new_tree_view(GTK_TREE_MODEL(store))),
+    delete_btn(gtk_button_new_with_mnemonic("_Delete Selected")),
     cancel_btn(gtk_button_new_with_mnemonic("_Cancel"))
   {
     GtkWidget *lbl;
@@ -126,12 +91,19 @@ namespace gui {
     add_col(GTK_TREE_VIEW(lst), "From", COL_FROM);
     add_col(GTK_TREE_VIEW(lst), "Message", COL_INFO, true);
     g_signal_connect(lst, "row-activated", G_CALLBACK(on_activate), this);
+    enable_multi_sel(GTK_TREE_VIEW(lst));
+    auto sel(gtk_tree_view_get_selection(GTK_TREE_VIEW(lst)));
+    g_signal_connect(sel, "changed", G_CALLBACK(on_sel_change), this);
     gtk_container_add(GTK_CONTAINER(panel), gtk_widget_get_parent(lst));
 
     lbl = gtk_label_new(fmt("Press Return or double-click "
 			    "to handle Message").c_str());
     gtk_container_add(GTK_CONTAINER(panel), lbl);
-     
+
+    gtk_widget_set_halign(delete_btn, GTK_ALIGN_START);
+    g_signal_connect(delete_btn, "clicked", G_CALLBACK(on_delete), this);
+    gtk_container_add(GTK_CONTAINER(panel), delete_btn);
+
     gtk_widget_set_margin_top(cancel_btn, 10);
     gtk_widget_set_halign(cancel_btn, GTK_ALIGN_END);
     g_signal_connect(cancel_btn, "clicked", G_CALLBACK(on_cancel), this);
@@ -168,60 +140,24 @@ namespace gui {
 	gtk_list_store_set(store, &iter, COL_INFO, "Invite", -1);
       } else if (msg.type == Msg::ACCEPT) {
 	gtk_list_store_set(store, &iter, COL_INFO, "Invite accepted", -1);
-      } else if (msg.type == Msg::REJECT) {
-	gtk_list_store_set(store, &iter, COL_INFO, "Invite rejected", -1);
       } else if (msg.type == Msg::POST) {
-	Feed fd(ctx, msg.feed);
 	Post ps(ctx, msg.post);
-	auto fd_fnd(find_feed_id(ctx, fd.id));
-
-	if (fd_fnd) {  
-	  auto ps_fnd(find_post_id(ctx, ps.id));
-	  
-	  if (ps_fnd) {
-	    gtk_list_store_set(store, &iter,
-			       COL_INFO,
-			       fmt("Post %0 updated", id_str(ps)).c_str(),
-			       -1);
-	  } else {
-	    gtk_list_store_set(store, &iter,
-			       COL_INFO,
-			       fmt("New post in feed %0:\n%1",
-				   id_str(fd), ps.body).c_str(),
-			       -1);
-	  }
-	} else {
-	  gtk_list_store_set(store, &iter,
-			     COL_INFO,
-			     fmt("New feed:\n%0", fd.name).c_str(),
-			     -1);
-	}
+	Feed fd(get_feed_id(ctx, ps.feed_id));
+	
+	gtk_list_store_set(store, &iter,
+			   COL_INFO,
+			   fmt("New post in feed '%0':\n%1",
+			       fd.name, ps.body).c_str(),
+			   -1);
       } else if (msg.type == Msg::TASK) {
-	Project prj(ctx, msg.project);
 	Task tsk(ctx, msg.task);
-	auto prj_fnd(find_project_id(ctx, prj.id));
-
-	if (prj_fnd) {  
-	  auto tsk_fnd(find_task_id(ctx, tsk.id));
-	  
-	  if (tsk_fnd) {
-	    gtk_list_store_set(store, &iter,
-			       COL_INFO,
-			       fmt("Task %0 updated", id_str(tsk)).c_str(),
-			       -1);
-	  } else {
-	    gtk_list_store_set(store, &iter,
-			       COL_INFO,
-			       fmt("New task in project %0:\n%1",
-				   id_str(prj), tsk.name).c_str(),
-			       -1);
-	  }
-	} else {
-	  gtk_list_store_set(store, &iter,
-			     COL_INFO,
-			     fmt("New project:\n%0", prj.name).c_str(),
-			     -1);
-	}	  
+	Project prj(get_project_id(ctx, tsk.project_id));
+	
+	gtk_list_store_set(store, &iter,
+			   COL_INFO,
+			   fmt("New task in project '%0':\n%1",
+			       prj.name, tsk.name).c_str(),
+			   -1);
       } else {
 	gtk_list_store_set(store, &iter, COL_INFO,
 			   fmt("Invalid message type: %0", msg.type).c_str(),

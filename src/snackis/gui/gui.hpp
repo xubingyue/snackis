@@ -62,6 +62,7 @@ namespace gui {
   void each_sel(GtkTreeView *w, func<void (GtkTreeIter &)> fn);
   void enable_multi_sel(GtkTreeView *w);
   bool sel_first(GtkTreeView *w);
+  int sel_count(GtkTreeView *w);
 
   GtkWidget *new_grid();
   GtkWidget *new_label(const str &txt);

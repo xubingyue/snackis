@@ -7,7 +7,7 @@ namespace snackis {
 namespace gui {
   struct Inbox: View {
     GtkListStore *store;
-    GtkWidget *lst, *cancel_btn;
+    GtkWidget *lst, *delete_btn, *cancel_btn;
 
     Inbox(Ctx &ctx);
     void load() override;

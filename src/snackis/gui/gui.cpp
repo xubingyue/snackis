@@ -80,6 +80,10 @@ namespace gui {
       gtk_tree_selection_select_iter(sel, &it);
       return true;
   }
+
+  int sel_count(GtkTreeView *w) {
+    return gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(w));
+  }
   
   GtkWidget *new_grid() {
     GtkWidget *w(gtk_grid_new());

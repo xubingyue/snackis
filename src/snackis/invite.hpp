@@ -20,10 +20,7 @@ namespace snackis {
 
   void send(Invite &inv);
   void send_accept(const Msg &in);
-  bool invited(const Msg &in);
-  void invite_accepted(const Msg &in);
-  void send_reject(const Msg &in);
-  void invite_rejected(const Msg &in);
+  bool invite_accepted(const Msg &in);
 }
 
 #endif

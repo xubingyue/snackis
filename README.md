@@ -67,7 +67,7 @@ Type ```decrypt``` and press ```Return``` in the reader to open the decryption v
 ![decrypt example](images/decrypt.png?raw=true)
 
 ### Invites
-Type ```invite foo@bar.com``` in the reader and press ```Return``` to create a new invite. Snackis will send an email containing your public encryption-key to the specified address. When an invite is accepted/rejected, a reply is sent to inform the inviting peer. The easiest way to see how it works is to send an invite to your own address.
+Type ```invite foo@bar.com``` in the reader and press ```Return``` to create a new invite. Snackis will send an email containing your public encryption-key to the specified address. When an invite is accepted, a reply is sent to inform the inviting peer. The easiest way to see how it works is to send an invite to your own address.
 
 ### Peers
 Type ```peer-search``` in the reader and press ```Return``` to search Peers locally. Peers are sorted by name. A short-cut is provided to find peers by id; execute ```peer id``` to open the specified peer, any unique part of the id will do.
@@ -75,7 +75,7 @@ Type ```peer-search``` in the reader and press ```Return``` to search Peers loca
 ![peer search example](images/peer_search.png?raw=true)
 
 ### Messages
-All Snackis-messages look more or less the same to the outside world, the actual data is appended in encrypted (except for invites and rejects) and encoded form below the ```__SNACKIS__```-marker.
+All Snackis-messages look more or less the same to the outside world, the actual data is appended in encrypted (except for invites) and encoded form below the ```__SNACKIS__```-marker.
 
 ![message example](images/message.png?raw=true)
 
