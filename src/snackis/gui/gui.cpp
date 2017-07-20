@@ -138,6 +138,21 @@ namespace gui {
     return w;
   }
 
+  static gboolean on_tree_view_key(gpointer _, GdkEventKey *ev, GtkTreeView *w) {
+    if ((ev->state & GDK_CONTROL_MASK) && ev->keyval == 'a') {
+      auto sel(gtk_tree_view_get_selection(w));
+      
+      if (ev->state & GDK_SHIFT_MASK) {
+	gtk_tree_selection_unselect_all(sel);
+      } else {
+	gtk_tree_selection_select_all(sel);
+      }
+      return true;
+    }
+    
+    return false;
+  }
+
   GtkWidget *new_tree_view(GtkTreeModel *mod) {
     GtkWidget *w(gtk_tree_view_new_with_model(mod));
     gtk_widget_set_hexpand(w, true);
@@ -149,6 +164,10 @@ namespace gui {
 				   GTK_POLICY_NEVER,
 				   GTK_POLICY_ALWAYS);
     gtk_container_add(GTK_CONTAINER(scroll), w);
+    g_signal_connect(G_OBJECT(w),
+		     "key_release_event",
+		     G_CALLBACK(on_tree_view_key),
+		     GTK_TREE_VIEW(w));
     return w;
   }
   
