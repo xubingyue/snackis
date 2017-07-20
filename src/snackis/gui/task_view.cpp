@@ -9,9 +9,15 @@
 namespace snackis {
 namespace gui {
   static void on_page(GtkNotebook *w, GtkWidget *p, guint pn, TaskView *v) {
-    if (pn == 1 && !post_count(v->post_lst)) {
+    switch (pn) {
+    case 1:
+      load(v->peer_lst);
+      break;
+    case 2: {
       auto fd(find_feed_id(v->ctx, v->rec.id));
       if (fd) { load(v->post_lst, *fd, now()); }
+      break;
+    }
     }
   }
 
@@ -52,12 +58,13 @@ namespace gui {
     v.project_fld.on_change.emplace([&v]() {
 	if (v.project_fld.selected) {
 	  set_project(v.rec, *v.project_fld.selected);
+	  load(v.peer_lst);
+	  set_str(GTK_ENTRY(v.tags_fld),
+		  join(v.rec.tags.begin(), v.rec.tags.end(), ' '));
+	  gtk_widget_set_sensitive(v.project_btn, true);
 	}
 	
-	set_str(GTK_ENTRY(v.tags_fld),
-		join(v.rec.tags.begin(), v.rec.tags.end(), ' '));
-	auto sel(v.project_fld.selected ? true : false);
-	gtk_widget_set_sensitive(v.project_btn, sel);
+	gtk_widget_set_sensitive(v.project_btn, false);
 	refresh(v);
       });
     
@@ -104,6 +111,7 @@ namespace gui {
     tags_fld(gtk_entry_new()),    
     info_fld(new_text_view()),
     project_fld(ctx),
+    peer_lst(ctx, "Peer", this->rec.peer_ids),
     post_lst(ctx)
   {
     gtk_widget_set_sensitive(find_posts_btn,
@@ -121,8 +129,12 @@ namespace gui {
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
 			     init_general(*this),
 			     gtk_label_new_with_mnemonic("_1 General"));
-    
-    GtkWidget *lbl(gtk_label_new_with_mnemonic("_2 Post History"));
+
+    gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
+			     peer_lst.ptr(),
+			     gtk_label_new_with_mnemonic("_2 Peers"));
+
+    GtkWidget *lbl(gtk_label_new_with_mnemonic("_3 Post History"));
     if (!find_feed_id(ctx, rec.id)) { gtk_widget_set_sensitive(lbl, false); }
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
 			     post_lst.ptr(),

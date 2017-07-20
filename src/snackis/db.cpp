@@ -157,13 +157,10 @@ namespace snackis {
 
     posts.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
 	Post curr(ctx, curr_rec);
-	curr.peer_ids = get_feed_id(ctx, curr.feed_id).peer_ids;
 	curr.changed_at = now();
 
 	auto fd(find_feed_id(ctx, curr.id));
-	if (fd && (fd->tags != curr.tags ||
-		   fd->peer_ids != curr.peer_ids)) {		    	
-	  fd->tags = curr.tags;
+	if (fd && fd->peer_ids != curr.peer_ids) {		    	
 	  fd->peer_ids = curr.peer_ids;
 	  db::update(feeds, *fd);
 	}
@@ -174,15 +171,15 @@ namespace snackis {
 
     projects.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
 	Project curr(ctx, curr_rec);
+	curr.changed_at = now();
 	auto fd(find_feed_id(ctx, curr.id));
 	
-	if (fd && (fd->tags != curr.tags ||
-		   fd->peer_ids != curr.peer_ids)) {
+	if (fd && fd->peer_ids != curr.peer_ids) {
 	  fd->peer_ids = curr.peer_ids;
 	  db::update(feeds, *fd);
 	}
 
-	db::set(curr_rec, project_changed_at, now());
+	db::copy(projects, curr_rec, curr);
       });
 
     tasks.on_insert.push_back([&](auto &rec) {
@@ -194,13 +191,11 @@ namespace snackis {
 
     tasks.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
 	Task curr(ctx, curr_rec), prev(ctx, prev_rec);
-	curr.peer_ids = get_project_id(ctx, curr.project_id).peer_ids;
 	curr.changed_at = now();
 	if (curr.done && !prev.done) { curr.done_at = now(); }
 	
 	auto fd(find_feed_id(ctx, curr.id));
-	if (fd && (fd->tags != curr.tags ||
-		   fd->peer_ids != curr.peer_ids)) {
+	if (fd && fd->peer_ids != curr.peer_ids) {
 	  fd->peer_ids = curr.peer_ids;
 	  db::update(feeds, *fd);
 	}

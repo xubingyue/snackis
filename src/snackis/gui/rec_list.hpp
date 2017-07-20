@@ -119,6 +119,7 @@ namespace gui {
 
   template <typename RecT>
   void load(RecList<RecT> &w) {
+    gtk_list_store_clear(w.store);
     auto &tbl(w.table());
     
     for (const auto &id: w.ids) {

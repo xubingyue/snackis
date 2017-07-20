@@ -81,8 +81,17 @@ namespace snackis {
   }
 
   void set_project(Task &tsk, Project &prj) {
+    Ctx &ctx(tsk.ctx);
+    
+    if (tsk.project_id != null_uid) {
+      Project prev_prj(get_project_id(ctx, tsk.project_id));
+      for (auto &id: prev_prj.peer_ids) { tsk.peer_ids.erase(id); }
+      for (auto &t: prev_prj.tags) { tsk.tags.erase(t); }
+    }
+    
     tsk.project_id = prj.id;
-    tsk.peer_ids = prj.peer_ids;
+    for (auto &id: prj.peer_ids) { tsk.peer_ids.insert(id); }
+    for (auto &t: prj.tags) { tsk.tags.insert(t); }
   }
 
   static void send(const Task &tsk, const Peer &pr) {

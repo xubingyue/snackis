@@ -13,16 +13,10 @@ namespace gui {
   static void on_page(GtkNotebook *w, GtkWidget *p, guint pn, FeedView *v) {
     switch (pn) {
     case 1:
-      if (!rec_count(v->peer_lst)) {
-	load(v->peer_lst);
-      }
-      
+      load(v->peer_lst);
       break;
     case 2:
-      if (!post_count(v->post_lst)) {
-	load(v->post_lst, v->rec, now());
-      }
-      
+      load(v->post_lst, v->rec, now());      
       break;
     }
   }

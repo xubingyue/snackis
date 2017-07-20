@@ -13,17 +13,11 @@ namespace gui {
   static void on_page(GtkNotebook *w, GtkWidget *p, guint pn, ProjectView *v) {
     switch (pn) {
     case 1:
-      if (!rec_count(v->peer_lst)) {
-	load(v->peer_lst);
-      }
-      
+      load(v->peer_lst);
       break;
     case 2:
-      if (!post_count(v->post_lst)) {
-	auto fd(find_feed_id(v->ctx, v->rec.id));
-	if (fd) { load(v->post_lst, *fd, now()); }
-      }
-      
+      auto fd(find_feed_id(v->ctx, v->rec.id));
+      if (fd) { load(v->post_lst, *fd, now()); }
       break;
     }
   }
