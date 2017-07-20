@@ -70,9 +70,17 @@ namespace snackis {
   }
 
   void set_feed(Post &ps, Feed &fd) {
+    Ctx &ctx(ps.ctx);
+    
+    if (ps.feed_id != null_uid) {
+      Feed prev_fd(get_feed_id(ctx, ps.feed_id));
+      for (auto &id: prev_fd.peer_ids) { ps.peer_ids.erase(id); }
+      for (auto &t: prev_fd.tags) { ps.tags.erase(t); }
+    }
+    
     ps.feed_id = fd.id;
-    ps.peer_ids = fd.peer_ids;
-    std::copy(fd.tags.begin(), fd.tags.end(), std::inserter(ps.tags, ps.tags.end()));
+    for (auto &id: fd.peer_ids) { ps.peer_ids.insert(id); }
+    for (auto &t: fd.tags) { ps.tags.insert(t); }
   }
 
   static void send(const Post &ps, const Peer &pr) {

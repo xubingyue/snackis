@@ -9,6 +9,14 @@
 
 namespace snackis {
 namespace gui {
+  static void on_page(GtkNotebook *w, GtkWidget *p, guint pn, PostView *v) {
+    switch (pn) {
+    case 1:
+      load(v->peer_lst);
+      break;
+    }
+  }
+
   static void on_project(gpointer *_, PostView *v) {
     push_view(new ProjectView(get_project_id(v->ctx, v->rec.feed_id)));
   }
@@ -53,6 +61,58 @@ namespace gui {
       push_view(pv);
     }
   }
+
+  GtkWidget *init_general(PostView &v) {
+    Ctx &ctx(v.ctx);
+    auto &me(whoami(ctx));
+    GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+    
+    gtk_container_add(GTK_CONTAINER(frm), new_label("Feed"));
+    GtkWidget *feed_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    gtk_container_add(GTK_CONTAINER(frm), feed_box);
+
+    v.feed_fld.on_change.emplace([&v]() {
+	clear(v.post_lst);
+
+	if (v.feed_fld.selected) {
+	  set_feed(v.rec, *v.feed_fld.selected);
+	  auto reply_fd(find_feed_id(v.ctx, v.rec.id));
+	  gui::load(v.post_lst, *v.feed_fld.selected, v.rec.created_at);
+	  load(v.peer_lst);
+	  set_str(GTK_ENTRY(v.tags_fld),
+		  join(v.rec.tags.begin(), v.rec.tags.end(), ' '));
+	  gtk_widget_set_sensitive(v.feed_btn, true);
+	}
+	
+	gtk_widget_set_sensitive(v.feed_btn, false);
+	refresh(v);
+      });
+
+    gtk_widget_set_sensitive(v.feed_fld.ptr(), v.rec.owner_id == me.id);    
+    gtk_container_add(GTK_CONTAINER(feed_box), v.feed_fld.ptr());
+    g_signal_connect(v.feed_btn, "clicked", G_CALLBACK(on_feed), &v);
+    gtk_widget_set_sensitive(v.feed_btn, false);
+    gtk_container_add(GTK_CONTAINER(feed_box), v.feed_btn);
+
+    if (v.rec.feed_id != null_uid) {
+      select<Feed>(v.feed_fld, get_feed_id(ctx, v.rec.feed_id));
+    }
+
+    GtkWidget *lbl(new_label("Tags"));
+    gtk_widget_set_margin_top(lbl, 5);
+    gtk_container_add(GTK_CONTAINER(frm), lbl);
+    gtk_container_add(GTK_CONTAINER(frm), v.tags_fld);
+    set_str(GTK_ENTRY(v.tags_fld), join(v.rec.tags.begin(), v.rec.tags.end(), ' '));
+
+    gtk_container_add(GTK_CONTAINER(frm), new_label("Body"));
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(v.body_fld), v.rec.owner_id == me.id);
+    gtk_container_add(GTK_CONTAINER(frm), gtk_widget_get_parent(v.body_fld));
+    set_str(GTK_TEXT_VIEW(v.body_fld), v.rec.body);
+
+    gtk_widget_set_margin_top(v.post_lst.ptr(), 5);
+    gtk_container_add(GTK_CONTAINER(frm), v.post_lst.ptr());
+    return frm;
+  }
   
   PostView::PostView(const Post &post):
     SharedView<Post>("Post", post),
@@ -65,9 +125,9 @@ namespace gui {
     tags_fld(gtk_entry_new()),
     body_fld(new_text_view()),
     feed_fld(ctx),
+    peer_lst(ctx, "Peer", this->rec.peer_ids),
     post_lst(ctx)
   {
-    auto &me(whoami(ctx));
     g_signal_connect(post_btn, "clicked", G_CALLBACK(on_post), this);
     gtk_container_add(GTK_CONTAINER(menu), post_btn);
     gtk_widget_set_sensitive(find_replies_btn,
@@ -84,55 +144,29 @@ namespace gui {
       g_signal_connect(task_btn, "clicked", G_CALLBACK(on_task), this);
       gtk_container_add(GTK_CONTAINER(menu), task_btn);
     }
-    
-    gtk_container_add(GTK_CONTAINER(fields), new_label("Feed"));
-    GtkWidget *feed_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    gtk_container_add(GTK_CONTAINER(fields), feed_box);
 
-    feed_fld.on_change.emplace([this]() {
-	clear(post_lst);
+    auto &me(whoami(ctx));
+    GtkWidget *tabs(gtk_notebook_new());
+    gtk_widget_set_vexpand(tabs, true);
+    g_signal_connect(tabs, "switch-page", G_CALLBACK(on_page), this);
+    gtk_container_add(GTK_CONTAINER(fields), tabs);
 
-	if (feed_fld.selected) {
-	  set_feed(rec, *feed_fld.selected);
-	  auto reply_fd(find_feed_id(ctx, rec.id));
-	  gui::load(post_lst, *feed_fld.selected, rec.created_at);
-	}
-	
-	set_str(GTK_ENTRY(tags_fld), join(rec.tags.begin(), rec.tags.end(), ' '));
-	auto sel(feed_fld.selected ? true : false);
-	gtk_widget_set_sensitive(feed_btn, sel);
-	refresh(*this);
-      });
+    gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
+			     init_general(*this),
+			     gtk_label_new_with_mnemonic("_1 General"));
 
-    gtk_widget_set_sensitive(feed_fld.ptr(), rec.owner_id == me.id);    
-    gtk_container_add(GTK_CONTAINER(feed_box), feed_fld.ptr());
-    g_signal_connect(feed_btn, "clicked", G_CALLBACK(on_feed), this);
-    gtk_widget_set_sensitive(feed_btn, false);
-    gtk_container_add(GTK_CONTAINER(feed_box), feed_btn);
-    
-    GtkWidget *lbl(new_label("Tags"));
-    gtk_widget_set_margin_top(lbl, 5);
-    gtk_container_add(GTK_CONTAINER(fields), lbl);
-    gtk_container_add(GTK_CONTAINER(fields), tags_fld);
-    set_str(GTK_ENTRY(tags_fld), join(rec.tags.begin(), rec.tags.end(), ' '));
-
-    gtk_container_add(GTK_CONTAINER(fields), new_label("Body"));
-    gtk_text_view_set_editable(GTK_TEXT_VIEW(body_fld), rec.owner_id == me.id);
-    gtk_container_add(GTK_CONTAINER(fields), gtk_widget_get_parent(body_fld));
-    set_str(GTK_TEXT_VIEW(body_fld), rec.body);
-
-    gtk_widget_set_margin_top(post_lst.ptr(), 5);
-    gtk_container_add(GTK_CONTAINER(fields), post_lst.ptr());
-
-    if (rec.feed_id == null_uid) {
-      refresh(*this);
-    } else {
-      select<Feed>(feed_fld, get_feed_id(ctx, rec.feed_id));
+    if (rec.owner_id != me.id) {
+      set_read_only(peer_lst);
     }
 
-    focused = (rec.owner_id == whoami(ctx).id)
+    gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
+			     peer_lst.ptr(),
+			     gtk_label_new_with_mnemonic("_2 Peers"));
+
+    focused = (rec.owner_id == me.id)
       ? feed_fld.search_btn
       : tags_fld;
+    refresh(*this);
   }
 
   bool PostView::allow_save() const {

@@ -2,6 +2,7 @@
 #define SNACKIS_GUI_REC_LIST_HPP
 
 #include <set>
+#include "snackis/db/table.hpp"
 #include "snackis/gui/search_view.hpp"
 
 namespace snackis {
@@ -10,8 +11,9 @@ namespace gui {
   struct RecList: Widget {
     Ctx &ctx;
     GtkListStore *store;
-    GtkWidget *box, *list, *add_btn;
+    GtkWidget *box, *list, *label, *add_btn;
     std::set<UId> &ids;
+    bool read_only;
     
     RecList(Ctx &ctx, const str &lbl, std::set<UId> &ids);
     GtkWidget *ptr() override;
@@ -64,7 +66,7 @@ namespace gui {
   template <typename RecT>
   gboolean on_rec_key(gpointer _, GdkEventKey *ev, RecList<RecT> *w) {
     if (ev->keyval != GDK_KEY_Return) { return false; }
-    activate(w);
+    if (!w->read_only) { activate(w); }
     return true;
   }
 
@@ -73,7 +75,7 @@ namespace gui {
 		       GtkTreePath *path,
 		       GtkTreeViewColumn *col,
 		       RecList<RecT> *w) {
-    activate(w);
+    if (!w->read_only) { activate(w); }
   }
   
   template <typename RecT>
@@ -86,8 +88,11 @@ namespace gui {
 			     G_TYPE_STRING)),
     box(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5)),
     list(new_tree_view(GTK_TREE_MODEL(store))),
+    label(gtk_label_new(fmt("Press Return or double-click "
+			    "to remove selected %0s", lbl).c_str())),
     add_btn(gtk_button_new_with_mnemonic(fmt("_Add %0", lbl).c_str())),
-    ids(ids)
+    ids(ids),
+    read_only(false)
   {
     add_col(GTK_TREE_VIEW(list), fmt("%0s", lbl), COL_REC_ID);
     add_col(GTK_TREE_VIEW(list), "", COL_REC_NAME);
@@ -108,15 +113,20 @@ namespace gui {
     g_signal_connect(add_btn, "clicked", G_CALLBACK(on_add_rec<RecT>), this);
     gtk_container_add(GTK_CONTAINER(btn_box), add_btn);
 
-    GtkWidget *l(gtk_label_new(fmt("Press Return or double-click "
-				   "to remove selected %0s", lbl).c_str()));
-    gtk_widget_set_hexpand(l, true);
-    gtk_container_add(GTK_CONTAINER(btn_box), l);
+    gtk_widget_set_hexpand(label, true);
+    gtk_container_add(GTK_CONTAINER(btn_box), label);
   }
 
   template <typename RecT>
   GtkWidget *RecList<RecT>::ptr() { return box; }
 
+  template <typename RecT>
+  void set_read_only(RecList<RecT> &w) {
+    gtk_widget_set_sensitive(w.add_btn, false);
+    gtk_label_set_text(GTK_LABEL(w.label), "");
+    w.read_only = true;
+  }
+		     
   template <typename RecT>
   void load(RecList<RecT> &w) {
     gtk_list_store_clear(w.store);

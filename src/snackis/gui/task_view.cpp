@@ -120,7 +120,8 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(menu), find_posts_btn);
     g_signal_connect(post_btn, "clicked", G_CALLBACK(on_post), this);
     gtk_container_add(GTK_CONTAINER(menu), post_btn);
-    
+
+    auto &me(whoami(ctx));
     GtkWidget *tabs(gtk_notebook_new());
     gtk_widget_set_vexpand(tabs, true);
     g_signal_connect(tabs, "switch-page", G_CALLBACK(on_page), this);
@@ -129,7 +130,11 @@ namespace gui {
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
 			     init_general(*this),
 			     gtk_label_new_with_mnemonic("_1 General"));
-
+    
+    if (rec.owner_id != me.id) {
+      set_read_only(peer_lst);
+    }
+    
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
 			     peer_lst.ptr(),
 			     gtk_label_new_with_mnemonic("_2 Peers"));
@@ -140,7 +145,7 @@ namespace gui {
 			     post_lst.ptr(),
 			     lbl);
     
-    focused = (rec.owner_id == whoami(ctx).id)
+    focused = (rec.owner_id == me.id)
       ? project_fld.search_btn
       : name_fld;
     
