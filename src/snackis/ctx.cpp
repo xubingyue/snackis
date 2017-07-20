@@ -120,13 +120,23 @@ namespace snackis {
     CHECK(load(ctx.db.peers, ctx.whoami), _);
     return ctx.whoami;
   }
+
+  void rewrite_posts(Ctx &ctx) {
+    std::vector<Post> del_recs;
+    
+    for (auto i(ctx.db.posts.recs.begin()); i != ctx.db.posts.recs.end(); i++) {
+      Post rec(ctx, *i);
+      if (!find_feed_id(ctx, rec.feed_id)) { del_recs.push_back(rec); }
+    }
+
+    for (auto &rec: del_recs) { db::erase(ctx.db.posts, rec); }
+  }
+
   
   int64_t rewrite_db(Ctx &ctx) {
     db::Trans trans(ctx);
-    rewrite_table(ctx.db.feeds);
-    rewrite_table(ctx.db.posts);
-    rewrite_table(ctx.db.projects);
-    rewrite_table(ctx.db.tasks);
+    rewrite_posts(ctx);
+    
     auto out(db::rewrite(ctx));
     db::commit(trans, nullopt);
     return out;

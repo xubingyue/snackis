@@ -28,18 +28,6 @@ namespace snackis {
   void log(const Ctx &ctx, const str &msg);
   Peer &whoami(Ctx &ctx);
   int64_t rewrite_db(Ctx &ctx);
-
-  template <typename RecT>
-  void rewrite_table(db::Table<RecT> &tbl) {
-    std::vector<RecT> del_recs;
-    
-    for (auto i(tbl.recs.begin()); i != tbl.recs.end(); i++) {
-      RecT rec(dynamic_cast<Ctx &>(tbl.ctx), *i);
-      if (rec.owner_id == null_uid) { del_recs.push_back(rec); }
-    }
-
-    for (auto &rec: del_recs) { db::erase(tbl, rec); }
-  }
 }
 
 #endif
