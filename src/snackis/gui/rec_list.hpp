@@ -122,8 +122,8 @@ namespace gui {
 
   template <typename RecT>
   void set_read_only(RecList<RecT> &w) {
-    gtk_widget_set_sensitive(w.add_btn, false);
-    gtk_label_set_text(GTK_LABEL(w.label), "");
+    gtk_widget_destroy(w.add_btn);
+    gtk_widget_destroy(w.label);
     w.read_only = true;
   }
 		     

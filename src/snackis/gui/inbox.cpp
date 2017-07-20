@@ -14,21 +14,21 @@ namespace gui {
   enum Cols { COL_PTR=0, COL_FROM, COL_INFO };
   
   static void on_sel_change(gpointer *_, Inbox *v) {
-    gtk_widget_set_sensitive(v->delete_btn, sel_count(GTK_TREE_VIEW(v->lst)) > 0);
+    gtk_widget_set_sensitive(v->dismiss_btn, sel_count(GTK_TREE_VIEW(v->lst)) > 0);
   }
   
   static void on_cancel(gpointer *_, Inbox *v) {
     pop_view(v);
   }
 
-  static void on_delete(gpointer *_, Inbox *v) {
+  static void on_dismiss(gpointer *_, Inbox *v) {
     each_sel(GTK_TREE_VIEW(v->lst), [v](auto &it) {
-	TRY(try_delete);
+	TRY(try_dismiss);
 	db::Trans trans(v->ctx);
 	auto rec(get_rec<Msg>(GTK_TREE_VIEW(v->lst), it));
 	db::erase(v->ctx.db.inbox, *rec);
 	
-	if (try_delete.errors.empty()) {
+	if (try_dismiss.errors.empty()) {
 	  db::commit(trans, nullopt);
 	  gtk_list_store_remove(v->store, &it);
 	}
@@ -83,7 +83,7 @@ namespace gui {
 			     G_TYPE_POINTER,
 			     G_TYPE_STRING, G_TYPE_STRING)),
     lst(new_tree_view(GTK_TREE_MODEL(store))),
-    delete_btn(gtk_button_new_with_mnemonic("_Delete Selected")),
+    dismiss_btn(gtk_button_new_with_mnemonic("_Dismiss Selected")),
     cancel_btn(gtk_button_new_with_mnemonic("_Cancel"))
   {
     GtkWidget *lbl;
@@ -100,9 +100,9 @@ namespace gui {
 			    "to handle Message").c_str());
     gtk_container_add(GTK_CONTAINER(panel), lbl);
 
-    gtk_widget_set_halign(delete_btn, GTK_ALIGN_START);
-    g_signal_connect(delete_btn, "clicked", G_CALLBACK(on_delete), this);
-    gtk_container_add(GTK_CONTAINER(panel), delete_btn);
+    gtk_widget_set_halign(dismiss_btn, GTK_ALIGN_START);
+    g_signal_connect(dismiss_btn, "clicked", G_CALLBACK(on_dismiss), this);
+    gtk_container_add(GTK_CONTAINER(panel), dismiss_btn);
 
     gtk_widget_set_margin_top(cancel_btn, 10);
     gtk_widget_set_halign(cancel_btn, GTK_ALIGN_END);
