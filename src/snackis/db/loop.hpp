@@ -2,6 +2,7 @@
 #define SNACKIS_DB_LOOP_HPP
 
 #include <thread>
+#include "snackis/core/chan.hpp"
 #include "snackis/db/msg.hpp"
 
 namespace snackis {

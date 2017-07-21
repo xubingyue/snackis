@@ -1,3 +1,4 @@
+#include "snackis/db/ctx.hpp"
 #include "snackis/db/proc.hpp"
 
 namespace snackis {
@@ -9,12 +10,14 @@ namespace db {
   }
 
   void Proc::on_msg(const Msg &msg) {
+    auto ctx(get(msg, Msg::SENDER));
+    
     switch (msg.type) {
     case MSG_CONNECT:
-      log(*this, "Connect");
+      put(ctx->inbox, Msg(MSG_OK));      
       break;
     case MSG_DISCONNECT:
-      log(*this, "Disconnect");
+      put(ctx->inbox, Msg(MSG_OK));      
       break;
     default:
       log(*this, "Invalid message type: %0", msg.type);

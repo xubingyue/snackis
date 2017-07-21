@@ -8,9 +8,23 @@ namespace snackis {
 namespace db {
   Ctx::Ctx(Proc &p, size_t max_buf):
     proc(p), inbox(max_buf), trans(nullptr)
-  { }
+  { 
+    Msg msg(MSG_CONNECT);
+    set(msg, Msg::SENDER, this);
+    put(proc.inbox, msg);
+    
+    auto res(get(inbox));
+    CHECK(res, _);
+    CHECK(res->type == MSG_OK, _);
+    log(*this, "Connected");
+  }
 
-  Ctx::~Ctx() { }
+  Ctx::~Ctx() { 
+    Msg msg(MSG_DISCONNECT);
+    set(msg, Msg::SENDER, this);
+    put(proc.inbox, msg);
+    get(inbox);
+  }
 
   Path get_path(const Ctx &ctx, const str &fname) {
     return ctx.proc.path / fname; 
