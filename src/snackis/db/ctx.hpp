@@ -12,21 +12,19 @@
 #include "snackis/crypt/secret.hpp"
 #include "snackis/db/change.hpp"
 #include "snackis/db/msg.hpp"
+#include "snackis/db/proc.hpp"
 
 namespace snackis {
 namespace db {
   struct BasicTable;
-  struct Proc;
   struct Trans;
   
   struct Ctx {
-    using Log = func<void (const str &)>;
     using Lock = std::unique_lock<std::recursive_mutex>;
     
     Proc &proc;
     Chan<Msg> inbox;
     opt<crypt::Secret> secret;
-    opt<Log> log;
     std::set<BasicTable *> tables;
     Trans *trans;
     std::set<std::ostream *> dirty_files;
@@ -50,8 +48,8 @@ namespace db {
   int64_t rewrite(Ctx &ctx);
 
   template <typename...Args>
-  void log(const Ctx &ctx, const str &spec, const Args &...args) {
-    if (ctx.log) { (*ctx.log)(fmt(spec, std::forward<const Args &>(args)...)); }
+  void log(const Ctx &ctx, const str &spec, const Args&...args) {
+    log(ctx.proc, spec, std::forward<const Args &>(args)...);
   }
 }}
 

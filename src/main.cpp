@@ -44,17 +44,16 @@ static void load_style() {
 
 opt<db::Proc> proc;
 
-static void on_activate(GtkApplication *app, gpointer user_data) {
+static void on_activate(GtkApplication *app, gpointer _) {
   load_style();
   gui::window = gtk_application_window_new(app);
-  
   gtk_window_set_icon_from_file(GTK_WINDOW(gui::window), "snackis.ico", nullptr);
  
   g_signal_connect(G_OBJECT(gui::window),
 		   "key_release_event",
 		   G_CALLBACK(on_key),
 		   nullptr);
-  
+
   gui::add_style(gui::window, "window");
   gtk_window_set_title(GTK_WINDOW(gui::window),
 		       fmt("Snackis v%0", version_str()).c_str());
@@ -72,7 +71,6 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
   gui::left_panel = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_container_add(GTK_CONTAINER(gui::panels), gui::left_panel);
   gui::console.emplace();  
-  ctx->log = [](const str &msg) { gui::log(*gui::console, msg); };
   gtk_container_add(GTK_CONTAINER(gui::left_panel), gui::console->ptr());
 
   error_handler = [ctx](auto &errors) {
@@ -90,6 +88,8 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
 
 int main(int argc, char **argv) {
   proc.emplace("db/", 32);
+  proc->logger = [](const str &msg) { gui::log(*gui::console, msg); };
+
   GtkApplication *app;
   int status;
   app = gtk_application_new("foo.bar.snackis", G_APPLICATION_FLAGS_NONE);

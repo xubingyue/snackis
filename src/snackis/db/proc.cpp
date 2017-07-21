@@ -7,4 +7,17 @@ namespace db {
   {
     create_path(path);
   }
+
+  void Proc::on_msg(const Msg &msg) {
+    switch (msg.type) {
+    case MSG_CONNECT:
+      log(*this, "Connect");
+      break;
+    case MSG_DISCONNECT:
+      log(*this, "Disconnect");
+      break;
+    default:
+      log(*this, "Invalid message type: %0", msg.type);
+    }
+  }
 }}

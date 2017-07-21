@@ -1,6 +1,7 @@
 #ifndef SNACKIS_DB_LOOP_HPP
 #define SNACKIS_DB_LOOP_HPP
 
+#include <thread>
 #include "snackis/db/msg.hpp"
 
 namespace snackis {
@@ -10,7 +11,11 @@ namespace db {
   struct Loop {
     Proc &proc;
     Chan<Msg> inbox;
+    std::thread thread;
+    
     Loop(Proc &proc, size_t max_buf);
+    virtual ~Loop();
+    virtual void on_msg(const Msg &msg)=0;
   };
 }}
 

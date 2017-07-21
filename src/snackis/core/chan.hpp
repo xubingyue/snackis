@@ -28,18 +28,8 @@ namespace snackis {
     ChanLock lock(c.mutex);
     CHECK(c.closed, !_);
     c.closed = true;
+    if (c.get_ok) { c.get_ok->notify_all(); }
     if (c.put_ok) { c.put_ok->notify_all(); }
-  }
-
-  template <typename T>
-  void drain(Chan<T> &c) {    
-    ChanLock lock(c.mutex);
-
-    while (!c.buf.empty()) {
-      if (c.get_ok) { c.get_ok->notify_all(); }
-      if (!c.put_ok) { c.put_ok.emplace(); }
-      c.put_ok->wait(lock, [&c](){ return c.buf.empty(); });
-    }
   }
 
   template <typename T>

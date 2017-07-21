@@ -62,7 +62,6 @@ static void chan_tests() {
   CHECK(put(c, 42, false), !_);
   for (int i = 0; i < MAX; i++) { CHECK(get(c), *_ == i); }
   CHECK(get(c, false), !_);
-  drain(c);
   CHECK(put(c, 42), _);
 
   close(c);
@@ -183,6 +182,7 @@ static void read_write_tests() {
   close(tbl);
 }
 
+/*
 static void email_tests() {
   TRACE("Running email_tests");
   snackis::Ctx ctx(*proc, MAX_BUF);
@@ -191,6 +191,7 @@ static void email_tests() {
   Imap imap(ctx);
   fetch(imap);
 }
+*/
 
 int main() {
   TRY(try_tests);
@@ -206,7 +207,6 @@ int main() {
   table_insert_tests();
   table_slurp_tests();
   read_write_tests();
-  email_tests();
-  
+  //email_tests();
   return 0;
 }

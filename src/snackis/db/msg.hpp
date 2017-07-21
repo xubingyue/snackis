@@ -25,17 +25,18 @@ namespace db {
     BasicMsgFld(id)
   { }
 
-  struct Msg {
-    enum Type { MSG_CONNECT, MSG_DISCONNECT, MSG_COMMIT };
-    using Val = std::variant<Chan<Msg>, Changes>;
+  enum MsgType { MSG_CONNECT, MSG_DISCONNECT, MSG_COMMIT };
 
-    static MsgFld<Chan<Msg>> CHAN;
+  struct Msg {
+    using Val = std::variant<Chan<Msg> *, Changes>;
+
+    static MsgFld<Chan<Msg> *> SENDER;
     static MsgFld<Changes> CHANGES;
 
-    const Type type;
+    const MsgType type;
     std::map<BasicMsgFld *, Val> vals;
     
-    Msg(Type t);
+    Msg(MsgType t);
   };
 }}
 

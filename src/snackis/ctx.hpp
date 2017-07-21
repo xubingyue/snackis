@@ -20,7 +20,7 @@ namespace snackis {
     std::condition_variable fetch_cond, send_cond;
     opt<std::thread> fetcher, sender;
     bool closing;
-    Ctx(db::Proc &p, size_t max_buf);
+  New connection  Ctx(db::Proc &p, size_t max_buf);
     virtual ~Ctx();
   };
 
