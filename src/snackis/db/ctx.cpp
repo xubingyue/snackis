@@ -134,7 +134,7 @@ namespace db {
     auto res(get(ctx.inbox));
     
     if (res && res->type == MSG_OK) {
-      auto cs(get(msg, Msg::CHANGES));
+      auto cs(get(*res, Msg::CHANGES));
       for (auto &c: cs) { c->apply(ctx); }
       return cs.size();
     }

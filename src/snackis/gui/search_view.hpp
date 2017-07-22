@@ -24,6 +24,7 @@ namespace gui {
   size_t find(SearchView<RecT> &v) {
     TRY(try_find);
     gtk_list_store_clear(v.store);
+    refresh(v.ctx);
     v.find();
 
     auto cnt(gtk_tree_model_iter_n_children(GTK_TREE_MODEL(v.store), nullptr));

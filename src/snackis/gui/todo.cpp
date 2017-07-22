@@ -59,6 +59,7 @@ namespace gui {
   void Todo::load() {
     View::load();
     gtk_list_store_clear(store);
+    refresh(ctx);
     size_t cnt(0);
     
     for(auto key = ctx.db.tasks_sort.recs.begin();

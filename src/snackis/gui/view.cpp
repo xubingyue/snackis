@@ -9,6 +9,7 @@ namespace gui {
 
   static gboolean on_key(gpointer _, GdkEventKey *ev, View *v) {
     if (ev->keyval == GDK_KEY_F5) {
+      refresh(v->ctx);
       v->load();
       const str lbl(gtk_label_get_text(GTK_LABEL(v->label)));
       log(v->ctx, fmt("Refreshed %0", lbl));
