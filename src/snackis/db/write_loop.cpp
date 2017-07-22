@@ -53,11 +53,12 @@ namespace db {
       int64_t reclaimed(0); 
       
       for (auto t: ctx->tables) {
-	auto &f(get_file(*this, t->path));
+	auto &f(get_file(*this, t.second->path));
 	auto old_size(f.tellp());
 	f.close();
-	f.open(t->path.string(), std::ios::out | std::ios::binary | std::ios::trunc);
-	t->dump(f);
+	f.open(t.second->path.string(), 
+	       std::ios::out | std::ios::binary | std::ios::trunc);
+	t.second->dump(f);
 	reclaimed += old_size-f.tellp();
       }
 

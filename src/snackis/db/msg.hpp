@@ -28,7 +28,7 @@ namespace db {
   { }
 
   enum MsgType { MSG_CONNECT, MSG_DISCONNECT,
-		 MSG_COMMIT, MSG_REWRITE,
+		 MSG_COMMIT, MSG_REFRESH, MSG_REWRITE,
 		 MSG_OK, MSG_ERROR };
 
   struct Msg {

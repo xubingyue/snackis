@@ -177,6 +177,8 @@ namespace gui {
 
 	{
 	  Ctx::Lock lock(ctx.mutex);
+	  refresh(ctx);
+	  
 	  if (ctx.db.inbox.recs.empty()) {
 	    log(ctx, "Inbox is empty");
 	    return true;

@@ -4,7 +4,6 @@ namespace snackis {
 namespace db {
   static void run(Loop *loop) {
     while (true) {
-      TRACE("Processing loop message");
       TRY(try_msg);
       auto msg(get(loop->inbox));
       if (!msg) { break; }

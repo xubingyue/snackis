@@ -6,7 +6,8 @@ namespace db {
   Proc::Proc(const Path &p, size_t max_buf):
     Loop(*this, max_buf),
     path(p),
-    write_loop(*this, max_buf)
+    write_loop(*this, max_buf),
+    change_loop(*this, max_buf)
   {
     create_path(path);
   }
@@ -22,6 +23,12 @@ namespace db {
       put(ctx->inbox, Msg(MSG_OK));      
       break;
     case MSG_COMMIT:
+      put(write_loop.inbox, msg);
+      put(change_loop.inbox, msg);
+      break;
+    case MSG_REFRESH:
+      put(change_loop.inbox, msg);
+      break;      
     case MSG_REWRITE:
       put(write_loop.inbox, msg);
       break;

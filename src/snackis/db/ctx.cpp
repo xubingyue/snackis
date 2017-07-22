@@ -80,7 +80,7 @@ namespace db {
   }
 
   bool login(Ctx &ctx, const str &pass) {
-    TRACE("Logging in");
+    TRY(try_login);
     crypt::Secret secret;
     
     std::ifstream file;
@@ -95,8 +95,9 @@ namespace db {
     file.read(reinterpret_cast<char *>(&edata[0]), size);
     file.close();
 
+    if (!try_login.errors.empty()) { return false; }
+
     Data ddata;
-    TRY(try_login);
     ddata = crypt::decrypt(secret, &edata[0], edata.size());
     if (!try_login.errors.empty()) { return false; }
     
@@ -106,22 +107,38 @@ namespace db {
   }
 
   void open(Ctx &ctx) {
-    TRACE("Opening database");
+    TRY(try_open);
     init_db_rev(ctx);
   }
 
   void slurp(Ctx &ctx) {
-    TRACE("Slurping database");
+    TRY(try_slurp);
     Ctx::Lock lock(ctx.mutex);
-    for (auto t: ctx.tables) { t->slurp(); }
+    for (auto t: ctx.tables) { t.second->slurp(); }
   }
 
   int64_t rewrite(Ctx &ctx) {
-    TRACE("Rewriting database");
+    TRY(try_rewrite);
     Msg msg(MSG_REWRITE);
     set(msg, Msg::SENDER, &ctx);
     put(ctx.proc.inbox, msg);
     auto res(get(ctx.inbox));
-    return res ? get(*res, Msg::RECLAIMED) : -1;
+    return (res && res->type == MSG_OK) ? get(*res, Msg::RECLAIMED) : -1;
+  }
+
+  int64_t refresh(Ctx &ctx) {
+    TRY(try_refresh);
+    Msg msg(MSG_REFRESH);
+    set(msg, Msg::SENDER, &ctx);
+    put(ctx.proc.inbox, msg);
+    auto res(get(ctx.inbox));
+    
+    if (res && res->type == MSG_OK) {
+      auto cs(get(msg, Msg::CHANGES));
+      for (auto &c: cs) { c->apply(ctx); }
+      return cs.size();
+    }
+
+    return -1;
   }
 }}
