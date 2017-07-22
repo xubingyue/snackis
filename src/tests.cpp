@@ -124,7 +124,6 @@ void table_insert_tests() {
   db::Ctx ctx(*proc, MAX_BUF);
   Table<Foo> tbl(ctx, "insert_tests", {&uid_col},
 		 {&int64_col, &str_col, &time_col});
-  open(tbl);
   Foo foo;
   Trans trans(ctx);
   CHECK(insert(tbl, foo), _);
@@ -132,34 +131,33 @@ void table_insert_tests() {
   CHECK(insert(tbl, foo), !_);
   commit(trans, nullopt);
   CHECK(load(tbl, foo) ? true : false, _);
-  close(tbl);
 }
 
 static void table_slurp_tests() {
   db::Ctx ctx(*proc, MAX_BUF);
   Table<Foo> tbl(ctx, "slurp_tests", {&uid_col},
 		 {&int64_col, &str_col, &time_col});
-  open(tbl);
+
+  Stream buf;
   
   Foo foo, bar;
   Trans trans(ctx);
   CHECK(insert(tbl, foo), _);
   CHECK(insert(tbl, bar), _);
   commit(trans, nullopt);
-  
+
+  dump(tbl, buf);
   tbl.recs.clear();
-  slurp(tbl);
-  
+  slurp(tbl, buf);
+
   CHECK(load(tbl, foo), _);
   CHECK(load(tbl, bar), _);
-  close(tbl);
 }
 
 static void read_write_tests() {
   db::Ctx ctx(*proc, MAX_BUF);
   Table<Foo> tbl(ctx, "read_write_tests", {&uid_col},
 		 {&int64_col, &str_col, &time_col, &set_col});
-  open(tbl);
   
   crypt::Secret sec;
   init(sec, "secret key");
@@ -178,8 +176,6 @@ static void read_write_tests() {
   Rec<Foo> rrec;
   read(tbl, buf, rrec, sec);
   CHECK(compare(tbl, rrec, rec), _ == 0);
-  
-  close(tbl);
 }
 
 /*
