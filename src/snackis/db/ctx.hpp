@@ -27,7 +27,6 @@ namespace db {
     opt<crypt::Secret> secret;
     std::set<BasicTable *> tables;
     Trans *trans;
-    std::set<std::ostream *> dirty_files;
     std::list<ChangeSet> undo_stack;
     std::recursive_mutex mutex;
     
@@ -42,8 +41,6 @@ namespace db {
   void init_pass(Ctx &ctx, const str &pass);
   bool login(Ctx &ctx, const str &pass);
   void open(Ctx &ctx);
-  void dirty_file(Ctx &ctx, std::ostream &file);
-  void flush(Ctx &ctx);
   void slurp(Ctx &ctx);
   int64_t rewrite(Ctx &ctx);
 

@@ -10,7 +10,8 @@ namespace db {
   struct Ctx;
   
   struct Change {
-    virtual void commit() const = 0;
+    virtual Path table_path() const = 0;
+    virtual void write(std::ostream &out) const = 0;
     virtual void rollback() const = 0;
     virtual void undo() const = 0;
   };

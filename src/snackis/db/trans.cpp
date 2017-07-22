@@ -26,11 +26,15 @@ namespace db {
   
   void commit(Trans &trans, const opt<str> &lbl) {
     if (trans.changes.empty()) { return; }
-    for (auto &c: trans.changes) { c->commit(); }
-    flush(trans.ctx);
+
+    Ctx &ctx(trans.ctx);
+    Msg msg(MSG_COMMIT);
+    set(msg, Msg::SENDER, &ctx);
+    set(msg, Msg::CHANGES, trans.changes);
+    put(ctx.proc.inbox, msg);
     
     if (lbl) {
-      trans.ctx.undo_stack.emplace_back(trans.ctx, *lbl, trans.changes);
+      ctx.undo_stack.emplace_back(ctx, *lbl, trans.changes);
     } else {
       clear(trans);
     }

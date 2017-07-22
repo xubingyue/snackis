@@ -108,18 +108,6 @@ namespace db {
   void open(Ctx &ctx) {
     TRACE("Opening database");
     init_db_rev(ctx);
-    for (auto t: ctx.tables) { open(*t); }
-  }
-
-  void dirty_file(Ctx &ctx, std::ostream &file) {
-    ctx.dirty_files.insert(&file);
-  }
-
-  void flush(Ctx &ctx) {
-    TRACE("Flushing database");
-    Ctx::Lock lock(ctx.mutex);
-    for (auto f: ctx.dirty_files) { f->flush(); }
-    ctx.dirty_files.clear();
   }
 
   void slurp(Ctx &ctx) {
@@ -129,15 +117,11 @@ namespace db {
   }
 
   int64_t rewrite(Ctx &ctx) {
-    TRACE("Rewritementing database");
-    Ctx::Lock lock(ctx.mutex);
-    int64_t res(0);
-    
-    for (auto t: ctx.tables) {
-      res += t->rewrite();
-      t->file.flush();
-    }
-
-    return res;
+    TRACE("Rewriting database");
+    Msg msg(MSG_REWRITE);
+    set(msg, Msg::SENDER, &ctx);
+    put(ctx.proc.inbox, msg);
+    auto res(get(ctx.inbox));
+    return res ? get(*res, Msg::RECLAIMED) : -1;
   }
 }}

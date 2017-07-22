@@ -53,8 +53,8 @@ namespace db {
     
     Table(Ctx &ctx, const str &name, Cols key_cols, Cols cols);
     virtual ~Table();
+    void dump(std::ostream &out) override;
     void slurp() override;
-    int64_t rewrite() override;
   };
     
   enum TableOp {TABLE_INSERT, TABLE_UPDATE, TABLE_ERASE};
@@ -66,7 +66,8 @@ namespace db {
     const Rec<RecT> rec;
 
     TableChange(TableOp op, Table<RecT> &table, const Rec<RecT> &rec);
-    void commit() const override;
+    Path table_path() const override;
+    void write(std::ostream &out) const override;
   };
 
   template <typename RecT>
@@ -275,17 +276,16 @@ namespace db {
   }
 
   template <typename RecT>
-  void write(Table<RecT> &tbl, const Rec<RecT> &rec, TableOp _op) {
+  void write(Table<RecT> &tbl, TableOp _op, const Rec<RecT> &rec, std::ostream &out) {
     uint8_t op(_op);
-    tbl.file.write(reinterpret_cast<const char *>(&op), sizeof op);
-    write(tbl, rec, tbl.file, tbl.ctx.secret);
-    dirty_file(tbl.ctx, tbl.file);
+    out.write(reinterpret_cast<const char *>(&op), sizeof op);
+    write(tbl, rec, out, tbl.ctx.secret);
   }
 
   template <typename RecT>
   void dump(Table<RecT> &tbl, std::ostream &out) {    
     for (auto &rec: tbl.recs) {
-      write(tbl, rec, TABLE_INSERT);
+      write(tbl, TABLE_INSERT, rec, out);
     }
   }
 
@@ -339,15 +339,6 @@ namespace db {
     slurp(tbl, f);
     f.close();
   }
-
-  template <typename RecT>
-  int64_t rewrite(Table<RecT> &tbl) {
-    auto old_size(tbl.file.tellg());
-    tbl.file.close();
-    open(tbl, std::ios::trunc);
-    dump(tbl, tbl.file);
-    return old_size-tbl.file.tellg();
-  }
   
   template <typename RecT>
   RecType<RecT>::RecType(Table<RecT> &tbl):
@@ -398,15 +389,14 @@ namespace db {
 
   template <typename RecT>
   Table<RecT>::~Table() {
-    if (file.is_open()) { close(*this); }
     ctx.tables.erase(this);
   }
 
   template <typename RecT>
-  void Table<RecT>::slurp() { db::slurp(*this); }
+  void Table<RecT>::dump(std::ostream &out) { db::dump(*this, out); }
 
   template <typename RecT>
-  int64_t Table<RecT>::rewrite() { return db::rewrite(*this); }
+  void Table<RecT>::slurp() { db::slurp(*this); }
 
   template <typename RecT>
   TableChange<RecT>::TableChange(TableOp op,
@@ -415,8 +405,13 @@ namespace db {
     op(op), table(table), rec(rec) { }
 
   template <typename RecT>
-  void TableChange<RecT>::commit() const {
-    write(this->table, this->rec, this->op);
+  Path TableChange<RecT>::table_path() const {
+    return table.path;
+  }
+
+  template <typename RecT>
+  void TableChange<RecT>::write(std::ostream &out) const {
+    db::write(this->table, this->op, this->rec, out);
   }
 
   template <typename RecT>

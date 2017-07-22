@@ -28,13 +28,15 @@ namespace db {
   { }
 
   enum MsgType { MSG_CONNECT, MSG_DISCONNECT,
+		 MSG_COMMIT, MSG_REWRITE,
 		 MSG_OK, MSG_ERROR };
 
   struct Msg {
-    using Val = std::variant<Ctx *, Changes>;
+    using Val = std::variant<int64_t, Ctx *, Changes>;
 
-    static const MsgFld<Ctx *> SENDER;
     static const MsgFld<Changes> CHANGES;
+    static const MsgFld<int64_t> RECLAIMED;
+    static const MsgFld<Ctx *> SENDER;
     
     const MsgType type;
     std::map<const BasicMsgFld *, Val> vals;

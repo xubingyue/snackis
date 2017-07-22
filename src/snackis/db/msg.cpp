@@ -2,8 +2,9 @@
 
 namespace snackis {
 namespace db {
-  const MsgFld<Ctx *> Msg::SENDER("sender");
   const MsgFld<Changes> Msg::CHANGES("changes");
+  const MsgFld<int64_t> Msg::RECLAIMED("reclaimed");
+  const MsgFld<Ctx *> Msg::SENDER("sender");
 
   BasicMsgFld::BasicMsgFld(const str id):
     id(id)

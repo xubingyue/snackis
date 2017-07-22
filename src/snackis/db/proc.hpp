@@ -2,7 +2,7 @@
 #define SNACKIS_DB_PROC_HPP
 
 #include "snackis/core/path.hpp"
-#include "snackis/db/loop.hpp"
+#include "snackis/db/write_loop.hpp"
 
 namespace snackis {
 namespace db {
@@ -10,6 +10,7 @@ namespace db {
     using Logger = func<void (const str &)>;
 
     const Path path;
+    WriteLoop write_loop;
     opt<Logger> logger;
 
     Proc(const Path &p, size_t max_buf);

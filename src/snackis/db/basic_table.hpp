@@ -1,7 +1,7 @@
 #ifndef SNACKIS_DB_BASIC_TABLE_HPP
 #define SNACKIS_DB_BASIC_TABLE_HPP
 
-#include <fstream>
+#include "snackis/core/path.hpp"
 #include "snackis/core/str.hpp"
 
 namespace snackis {  
@@ -11,14 +11,12 @@ namespace db {
   struct BasicTable {
     Ctx &ctx;
     const str name;
-    std::fstream file;
+    const Path path;
     
     BasicTable(Ctx &ctx, const str &name);
+    virtual void dump(std::ostream &out) = 0;
     virtual void slurp() = 0;
-    virtual int64_t rewrite() = 0;
   };
-
-  void open(BasicTable &tbl, std::ios_base::openmode mod=std::ios::app);
 }}
 
 #endif
