@@ -62,7 +62,7 @@ namespace snackis {
       fd.peer_ids = ps.peer_ids;
       db::insert(ctx.db.feeds, fd);
       if (try_create.errors.empty()) {
-	db::commit(trans, fmt("Created Post Feed %0", id_str(fd)));
+	db::commit(trans, fmt("Created reply Feed %0", id_str(fd)));
       }
     }
     

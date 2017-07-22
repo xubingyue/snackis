@@ -39,11 +39,9 @@ namespace gui {
   }
   
   static void on_post(gpointer *_, PostView *v) {
-    if (save_rec(*v)) {
-      Post post(v->ctx);
-      post.feed_id = v->rec.feed_id;
-      push_view(new PostView(post));
-    }
+    Post post(v->ctx);
+    post.feed_id = v->rec.feed_id;
+    push_view(new PostView(post));
   }
 
   static void on_find_replies(gpointer *_, PostView *v) {
