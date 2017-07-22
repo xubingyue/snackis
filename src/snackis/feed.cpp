@@ -17,21 +17,14 @@ namespace snackis {
   
   Feed::Feed(const Msg &msg):
     IdRec(msg.ctx, *db::get(msg.feed, msg.ctx.db.feed_id)),
-    owner_id(msg.from_id),
-    created_at(now()),
-    changed_at(created_at)
+    owner_id(msg.from_id)
   {
     copy(*this, msg);
     peer_ids.insert(msg.from_id);
   }
 
   void copy(Feed &fd, const Msg &msg) {
-    Ctx &ctx(fd.ctx);
-    ctx.db.feed_id.copy(fd, msg.feed);
-    ctx.db.feed_name.copy(fd, msg.feed);
-    ctx.db.feed_info.copy(fd, msg.feed);
-    ctx.db.feed_active.copy(fd, msg.feed);
-    ctx.db.feed_visible.copy(fd, msg.feed);
+    db::copy(fd.ctx.db.feeds_share, fd, msg.feed);
   }
 
   opt<Feed> find_feed_id(Ctx &ctx, UId id) {

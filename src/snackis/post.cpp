@@ -27,9 +27,7 @@ namespace snackis {
 
   void copy(Post &ps, const Msg &msg) {
     Ctx &ctx(ps.ctx);
-    ctx.db.post_id.copy(ps, msg.post);
-    ctx.db.post_feed_id.copy(ps, msg.post);
-    ctx.db.post_body.copy(ps, msg.post);
+    db::copy(ctx.db.posts_share, ps, msg.post);
   }
 
   opt<Post> find_post_id(Ctx &ctx, UId id) {
@@ -83,22 +81,15 @@ namespace snackis {
     for (auto &t: fd.tags) { ps.tags.insert(t); }
   }
 
-  static void send(const Post &ps, const Peer &pr) {
+  void send(const Post &ps, const Peer &pr) {
     Ctx &ctx(ps.ctx);
     Msg msg(ctx, Msg::POST);
     msg.to = pr.email;
     msg.to_id = pr.id;
 
     auto fd(get_feed_id(ctx, ps.feed_id));
-    ctx.db.feed_id.copy(msg.feed, fd);
-    ctx.db.feed_name.copy(msg.feed, fd);
-    ctx.db.feed_info.copy(msg.feed, fd);
-    ctx.db.feed_active.copy(msg.feed, fd);
-    ctx.db.feed_visible.copy(msg.feed, fd);
-    
-    ctx.db.post_id.copy(msg.post, ps);
-    ctx.db.post_feed_id.copy(msg.post, ps);
-    ctx.db.post_body.copy(msg.post, ps);
+    db::copy(ctx.db.feeds_share, msg.feed, fd);
+    db::copy(ctx.db.posts_share, msg.post, ps);
     insert(ctx.db.outbox, msg);
   }
   

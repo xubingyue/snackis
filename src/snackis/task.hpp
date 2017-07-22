@@ -29,6 +29,7 @@ namespace snackis {
   Task get_task_id(Ctx &ctx, UId id);
   Feed get_feed(const Task &tsk);
   void set_project(Task &tsk, Project &project);
+  void send(const Task &tsk, const Peer &pr);
   void send(const Task &tsk);
 }
 

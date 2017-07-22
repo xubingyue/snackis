@@ -40,6 +40,7 @@ namespace snackis {
     db::Col<Feed, bool>          feed_active, feed_visible;
     db::Col<Feed, std::set<UId>> feed_peer_ids;
     db::Table<Feed> feeds, feeds_sort;
+    db::Schema<Feed> feeds_share;
 
     db::Col<Post, UId>           post_id;
     db::Col<Post, UId>           post_feed_id;
@@ -49,6 +50,7 @@ namespace snackis {
     db::Col<Post, std::set<str>> post_tags;
     db::Col<Post, std::set<UId>> post_peer_ids;
     db::Table<Post> posts, posts_sort, feed_posts;
+    db::Schema<Post> posts_share;
     
     db::Col<Msg, UId>              msg_id;
     db::Col<Msg, str>              msg_type;
@@ -71,6 +73,7 @@ namespace snackis {
     db::Col<Project, bool>          project_active;
     db::Col<Project, std::set<UId>> project_peer_ids;
     db::Table<Project> projects, projects_sort;
+    db::Schema<Project> projects_share;
 
     db::Col<Task, UId>           task_id;
     db::Col<Task, UId>           task_project_id;
@@ -83,6 +86,7 @@ namespace snackis {
     db::Col<Task, Time>          task_done_at;
     db::Col<Task, std::set<UId>> task_peer_ids;
     db::Table<Task> tasks, tasks_sort;
+    db::Schema<Task> tasks_share;
 
     Db(Ctx &ctx);
   };

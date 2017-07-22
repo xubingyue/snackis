@@ -28,10 +28,7 @@ namespace snackis {
 
   void copy(Project &prj, const Msg &msg) {
     Ctx &ctx(prj.ctx);
-    ctx.db.project_id.copy(prj, msg.project);
-    ctx.db.project_name.copy(prj, msg.project);
-    ctx.db.project_info.copy(prj, msg.project);
-    ctx.db.project_active.copy(prj, msg.project);
+    db::copy(ctx.db.projects_share, prj, msg.project);
   }
   
   opt<Project> find_project_id(Ctx &ctx, UId id) {

@@ -55,7 +55,9 @@ namespace snackis {
 	      &feed_info, &feed_tags, &feed_active, &feed_visible, &feed_peer_ids}),
 
     feeds_sort(ctx, "feeds_sort", {&feed_created_at, &feed_id}, {}),
-		  
+    feeds_share({&feed_id, &feed_created_at, &feed_changed_at, &feed_name,
+	  &feed_info, &feed_active, &feed_visible}),
+    
     post_id(        "id",         uid_type,     &Post::id),
     post_feed_id(   "feed_id",    uid_type,     &Post::feed_id),
     post_owner_id(  "owner_id",   uid_type,     &Post::owner_id),
@@ -71,6 +73,8 @@ namespace snackis {
 
     posts_sort(ctx, "posts_sort", {&post_created_at, &post_id}, {}),
     feed_posts(ctx, "feed_posts", {&post_feed_id, &post_created_at, &post_id}, {}),
+    posts_share({&post_id, &post_feed_id, &post_created_at, &post_changed_at,
+	  &post_body}),
     
     msg_id(        "id",         uid_type,            &Msg::id),
     msg_type(      "type",       str_type,            &Msg::type),
@@ -112,6 +116,8 @@ namespace snackis {
 		 &project_peer_ids}),
 
     projects_sort(ctx, "projects_sort", {&project_name, &project_id}, {}),
+    projects_share({&project_id, &project_created_at, &project_changed_at,
+	  &project_name, &project_info, &project_active}),
     
     task_id(        "id",         uid_type,     &Task::id),
     task_project_id("project_id", uid_type,     &Task::project_id),
@@ -131,7 +137,10 @@ namespace snackis {
 	      &task_name, &task_info, &task_tags, &task_prio, &task_done,
 	      &task_done_at, &task_peer_ids}),
 
-    tasks_sort(ctx, "tasks_sort", {&task_prio, &task_created_at, &task_id}, {})
+    tasks_sort(ctx, "tasks_sort", {&task_prio, &task_created_at, &task_id}, {}),
+    tasks_share({&task_id, &task_created_at, &task_changed_at, &task_project_id,
+	  &task_name, &task_info, &task_done, &task_done_at})
+      
   {
     peers.indexes.insert(&peers_sort);
     inbox.indexes.insert(&inbox_sort);
@@ -156,7 +165,7 @@ namespace snackis {
       });
 
     posts.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
-	Post curr(ctx, curr_rec);
+	Post curr(ctx, curr_rec), prev(ctx, prev_rec);
 	curr.changed_at = now();
 
 	auto fd(find_feed_id(ctx, curr.id));
@@ -165,7 +174,18 @@ namespace snackis {
 	  db::update(feeds, *fd);
 	}
 
-	if (curr.owner_id == whoami(ctx).id) { send(curr); }
+	if (curr.owner_id == whoami(ctx).id) {
+	  if (db::compare(posts_share, curr, prev) != 0) {
+	    send(curr);
+	  } else {
+	    std::set<UId> added;
+	    std::set_difference(curr.peer_ids.begin(), curr.peer_ids.end(),
+				prev.peer_ids.begin(), prev.peer_ids.end(),
+				std::inserter(added, added.end()));
+	    for (auto &id: added) { send(curr, get_peer_id(ctx, id)); }
+	  }
+	}
+	
 	db::copy(posts, curr_rec, curr);
       });
 
@@ -200,7 +220,18 @@ namespace snackis {
 	  db::update(feeds, *fd);
 	}
 	
-	if (curr.owner_id == whoami(ctx).id) { send(curr); }
+	if (curr.owner_id == whoami(ctx).id) {
+	  if (db::compare(tasks_share, curr, prev) != 0) {
+	    send(curr);
+	  } else {
+	    std::set<UId> added;
+	    std::set_difference(curr.peer_ids.begin(), curr.peer_ids.end(),
+				prev.peer_ids.begin(), prev.peer_ids.end(),
+				std::inserter(added, added.end()));
+	    for (auto &id: added) { send(curr, get_peer_id(ctx, id)); }
+	  }
+	}
+
 	db::copy(tasks, curr_rec, curr);
       });
   }

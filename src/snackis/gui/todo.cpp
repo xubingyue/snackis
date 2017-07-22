@@ -80,8 +80,7 @@ namespace gui {
       
       gtk_list_store_set(store, &iter,
 			 COL_PTR, &rec,
-			 COL_INFO, trim(fmt("%0\n%1\n%2",
-					    prj.name, tsk.name, tsk.info)).c_str(),
+			 COL_INFO, fmt("%0\n%1", prj.name, tsk.name).c_str(),
 			 COL_PRIO, to_str(tsk.prio).c_str(),
 			 COL_DONE, tsk.done ? "Done!" : "",
 			 -1);

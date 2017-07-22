@@ -33,13 +33,7 @@ namespace snackis {
   }
 
   void copy(Task &tsk, const Msg &msg) {
-    Ctx &ctx(tsk.ctx);
-    ctx.db.task_id.copy(tsk, msg.task);
-    ctx.db.task_project_id.copy(tsk, msg.task);
-    ctx.db.task_name.copy(tsk, msg.task);
-    ctx.db.task_info.copy(tsk, msg.task);
-    ctx.db.task_done.copy(tsk, msg.task);
-    ctx.db.task_done_at.copy(tsk, msg.task);
+    db::copy(tsk.ctx.db.tasks_share, tsk, msg.task);
   }
 
   opt<Task> find_task_id(Ctx &ctx, UId id) {
@@ -94,25 +88,15 @@ namespace snackis {
     for (auto &t: prj.tags) { tsk.tags.insert(t); }
   }
 
-  static void send(const Task &tsk, const Peer &pr) {
+  void send(const Task &tsk, const Peer &pr) {
     Ctx &ctx(tsk.ctx);
     Msg msg(ctx, Msg::TASK);
     msg.to = pr.email;
     msg.to_id = pr.id;
 
     auto prj(get_project_id(ctx, tsk.project_id));
-    ctx.db.project_id.copy(msg.project, prj);
-    ctx.db.project_name.copy(msg.project, prj);
-    ctx.db.project_info.copy(msg.project, prj);
-    ctx.db.project_active.copy(msg.project, prj);
-    
-    ctx.db.task_id.copy(msg.task, tsk);
-    ctx.db.task_project_id.copy(msg.task, tsk);
-    ctx.db.task_name.copy(msg.task, tsk);
-    ctx.db.task_info.copy(msg.task, tsk);
-    ctx.db.task_done.copy(msg.task, tsk);
-    ctx.db.task_done_at.copy(msg.task, tsk);
-
+    db::copy(ctx.db.projects_share, msg.project, prj);
+    db::copy(ctx.db.tasks_share, msg.task, tsk);
     insert(ctx.db.outbox, msg);
   }
 
