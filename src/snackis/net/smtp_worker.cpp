@@ -38,6 +38,7 @@ namespace net {
     stopped(false) {
     this->ctx.secret = ctx.secret;
     db::copy(this->ctx.db.settings, ctx.db.settings);
+    db::copy(this->ctx.db.peers, ctx.db.peers);
     db::copy(this->ctx.db.outbox, ctx.db.outbox);
     thread = std::thread(loop, this);
   }
