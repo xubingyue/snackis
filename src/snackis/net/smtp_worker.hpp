@@ -5,21 +5,13 @@
 #include <mutex>
 #include <thread>
 
-#include "snackis/ctx.hpp"
+#include "snackis/net/worker.hpp"
 
 namespace snackis {
 namespace net {
-  struct SmtpWorker {
-    using Lock = std::unique_lock<std::mutex>;
-
-    Ctx ctx;
-    std::mutex mutex;
-    std::condition_variable go;
-    std::thread thread;
-    bool stopped;
-    
+  struct SmtpWorker: Worker {
     SmtpWorker(Ctx &ctx);
-    ~SmtpWorker();
+    void run() override;
   };
 }}
 

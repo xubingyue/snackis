@@ -18,8 +18,10 @@ namespace snackis {
 					     &Post::peer_ids);
 
   db::Schema<Post> post_key({&post_id});
+
   db::Schema<Post> post_cols({&post_id, &post_feed_id, &post_owner_id, 
 	&post_created_at, &post_changed_at, &post_body, &post_tags, &post_peer_ids});
+
   db::RecType<Post> post_type(post_cols);
 
   Post::Post(Ctx &ctx):

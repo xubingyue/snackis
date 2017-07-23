@@ -120,21 +120,19 @@ namespace snackis {
 
     peers_sort(ctx, "peers_sort", {&peer_name, &peer_id}, {}),
     
-    feeds(ctx, "feeds", feed_key,
-	  {&feed_owner_id, &feed_created_at, &feed_changed_at, &feed_name,
-	      &feed_info, &feed_tags, &feed_active, &feed_visible, &feed_peer_ids}),
+    feeds(ctx, "feeds", feed_key, feed_cols),
 
     feeds_sort(ctx, "feeds_sort", {&feed_created_at, &feed_id}, {}),
 
     feeds_share({&feed_id, &feed_created_at, &feed_changed_at, &feed_name,
 	  &feed_info, &feed_active, &feed_visible}),
     
-    posts(ctx, "posts", post_key,
-	  {&post_feed_id, &post_owner_id, &post_created_at, &post_changed_at,
-	      &post_body, &post_tags, &post_peer_ids}),
+    posts(ctx, "posts", post_key, post_cols),
 
     posts_sort(ctx, "posts_sort", {&post_created_at, &post_id}, {}),
+
     feed_posts(ctx, "feed_posts", {&post_feed_id, &post_created_at, &post_id}, {}),
+
     posts_share({&post_id, &post_feed_id, &post_created_at, &post_changed_at,
 	  &post_body}),
     
@@ -148,21 +146,17 @@ namespace snackis {
 	   {&msg_type, &msg_from, &msg_from_id, &msg_to, &msg_to_id, &msg_peer_name,
 	       &msg_crypt_key, &msg_feed, &msg_post, &msg_project, &msg_task}),
 
-    projects(ctx, "projects", project_key,
-	     {&project_owner_id, &project_created_at, &project_changed_at,
-		 &project_name, &project_info, &project_tags, &project_active,
-		 &project_peer_ids}),
+    projects(ctx, "projects", project_key, project_cols),
 
     projects_sort(ctx, "projects_sort", {&project_name, &project_id}, {}),
+
     projects_share({&project_id, &project_created_at, &project_changed_at,
 	  &project_name, &project_info, &project_active}),
     
-    tasks(ctx, "tasks", task_key,
-	  {&task_project_id, &task_owner_id, &task_created_at, &task_changed_at,
-	      &task_name, &task_info, &task_tags, &task_prio, &task_done,
-	      &task_done_at, &task_peer_ids}),
+    tasks(ctx, "tasks", task_key, task_cols),
 
     tasks_sort(ctx, "tasks_sort", {&task_prio, &task_created_at, &task_id}, {}),
+
     tasks_share({&task_id, &task_created_at, &task_changed_at, &task_project_id,
 	  &task_name, &task_info, &task_done, &task_done_at})
       

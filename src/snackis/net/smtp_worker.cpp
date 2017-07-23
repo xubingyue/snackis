@@ -4,26 +4,29 @@
 
 namespace snackis {
 namespace net {
-  static void loop(SmtpWorker *w) {
-    Ctx &ctx(w->ctx);
-    
-    error_handler = [&ctx](auto &errors) {
+  SmtpWorker::SmtpWorker(Ctx &ctx): Worker(ctx) {
+    db::copy(this->ctx.db.outbox, ctx.db.outbox);
+    start(*this);
+  }
+  
+  void SmtpWorker::run() {
+    error_handler = [this](auto &errors) {
       for (auto e: errors) { log(ctx, e->what); }
     };
 
-    while (!w->stopped) {
+    while (running) {
       TRY(try_smtp);
       auto poll(*get_val(ctx.settings.smtp.poll));
       
       if (poll) {
-	SmtpWorker::Lock lock(w->mutex);
-   	w->go.wait_for(lock, std::chrono::seconds(poll));	
+	SmtpWorker::Lock lock(mutex);
+   	go.wait_for(lock, std::chrono::seconds(poll));	
       } else {
-	SmtpWorker::Lock lock(w->mutex);
-   	w->go.wait(lock);
+	SmtpWorker::Lock lock(mutex);
+   	go.wait(lock);
       }
 
-      if (w->stopped) { break; }
+      if (!running) { break; }
 
       refresh(ctx);
       if (!ctx.db.outbox.recs.empty()) {
@@ -31,21 +34,5 @@ namespace net {
 	send(smtp);
       }
     }
-  }
-
-  SmtpWorker::SmtpWorker(Ctx &ctx):
-    ctx(ctx.proc, ctx.inbox.max),
-    stopped(false) {
-    this->ctx.secret = ctx.secret;
-    db::copy(this->ctx.db.settings, ctx.db.settings);
-    db::copy(this->ctx.db.peers, ctx.db.peers);
-    db::copy(this->ctx.db.outbox, ctx.db.outbox);
-    thread = std::thread(loop, this);
-  }
-  
-  SmtpWorker::~SmtpWorker() {
-    stopped = true;
-    go.notify_one();
-    thread.join();
   }
 }}

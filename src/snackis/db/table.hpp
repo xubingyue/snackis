@@ -39,7 +39,10 @@ namespace db {
     std::vector<OnInsert> on_insert;
     std::vector<OnUpdate> on_update;
     
-    Table(Ctx &ctx, const str &name, const Schema<RecT> &key, Cols cols);
+    Table(Ctx &ctx,
+	  const str &name,
+	  const Schema<RecT> &key,
+	  const Schema<RecT> &cols);
     virtual ~Table();
     void dump(std::ostream &out) override;
     void slurp() override;
@@ -273,7 +276,10 @@ namespace db {
   }
   
   template <typename RecT>
-  Table<RecT>::Table(Ctx &ctx, const str &name, const Schema<RecT> &key, Cols cols):
+  Table<RecT>::Table(Ctx &ctx,
+		     const str &name,
+		     const Schema<RecT> &key,
+		     const Schema<RecT> &cols):
     BasicTable(ctx, name),
     Schema<RecT>(cols),
     key(key),

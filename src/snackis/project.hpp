@@ -34,7 +34,7 @@ namespace snackis {
   extern db::Col<Project, bool>          project_active;
   extern db::Col<Project, std::set<UId>> project_peer_ids;
 
-  extern db::Schema<Project> project_key;
+  extern db::Schema<Project> project_key, project_cols;
   extern db::RecType<Project> project_type;
 
   void copy(Project &prj, const Msg &msg);

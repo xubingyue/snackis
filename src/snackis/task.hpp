@@ -37,7 +37,7 @@ namespace snackis {
   extern db::Col<Task, Time>          task_done_at;
   extern db::Col<Task, std::set<UId>> task_peer_ids;
 
-  extern db::Schema<Task> task_key;
+  extern db::Schema<Task> task_key, task_cols;
   extern db::RecType<Task> task_type;
 
   void copy(Task &tsk, const Msg &msg);

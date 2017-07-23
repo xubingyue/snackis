@@ -34,7 +34,7 @@ namespace snackis {
   extern db::Col<Feed, bool>          feed_active, feed_visible;
   extern db::Col<Feed, std::set<UId>> feed_peer_ids;
 
-  extern db::Schema<Feed> feed_key;
+  extern db::Schema<Feed> feed_key, feed_cols;
   extern db::RecType<Feed> feed_type;
   
   void copy(Feed &fd, const Msg &msg);

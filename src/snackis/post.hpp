@@ -33,7 +33,7 @@ namespace snackis {
   extern db::Col<Post, std::set<str>> post_tags;
   extern db::Col<Post, std::set<UId>> post_peer_ids;
 
-  extern db::Schema<Post> post_key;
+  extern db::Schema<Post> post_key, post_cols;
   extern db::RecType<Post> post_type;
 
   void copy(Post &ps, const Msg &msg);
