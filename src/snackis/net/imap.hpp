@@ -9,11 +9,12 @@
 #include "snackis/db/trans.hpp"
 
 namespace snackis {
+  struct Ctx;
+
+namespace net {
   struct ImapError: Error {
     ImapError(const str &msg);
   };
-
-  struct Ctx;
 
   struct Imap {
     Ctx &ctx;
@@ -25,6 +26,6 @@ namespace snackis {
     
   void noop(const struct Imap &imap);
   void fetch(struct Imap &imap);
-}
+}}
 
 #endif

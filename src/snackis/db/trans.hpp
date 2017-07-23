@@ -10,7 +10,6 @@ namespace db {
   struct Trans {
     Ctx &ctx;
     Trans *super;
-    Ctx::Lock lock; 
     Changes changes;
     Trans(Ctx &ctx);
     ~Trans();

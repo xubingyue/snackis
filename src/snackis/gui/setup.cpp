@@ -1,4 +1,5 @@
 #include "snackis/ctx.hpp"
+#include "snackis/snackis.hpp"
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/setup.hpp"
 #include "snackis/net/imap.hpp"
@@ -101,7 +102,7 @@ namespace gui {
     db::Trans trans(ctx);
     TRY(try_save);
     
-    Peer &me(whoami(ctx));
+    Peer me(whoami(ctx));
     me.name = gtk_entry_get_text(GTK_ENTRY(v->name));
     me.email = gtk_entry_get_text(GTK_ENTRY(v->email));
     update(ctx.db.peers, me);
@@ -115,12 +116,18 @@ namespace gui {
 	return;
       }
 
+      imap_worker.reset();
+      smtp_worker.reset();
+
       log(ctx, "Rewriting database...");
       remove_path(get_path(ctx, "pass"));
       init_pass(ctx, pass);
       rewrite_db(ctx);
       if (!try_save.errors.empty()) { return; }
       log(ctx, "Password changed");
+      
+      imap_worker.emplace(ctx);
+      smtp_worker.emplace(ctx);
     }
     
     set_val(ctx.settings.load_folder,
@@ -130,12 +137,12 @@ namespace gui {
 
     copy_flds(v->imap);
     if (*get_val(ctx.settings.imap.poll)) {
-      ctx.fetch_cond.notify_one();
+      imap_worker->go.notify_one();
     }
     
     copy_flds(v->smtp);
     if (*get_val(ctx.settings.smtp.poll)) {
-      ctx.send_cond.notify_one();
+      smtp_worker->go.notify_one();
     }
 
     if (try_save.errors.empty()) {
@@ -151,7 +158,7 @@ namespace gui {
     copy_flds(*v);
 
     TRY(try_imap);
-    Imap imap(ctx);
+    net::Imap imap(ctx);
     if (try_imap.errors.empty()) { log(ctx, "Imap Ok"); }
   }
 
@@ -161,7 +168,7 @@ namespace gui {
     copy_flds(*v);
 
     TRY(try_smtp);
-    Smtp smtp(ctx);
+    net::Smtp smtp(ctx);
     if (try_smtp.errors.empty()) { log(ctx, "Smtp Ok"); }
   }
 
@@ -268,7 +275,7 @@ namespace gui {
   void Setup::load() {
     View::load();
     
-    Peer &me(whoami(ctx));
+    Peer me(whoami(ctx));
     set_str(GTK_ENTRY(name), me.name);
     set_str(GTK_ENTRY(email), me.email);
 

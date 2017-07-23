@@ -4,7 +4,10 @@
 #include <initializer_list>
 #include <vector>
 
+#include <snackis/core/int64_type.hpp>
 #include <snackis/core/str.hpp>
+#include <snackis/core/str_type.hpp>
+#include <snackis/crypt/secret.hpp>
 #include <snackis/db/basic_col.hpp>
 #include <snackis/db/rec.hpp>
 
@@ -78,6 +81,66 @@ namespace db {
     for (auto c: scm.cols) {
       auto found = src.find(c);
       if (found != src.end()) { dest.insert(*found); }
+    }
+  }
+
+  template <typename RecT>
+  void read(const Schema<RecT> &scm,
+	    std::istream &in,
+	    Rec<RecT> &rec,
+	    opt<crypt::Secret> sec) {
+    if (sec) {
+      int64_t size(int64_type.read(in));
+      Data edata(size);
+      in.read((char *)&edata[0], size);
+      const Data ddata(decrypt(*sec, (unsigned char *)&edata[0], size));
+      Stream buf(str(ddata.begin(), ddata.end()));
+      read(scm, buf, rec, nullopt);
+    } else {
+      int64_t cnt(int64_type.read(in));
+
+      for (int64_t i=0; i<cnt; i++) {
+	const str cname(str_type.read(in));
+	auto found(scm.col_lookup.find(cname));
+	
+	if (found != scm.col_lookup.end()) {
+	  auto c = found->second;
+	  rec[c] = c->read(in);
+	}
+      }
+    }
+  }
+  
+  template <typename RecT>
+  void write(const Schema<RecT> &scm,
+	     const Rec<RecT> &rec,
+	     std::ostream &out,
+	     opt<crypt::Secret> sec) {
+    if (sec) {
+	Stream buf;
+	write(scm, rec, buf, nullopt);
+	str data(buf.str());
+	const Data edata(encrypt(*sec, (unsigned char *)data.c_str(), data.size()));
+	int64_type.write(edata.size(), out);
+	out.write((char *)&edata[0], edata.size());
+    } else {
+      int64_t cnt(0);
+
+      for (auto c: scm.cols) {
+	auto found = rec.find(c);
+	if (found != rec.end()) { cnt++; }
+      }
+
+      int64_type.write(cnt, out);
+    
+      for (auto c: scm.cols) {
+	auto found = rec.find(c);
+	
+	if (found != rec.end()) {
+	  str_type.write(c->name, out);
+	  c->write(rec.at(c), out);
+	}
+      }
     }
   }
 }}

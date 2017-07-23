@@ -14,10 +14,16 @@ namespace db {
     auto ctx(get(msg, Msg::SENDER));
 
     switch (msg.type) {
+    case MSG_CONNECT:
+      queues.emplace(ctx, Changes());
+      break;
+    case MSG_DISCONNECT:
+      queues.erase(ctx);
+      break;
     case MSG_COMMIT: {
       auto cs(get(msg, Msg::CHANGES));
       
-      for (auto q: queues) {
+      for (auto &q: queues) {
 	if (q.first != ctx) {
 	  std::copy(cs.begin(), cs.end(), std::back_inserter(q.second));
 	}

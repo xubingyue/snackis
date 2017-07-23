@@ -7,6 +7,7 @@
 #include "snackis/net/imap.hpp"
 
 namespace snackis {
+namespace net {
   ImapError::ImapError(const str &msg): Error(str("ImapError: ") + msg) { }
 
   static size_t on_read(char *ptr, size_t size, size_t nmemb, void *_out) {
@@ -169,4 +170,4 @@ namespace snackis {
 
     log(ctx, fmt("Finished fetching %0 messages", msg_cnt));
   }
-}
+}}

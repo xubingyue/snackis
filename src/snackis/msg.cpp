@@ -3,16 +3,35 @@
 #include "snackis/snackis.hpp"
 #include "snackis/core/bool_type.hpp"
 #include "snackis/core/int64_type.hpp"
+#include "snackis/core/time_type.hpp"
 #include "snackis/core/uid_type.hpp"
 #include "snackis/crypt/pub_key_type.hpp"
 
 namespace snackis {
+  db::Col<Msg, UId> msg_id("id", uid_type, &Msg::id);
+  db::Col<Msg, str> msg_type("type", str_type, &Msg::type);
+  db::Col<Msg, str> msg_from("from", str_type, &Msg::from);
+  db::Col<Msg, str> msg_to("to", str_type, &Msg::to);
+  db::Col<Msg, UId> msg_from_id("from_id", uid_type, &Msg::from_id);
+  db::Col<Msg, UId> msg_to_id("to_id", uid_type, &Msg::to_id);
+  db::Col<Msg, Time> msg_fetched_at("fetched_at", time_type, &Msg::fetched_at);
+  db::Col<Msg, str> msg_peer_name("peer_name", str_type, &Msg::peer_name);
+  db::Col<Msg, crypt::PubKey> msg_crypt_key("crypt_key",
+					    crypt::pub_key_type,
+					    &Msg::crypt_key);
+  db::Col<Msg, db::Rec<Feed>> msg_feed("feed", feed_type, &Msg::feed);
+  db::Col<Msg, db::Rec<Post>> msg_post("post", post_type, &Msg::post);
+  db::Col<Msg, db::Rec<Project>> msg_project("project",
+					     project_type,
+					     &Msg::project);
+  db::Col<Msg, db::Rec<Task>> msg_task("task", task_type, &Msg::task);
+  
   const str
   Msg::INVITE("invite"), Msg::ACCEPT("accept"),
     Msg::POST("post"), Msg::TASK("task");
 
   Msg::Msg(Ctx &ctx, const str &type): IdRec(ctx), type(type) {
-    Peer &me(whoami(ctx));
+    Peer me(whoami(ctx));
     from = me.email;
     from_id = me.id;
     peer_name = me.name;

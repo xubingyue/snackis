@@ -1,4 +1,5 @@
 #include "snackis/ctx.hpp"
+#include "snackis/snackis.hpp"
 #include "snackis/gui/gui.hpp"
 #include "snackis/gui/login.hpp"
 #include "snackis/gui/reader.hpp"
@@ -24,11 +25,14 @@ namespace gui {
     
     if (!reader) {
       open(ctx);
+      imap_worker.emplace(ctx);
+      smtp_worker.emplace(ctx);
+
       reader.emplace(ctx);
       gtk_box_pack_start(GTK_BOX(left_panel), reader->ptr(), false, false, 5);
     }
 
-    Peer &me(whoami(ctx));
+    Peer me(whoami(ctx));
     if (!me.name.empty()) { log(ctx, fmt("Welcome back, %0", me.name)); }
     pop_view(v);
     delete v;

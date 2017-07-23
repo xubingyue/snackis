@@ -25,6 +25,8 @@ namespace snackis {
 	    opt<ValT> init_val=nullopt);
   };
 
+  extern db::Col<BasicSetting, str> setting_key, setting_val;
+  
   template <typename ValT>
   Setting<ValT>::Setting(Ctx &ctx,
 			 const str &key, const Type<ValT> &type, 

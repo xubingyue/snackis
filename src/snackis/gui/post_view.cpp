@@ -62,7 +62,7 @@ namespace gui {
 
   GtkWidget *init_general(PostView &v) {
     Ctx &ctx(v.ctx);
-    auto &me(whoami(ctx));
+    auto me(whoami(ctx));
     GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
     
     gtk_container_add(GTK_CONTAINER(frm), new_label("Feed"));
@@ -143,7 +143,7 @@ namespace gui {
       gtk_container_add(GTK_CONTAINER(menu), task_btn);
     }
 
-    auto &me(whoami(ctx));
+    auto me(whoami(ctx));
     GtkWidget *tabs(gtk_notebook_new());
     gtk_widget_set_vexpand(tabs, true);
     g_signal_connect(tabs, "switch-page", G_CALLBACK(on_page), this);

@@ -22,15 +22,12 @@ namespace db {
   struct Trans;
   
   struct Ctx {
-    using Lock = std::unique_lock<std::recursive_mutex>;
-    
     Proc &proc;
     Chan<Msg> inbox;
     opt<crypt::Secret> secret;
     std::map<str, BasicTable *> tables;
     Trans *trans;
     std::list<ChangeSet> undo_stack;
-    std::recursive_mutex mutex;
     
     Ctx(Proc &p, size_t max_buf);
     virtual ~Ctx();
@@ -38,7 +35,6 @@ namespace db {
 
   Path get_path(const Ctx &ctx, const str &fname);
   Trans &get_trans(Ctx &ctx);
-  void init_db_ver(Ctx &ctx);
   bool pass_exists(const Ctx &ctx);
   void init_pass(Ctx &ctx, const str &pass);
   bool login(Ctx &ctx, const str &pass);

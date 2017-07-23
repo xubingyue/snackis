@@ -8,6 +8,7 @@
 #include "snackis/net/smtp.hpp"
 
 namespace snackis {
+namespace net {
   SmtpError::SmtpError(const str &msg): Error(str("SmtpError: ") + msg) { }
 
   static size_t on_read(char *ptr, size_t size, size_t nmemb, void *_out) {
@@ -140,4 +141,4 @@ namespace snackis {
     
     log(ctx, "Finished sending email");
   }
-}
+}}

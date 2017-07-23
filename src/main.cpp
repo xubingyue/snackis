@@ -43,6 +43,7 @@ static void load_style() {
 }
 
 opt<db::Proc> proc;
+opt<Ctx> ctx;
 
 static void on_activate(GtkApplication *app, gpointer _) {
   load_style();
@@ -66,14 +67,14 @@ static void on_activate(GtkApplication *app, gpointer _) {
   gtk_box_set_homogeneous(GTK_BOX(gui::panels), true);
   gtk_box_pack_start(GTK_BOX(gui::main_panel), gui::panels, true, true, 0);
 
-  Ctx *ctx = new Ctx(*proc, 32);
-
+  ctx.emplace(*proc, 32);
+  
   gui::left_panel = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_container_add(GTK_CONTAINER(gui::panels), gui::left_panel);
   gui::console.emplace();  
   gtk_container_add(GTK_CONTAINER(gui::left_panel), gui::console->ptr());
 
-  error_handler = [ctx](auto &errors) {
+  error_handler = [](auto &errors) {
     for (auto e: errors) { log(*ctx, e->what); }
   };
   
@@ -96,5 +97,8 @@ int main(int argc, char **argv) {
   g_signal_connect(app, "activate", G_CALLBACK(on_activate), NULL);
   status = g_application_run(G_APPLICATION(app), argc, argv);
   g_object_unref(app);
+  imap_worker.reset();
+  smtp_worker.reset();
+  ctx.reset();
   return status;
 }

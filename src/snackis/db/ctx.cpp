@@ -16,7 +16,6 @@ namespace db {
     auto res(get(inbox));
     CHECK(res, _);
     CHECK(res->type == MSG_OK, _);
-    log(*this, "Connected");
   }
 
   Ctx::~Ctx() { 
@@ -33,31 +32,6 @@ namespace db {
   Trans &get_trans(Ctx &ctx) {
     CHECK(ctx.trans, _);
     return *ctx.trans;
-  }
-
-  void init_db_rev(Ctx &ctx) {
-    const Path p(get_path(ctx, "rev"));
-    
-    if (path_exists(p)) {
-      std::ifstream in;
-      in.open(p.string(), std::ios::in | std::ios::binary);
-      int64_t rev = -1;
-      in.read(reinterpret_cast<char *>(&rev), sizeof rev);
-      in.close();
-
-      if (rev < DB_REV) {
-	ERROR(Db, fmt("This version of Snackis requires database revision #%0 to run",
-		      DB_REV));
-	return;
-      }
-    } else {
-      log(ctx, "Initialized database, revision %0", DB_REV);
-    }
-    
-    std::ofstream out;
-    out.open(p.string(), std::ios::out | std::ios::trunc | std::ios::binary);
-    out.write(reinterpret_cast<const char *>(&DB_REV), sizeof(DB_REV));
-    out.close();
   }
 
   bool pass_exists(const Ctx &ctx) {
@@ -106,15 +80,11 @@ namespace db {
     return true;
   }
 
-  void open(Ctx &ctx) {
-    TRY(try_open);
-    init_db_rev(ctx);
-  }
-
   void slurp(Ctx &ctx) {
     TRY(try_slurp);
-    Ctx::Lock lock(ctx.mutex);
-    for (auto t: ctx.tables) { t.second->slurp(); }
+    for (auto t: ctx.tables) {
+      if (path_exists(t.second->path)) { t.second->slurp(); }
+    }
   }
 
   int64_t rewrite(Ctx &ctx) {

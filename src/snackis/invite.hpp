@@ -18,6 +18,9 @@ namespace snackis {
     Invite(Ctx &ctx, const db::Rec<Invite> &src);
   };
 
+  extern db::Col<Invite, str>  invite_to;
+  extern db::Col<Invite, Time> invite_posted_at;
+
   void send(Invite &inv);
   void send_accept(const Msg &in);
   bool invite_accepted(const Msg &in);

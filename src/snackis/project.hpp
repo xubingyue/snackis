@@ -6,6 +6,8 @@
 #include "snackis/id_rec.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/core/uid.hpp"
+#include "snackis/db/schema.hpp"
+#include "snackis/db/rec_type.hpp"
 
 namespace snackis {
   struct Feed;
@@ -23,6 +25,17 @@ namespace snackis {
     Project(Ctx &ctx, const db::Rec<Project> &rec);   
     Project(const Msg &msg);
   };
+
+  extern db::Col<Project, UId>           project_id;
+  extern db::Col<Project, UId>           project_owner_id;
+  extern db::Col<Project, Time>          project_created_at, project_changed_at;
+  extern db::Col<Project, str>           project_name, project_info;
+  extern db::Col<Project, std::set<str>> project_tags;
+  extern db::Col<Project, bool>          project_active;
+  extern db::Col<Project, std::set<UId>> project_peer_ids;
+
+  extern db::Schema<Project> project_key;
+  extern db::RecType<Project> project_type;
 
   void copy(Project &prj, const Msg &msg);
   opt<Project> find_project_id(Ctx &ctx, UId id);

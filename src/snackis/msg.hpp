@@ -27,6 +27,18 @@ namespace snackis {
     Msg(Ctx &ctx, const str &type);
     Msg(Ctx &ctx, const db::Rec<Msg> &src);
   };
+
+  extern db::Col<Msg, UId>              msg_id;
+  extern db::Col<Msg, str>              msg_type;
+  extern db::Col<Msg, str>              msg_from, msg_to;
+  extern db::Col<Msg, UId>              msg_from_id, msg_to_id;
+  extern db::Col<Msg, Time>             msg_fetched_at;
+  extern db::Col<Msg, str>              msg_peer_name;
+  extern db::Col<Msg, crypt::PubKey>    msg_crypt_key;
+  extern db::Col<Msg, db::Rec<Feed>>    msg_feed;
+  extern db::Col<Msg, db::Rec<Post>>    msg_post;
+  extern db::Col<Msg, db::Rec<Project>> msg_project;
+  extern db::Col<Msg, db::Rec<Task>>    msg_task;
   
   str encode(Msg &msg);
   bool decode(Msg &msg, const str &in);

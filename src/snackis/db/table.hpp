@@ -25,17 +25,6 @@ namespace snackis {
 namespace db {
   template <typename RecT>
   struct Table;
-
-  template <typename RecT>
-  struct RecType: public Type<Rec<RecT>> {
-    Table<RecT> &table;    
-    RecType(Table<RecT> &tbl);
-    bool is_null(const Rec<RecT> &val) const override;
-    Rec<RecT> from_val(const Val &in) const override;
-    Val to_val(const Rec<RecT> &in) const override;
-    Rec<RecT> read(std::istream &in) const override;
-    void write(const Rec<RecT> &val, std::ostream &out) const override;
-  };
   
   template <typename RecT>
   struct Table: BasicTable, Schema<RecT> {
@@ -45,13 +34,12 @@ namespace db {
     using OnUpdate = func<void (const Rec<RecT> &, Rec<RecT> &)>;
       
     const Schema<RecT> key;
-    RecType<RecT> rec_type;
     std::set<Table<RecT> *> indexes;
     std::set<Rec<RecT>, CmpRec> recs;
     std::vector<OnInsert> on_insert;
     std::vector<OnUpdate> on_update;
     
-    Table(Ctx &ctx, const str &name, Cols key_cols, Cols cols);
+    Table(Ctx &ctx, const str &name, const Schema<RecT> &key, Cols cols);
     virtual ~Table();
     void dump(std::ostream &out) override;
     void slurp() override;
@@ -214,66 +202,6 @@ namespace db {
   }
 
   template <typename RecT>
-  void read(const Table<RecT> &tbl,
-	    std::istream &in,
-	    Rec<RecT> &rec,
-	    opt<crypt::Secret> sec) {
-    if (sec) {
-      int64_t size(int64_type.read(in));
-      Data edata(size);
-      in.read((char *)&edata[0], size);
-      const Data ddata(decrypt(*sec, (unsigned char *)&edata[0], size));
-      Stream buf(str(ddata.begin(), ddata.end()));
-      read(tbl, buf, rec, nullopt);
-    } else {
-      int64_t cnt(int64_type.read(in));
-
-      for (int64_t i=0; i<cnt; i++) {
-	const str cname(str_type.read(in));
-	auto found(tbl.col_lookup.find(cname));
-	
-	if (found != tbl.col_lookup.end()) {
-	  auto c = found->second;
-	  rec[c] = c->read(in);
-	}
-      }
-    }
-  }
-
-  template <typename RecT>
-  void write(const Table<RecT> &tbl,
-	     const Rec<RecT> &rec,
-	     std::ostream &out,
-	     opt<crypt::Secret> sec) {
-    if (sec) {
-	Stream buf;
-	write(tbl, rec, buf, nullopt);
-	str data(buf.str());
-	const Data edata(encrypt(*sec, (unsigned char *)data.c_str(), data.size()));
-	int64_type.write(edata.size(), out);
-	out.write((char *)&edata[0], edata.size());
-    } else {
-      int64_t cnt(0);
-
-      for (auto c: tbl.cols) {
-	auto found = rec.find(c);
-	if (found != rec.end()) { cnt++; }
-      }
-
-      int64_type.write(cnt, out);
-    
-      for (auto c: tbl.cols) {
-	auto found = rec.find(c);
-	
-	if (found != rec.end()) {
-	  str_type.write(c->name, out);
-	  c->write(rec.at(c), out);
-	}
-      }
-    }
-  }
-
-  template <typename RecT>
   void write(Table<RecT> &tbl, TableOp _op, const Rec<RecT> &rec, std::ostream &out) {
     uint8_t op(_op);
     out.write(reinterpret_cast<const char *>(&op), sizeof op);
@@ -337,50 +265,22 @@ namespace db {
     slurp(tbl, f);
     f.close();
   }
-  
-  template <typename RecT>
-  RecType<RecT>::RecType(Table<RecT> &tbl):
-    Type<Rec<RecT>>(fmt("Rec(%0)", tbl.name)), table(tbl) { }
 
   template <typename RecT>
-  bool RecType<RecT>::is_null(const Rec<RecT> &val) const {
-    return val.empty();
-  }
-
-  template <typename RecT>
-  Rec<RecT> RecType<RecT>::from_val(const Val &in) const {
-    Stream out(get<str>(in));
-    return read(out);
-  }
-
-  template <typename RecT>
-  Val RecType<RecT>::to_val(const Rec<RecT> &in) const {
-    Stream out;
-    write(in, out);
-    return out.str();
-  }
-
-  template <typename RecT>
-  Rec<RecT> RecType<RecT>::read(std::istream &in) const {
-    Rec<RecT> rec;
-    db::read(table, in, rec, nullopt);
-    return rec;
+  void copy(Table<RecT> &dest, const Table<RecT> &src) {
+    std::copy(src.recs.begin(), src.recs.end(),
+	      std::inserter(dest.recs, dest.recs.end()));
   }
   
   template <typename RecT>
-  void RecType<RecT>::write(const Rec<RecT> &val, std::ostream &out) const {
-    db::write(table, val, out, nullopt);
-  }  
-  
-  template <typename RecT>
-  Table<RecT>::Table(Ctx &ctx, const str &name, Cols key_cols, Cols cols):
+  Table<RecT>::Table(Ctx &ctx, const str &name, const Schema<RecT> &key, Cols cols):
     BasicTable(ctx, name),
     Schema<RecT>(cols),
-    key(key_cols),
-    rec_type(*this),
+    key(key),
     recs([this](const Rec<RecT> &x, const Rec<RecT> &y) {
-	return compare(key, x, y) < 0;
-      }) {
+	return compare(this->key, x, y) < 0;
+      })
+  {
     for (auto c: key.cols) { add(*this, *c); }
     ctx.tables.emplace(name, this);
   }

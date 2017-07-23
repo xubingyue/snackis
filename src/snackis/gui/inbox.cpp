@@ -113,7 +113,6 @@ namespace gui {
 
   void Inbox::load() {
     View::load();
-    Ctx::Lock lock(ctx.mutex);
     gtk_list_store_clear(store);
     size_t cnt(0);
     

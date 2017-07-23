@@ -77,7 +77,7 @@ namespace gui {
   
   void load(FeedHistory &w, const Feed &fd, Time start) {
     db::Rec<Post> pst_key;
-    db::set(pst_key, w.ctx.db.post_id, fd.id);
+    db::set(pst_key, post_id, fd.id);
     auto pst_fnd(db::find(w.ctx.db.posts, pst_key));
     
     if (pst_fnd) {

@@ -1,6 +1,7 @@
 #include <cctype>
 #include "snackis/ctx.hpp"
 #include "snackis/invite.hpp"
+#include "snackis/snackis.hpp"
 #include "snackis/core/fmt.hpp"
 #include "snackis/gui/decrypt.hpp"
 #include "snackis/gui/encrypt.hpp"
@@ -165,7 +166,7 @@ namespace gui {
 	  return false;
 	}
 
-	ctx.fetch_cond.notify_one();
+	imap_worker->go.notify_one();
 	return true;
       });
 
@@ -175,14 +176,10 @@ namespace gui {
 	  return false;
 	}
 
-	{
-	  Ctx::Lock lock(ctx.mutex);
-	  refresh(ctx);
-	  
-	  if (ctx.db.inbox.recs.empty()) {
-	    log(ctx, "Inbox is empty");
-	    return true;
-	  }
+	refresh(ctx);
+	if (ctx.db.inbox.recs.empty()) {
+	  log(ctx, "Inbox is empty");
+	  return true;
 	}
 
 	if (!inbox) { inbox.reset(new Inbox(ctx)); }
@@ -239,7 +236,7 @@ namespace gui {
 	  return false;
 	}
 	
-	ctx.send_cond.notify_one();
+	smtp_worker->go.notify_one();
 	return true;
       });
 

@@ -3,8 +3,29 @@
 #include "snackis/peer.hpp"
 #include "snackis/project.hpp"
 #include "snackis/task.hpp"
+#include "snackis/core/bool_type.hpp"
+#include "snackis/core/time_type.hpp"
+#include "snackis/core/uid_type.hpp"
 
 namespace snackis {
+  db::Col<Task, UId> task_id("id", uid_type, &Task::id);
+  db::Col<Task, UId> task_project_id("project_id", uid_type, &Task::project_id);
+  db::Col<Task, UId> task_owner_id("owner_id", uid_type, &Task::owner_id);
+  db::Col<Task, Time> task_created_at("created_at", time_type, &Task::created_at);
+  db::Col<Task, Time> task_changed_at("changed_at", time_type, &Task::changed_at);
+  db::Col<Task, str> task_name("name", str_type, &Task::name);
+  db::Col<Task, str> task_info("info", str_type, &Task::info);
+  db::Col<Task, std::set<str>> task_tags("tags", str_set_type, &Task::tags);
+  db::Col<Task, int64_t> task_prio("prio", int64_type, &Task::prio);
+  db::Col<Task, bool> task_done("done", bool_type, &Task::done);
+  db::Col<Task, Time> task_done_at("done_at", time_type, &Task::done_at);
+  db::Col<Task, std::set<UId>> task_peer_ids("peer_ids",
+					     uid_set_type,
+					     &Task::peer_ids);
+
+  db::Schema<Task> task_key({&task_id});
+  db::RecType<Task> task_type(task_key);
+
   Task::Task(Ctx &ctx):
     IdRec(ctx),
     owner_id(whoami(ctx).id),
@@ -22,7 +43,7 @@ namespace snackis {
   }
 
   Task::Task(const Msg &msg):
-    IdRec(msg.ctx, *db::get(msg.task, msg.ctx.db.task_id)),
+    IdRec(msg.ctx, *db::get(msg.task, task_id)),
     owner_id(msg.from_id),
     created_at(now()),
     changed_at(created_at),
@@ -38,7 +59,7 @@ namespace snackis {
 
   opt<Task> find_task_id(Ctx &ctx, UId id) {
     db::Rec<Task> rec;
-    set(rec, ctx.db.task_id, id);
+    set(rec, task_id, id);
     if (!load(ctx.db.tasks, rec)) { return nullopt; }
     return Task(ctx, rec);
   }
@@ -52,7 +73,7 @@ namespace snackis {
   Feed get_feed(const Task &tsk) {
     Ctx &ctx(tsk.ctx);
     db::Rec<Feed> rec;
-    db::set(rec, ctx.db.feed_id, tsk.id);
+    db::set(rec, feed_id, tsk.id);
     Feed fd(ctx, rec);
 
     if (!db::load(ctx.db.feeds, fd)) {

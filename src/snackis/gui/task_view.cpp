@@ -53,7 +53,7 @@ namespace gui {
   }
 
   static GtkWidget *init_general(TaskView &v) {
-    auto &me(whoami(v.ctx));
+    auto me(whoami(v.ctx));
     GtkWidget *frm(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
     gtk_widget_set_margin_top(frm, 5);
     
@@ -131,7 +131,7 @@ namespace gui {
     g_signal_connect(post_btn, "clicked", G_CALLBACK(on_post), this);
     gtk_container_add(GTK_CONTAINER(menu), post_btn);
 
-    auto &me(whoami(ctx));
+    auto me(whoami(ctx));
     GtkWidget *tabs(gtk_notebook_new());
     gtk_widget_set_vexpand(tabs, true);
     g_signal_connect(tabs, "switch-page", G_CALLBACK(on_page), this);

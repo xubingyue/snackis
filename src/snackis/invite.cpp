@@ -1,8 +1,12 @@
 #include "snackis/ctx.hpp"
 #include "snackis/invite.hpp"
 #include "snackis/msg.hpp"
+#include "snackis/core/time_type.hpp"
 
 namespace snackis {
+  db::Col<Invite, str>  invite_to("to", str_type, &Invite::to);
+  db::Col<Invite, Time> invite_posted_at("posted_at", time_type, &Invite::posted_at);
+
   Invite::Invite(Ctx &ctx, const str &to): Rec(ctx), to(to)
   { }
 
@@ -32,7 +36,7 @@ namespace snackis {
   bool invite_accepted(const Msg &in) {
     Ctx &ctx(in.ctx);
     db::Rec<Invite> inv;
-    set(inv, ctx.db.invite_to, in.from);
+    set(inv, invite_to, in.from);
 
     if (!erase(ctx.db.invites, inv)) { return false; }
     

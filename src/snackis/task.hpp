@@ -7,6 +7,8 @@
 #include "snackis/core/str.hpp"
 #include "snackis/core/time.hpp"
 #include "snackis/core/uid.hpp"
+#include "snackis/db/schema.hpp"
+#include "snackis/db/rec_type.hpp"
 
 namespace snackis {
   struct Task: IdRec {
@@ -23,6 +25,20 @@ namespace snackis {
     Task(Ctx &ctx, const db::Rec<Task> &rec);   
     Task(const Msg &msg);
   };
+
+  extern db::Col<Task, UId>           task_id;
+  extern db::Col<Task, UId>           task_project_id;
+  extern db::Col<Task, UId>           task_owner_id;
+  extern db::Col<Task, Time>          task_created_at, task_changed_at;
+  extern db::Col<Task, str>           task_name, task_info;
+  extern db::Col<Task, std::set<str>> task_tags;
+  extern db::Col<Task, int64_t>       task_prio;
+  extern db::Col<Task, bool>          task_done;
+  extern db::Col<Task, Time>          task_done_at;
+  extern db::Col<Task, std::set<UId>> task_peer_ids;
+
+  extern db::Schema<Task> task_key;
+  extern db::RecType<Task> task_type;
 
   void copy(Task &tsk, const Msg &msg);
   opt<Task> find_task_id(Ctx &ctx, UId id);

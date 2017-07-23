@@ -2,8 +2,24 @@
 #include "snackis/ctx.hpp"
 #include "snackis/peer.hpp"
 #include "snackis/post.hpp"
+#include "snackis/core/time_type.hpp"
+#include "snackis/core/uid_type.hpp"
 
 namespace snackis {
+  db::Col<Post, UId> post_id("id", uid_type, &Post::id);
+  db::Col<Post, UId> post_feed_id("feed_id", uid_type, &Post::feed_id);
+  db::Col<Post, UId> post_owner_id("owner_id", uid_type, &Post::owner_id);
+  db::Col<Post, Time> post_created_at("created_at", time_type, &Post::created_at);
+  db::Col<Post, Time> post_changed_at("changed_at", time_type, &Post::changed_at);
+  db::Col<Post, str> post_body("body", str_type, &Post::body);
+  db::Col<Post, std::set<str>> post_tags("tags", str_set_type, &Post::tags);
+  db::Col<Post, std::set<UId>> post_peer_ids("peer_ids",
+					     uid_set_type,
+					     &Post::peer_ids);
+
+  db::Schema<Post> post_key({&post_id});
+  db::RecType<Post> post_type(post_key);
+
   Post::Post(Ctx &ctx):
     IdRec(ctx),
     owner_id(whoami(ctx).id),
@@ -16,7 +32,7 @@ namespace snackis {
   }
 
   Post::Post(const Msg &msg):
-    IdRec(msg.ctx, *db::get(msg.post, msg.ctx.db.post_id)),
+    IdRec(msg.ctx, *db::get(msg.post, post_id)),
     owner_id(msg.from_id),
     created_at(now()),
     changed_at(created_at)
@@ -32,7 +48,7 @@ namespace snackis {
 
   opt<Post> find_post_id(Ctx &ctx, UId id) {
     db::Rec<Post> rec;
-    set(rec, ctx.db.post_id, id);
+    set(rec, post_id, id);
     if (!load(ctx.db.posts, rec)) { return nullopt; }
     return Post(ctx, rec);
   }
@@ -46,7 +62,7 @@ namespace snackis {
   Feed get_reply_feed(const Post &ps) {
     Ctx &ctx(ps.ctx);
     db::Rec<Feed> rec;
-    db::set(rec, ctx.db.feed_id, ps.id);
+    db::set(rec, feed_id, ps.id);
     Feed fd(ctx, rec);
 
     if (!db::load(ctx.db.feeds, fd)) {

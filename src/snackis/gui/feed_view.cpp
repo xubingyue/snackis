@@ -53,7 +53,7 @@ namespace gui {
   }
   
   static GtkWidget *init_general(FeedView &v) {
-    auto &me(whoami(v.ctx));
+    auto me(whoami(v.ctx));
     GtkWidget *frm(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
     gtk_widget_set_margin_top(frm, 5);
     
