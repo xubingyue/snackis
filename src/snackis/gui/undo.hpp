@@ -7,7 +7,7 @@ namespace snackis {
 namespace gui {
   struct Undo: View {
     GtkListStore *store;
-    GtkWidget *lst, *revert_btn, *cancel_btn;
+    GtkWidget *lst, *revert_btn, *revert_all_btn, *forget_btn, *cancel_btn;
 
     Undo(Ctx &ctx);
     void load() override;

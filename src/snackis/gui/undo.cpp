@@ -17,15 +17,16 @@ namespace gui {
     pop_view(v);
   }
 
-  static void on_undo(gpointer *_, Undo *v) {
+  static void on_revert(gpointer *_, Undo *v) {
     Ctx &ctx(v->ctx);
     CHECK(!ctx.undo_stack.empty(), _);
     db::Trans trans(ctx);
-    TRY(try_undo);
-    auto &cs(ctx.undo_stack.back());
+    TRY(try_revert);
+    auto cs(ctx.undo_stack.back());
+    ctx.undo_stack.pop_back();
     db::undo(cs);
     
-    if (try_undo.errors.empty()) {
+    if (try_revert.errors.empty()) {
       db::commit(trans, nullopt);
 
       GtkTreeIter it;
@@ -34,16 +35,38 @@ namespace gui {
       gtk_widget_set_sensitive(v->revert_btn, !ctx.undo_stack.empty());
       log(ctx, fmt("Reverted change:\n%0", cs.label)); 
     }
-
-    ctx.undo_stack.pop_back();
   }
-  
+
+  static void on_revert_all(gpointer *_, Undo *v) {
+    Ctx &ctx(v->ctx);
+    
+    while (!ctx.undo_stack.empty()) {
+      auto cs(ctx.undo_stack.back());
+      ctx.undo_stack.pop_back();
+      db::Trans trans(ctx);
+      TRY(try_revert);
+      db::undo(cs);
+      if (try_revert.errors.empty()) {
+	db::commit(trans, nullopt);
+      }
+    }
+
+    gtk_list_store_clear(v->store);    
+  }
+
+  static void on_forget(gpointer *_, Undo *v) {
+    v->ctx.undo_stack.clear();
+    gtk_list_store_clear(v->store);    
+  }
+
   Undo::Undo(Ctx &ctx):
     View(ctx, "Undo"),
     store(gtk_list_store_new(2,
 			     G_TYPE_STRING, G_TYPE_STRING)),
     lst(new_tree_view(GTK_TREE_MODEL(store))),
     revert_btn(gtk_button_new_with_mnemonic("_Revert Last Change")),
+    revert_all_btn(gtk_button_new_with_mnemonic("Revert _All Changes")),
+    forget_btn(gtk_button_new_with_mnemonic("_Forget All Changes")),
     cancel_btn(gtk_button_new_with_mnemonic("_Cancel"))
   {
     add_col(GTK_TREE_VIEW(lst), "Time", COL_TIME);
@@ -51,8 +74,12 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(panel), gtk_widget_get_parent(lst));
     GtkWidget *lst_btns(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
     gtk_container_add(GTK_CONTAINER(panel), lst_btns);
-    g_signal_connect(revert_btn, "clicked", G_CALLBACK(on_undo), this);
+    g_signal_connect(revert_btn, "clicked", G_CALLBACK(on_revert), this);
     gtk_container_add(GTK_CONTAINER(lst_btns), revert_btn);
+    g_signal_connect(revert_all_btn, "clicked", G_CALLBACK(on_revert_all), this);
+    gtk_container_add(GTK_CONTAINER(lst_btns), revert_all_btn);
+    g_signal_connect(forget_btn, "clicked", G_CALLBACK(on_forget), this);
+    gtk_container_add(GTK_CONTAINER(lst_btns), forget_btn);
     
     gtk_widget_set_margin_top(cancel_btn, 10);
     gtk_widget_set_halign(cancel_btn, GTK_ALIGN_END);
