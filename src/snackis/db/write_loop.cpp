@@ -8,7 +8,9 @@ namespace snackis {
 namespace db {
   WriteLoop::WriteLoop(Proc &p, size_t max_buf):
     Loop(p, max_buf)
-  { }
+  {
+    start(*this);
+  }
 
   static std::ofstream &get_file(WriteLoop &lp, const Path &p) {
     auto fnd(lp.files.find(p));

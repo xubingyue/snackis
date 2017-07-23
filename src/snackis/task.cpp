@@ -24,7 +24,10 @@ namespace snackis {
 					     &Task::peer_ids);
 
   db::Schema<Task> task_key({&task_id});
-  db::RecType<Task> task_type(task_key);
+  static db::Schema<Task> task_cols({&task_id, &task_project_id, &task_owner_id,
+	&task_created_at, &task_changed_at, &task_name, &task_info, &task_tags,
+	&task_prio, &task_done, &task_done_at, &task_peer_ids});
+  db::RecType<Task> task_type(task_cols);
 
   Task::Task(Ctx &ctx):
     IdRec(ctx),

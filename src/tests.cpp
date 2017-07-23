@@ -117,11 +117,11 @@ const Col<Foo, std::set<int64_t>> set_col("set",
 					  int64_set,
 					  &Foo::fset); 
 
-opt<db::Proc> proc;
 const size_t MAX_BUF(32);
 
 void table_insert_tests() {
-  db::Ctx ctx(*proc, MAX_BUF);
+  Proc proc("testdb/", MAX_BUF);
+  db::Ctx ctx(proc, MAX_BUF);
   Table<Foo> tbl(ctx, "insert_tests", {&uid_col},
 		 {&int64_col, &str_col, &time_col});
   Foo foo;
@@ -134,7 +134,8 @@ void table_insert_tests() {
 }
 
 static void table_slurp_tests() {
-  db::Ctx ctx(*proc, MAX_BUF);
+  Proc proc("testdb/", MAX_BUF);
+  db::Ctx ctx(proc, MAX_BUF);
   Table<Foo> tbl(ctx, "slurp_tests", {&uid_col},
 		 {&int64_col, &str_col, &time_col});
 
@@ -155,7 +156,8 @@ static void table_slurp_tests() {
 }
 
 static void read_write_tests() {
-  db::Ctx ctx(*proc, MAX_BUF);
+  Proc proc("testdb/", MAX_BUF);
+  db::Ctx ctx(proc, MAX_BUF);
   Table<Foo> tbl(ctx, "read_write_tests", {&uid_col},
 		 {&int64_col, &str_col, &time_col, &set_col});
   
@@ -181,9 +183,9 @@ static void read_write_tests() {
 /*
 static void email_tests() {
   TRACE("Running email_tests");
-  snackis::Ctx ctx(*proc, MAX_BUF);
+  Proc proc("testdb/", MAX_BUF);
+  snackis::Ctx ctx(proc, MAX_BUF);
   ctx.db.inbox.recs.clear();
-  
   Imap imap(ctx);
   fetch(imap);
 }
@@ -192,7 +194,6 @@ static void email_tests() {
 int main() {
   TRY(try_tests);
   std::cout << "Snackis v" << version_str() << std::endl;
-  proc.emplace("testdb/", MAX_BUF);
   
   str_tests();
   fmt_tests();

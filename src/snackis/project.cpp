@@ -24,7 +24,10 @@ namespace snackis {
 						   &Project::peer_ids);
 
   db::Schema<Project> project_key({&project_id});
-  db::RecType<Project> project_type(project_key);
+  static db::Schema<Project> project_cols({&project_id, &project_owner_id, 
+	&project_created_at, &project_changed_at, &project_name, &project_info, 
+	&project_tags, &project_active, &project_peer_ids});
+  db::RecType<Project> project_type(project_cols);
 
   Project::Project(Ctx &ctx):
     IdRec(ctx),

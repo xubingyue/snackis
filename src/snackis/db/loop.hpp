@@ -18,6 +18,8 @@ namespace db {
     virtual ~Loop();
     virtual void on_msg(const Msg &msg)=0;
   };
+
+  void start(Loop &lp);
 }}
 
 #endif

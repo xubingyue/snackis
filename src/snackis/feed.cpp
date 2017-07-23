@@ -19,7 +19,10 @@ namespace snackis {
 					     &Feed::peer_ids);
 
   db::Schema<Feed> feed_key({&feed_id});
-  db::RecType<Feed> feed_type(feed_key);
+  static db::Schema<Feed> feed_cols({&feed_id, &feed_owner_id, &feed_created_at,
+	&feed_changed_at, &feed_name, &feed_info, &feed_tags, &feed_active,
+	&feed_visible, &feed_peer_ids});
+  db::RecType<Feed> feed_type(feed_cols);
 
   Feed::Feed(Ctx &ctx, UId id):
     IdRec(ctx, id),

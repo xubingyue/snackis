@@ -40,6 +40,7 @@ namespace db {
   {
     create_path(path);
     init_db_rev(*this);
+    start(*this);
   }
 
   void Proc::on_msg(const Msg &msg) {

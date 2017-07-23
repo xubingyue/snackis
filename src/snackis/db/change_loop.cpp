@@ -8,7 +8,9 @@ namespace snackis {
 namespace db {
   ChangeLoop::ChangeLoop(Proc &p, size_t max_buf):
     Loop(p, max_buf)
-  { }
+  {
+    start(*this);
+  }
 
   void ChangeLoop::on_msg(const Msg &msg) {
     auto ctx(get(msg, Msg::SENDER));
