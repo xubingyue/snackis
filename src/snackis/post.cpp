@@ -26,7 +26,7 @@ namespace snackis {
 
   Post::Post(Ctx &ctx):
     IdRec(ctx),
-    owner_id(whoami(ctx).id),
+    owner_id(whoamid(ctx)),
     created_at(now()),
     changed_at(created_at)
   { }
@@ -42,12 +42,13 @@ namespace snackis {
     changed_at(created_at)
   {
     copy(*this, msg);
-    peer_ids.insert(msg.from_id);
   }
 
   void copy(Post &ps, const Msg &msg) {
     Ctx &ctx(ps.ctx);
     db::copy(ctx.db.posts_share, ps, msg.post);
+    ps.peer_ids.erase(whoamid(ctx));
+    ps.peer_ids.insert(msg.from_id);
   }
 
   opt<Post> find_post_id(Ctx &ctx, UId id) {

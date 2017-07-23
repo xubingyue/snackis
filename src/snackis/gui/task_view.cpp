@@ -53,7 +53,7 @@ namespace gui {
   }
 
   static GtkWidget *init_general(TaskView &v) {
-    auto me(whoami(v.ctx));
+    auto me(whoamid(v.ctx));
     GtkWidget *frm(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
     gtk_widget_set_margin_top(frm, 5);
     
@@ -68,13 +68,14 @@ namespace gui {
 	  set_str(GTK_ENTRY(v.tags_fld),
 		  join(v.rec.tags.begin(), v.rec.tags.end(), ' '));
 	  gtk_widget_set_sensitive(v.project_btn, true);
+	} else {
+	  gtk_widget_set_sensitive(v.project_btn, false);
 	}
 	
-	gtk_widget_set_sensitive(v.project_btn, false);
 	refresh(v);
       });
     
-    gtk_widget_set_sensitive(v.project_fld.ptr(), v.rec.owner_id == me.id);
+    gtk_widget_set_sensitive(v.project_fld.ptr(), v.rec.owner_id == me);
     gtk_container_add(GTK_CONTAINER(project_box), v.project_fld.ptr());
     g_signal_connect(v.project_btn, "clicked", G_CALLBACK(on_project), &v);
     gtk_container_add(GTK_CONTAINER(project_box), v.project_btn);
@@ -86,7 +87,7 @@ namespace gui {
 
     gtk_grid_attach(GTK_GRID(name_box), new_label("Name"), 0, 0, 2, 1);
     gtk_widget_set_hexpand(v.name_fld, true);
-    gtk_editable_set_editable(GTK_EDITABLE(v.name_fld), v.rec.owner_id == me.id);
+    gtk_editable_set_editable(GTK_EDITABLE(v.name_fld), v.rec.owner_id == me);
     gtk_grid_attach(GTK_GRID(name_box), v.name_fld, 0, 1, 2, 1);		    
   
     gtk_grid_attach(GTK_GRID(name_box), new_label("Prio"), 2, 0, 1, 1);
@@ -94,14 +95,14 @@ namespace gui {
     gtk_widget_set_halign(v.prio_fld, GTK_ALIGN_START);
     gtk_grid_attach(GTK_GRID(name_box), v.prio_fld, 2, 1, 1, 1);		    
     gtk_widget_set_halign(v.done_fld, GTK_ALIGN_END);
-    gtk_widget_set_sensitive(v.done_fld, v.rec.owner_id == me.id);
+    gtk_widget_set_sensitive(v.done_fld, v.rec.owner_id == me);
     gtk_grid_attach(GTK_GRID(name_box), v.done_fld, 3, 1, 1, 1);		    
 
     gtk_container_add(GTK_CONTAINER(frm), new_label("Tags"));
     gtk_container_add(GTK_CONTAINER(frm), v.tags_fld);
     
     gtk_container_add(GTK_CONTAINER(frm), new_label("Info"));
-    gtk_text_view_set_editable(GTK_TEXT_VIEW(v.info_fld), v.rec.owner_id == me.id);
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(v.info_fld), v.rec.owner_id == me);
     gtk_container_add(GTK_CONTAINER(frm), gtk_widget_get_parent(v.info_fld));
     return frm;
   }
@@ -131,7 +132,7 @@ namespace gui {
     g_signal_connect(post_btn, "clicked", G_CALLBACK(on_post), this);
     gtk_container_add(GTK_CONTAINER(menu), post_btn);
 
-    auto me(whoami(ctx));
+    auto me(whoamid(ctx));
     GtkWidget *tabs(gtk_notebook_new());
     gtk_widget_set_vexpand(tabs, true);
     g_signal_connect(tabs, "switch-page", G_CALLBACK(on_page), this);
@@ -141,9 +142,7 @@ namespace gui {
 			     init_general(*this),
 			     gtk_label_new_with_mnemonic("_1 General"));
     
-    if (rec.owner_id != me.id) {
-      set_read_only(peer_lst);
-    }
+    if (rec.owner_id != me) { set_read_only(peer_lst); }
     
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
 			     peer_lst.ptr(),
@@ -155,7 +154,7 @@ namespace gui {
 			     post_lst.ptr(),
 			     lbl);
     
-    focused = (rec.owner_id == me.id)
+    focused = (rec.owner_id == me)
       ? project_fld.search_btn
       : name_fld;
     

@@ -106,7 +106,7 @@ namespace gui {
       return;
     }
 
-    auto me(whoami(ctx));
+    auto me(whoamid(ctx));
     
     for (auto key = ctx.db.posts_sort.recs.rbegin();
 	 key != ctx.db.posts_sort.recs.rend();
@@ -143,7 +143,7 @@ namespace gui {
 
       if (peer_sel &&
 	  post.owner_id != peer_sel->id &&
-	  (post.owner_id != me.id ||
+	  (post.owner_id != me ||
 	   post.peer_ids.find(peer_sel->id) == post.peer_ids.end())) {
 	continue;
       }

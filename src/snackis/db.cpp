@@ -31,7 +31,7 @@ namespace snackis {
 
     db.posts.on_insert.push_back([&](auto &rec) {
 	Post ps(ctx, rec);
-	if (ps.owner_id == whoami(ctx).id) { send(ps); }
+	if (ps.owner_id == whoamid(ctx)) { send(ps); }
 	db::copy(db.posts, rec, ps);
       });
 
@@ -45,7 +45,7 @@ namespace snackis {
 	  db::update(db.feeds, *fd);
 	}
 
-	if (curr.owner_id == whoami(ctx).id) {
+	if (curr.owner_id == whoamid(ctx)) {
 	  if (db::compare(db.posts_share, curr, prev) != 0) {
 	    send(curr);
 	  } else {
@@ -75,7 +75,7 @@ namespace snackis {
 
     db.tasks.on_insert.push_back([&](auto &rec) {
 	Task tsk(ctx, rec);
-	if (tsk.owner_id == whoami(ctx).id) { send(tsk); }
+	if (tsk.owner_id == whoamid(ctx)) { send(tsk); }
 	if (tsk.done) { tsk.done_at = now(); }
 	db::copy(db.tasks, rec, tsk);
       });
@@ -91,7 +91,7 @@ namespace snackis {
 	  db::update(db.feeds, *fd);
 	}
 	
-	if (curr.owner_id == whoami(ctx).id) {
+	if (curr.owner_id == whoamid(ctx)) {
 	  if (db::compare(db.tasks_share, curr, prev) != 0) {
 	    send(curr);
 	  } else {
@@ -125,7 +125,7 @@ namespace snackis {
     feeds_sort(ctx, "feeds_sort", {&feed_created_at, &feed_id}, {}),
 
     feeds_share({&feed_id, &feed_created_at, &feed_changed_at, &feed_name,
-	  &feed_info, &feed_active, &feed_visible}),
+	  &feed_info, &feed_active, &feed_visible, &feed_peer_ids}),
     
     posts(ctx, "posts", post_key, post_cols),
 
@@ -134,7 +134,7 @@ namespace snackis {
     feed_posts(ctx, "feed_posts", {&post_feed_id, &post_created_at, &post_id}, {}),
 
     posts_share({&post_id, &post_feed_id, &post_created_at, &post_changed_at,
-	  &post_body}),
+	  &post_body, &post_peer_ids}),
     
     inbox(ctx, "inbox", {&msg_id},
 	  {&msg_type, &msg_fetched_at, &msg_peer_name, &msg_from, &msg_from_id,
@@ -151,14 +151,14 @@ namespace snackis {
     projects_sort(ctx, "projects_sort", {&project_name, &project_id}, {}),
 
     projects_share({&project_id, &project_created_at, &project_changed_at,
-	  &project_name, &project_info, &project_active}),
+	  &project_name, &project_info, &project_active, &project_peer_ids}),
     
     tasks(ctx, "tasks", task_key, task_cols),
 
     tasks_sort(ctx, "tasks_sort", {&task_prio, &task_created_at, &task_id}, {}),
 
     tasks_share({&task_id, &task_created_at, &task_changed_at, &task_project_id,
-	  &task_name, &task_info, &task_done, &task_done_at})
+	  &task_name, &task_info, &task_done, &task_done_at, &task_peer_ids})
       
   {
     init_indexes(*this);

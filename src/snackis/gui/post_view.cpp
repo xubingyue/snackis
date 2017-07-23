@@ -62,7 +62,7 @@ namespace gui {
 
   GtkWidget *init_general(PostView &v) {
     Ctx &ctx(v.ctx);
-    auto me(whoami(ctx));
+    auto me(whoamid(ctx));
     GtkWidget *frm = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
     
     gtk_container_add(GTK_CONTAINER(frm), new_label("Feed"));
@@ -80,13 +80,14 @@ namespace gui {
 	  set_str(GTK_ENTRY(v.tags_fld),
 		  join(v.rec.tags.begin(), v.rec.tags.end(), ' '));
 	  gtk_widget_set_sensitive(v.feed_btn, true);
+	} else {
+	  gtk_widget_set_sensitive(v.feed_btn, false);
 	}
 	
-	gtk_widget_set_sensitive(v.feed_btn, false);
 	refresh(v);
       });
 
-    gtk_widget_set_sensitive(v.feed_fld.ptr(), v.rec.owner_id == me.id);    
+    gtk_widget_set_sensitive(v.feed_fld.ptr(), v.rec.owner_id == me);    
     gtk_container_add(GTK_CONTAINER(feed_box), v.feed_fld.ptr());
     g_signal_connect(v.feed_btn, "clicked", G_CALLBACK(on_feed), &v);
     gtk_widget_set_sensitive(v.feed_btn, false);
@@ -103,7 +104,7 @@ namespace gui {
     set_str(GTK_ENTRY(v.tags_fld), join(v.rec.tags.begin(), v.rec.tags.end(), ' '));
 
     gtk_container_add(GTK_CONTAINER(frm), new_label("Body"));
-    gtk_text_view_set_editable(GTK_TEXT_VIEW(v.body_fld), v.rec.owner_id == me.id);
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(v.body_fld), v.rec.owner_id == me);
     gtk_container_add(GTK_CONTAINER(frm), gtk_widget_get_parent(v.body_fld));
     set_str(GTK_TEXT_VIEW(v.body_fld), v.rec.body);
 
@@ -143,7 +144,7 @@ namespace gui {
       gtk_container_add(GTK_CONTAINER(menu), task_btn);
     }
 
-    auto me(whoami(ctx));
+    auto me(whoamid(ctx));
     GtkWidget *tabs(gtk_notebook_new());
     gtk_widget_set_vexpand(tabs, true);
     g_signal_connect(tabs, "switch-page", G_CALLBACK(on_page), this);
@@ -153,15 +154,13 @@ namespace gui {
 			     init_general(*this),
 			     gtk_label_new_with_mnemonic("_1 General"));
 
-    if (rec.owner_id != me.id) {
-      set_read_only(peer_lst);
-    }
+    if (rec.owner_id != me) { set_read_only(peer_lst); }
 
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
 			     peer_lst.ptr(),
 			     gtk_label_new_with_mnemonic("_2 Peers"));
 
-    focused = (rec.owner_id == me.id)
+    focused = (rec.owner_id == me)
       ? feed_fld.search_btn
       : tags_fld;
     refresh(*this);

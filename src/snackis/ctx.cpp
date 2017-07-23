@@ -33,8 +33,12 @@ namespace snackis {
 
   void log(const Ctx &ctx, const str &msg) { db::log(ctx,msg); }
 
+  UId whoamid(Ctx &ctx) {
+    return *get_val(ctx.settings.whoami);
+  }
+
   Peer whoami(Ctx &ctx) {
-    return get_peer_id(ctx, *get_val(ctx.settings.whoami));
+    return get_peer_id(ctx, whoamid(ctx));
   }
 
   int64_t rewrite_db(Ctx &ctx) {

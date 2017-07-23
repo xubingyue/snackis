@@ -28,7 +28,7 @@ namespace snackis {
 
   Feed::Feed(Ctx &ctx, UId id):
     IdRec(ctx, id),
-    owner_id(whoami(ctx).id),
+    owner_id(whoamid(ctx)),
     created_at(now()),
     changed_at(created_at),
     active(true),
@@ -44,11 +44,13 @@ namespace snackis {
     owner_id(msg.from_id)
   {
     copy(*this, msg);
-    peer_ids.insert(msg.from_id);
   }
 
   void copy(Feed &fd, const Msg &msg) {
-    db::copy(fd.ctx.db.feeds_share, fd, msg.feed);
+    Ctx &ctx(fd.ctx);
+    db::copy(ctx.db.feeds_share, fd, msg.feed);
+    fd.peer_ids.erase(whoamid(ctx));
+    fd.peer_ids.insert(msg.from_id);
   }
 
   opt<Feed> find_feed_id(Ctx &ctx, UId id) {

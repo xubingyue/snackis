@@ -33,7 +33,7 @@ namespace snackis {
 
   Project::Project(Ctx &ctx):
     IdRec(ctx),
-    owner_id(whoami(ctx).id),
+    owner_id(whoamid(ctx)),
     created_at(now()),
     changed_at(created_at),
     active(true)
@@ -50,12 +50,13 @@ namespace snackis {
     changed_at(created_at)
   {
     copy(*this, msg);
-    peer_ids.insert(msg.from_id);
   }
 
   void copy(Project &prj, const Msg &msg) {
     Ctx &ctx(prj.ctx);
     db::copy(ctx.db.projects_share, prj, msg.project);
+    prj.peer_ids.erase(whoamid(ctx));
+    prj.peer_ids.insert(msg.from_id);
   }
   
   opt<Project> find_project_id(Ctx &ctx, UId id) {
