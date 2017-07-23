@@ -12,6 +12,10 @@ namespace db {
     start(*this);
   }
 
+  ChangeLoop::~ChangeLoop() {
+    stop(*this);
+  }
+  
   void ChangeLoop::on_msg(const Msg &msg) {
     auto ctx(get(msg, Msg::SENDER));
 

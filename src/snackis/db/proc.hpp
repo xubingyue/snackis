@@ -16,6 +16,7 @@ namespace db {
     opt<Logger> logger;
 
     Proc(const Path &p, size_t max_buf);
+    ~Proc();
     void on_msg(const Msg &msg) override;
   };
 

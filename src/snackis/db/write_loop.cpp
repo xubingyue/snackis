@@ -12,6 +12,10 @@ namespace db {
     start(*this);
   }
 
+  WriteLoop::~WriteLoop() {
+    stop(*this);
+  }
+  
   static std::ofstream &get_file(WriteLoop &lp, const Path &p) {
     auto fnd(lp.files.find(p));
 

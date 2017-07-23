@@ -16,12 +16,12 @@ namespace db {
     inbox(max_buf)
   { }
   
-  Loop::~Loop() {
-    close(inbox);
-    thread.join();
-  }
-
   void start(Loop &lp) {
     lp.thread = std::thread(run, &lp);
+  }
+
+  void stop(Loop &lp) {
+    close(lp.inbox);
+    lp.thread.join();
   }
 }}

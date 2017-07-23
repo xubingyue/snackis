@@ -16,6 +16,7 @@ namespace db {
     std::map<Ctx *, Changes> queues;
     
     ChangeLoop(Proc &p, size_t max_buf);
+    ~ChangeLoop();
     void on_msg(const Msg &msg) override;
   };
 }}

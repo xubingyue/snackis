@@ -43,6 +43,10 @@ namespace db {
     start(*this);
   }
 
+  Proc::~Proc() {
+    stop(*this);
+  }
+  
   void Proc::on_msg(const Msg &msg) {
     auto ctx(get(msg, Msg::SENDER));
     

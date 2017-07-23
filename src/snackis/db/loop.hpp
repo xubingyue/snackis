@@ -15,11 +15,11 @@ namespace db {
     std::thread thread;
     
     Loop(Proc &proc, size_t max_buf);
-    virtual ~Loop();
     virtual void on_msg(const Msg &msg)=0;
   };
 
   void start(Loop &lp);
+  void stop(Loop &lp);
 }}
 
 #endif

@@ -15,6 +15,7 @@ namespace db {
     std::map<Path, std::ofstream> files;
     
     WriteLoop(Proc &p, size_t max_buf);
+    ~WriteLoop();
     void on_msg(const Msg &msg) override;
   };
 }}
