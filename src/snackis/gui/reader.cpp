@@ -120,7 +120,6 @@ namespace gui {
 	}
 	
 	clear(*console);
-	ctx.undo_stack.clear();
 	return true;
       });
 

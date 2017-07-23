@@ -52,7 +52,7 @@ Once inside, the first thing you probably want to do is to have a look at the se
 Type ```lock``` and press ```Return``` in the reader to lock Snackis and return to the login screen, the application will keep running in the background until closed.
 
 ### Undo
-Snackis logs all committed changes to an undo-stack. Type ```undo``` and press ```Return``` in the reader to list/revert changes. The undo-stack is emptied whenever the ```clear```-command is executed.
+Snackis logs all committed changes to an undo-stack. Type ```undo``` and press ```Return``` in the reader to manage recent changes.
 
 ![undo example](images/undo.png?raw=true)
 
