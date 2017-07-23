@@ -118,16 +118,14 @@ namespace gui {
 
       imap_worker.reset();
       smtp_worker.reset();
-
       log(ctx, "Rewriting database...");
       remove_path(get_path(ctx, "pass"));
       init_pass(ctx, pass);
-      rewrite_db(ctx);
-      if (!try_save.errors.empty()) { return; }
-      log(ctx, "Password changed");
-      
       imap_worker.emplace(ctx);
       smtp_worker.emplace(ctx);
+      rewrite_db(ctx);
+      if (!try_save.errors.empty()) { return; }
+      log(ctx, "Password changed");      
     }
     
     set_val(ctx.settings.load_folder,

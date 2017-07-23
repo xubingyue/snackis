@@ -8,5 +8,5 @@ namespace db {
   BasicTable::BasicTable(Ctx &ctx, const str &name):
     ctx(ctx),
     name(name),
-    path(get_path(ctx, name + ".tbl")) { }
+    path(get_path(ctx, fmt("%0.tbl", name))) { }
 }}
