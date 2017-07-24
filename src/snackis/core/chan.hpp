@@ -43,7 +43,7 @@ namespace snackis {
   bool put(Chan<T> &c, const T &it, bool wait=true) {
     if (c.size.load() == c.max) {
       if (!wait) { return false; }
-      while (c.size.load() == c.max) { std::this_thread::yield(); }
+      do { std::this_thread::yield(); } while (c.size.load() == c.max);
     }
     
     ChanLock lock(c.mutex);
@@ -64,7 +64,7 @@ namespace snackis {
   opt<T> get(Chan<T> &c, bool wait=true) {
     if (c.size.load() == 0) {
       if (!wait) { return nullopt; }
-      while (c.size.load() == 0) { std::this_thread::yield(); }
+      do { std::this_thread::yield(); } while (c.size.load() == 0);
     }
 
     ChanLock lock(c.mutex);
