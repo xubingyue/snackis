@@ -14,7 +14,7 @@ namespace snackis {
     size_t pos;
     std::atomic<size_t> size;
     std::mutex mutex;
-    bool closed;
+    std::atomic<bool> closed;
 
     Chan(size_t max);
   };
@@ -31,34 +31,35 @@ namespace snackis {
   template <typename T>
   void close(Chan<T> &c) {    
     ChanLock lock(c.mutex);
-    CHECK(c.closed, !_);
-    c.closed = true;
+    CHECK(c.closed.load(), !_);
+    c.closed.store(true);
   }
 
   template <typename T>
   bool put(Chan<T> &c, const T &it, bool wait=true) {
     while (true) {
       if (c.size.load() == c.max) {
-	if (!wait) { return false; }
+	if (!wait || c.closed.load()) { break; }
 	std::this_thread::yield();
 	continue;
       }
     
       ChanLock lock(c.mutex);
-      if (c.closed) { return false; }
       if (c.buf.size() == c.max) { continue; }
       
       c.buf.push_back(it);
       c.size++;
       return true;
     }
+
+    return false;
   }
 
   template <typename T>
   opt<T> get(Chan<T> &c, bool wait=true) {
     while (true) {
       if (c.size.load() == 0) {
-	if (!wait) { return nullopt; }
+	if (!wait || c.closed.load()) { break; }
 	std::this_thread::yield();
 	continue;
       }
@@ -66,7 +67,6 @@ namespace snackis {
       ChanLock lock(c.mutex);
 
       if (c.pos == c.buf.size()) {
-	if (c.closed) { return nullopt; }
 	continue;
       }
       
@@ -81,6 +81,8 @@ namespace snackis {
       c.size--;
       return out;
     }
+
+    return nullopt;
   }
 }
 

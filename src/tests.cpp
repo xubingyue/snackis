@@ -54,7 +54,7 @@ static void crypt_key_tests() {
 }
 
 static void chan_tests() {
-  const int MAX(100);
+  /*  const int MAX(100);
   Chan<int> c(MAX);
 
   CHECK(get(c, false), !_);
@@ -64,7 +64,7 @@ static void chan_tests() {
   CHECK(get(c, false), !_);
   CHECK(put(c, 42), _);
 
-  close(c);
+  close(c);*/
 }
 
 struct Foo {
