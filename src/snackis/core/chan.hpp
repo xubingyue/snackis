@@ -28,9 +28,7 @@ namespace snackis {
   template <typename T>
   Chan<T>::Chan(size_t max):
     max(max), pos(0), size(0), closed(false)
-  {
-    buf.reserve(max);
-  }
+  { }
 
   template <typename T>
   void close(Chan<T> &c) {    
