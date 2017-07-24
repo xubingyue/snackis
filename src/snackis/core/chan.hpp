@@ -1,6 +1,7 @@
 #ifndef SNACKIS_CHAN_HPP
 #define SNACKIS_CHAN_HPP
 
+#include <atomic>
 #include <condition_variable>
 #include <mutex>
 #include <vector>
@@ -12,6 +13,7 @@ namespace snackis {
     const size_t max;
     std::vector<T> buf;
     size_t pos;
+    std::atomic<size_t> size;
     std::mutex mutex;
     std::condition_variable get_ok, put_ok;
     bool closed;
@@ -23,8 +25,10 @@ namespace snackis {
   
   template <typename T>
   Chan<T>::Chan(size_t max):
-    max(max), pos(0), closed(false)
-  { }
+    max(max), pos(0), size(0), closed(false)
+  {
+    buf.reserve(max);
+  }
 
   template <typename T>
   void close(Chan<T> &c) {    
@@ -37,6 +41,11 @@ namespace snackis {
 
   template <typename T>
   bool put(Chan<T> &c, const T &it, bool wait=true) {
+    if (c.size.load() == c.max) {
+      if (!wait) { return false; }
+      while (c.size.load() == c.max) { std::this_thread::yield(); }
+    }
+    
     ChanLock lock(c.mutex);
     if (c.closed) { return false; }
 
@@ -46,12 +55,18 @@ namespace snackis {
 
     if (c.buf.size() == c.max) { return false; }
     c.buf.push_back(it);
+    c.size++;
     c.get_ok.notify_one();
     return true;
   }
 
   template <typename T>
   opt<T> get(Chan<T> &c, bool wait=true) {
+    if (c.size.load() == 0) {
+      if (!wait) { return nullopt; }
+      while (c.size.load() == 0) { std::this_thread::yield(); }
+    }
+
     ChanLock lock(c.mutex);
     
     if (wait && c.pos == c.buf.size()) {
@@ -59,7 +74,6 @@ namespace snackis {
     }
     
     if (c.pos == c.buf.size()) { return nullopt; }
-    
     auto out(c.buf[c.pos]);
     c.pos++;
 
@@ -68,6 +82,7 @@ namespace snackis {
       c.pos = 0;
     }
     
+    c.size--;
     c.put_ok.notify_one();
     return out;
   }
