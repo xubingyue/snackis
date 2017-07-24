@@ -19,7 +19,7 @@ void run_con(Chan<int> *ch, int reps) {
 void run(int workers, int reps, int buf) {
   std::vector<std::thread> wg;
   Chan<int> ch(buf);
-
+  
   for (int i(0); i < workers; i++) {
     wg.emplace_back(run_pub, &ch, reps);
     wg.emplace_back(run_con, &ch, reps);
