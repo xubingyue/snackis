@@ -2,7 +2,6 @@
 #define SNACKIS_CHAN_HPP
 
 #include <atomic>
-#include <condition_variable>
 #include <mutex>
 #include <vector>
 #include "snackis/core/error.hpp"
@@ -15,7 +14,6 @@ namespace snackis {
     size_t pos;
     std::atomic<size_t> size;
     std::mutex mutex;
-    std::condition_variable get_ok, put_ok;
     bool closed;
 
     Chan(size_t max);
@@ -35,56 +33,54 @@ namespace snackis {
     ChanLock lock(c.mutex);
     CHECK(c.closed, !_);
     c.closed = true;
-    c.get_ok.notify_all();
-    c.put_ok.notify_all();
   }
 
   template <typename T>
   bool put(Chan<T> &c, const T &it, bool wait=true) {
-    if (c.size.load() == c.max) {
-      if (!wait) { return false; }
-      do { std::this_thread::yield(); } while (c.size.load() == c.max);
-    }
+    while (true) {
+      if (c.size.load() == c.max) {
+	if (!wait) { return false; }
+	std::this_thread::yield();
+	continue;
+      }
     
-    ChanLock lock(c.mutex);
-    if (c.closed) { return false; }
-
-    if (wait && c.buf.size() == c.max) {
-      c.put_ok.wait(lock, [&c](){ return c.closed || c.buf.size() < c.max; });
+      ChanLock lock(c.mutex);
+      if (c.closed) { return false; }
+      if (c.buf.size() == c.max) { continue; }
+      
+      c.buf.push_back(it);
+      c.size++;
+      return true;
     }
-
-    if (c.buf.size() == c.max) { return false; }
-    c.buf.push_back(it);
-    c.size++;
-    c.get_ok.notify_one();
-    return true;
   }
 
   template <typename T>
   opt<T> get(Chan<T> &c, bool wait=true) {
-    if (c.size.load() == 0) {
-      if (!wait) { return nullopt; }
-      do { std::this_thread::yield(); } while (c.size.load() == 0);
-    }
+    while (true) {
+      if (c.size.load() == 0) {
+	if (!wait) { return nullopt; }
+	std::this_thread::yield();
+	continue;
+      }
 
-    ChanLock lock(c.mutex);
-    
-    if (wait && c.pos == c.buf.size()) {
-      c.get_ok.wait(lock, [&c](){ return c.closed || c.pos < c.buf.size(); });
-    }
-    
-    if (c.pos == c.buf.size()) { return nullopt; }
-    auto out(c.buf[c.pos]);
-    c.pos++;
+      ChanLock lock(c.mutex);
 
-    if (c.pos == c.buf.size()) {
-      c.buf.clear();
-      c.pos = 0;
+      if (c.pos == c.buf.size()) {
+	if (c.closed) { return nullopt; }
+	continue;
+      }
+      
+      auto out(c.buf[c.pos]);
+      c.pos++;
+      
+      if (c.pos == c.buf.size()) {
+	c.buf.clear();
+	c.pos = 0;
+      }
+      
+      c.size--;
+      return out;
     }
-    
-    c.size--;
-    c.put_ok.notify_one();
-    return out;
   }
 }
 
