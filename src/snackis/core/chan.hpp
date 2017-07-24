@@ -46,7 +46,6 @@ namespace snackis {
     
       ChanLock lock(c.mutex);
       if (c.buf.size() == c.max) { continue; }
-      
       c.buf.push_back(it);
       c.size++;
       return true;
@@ -65,11 +64,7 @@ namespace snackis {
       }
 
       ChanLock lock(c.mutex);
-
-      if (c.pos == c.buf.size()) {
-	continue;
-      }
-      
+      if (c.pos == c.buf.size()) { continue; }
       auto out(c.buf[c.pos]);
       c.pos++;
       
