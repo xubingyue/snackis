@@ -75,6 +75,7 @@ namespace gui {
 	if (v.feed_fld.selected) {
 	  set_feed(v.rec, *v.feed_fld.selected);
 	  auto reply_fd(find_feed_id(v.ctx, v.rec.id));
+	  clear(v.post_lst);
 	  gui::load(v.post_lst, *v.feed_fld.selected, v.rec.created_at);
 	  load(v.peer_lst);
 	  set_str(GTK_ENTRY(v.tags_fld),

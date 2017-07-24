@@ -16,6 +16,7 @@ namespace gui {
       load(v->peer_lst);
       break;
     case 2:
+      clear(v->post_lst);
       load(v->post_lst, v->rec, now());      
       break;
     }

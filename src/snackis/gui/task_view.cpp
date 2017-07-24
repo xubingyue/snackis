@@ -14,6 +14,7 @@ namespace gui {
       load(v->peer_lst);
       break;
     case 2: {
+      clear(v->post_lst);
       auto fd(find_feed_id(v->ctx, v->rec.id));
       if (fd) { load(v->post_lst, *fd, now()); }
       break;
