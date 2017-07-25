@@ -44,7 +44,7 @@ static void crypt_secret_tests() {
 static void crypt_key_tests() {
   using namespace snackis::crypt;
   PubKey foo_pub, bar_pub;
-  Key foo(foo_pub), bar(bar_pub);
+  crypt::Key foo(foo_pub), bar(bar_pub);
   str msg("secret message");
 
   Data cmsg(encrypt(foo, bar_pub, (const unsigned char *)msg.c_str(), msg.size())),
@@ -75,7 +75,7 @@ struct Foo {
   std::set<int64_t> fset;
   Foo(): fint64(0), ftime(now()), fuid(true) { }
 
-  Foo(db::Table<Foo> &tbl, db::Rec<Foo> &rec) {
+  Foo(db::Table<Foo, UId> &tbl, db::Rec<Foo> &rec) {
     copy(tbl, *this, rec);
   }
 };
@@ -122,11 +122,17 @@ const size_t MAX_BUF(32);
 void table_insert_tests() {
   Proc proc("testdb/", MAX_BUF);
   db::Ctx ctx(proc, MAX_BUF);
-  Table<Foo> tbl(ctx, "insert_tests", {&uid_col},
+  Table<Foo, UId> tbl(ctx, "insert_tests", db::make_key(uid_col),
 		 {&int64_col, &str_col, &time_col});
+  
   Foo foo;
   Trans trans(ctx);
   CHECK(insert(tbl, foo), _);
+
+  /*for (const auto &[k, v]: tbl) {
+    CHECK(k == tbl.key(foo.uid));
+    }*/
+
   CHECK(load(tbl, foo) ? true : false, _);
   CHECK(insert(tbl, foo), !_);
   commit(trans, nullopt);
@@ -136,8 +142,8 @@ void table_insert_tests() {
 static void table_slurp_tests() {
   Proc proc("testdb/", MAX_BUF);
   db::Ctx ctx(proc, MAX_BUF);
-  Table<Foo> tbl(ctx, "slurp_tests", {&uid_col},
-		 {&int64_col, &str_col, &time_col});
+  Table<Foo, UId> tbl(ctx, "slurp_tests", db::make_key(uid_col),
+		      {&int64_col, &str_col, &time_col});
 
   Stream buf;
   
@@ -158,8 +164,8 @@ static void table_slurp_tests() {
 static void read_write_tests() {
   Proc proc("testdb/", MAX_BUF);
   db::Ctx ctx(proc, MAX_BUF);
-  Table<Foo> tbl(ctx, "read_write_tests", {&uid_col},
-		 {&int64_col, &str_col, &time_col, &set_col});
+  Table<Foo, UId> tbl(ctx, "read_write_tests", db::make_key(uid_col),
+		      {&int64_col, &str_col, &time_col, &set_col});
   
   crypt::Secret sec;
   init(sec, "secret key");

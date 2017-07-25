@@ -29,12 +29,13 @@ namespace db {
   struct Table: Index<RecT> {
     using CmpRec = func<bool (const Rec<RecT> &, const Rec<RecT> &)>;
     using Cols = std::initializer_list<const BasicCol<RecT> *>;
+    using Recs = std::set<Rec<RecT>, CmpRec>;
     using OnInsert = func<void (Rec<RecT> &)>;
     using OnUpdate = func<void (const Rec<RecT> &, Rec<RecT> &)>;
       
     const Key<RecT, KeyT...> key;
     std::set<Index<RecT> *> indexes;
-    std::set<Rec<RecT>, CmpRec> recs;
+    Recs recs;
     std::vector<OnInsert> on_insert;
     std::vector<OnUpdate> on_update;
     
@@ -44,6 +45,9 @@ namespace db {
 	  const Schema<RecT> &cols);
     virtual ~Table();
 
+    typename Recs::const_iterator begin() const;
+    typename Recs::const_iterator end() const;
+    
     bool insert(const Rec<RecT> &rec) override;
     bool update(const Rec<RecT> &rec) override;
     bool erase(const Rec<RecT> &rec) override;
@@ -301,6 +305,18 @@ namespace db {
   template <typename RecT, typename...KeyT>
   Table<RecT, KeyT...>::~Table() {
     this->ctx.tables.erase(this->name);
+  }
+
+  template <typename RecT, typename...KeyT>
+  typename Table<RecT, KeyT...>::Recs::const_iterator
+  Table<RecT, KeyT...>::begin() const {
+    return recs.begin();
+  }
+
+  template <typename RecT, typename...KeyT>
+  typename Table<RecT, KeyT...>::Recs::const_iterator
+  Table<RecT, KeyT...>::end() const {
+    return recs.end();
   }
 
   template <typename RecT, typename...KeyT>
