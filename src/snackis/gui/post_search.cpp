@@ -108,10 +108,8 @@ namespace gui {
 
     auto me(whoamid(ctx));
     
-    for (auto key = ctx.db.posts_sort.recs.rbegin();
-	 key != ctx.db.posts_sort.recs.rend();
-	 key++) {
-      auto &rec(db::get(ctx.db.posts, *key));
+    for (const auto &key: ctx.db.posts_sort) {
+      auto &rec(db::get(ctx.db.posts, key));
       Post post(ctx, rec);
       Feed feed(get_feed_id(ctx, post.feed_id));
 

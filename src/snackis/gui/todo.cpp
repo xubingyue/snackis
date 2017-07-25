@@ -62,10 +62,8 @@ namespace gui {
     refresh(ctx);
     size_t cnt(0);
     
-    for(auto key = ctx.db.tasks_sort.recs.begin();
-	key != ctx.db.tasks_sort.recs.end();
-	key++) {
-      auto &rec(db::get(ctx.db.tasks, *key));
+    for(const auto &key: ctx.db.tasks_sort) {
+      auto &rec(db::get(ctx.db.tasks, key));
       Task tsk(ctx, rec);
       
       if (tsk.tags.find("todo") == tsk.tags.end()) { continue; }

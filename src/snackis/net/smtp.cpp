@@ -129,7 +129,7 @@ namespace net {
       if (tbl.recs.empty()) { break; }
       TRY(try_send);
 
-      auto i = tbl.recs.begin();
+      auto i = tbl.begin();
       Msg msg(ctx, *i);      
       send(smtp, msg);
       erase(tbl, *i);

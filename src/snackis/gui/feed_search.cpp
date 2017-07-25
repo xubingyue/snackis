@@ -81,10 +81,8 @@ namespace gui {
     str text_sel(trim(gtk_entry_get_text(GTK_ENTRY(text_fld))));
     auto &peer_sel(peer_fld.selected);
     
-    for (auto key = ctx.db.feeds_sort.recs.begin();
-	 key != ctx.db.feeds_sort.recs.end();
-	 key++) {
-      auto &rec(db::get(ctx.db.feeds, *key));
+    for (const auto &key: ctx.db.feeds_sort) {
+      auto &rec(db::get(ctx.db.feeds, key));
       Feed feed(ctx, rec);
 
       if (id_sel.empty() && !feed.visible) { continue; }
