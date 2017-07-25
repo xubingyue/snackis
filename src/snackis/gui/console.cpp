@@ -43,7 +43,7 @@ namespace gui {
 
   Console::Console(): view(new_text_view()) {
     add_style(view, "console");
-    gtk_text_view_set_editable(GTK_TEXT_VIEW(view), false);
+    read_only(GTK_TEXT_VIEW(view));
     gtk_text_view_set_monospace(GTK_TEXT_VIEW(view), true);
   }
 
