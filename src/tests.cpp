@@ -75,7 +75,7 @@ struct Foo {
   std::set<int64_t> fset;
   Foo(): fint64(0), ftime(now()), fuid(true) { }
 
-  Foo(db::Table<Foo, UId> &tbl, db::Rec<Foo> &rec) {
+  Foo(db::Table<Foo, UId> &tbl, const db::Rec<Foo> &rec) {
     copy(tbl, *this, rec);
   }
 };
@@ -128,6 +128,10 @@ void table_insert_tests() {
   Foo foo;
   Trans trans(ctx);
   CHECK(insert(tbl, foo), _);
+
+  for (const auto &rec: tbl) {
+    CHECK(Foo(tbl, rec).fuid == foo.fuid, _);
+  }
 
   /*for (const auto &[k, v]: tbl) {
     CHECK(k == tbl.key(foo.uid));
