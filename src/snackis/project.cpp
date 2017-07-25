@@ -23,7 +23,7 @@ namespace snackis {
 						   uid_set_type,
 						   &Project::peer_ids);
 
-  db::Schema<Project> project_key({&project_id});
+  db::Key<Project, UId> project_key(project_id);
   
   db::Schema<Project> project_cols({&project_id, &project_owner_id, 
 	&project_created_at, &project_changed_at, &project_name, &project_info, 

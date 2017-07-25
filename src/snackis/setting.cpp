@@ -5,6 +5,7 @@
 namespace snackis {
   db::Col<BasicSetting, str> setting_key("key", str_type, &BasicSetting::key);
   db::Col<BasicSetting, str> setting_val("val", str_type, &BasicSetting::val);
+  db::Key<BasicSetting, str> settings_key(setting_key);
 
   BasicSetting::BasicSetting(Ctx &ctx, const str &key): Rec(ctx), key(key)
   { }

@@ -23,7 +23,7 @@ namespace snackis {
 					     uid_set_type,
 					     &Task::peer_ids);
 
-  db::Schema<Task> task_key({&task_id});
+  db::Key<Task, UId> task_key(task_id);
   
   db::Schema<Task> task_cols({&task_id, &task_project_id, &task_owner_id,
 	&task_created_at, &task_changed_at, &task_name, &task_info, &task_tags,

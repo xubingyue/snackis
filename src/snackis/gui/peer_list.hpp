@@ -8,7 +8,7 @@ namespace snackis {
 namespace gui {
   struct PeerList: RecList<Peer> {
     PeerList(Ctx &ctx, const str &lbl, std::set<UId> &ids);
-    db::Table<Peer> &table() const override;
+    db::Table<Peer, UId> &table() const override;
     SearchView<Peer> *search() const override;
   };
 }}

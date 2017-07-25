@@ -7,6 +7,7 @@
 #include "snackis/core/str.hpp"
 #include "snackis/core/time.hpp"
 #include "snackis/core/uid.hpp"
+#include "snackis/db/key.hpp"
 #include "snackis/db/schema.hpp"
 #include "snackis/db/rec_type.hpp"
 
@@ -37,7 +38,8 @@ namespace snackis {
   extern db::Col<Task, Time>          task_done_at;
   extern db::Col<Task, std::set<UId>> task_peer_ids;
 
-  extern db::Schema<Task> task_key, task_cols;
+  extern db::Key<Task, UId> task_key;
+  extern db::Schema<Task> task_cols;
   extern db::RecType<Task> task_type;
 
   void copy(Task &tsk, const Msg &msg);

@@ -6,6 +6,7 @@
 #include "snackis/id_rec.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/core/uid.hpp"
+#include "snackis/db/key.hpp"
 #include "snackis/db/schema.hpp"
 #include "snackis/db/rec_type.hpp"
 
@@ -34,7 +35,8 @@ namespace snackis {
   extern db::Col<Project, bool>          project_active;
   extern db::Col<Project, std::set<UId>> project_peer_ids;
 
-  extern db::Schema<Project> project_key, project_cols;
+  extern db::Key<Project, UId> project_key;
+  extern db::Schema<Project> project_cols;
   extern db::RecType<Project> project_type;
 
   void copy(Project &prj, const Msg &msg);

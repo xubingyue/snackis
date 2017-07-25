@@ -108,54 +108,56 @@ namespace snackis {
   }
   
   Db::Db(Ctx &ctx):
-    settings(ctx, "settings",
-	     {&setting_key}, {&setting_val}),
+    settings(ctx, "settings", db::make_key(setting_key), {&setting_val}),
 
-    invites(ctx, "invites",
-	    {&invite_to}, {&invite_posted_at}),
+    invites(ctx, "invites", db::make_key(invite_to), {&invite_posted_at}),
     
-    peers(ctx, "peers", {&peer_id},
+    peers(ctx, "peers", db::make_key(peer_id),
 	  {&peer_created_at, &peer_changed_at, &peer_name, &peer_email, &peer_info,
 	      &peer_tags, &peer_crypt_key, &peer_active}),
 
-    peers_sort(ctx, "peers_sort", {&peer_name, &peer_id}, {}),
+    peers_sort(ctx, "peers_sort", db::make_key(peer_name, peer_id), {}),
     
     feeds(ctx, "feeds", feed_key, feed_cols),
 
-    feeds_sort(ctx, "feeds_sort", {&feed_created_at, &feed_id}, {}),
+    feeds_sort(ctx, "feeds_sort", db::make_key(feed_created_at, feed_id), {}),
 
     feeds_share({&feed_id, &feed_created_at, &feed_changed_at, &feed_name,
 	  &feed_info, &feed_active, &feed_visible, &feed_peer_ids}),
     
     posts(ctx, "posts", post_key, post_cols),
 
-    posts_sort(ctx, "posts_sort", {&post_created_at, &post_id}, {}),
+    posts_sort(ctx, "posts_sort", db::make_key(post_created_at, post_id), {}),
 
-    feed_posts(ctx, "feed_posts", {&post_feed_id, &post_created_at, &post_id}, {}),
+    feed_posts(ctx,
+	       "feed_posts",
+	       db::make_key(post_feed_id, post_created_at, post_id),
+	       {}),
 
     posts_share({&post_id, &post_feed_id, &post_created_at, &post_changed_at,
 	  &post_body, &post_peer_ids}),
     
-    inbox(ctx, "inbox", {&msg_id},
+    inbox(ctx, "inbox", db::make_key(msg_id),
 	  {&msg_type, &msg_fetched_at, &msg_peer_name, &msg_from, &msg_from_id,
 	      &msg_crypt_key, &msg_feed, &msg_post, &msg_project, &msg_task}),
-
-    inbox_sort(ctx, "inbox_sort", {&msg_fetched_at, &msg_id}, {}),
     
-    outbox(ctx, "outbox", {&msg_id},
+    outbox(ctx, "outbox", db::make_key(msg_id),
 	   {&msg_type, &msg_from, &msg_from_id, &msg_to, &msg_to_id, &msg_peer_name,
 	       &msg_crypt_key, &msg_feed, &msg_post, &msg_project, &msg_task}),
 
+    inbox_sort(ctx, "inbox_sort", db::make_key(msg_fetched_at, msg_id), {}),
+
     projects(ctx, "projects", project_key, project_cols),
 
-    projects_sort(ctx, "projects_sort", {&project_name, &project_id}, {}),
+    projects_sort(ctx, "projects_sort", db::make_key(project_name, project_id), {}),
 
     projects_share({&project_id, &project_created_at, &project_changed_at,
 	  &project_name, &project_info, &project_active, &project_peer_ids}),
     
     tasks(ctx, "tasks", task_key, task_cols),
 
-    tasks_sort(ctx, "tasks_sort", {&task_prio, &task_created_at, &task_id}, {}),
+    tasks_sort(ctx, "tasks_sort", db::make_key(task_prio, task_created_at, task_id),
+	       {}),
 
     tasks_share({&task_id, &task_created_at, &task_changed_at, &task_project_id,
 	  &task_name, &task_info, &task_done, &task_done_at, &task_peer_ids})

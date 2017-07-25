@@ -5,6 +5,7 @@
 #include "snackis/core/str.hpp"
 #include "snackis/core/time.hpp"
 #include "snackis/core/uid.hpp"
+#include "snackis/db/key.hpp"
 #include "snackis/db/schema.hpp"
 #include "snackis/db/rec_type.hpp"
 
@@ -32,8 +33,9 @@ namespace snackis {
   extern db::Col<Post, str>           post_body;
   extern db::Col<Post, std::set<str>> post_tags;
   extern db::Col<Post, std::set<UId>> post_peer_ids;
-
-  extern db::Schema<Post> post_key, post_cols;
+  
+  extern db::Key<Post, UId> post_key;
+  extern db::Schema<Post> post_cols;
   extern db::RecType<Post> post_type;
 
   void copy(Post &ps, const Msg &msg);

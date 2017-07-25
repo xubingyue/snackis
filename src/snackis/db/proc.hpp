@@ -22,7 +22,7 @@ namespace db {
 
   template <typename...Args>
   void log(const Proc &p, const str &spec, const Args&...args) {
-    if (p.logger) { (*p.logger)(fmt(spec, std::forward<const Args &>(args)...)); }
+    if (p.logger) { (*p.logger)(fmt(spec, args...)); }
   }
 }}
 

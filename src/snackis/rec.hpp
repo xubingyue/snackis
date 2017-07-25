@@ -7,7 +7,7 @@ namespace snackis {
   namespace db {
     struct Ctx;
     
-    template <typename RecT>
+    template <typename RecT, typename...KeyT>
     struct Table;
   }
 

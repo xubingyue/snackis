@@ -17,8 +17,10 @@
 namespace snackis {
 namespace db {
   struct BasicTable;
-  template <typename RecT>
+
+  template <typename RecT, typename...KeyT>
   struct Table;
+
   struct Trans;
   
   struct Ctx {
@@ -45,14 +47,14 @@ namespace db {
 
   template <typename...Args>
   void log(const Ctx &ctx, const str &spec, const Args&...args) {
-    log(ctx.proc, spec, std::forward<const Args &>(args)...);
+    log(ctx.proc, spec, args...);
   }
 
-  template <typename RecT>
-  Table<RecT> &get_table(const Ctx &ctx, const str &name) {
+  template <typename RecT, typename...KeyT>
+  Table<RecT, KeyT...> &get_table(const Ctx &ctx, const str &name) {
     auto fnd(ctx.tables.find(name));
     CHECK(fnd != ctx.tables.end(), _);
-    return *dynamic_cast<Table<RecT> *>(fnd->second);
+    return *dynamic_cast<Table<RecT, KeyT...> *>(fnd->second);
   }
 }}
 

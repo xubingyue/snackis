@@ -16,7 +16,9 @@ namespace snackis {
 
   template <typename ValT>
   struct Type: BasicType {
-    Type(const str &name);
+    const ValT null;
+    
+    Type(const str &name, const ValT &null = ValT());
     virtual bool is_null(const ValT &val) const;
     virtual ValT from_val(const Val &in) const = 0;
     virtual Val to_val(const ValT &in) const = 0;
@@ -27,7 +29,10 @@ namespace snackis {
   };
 
   template <typename ValT>
-  Type<ValT>::Type(const str &name): BasicType(name) { }
+  Type<ValT>::Type(const str &name, const ValT &null):
+    BasicType(name),
+    null(null)
+  { }
 
   template <typename ValT>
   bool Type<ValT>::is_null(const ValT &val) const {

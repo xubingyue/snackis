@@ -17,7 +17,7 @@ namespace gui {
     
     RecList(Ctx &ctx, const str &lbl, std::set<UId> &ids);
     GtkWidget *ptr() override;
-    virtual db::Table<RecT> &table() const=0;
+    virtual db::Table<RecT, UId> &table() const=0;
     virtual SearchView<RecT> *search() const=0;
   };
 
@@ -134,9 +134,7 @@ namespace gui {
     
     for (const auto &id: w.ids) {
       db::Rec<RecT> key;
-      db::set(key,
-	      *dynamic_cast<const db::Col<RecT, UId> *>(tbl.key.cols.front()),
-	      id);
+      db::set(key, *std::get<0>(tbl.key), id);
       auto rec(db::find(tbl, key));
       
       if (rec) {

@@ -8,7 +8,7 @@ namespace gui {
     RecList<Peer>(ctx, lbl, ids)
   { }
 
-  db::Table<Peer> &PeerList::table() const { return ctx.db.peers; }
+  db::Table<Peer, UId> &PeerList::table() const { return ctx.db.peers; }
 
   SearchView<Peer> *PeerList::search() const { return new PeerSearch(ctx); }
 }}

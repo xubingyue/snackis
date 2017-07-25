@@ -6,6 +6,7 @@
 #include "snackis/peer.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/core/uid.hpp"
+#include "snackis/db/key.hpp"
 #include "snackis/db/schema.hpp"
 #include "snackis/db/rec_type.hpp"
 
@@ -34,7 +35,8 @@ namespace snackis {
   extern db::Col<Feed, bool>          feed_active, feed_visible;
   extern db::Col<Feed, std::set<UId>> feed_peer_ids;
 
-  extern db::Schema<Feed> feed_key, feed_cols;
+  extern db::Key<Feed, UId> feed_key;
+  extern db::Schema<Feed> feed_cols;
   extern db::RecType<Feed> feed_type;
   
   void copy(Feed &fd, const Msg &msg);

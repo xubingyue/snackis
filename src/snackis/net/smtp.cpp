@@ -121,7 +121,7 @@ namespace net {
   void send(struct Smtp &smtp) {
     Ctx &ctx(smtp.ctx);
     TRACE("Sending email");
-    db::Table<Msg> &tbl(ctx.db.outbox);
+    auto &tbl(ctx.db.outbox);
     log(ctx, "Sending %0 messages...", tbl.recs.size());
     
     while (true) {

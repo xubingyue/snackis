@@ -17,24 +17,31 @@
 
 namespace snackis {
   struct Db {
-    db::Table<BasicSetting> settings;
+    db::Table<BasicSetting, str> settings;
     
-    db::Table<Invite> invites;
+    db::Table<Invite, str> invites;
 	    
-    db::Table<Peer> peers, peers_sort;
+    db::Table<Peer, UId> peers;
+    db::Table<Peer, str, UId> peers_sort;
 
-    db::Table<Feed> feeds, feeds_sort;
+    db::Table<Feed, UId> feeds;
+    db::Table<Feed, Time, UId> feeds_sort;
     db::Schema<Feed> feeds_share;
 
-    db::Table<Post> posts, posts_sort, feed_posts;
+    db::Table<Post, UId> posts;
+    db::Table<Post, Time, UId> posts_sort;
+    db::Table<Post, UId, Time, UId> feed_posts;
     db::Schema<Post> posts_share;
     
-    db::Table<Msg> inbox, inbox_sort, outbox;
+    db::Table<Msg, UId> inbox, outbox;
+    db::Table<Msg, Time, UId> inbox_sort;
 
-    db::Table<Project> projects, projects_sort;
+    db::Table<Project, UId> projects;
+    db::Table<Project, str, UId> projects_sort;
     db::Schema<Project> projects_share;
 
-    db::Table<Task> tasks, tasks_sort;
+    db::Table<Task, UId> tasks;
+    db::Table<Task, int64_t, Time, UId> tasks_sort;
     db::Schema<Task> tasks_share;
 
     Db(Ctx &ctx);
