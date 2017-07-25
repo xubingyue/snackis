@@ -64,6 +64,9 @@ namespace gui {
   bool sel_first(GtkTreeView *w);
   int sel_count(GtkTreeView *w);
 
+  void read_only(GtkEntry *w);
+  void read_only(GtkTextView *w);
+  
   GtkWidget *new_grid();
   GtkWidget *new_label(const str &txt);
   void set_width(GtkEntry *e, int w);

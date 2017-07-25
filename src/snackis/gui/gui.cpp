@@ -84,6 +84,14 @@ namespace gui {
   int sel_count(GtkTreeView *w) {
     return gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(w));
   }
+
+  void read_only(GtkEntry *w) {
+    gtk_widget_set_sensitive(GTK_WIDGET(w), false);
+  }
+  
+  void read_only(GtkTextView *w) {
+    gtk_widget_set_sensitive(GTK_WIDGET(w), false);
+  }
   
   GtkWidget *new_grid() {
     GtkWidget *w(gtk_grid_new());

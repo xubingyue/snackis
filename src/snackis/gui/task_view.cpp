@@ -88,7 +88,7 @@ namespace gui {
 
     gtk_grid_attach(GTK_GRID(name_box), new_label("Name"), 0, 0, 2, 1);
     gtk_widget_set_hexpand(v.name_fld, true);
-    gtk_editable_set_editable(GTK_EDITABLE(v.name_fld), v.rec.owner_id == me);
+    if (v.rec.owner_id != me) { read_only(GTK_ENTRY(v.name_fld)); }
     gtk_grid_attach(GTK_GRID(name_box), v.name_fld, 0, 1, 2, 1);		    
   
     gtk_grid_attach(GTK_GRID(name_box), new_label("Prio"), 2, 0, 1, 1);
@@ -103,7 +103,7 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(frm), v.tags_fld);
     
     gtk_container_add(GTK_CONTAINER(frm), new_label("Info"));
-    gtk_text_view_set_editable(GTK_TEXT_VIEW(v.info_fld), v.rec.owner_id == me);
+    if (v.rec.owner_id != me) { read_only(GTK_TEXT_VIEW(v.info_fld)); }
     gtk_container_add(GTK_CONTAINER(frm), gtk_widget_get_parent(v.info_fld));
     return frm;
   }
@@ -143,7 +143,7 @@ namespace gui {
 			     init_general(*this),
 			     gtk_label_new_with_mnemonic("_1 General"));
     
-    if (rec.owner_id != me) { set_read_only(peer_lst); }
+    if (rec.owner_id != me) { read_only(peer_lst); }
     
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
 			     peer_lst.ptr(),

@@ -121,7 +121,7 @@ namespace gui {
   GtkWidget *RecList<RecT>::ptr() { return box; }
 
   template <typename RecT>
-  void set_read_only(RecList<RecT> &w) {
+  void read_only(RecList<RecT> &w) {
     gtk_widget_destroy(w.add_btn);
     gtk_widget_destroy(w.label);
     w.read_only = true;

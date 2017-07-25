@@ -105,7 +105,7 @@ namespace gui {
     set_str(GTK_ENTRY(v.tags_fld), join(v.rec.tags.begin(), v.rec.tags.end(), ' '));
 
     gtk_container_add(GTK_CONTAINER(frm), new_label("Body"));
-    gtk_text_view_set_editable(GTK_TEXT_VIEW(v.body_fld), v.rec.owner_id == me);
+    if (v.rec.owner_id != me) { read_only(GTK_TEXT_VIEW(v.body_fld)); }
     gtk_container_add(GTK_CONTAINER(frm), gtk_widget_get_parent(v.body_fld));
     set_str(GTK_TEXT_VIEW(v.body_fld), v.rec.body);
 
@@ -155,7 +155,7 @@ namespace gui {
 			     init_general(*this),
 			     gtk_label_new_with_mnemonic("_1 General"));
 
-    if (rec.owner_id != me) { set_read_only(peer_lst); }
+    if (rec.owner_id != me) { read_only(peer_lst); }
 
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs),
 			     peer_lst.ptr(),

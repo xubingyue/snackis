@@ -2,16 +2,16 @@
     background: #ffff99;
 }
 
-GtkEntry:focused {
+entry:focused {
     color: #000000;
 }
 
-GtkTextView .view:focused {
+textview .view:focused {
     background: #ffff99;
     color: #000000;
 }
 
-GtkButton {
+button {
     border: 1px solid;
     border-color: #cccccc;
     box-shadow: none;
@@ -19,20 +19,20 @@ GtkButton {
     padding: 0.3em 0.6em;
 }
 
-GtkButton:insensitive GtkLabel {
+button:insensitive label {
     color: #888888;
 }
 
-GtkCheckButton {
+checkbutton {
     border-radius: 0.3em;
 }
 
-GtkCheckButton GtkLabel {
+checkbutton label {
     border-radius: 0.3em;
     color: #991f00;    
 }
 
-GtkComboBox {
+combobox {
     border-color: #333333;
     border: none;
     box-shadow: none;
@@ -40,97 +40,97 @@ GtkComboBox {
     border-radius: 0.3em;
 }
 
-GtkComboBox GtkButton {
+combobox button {
     background: #ffffff;
 }
 
-GtkEntry {
+entry {
     border: 1px solid;
     border-color: silver;
     padding: 0.3em 0.6em;
 }
 
-GtkEntry:insensitive {
+entry:insensitive {
     color: #ffffff;
     border: none;
     background: #333333;
     padding: 0px;
 }
 
-GtkEntry:selected {
+entry:selected {
     background: #cccccc;
     color: #000000;
 }
 
-GtkEntry:selected:focused {
+entry:selected:focused {
     background: #ffffff;
     color: #000000;
 }
 
-GtkLabel {
+label {
     color: #991f00;
     font-size: 105%;
 }
 
-GtkLabel:insensitive {
+label:insensitive {
     color: #888888;
 }
 
-GtkNotebook {
+notebook {
     background: #333333;
     border: none;
 }
 
-GtkNotebook:focused {
+notebook:focused {
     background: #333333;
 }
 
-GtkNotebook tab {
+notebook tab {
     border-color: #cccccc;
     border: 1px solid;
     padding: 0.3em 0.6em;
 }
 
-GtkNotebook tab:active {
+notebook tab:active {
     border-bottom: none;
 }
 
-GtkNotebook tab:active:focused {
+notebook tab:active:focused {
     background: #ffff99
 }
 
-GtkTextView {
+textview {
     border-radius: 0.3em;
 }
 
-GtkTextView .view {
+textview .view {
     background: #ffffff;
     color: #000000;
 }
 
-GtkTextView .view:selected:focused {
+textview .view:selected:focused {
     background: #ffffff;
     color: #000000;
 }
 
-GtkTextView:insensitive {
+textview:insensitive {
     color: #ffffff;
     background: #333333;
 }
 
-GtkTreeView column-header .button {
+treeview column-header .button {
     background: #333333;
     border: none;
     border-bottom: 1px solid;
     padding: 0px;
 }
 
-GtkTreeView column-header .label {
+treeview column-header .label {
     font-weight: normal;
     color: #991f00;
 }
 
-GtkTreeView row {
+treeview row {
 }
 
 .window {
@@ -174,4 +174,8 @@ GtkTreeView row {
 
 .view_label {
     font-size: 125%;
- }
+}
+
+.xxx {
+    font-size: 200%;
+}
