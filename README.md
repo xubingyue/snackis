@@ -56,16 +56,6 @@ Snackis logs all committed changes to an undo-stack. Type ```undo``` and press `
 
 ![undo example](images/undo.png?raw=true)
 
-### Encryption
-Snackis supports encrypting arbitrary data for specific peers. Type ```encrypt``` and press ```Return``` in the reader to open the encryption view. On top of being encrypted; the resulting file is cryptographically signed, and the signature is verified when decrypting. Encoding ensures that the resulting file can be reliable transferred over text-based protocols, it also rougly doubles the size of the output.
-
-![encrypt example](images/encrypt.png?raw=true)
-
-### Decryption
-Type ```decrypt``` and press ```Return``` in the reader to open the decryption view. Decoding is mandatory for files that were encoded as part of the encryption process.
-
-![decrypt example](images/decrypt.png?raw=true)
-
 ### Invites
 Type ```invite foo@bar.com``` in the reader and press ```Return``` to create a new invite. Snackis will send an email containing your public encryption-key to the specified address. When an invite is accepted, a reply is sent to inform the inviting peer. The easiest way to see how it works is to send an invite to your own address.
 
@@ -137,6 +127,16 @@ Type ```task-search``` in the reader and press ```Return``` to search tasks. Tas
 Type ```todo``` in the reader and press ```Return``` to show a list of the current top-priority tasks sorted by priority and time of creation. The list includes tasks that are tagged with ```todo```. Finished tasks remain in the list for a specified time period.
 
 ![todo example](images/todo.png?raw=true)
+
+### Encryption
+Snackis supports encrypting arbitrary data for specific peers. Type ```encrypt``` and press ```Return``` in the reader to open the encryption view. On top of being encrypted; the resulting file is cryptographically signed, and the signature is verified when decrypting. Encoding ensures that the resulting file can be reliable transferred over text-based protocols, it also rougly doubles the size of the output.
+
+![encrypt example](images/encrypt.png?raw=true)
+
+### Decryption
+Type ```decrypt``` and press ```Return``` in the reader to open the decryption view. Decoding is mandatory for files that were encoded as part of the encryption process.
+
+![decrypt example](images/decrypt.png?raw=true)
 
 ### Algorithms
 Snackis delegates anything concerning encryption to [libsodium](https://github.com/jedisct1/libsodium). The IETF-variant of ```ChaCha20-Poly1305``` is used to encrypt the master password and database, while ```XSalsa20```/```X25519``` with ```Poly1305 MAC```-authentication is used for everything else. The master password is hashed using ```Scrypt```, and encrypted using the hash as key for future validation.
