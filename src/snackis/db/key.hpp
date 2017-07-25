@@ -12,6 +12,7 @@ namespace db {
   template <typename RecT, typename...ValT>
   struct Key: std::tuple<const Col<RecT, ValT> *...> {
     Key(const Col<RecT, ValT> &...cols);
+    KeyRec<ValT...> operator ()(const ValT &...vals) const;
     KeyRec<ValT...> operator ()(const db::Rec<RecT> &rec) const;
   };
 
@@ -19,6 +20,11 @@ namespace db {
   Key<RecT, ValT...>::Key(const Col<RecT, ValT> &...cols):
     std::tuple<const Col<RecT, ValT> *...>(&cols...)
   { }
+
+  template <typename RecT, typename...ValT>
+  KeyRec<ValT...> Key<RecT, ValT...>::operator ()(const ValT &...vals) const {
+    return make_tuple(vals...);
+  }
 
   template <typename RecT, typename...ValT>
   KeyRec<ValT...> Key<RecT, ValT...>::operator ()(const db::Rec<RecT> &rec) const {
