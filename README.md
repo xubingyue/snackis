@@ -7,7 +7,7 @@
 Snackis aims to be an effective tool for most secure communication needs using any regular email-account as transport. Peers, encryption-keys, messages and and settings are stored locally, encrypted using a master password. At present; Snackis supports invites/accepts, threaded feeds/posts and projects/tasks.
 
 ### Dependencies
-Snackis requires a ```C++1z```-capable compiler and standard library to build, and defaults to using [clang](http://releases.llvm.org/download.html#4.0.0) with ```libc++```. This unfortunately often means downloading and manually installing [clang](http://releases.llvm.org/download.html#4.0.0) to even run the application, but will improve over time. Snackis further depends on ```libcurl```, ```libpthread```, ```libsodium``` and ```libuuid``` for core functionality, as well as ```GTK+ 3``` for the UI.
+Snackis requires a ```C++1z```-capable compiler and standard library to build, and defaults to using [clang](http://releases.llvm.org/download.html#4.0.0) with ```libc++```. This unfortunately means downloading and manually installing [clang](http://releases.llvm.org/download.html#4.0.0) to even run the application, but will improve over time. Snackis further depends on ```libcurl```, ```libpthread```, ```libsodium``` and ```libuuid``` for core functionality, as well as ```GTK+ 3``` for the UI.
 
 ```
 tar -xzf clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
@@ -52,7 +52,7 @@ Once inside, the first thing you probably want to do is to have a look at the se
 Type ```lock``` and press ```Return``` in the reader to lock Snackis and return to the login screen, the application will keep running in the background until closed.
 
 ### Undo
-Snackis logs all committed changes to an undo-stack. Type ```undo``` and press ```Return``` in the reader to manage recent changes.
+Snackis logs all changes to an undo-stack, type ```undo``` and press ```Return``` in the reader to view the stack.
 
 ![undo example](images/undo.png?raw=true)
 
@@ -94,7 +94,7 @@ Type ```feed-search``` in the reader and press ```Return``` to search feeds. A s
 ![feed search example](images/feed_search.png?raw=true)
 
 ### Posts
-Type ```post-new``` in the reader and press ```Return``` to post in existing feed. The same view is used for showing existing posts. ```New Post``` opens a new post in the same feed, while ```New Reply``` opens a new post in a separate feed dedicated to this specific post.
+Type ```post-new``` in the reader and press ```Return``` to post in existing feed. Clicking ```New Post``` creates a new post in the same feed, while ```New Reply``` posts in a separate reply-feed.
 
 ![post example](images/post.png?raw=true)
 
