@@ -7,9 +7,10 @@
 
 namespace snackis {  
 namespace db {
-  template <typename RecT>
+  template <typename RecT, typename...KeyT>
   struct TableIter: std::iterator<std::forward_iterator_tag, db::Rec<RecT>> {
-    using Imp = typename std::set<Rec<RecT>>::const_iterator; 
+    using Imp = typename std::map<typename Key<RecT, KeyT...>::Type,
+				  Rec<RecT>>::const_iterator; 
 
     Imp imp;
 
@@ -18,24 +19,25 @@ namespace db {
     const db::Rec<RecT>& operator*() const;
   };
 
-  template <typename RecT>
-  TableIter<RecT>::TableIter(const Imp &imp):
+  template <typename RecT, typename...KeyT>
+  TableIter<RecT, KeyT...>::TableIter(const Imp &imp):
     imp(imp)
   {}
 
-  template <typename RecT>
-  TableIter<RecT>& TableIter<RecT>::operator++() {
+  template <typename RecT, typename...KeyT>
+  TableIter<RecT, KeyT...>& TableIter<RecT, KeyT...>::operator++() {
     ++imp;
     return *this;
   }
     
-  template <typename RecT>
-  const db::Rec<RecT>& TableIter<RecT>::operator*() const {
-    return *imp;
+  template <typename RecT, typename...KeyT>
+  const db::Rec<RecT>& TableIter<RecT, KeyT...>::operator*() const {
+    return imp->second;
   }
   
-  template <typename RecT>
-  bool operator !=(const TableIter<RecT> &x, const TableIter<RecT> &y) {
+  template <typename RecT, typename...KeyT>
+  bool operator !=(const TableIter<RecT, KeyT...> &x,
+		   const TableIter<RecT, KeyT...> &y) {
     return x.imp != y.imp;
   }
 }}

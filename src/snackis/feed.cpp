@@ -70,22 +70,20 @@ namespace snackis {
 						const Time &end,
 						size_t max) {
     Ctx &ctx(fd.ctx);
+    auto &tbl(ctx.db.feed_posts);
     std::vector<const db::Rec<Post> *> out;
-    if (ctx.db.feed_posts.recs.empty()) { return out; }
+    if (tbl.recs.empty()) { return out; }
     
-    db::Rec<Post> key;
-    set(key, post_feed_id, fd.id);
-    set(key, post_created_at, end);
-    auto found(ctx.db.feed_posts.recs.lower_bound(key));
-    if (found == ctx.db.feed_posts.recs.begin()) { return out; }
-    found--;
+    auto fnd(tbl.recs.lower_bound(tbl.key(fd.id, end, null_uid)));
+    if (fnd == tbl.recs.begin()) { return out; }
+    fnd--;
     
     while (out.size() < max) {
-      if (*db::get(*found, post_feed_id) != fd.id) { break; }
-      const db::Rec<Post> &rec(db::get(ctx.db.posts, *found));
+      if (*db::get(fnd->second, post_feed_id) != fd.id) { break; }
+      const db::Rec<Post> &rec(db::get(ctx.db.posts, fnd->second));
       out.push_back(&rec);
-      if (found == ctx.db.feed_posts.recs.begin()) { break; }
-      found--;
+      if (fnd == tbl.recs.begin()) { break; }
+      fnd--;
     }
 
     return out;

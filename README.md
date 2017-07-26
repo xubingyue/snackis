@@ -89,7 +89,7 @@ Snackis main mode of communication is using feeds/posts. Type ```feed-new``` in 
 ![feed example](images/feed.png?raw=true)
 
 #### Searching
-Type ```feed-search``` in the reader and press ```Return``` to search feeds. A short-cut is provided to find feeds by id, execute ```feed id``` to open the specified feed, any unique part of the id will do.
+Type ```feed-search``` in the reader and press ```Return``` to search feeds. Tasks are sorted descending by time of creation. A short-cut is provided to find feeds by id, execute ```feed id``` to open the specified feed, any unique part of the id will do.
 
 ![feed search example](images/feed_search.png?raw=true)
 
@@ -99,7 +99,7 @@ Type ```post-new``` in the reader and press ```Return``` to post in existing fee
 ![post example](images/post.png?raw=true)
 
 #### Searching
-Type ```post-search``` in the reader and press ```Return``` to search posts. By default, a list of last weeks posts in reverse chronological order is displayed. A short-cut is provided to find posts by id, execute ```post id``` to open the specified post, any unique part of the id will do.
+Type ```post-search``` in the reader and press ```Return``` to search posts. Posts are sorted descending by time of creation. A short-cut is provided to find posts by id, execute ```post id``` to open the specified post, any unique part of the id will do.
 
 ![post search example](images/post_search.png?raw=true)
 
@@ -119,7 +119,7 @@ Each Task belongs to a project and changes are automatically propagated to all p
 ![task example](images/task.png?raw=true)
 
 #### Searching
-Type ```task-search``` in the reader and press ```Return``` to search tasks. Tasks are sorted by priority and time of creation.
+Type ```task-search``` in the reader and press ```Return``` to search tasks. Tasks are sorted by priority and time of creation.  A short-cut is provided to find tasks by id, execute ```task id``` to open the specified task, any unique part of the id will do.
 
 ![task search example](images/task_search.png?raw=true)
 

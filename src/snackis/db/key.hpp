@@ -6,14 +6,14 @@
 
 namespace snackis {
 namespace db {
-  template <typename...ValT>
-  using KeyRec = std::tuple<ValT...>;
-
   template <typename RecT, typename...ValT>
   struct Key: std::tuple<const Col<RecT, ValT> *...> {
+    using Type = std::tuple<ValT...>;
+
     Key(const Col<RecT, ValT> &...cols);
-    KeyRec<ValT...> operator ()(const ValT &...vals) const;
-    KeyRec<ValT...> operator ()(const db::Rec<RecT> &rec) const;
+    Type operator ()(const ValT &...vals) const;
+    Type operator ()(const db::Rec<RecT> &rec) const;
+    Type operator ()(const RecT &rec) const;
   };
 
   template <typename RecT, typename...ValT>
@@ -22,12 +22,14 @@ namespace db {
   { }
 
   template <typename RecT, typename...ValT>
-  KeyRec<ValT...> Key<RecT, ValT...>::operator ()(const ValT &...vals) const {
+  typename Key<RecT, ValT...>::Type
+  Key<RecT, ValT...>::operator ()(const ValT &...vals) const {
     return make_tuple(vals...);
   }
 
   template <typename RecT, typename...ValT>
-  KeyRec<ValT...> Key<RecT, ValT...>::operator ()(const db::Rec<RecT> &rec) const {
+  typename Key<RecT, ValT...>::Type
+  Key<RecT, ValT...>::operator ()(const db::Rec<RecT> &rec) const {
     return map([this, &rec](auto c) {
 	auto fnd(rec.find(c));
 	return (fnd == rec.end()) ? c->type.null : c->type.from_val(fnd->second);
@@ -36,16 +38,15 @@ namespace db {
   }
 
   template <typename RecT, typename...ValT>
-  Key<RecT, ValT...> make_key(const Col<RecT, ValT> &...cols) {
-    return Key<RecT, ValT...>(cols...);
+  typename Key<RecT, ValT...>::Type
+  Key<RecT, ValT...>::operator ()(const RecT &rec) const {
+    return map([this, &rec](auto c) { return rec.*c->field; },
+	       *this);
   }
 
   template <typename RecT, typename...ValT>
-  int compare(const Key<RecT, ValT...> &key,
-	      const Rec<RecT> &x, const Rec<RecT> &y) {
-    auto xk(key(x)), yk(key(y));
-    if (xk < yk) { return -1; }
-    return (xk > yk) ? 1 : 0;
+  Key<RecT, ValT...> make_key(const Col<RecT, ValT> &...cols) {
+    return Key<RecT, ValT...>(cols...);
   }
 
   template <typename RecT, typename...ValT>
