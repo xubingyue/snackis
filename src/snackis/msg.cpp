@@ -48,8 +48,7 @@ namespace snackis {
     const bool encrypt(msg.type != Msg::INVITE);
     
     Stream buf;
-    db::Rec<Msg> rec;
-    copy(ctx.db.inbox, rec, msg);
+    const db::Rec<Msg> rec(ctx.db.inbox, msg);
     write(ctx.db.inbox, rec, buf, nullopt);
     str data(buf.str());
     
