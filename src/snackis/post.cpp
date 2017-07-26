@@ -52,10 +52,9 @@ namespace snackis {
   }
 
   opt<Post> find_post_id(Ctx &ctx, UId id) {
-    db::Rec<Post> rec;
-    set(rec, post_id, id);
-    if (!load(ctx.db.posts, rec)) { return nullopt; }
-    return Post(ctx, rec);
+    auto fnd(db::find(ctx.db.posts, id));
+    if (!fnd) { return nullopt; }
+    return Post(ctx, *fnd);
   }
 
   Post get_post_id(Ctx &ctx, UId id) {
@@ -108,7 +107,7 @@ namespace snackis {
     msg.to = pr.email;
     msg.to_id = pr.id;
 
-    auto fd(get_feed_id(ctx, ps.feed_id));
+    auto fd(db::get(ctx.db.feeds, ps.feed_id));
     db::copy(ctx.db.feeds_share, msg.feed, fd);
     db::copy(ctx.db.posts_share, msg.post, ps);
     insert(ctx.db.outbox, msg);

@@ -49,10 +49,9 @@ namespace snackis {
   }
 
   opt<Peer> find_peer_id(Ctx &ctx, const UId &id) {
-    db::Rec<Peer> rec;
-    set(rec, peer_id, id);
-    if (!load(ctx.db.peers, rec)) { return nullopt; }
-    return Peer(ctx, rec);
+    auto fnd(db::find(ctx.db.peers, id));
+    if (!fnd) { return nullopt; }
+    return Peer(ctx, *fnd);
   }
 
   Peer get_peer_id(Ctx &ctx, const UId &id) {

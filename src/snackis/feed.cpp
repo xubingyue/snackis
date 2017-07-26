@@ -54,10 +54,9 @@ namespace snackis {
   }
 
   opt<Feed> find_feed_id(Ctx &ctx, UId id) {
-    db::Rec<Feed> rec;
-    set(rec, feed_id, id);
-    if (!load(ctx.db.feeds, rec)) { return nullopt; }
-    return Feed(ctx, rec);
+    auto fnd(db::find(ctx.db.feeds, id));
+    if (!fnd) { return nullopt; }
+    return Feed(ctx, *fnd);
   }
 
   Feed get_feed_id(Ctx &ctx, UId id) {

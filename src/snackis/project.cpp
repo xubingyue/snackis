@@ -60,10 +60,9 @@ namespace snackis {
   }
   
   opt<Project> find_project_id(Ctx &ctx, UId id) {
-    db::Rec<Project> rec;
-    set(rec, project_id, id);
-    if (!load(ctx.db.projects, rec)) { return nullopt; }
-    return Project(ctx, rec);
+    auto fnd(db::find(ctx.db.projects, id));
+    if (!fnd) { return nullopt; }
+    return Project(ctx, *fnd);
   }
 
   Project get_project_id(Ctx &ctx, UId id) {

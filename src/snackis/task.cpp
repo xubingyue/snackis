@@ -65,10 +65,9 @@ namespace snackis {
   }
 
   opt<Task> find_task_id(Ctx &ctx, UId id) {
-    db::Rec<Task> rec;
-    set(rec, task_id, id);
-    if (!load(ctx.db.tasks, rec)) { return nullopt; }
-    return Task(ctx, rec);
+    auto fnd(db::find(ctx.db.tasks, id));
+    if (!fnd) { return nullopt; }
+    return Task(ctx, *fnd);
   }
 
   Task get_task_id(Ctx &ctx, UId id) {
@@ -122,7 +121,7 @@ namespace snackis {
     msg.to = pr.email;
     msg.to_id = pr.id;
 
-    auto prj(get_project_id(ctx, tsk.project_id));
+    auto prj(db::get(ctx.db.projects, tsk.project_id));
     db::copy(ctx.db.projects_share, msg.project, prj);
     db::copy(ctx.db.tasks_share, msg.task, tsk);
     insert(ctx.db.outbox, msg);
