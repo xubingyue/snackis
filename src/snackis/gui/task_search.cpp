@@ -88,8 +88,8 @@ namespace gui {
     str text_sel(get_str(GTK_ENTRY(text_fld)));
     auto peer_sel(peer_fld.selected);
     
-    for (const auto &key: ctx.db.tasks_sort) {
-      auto &rec(db::get(ctx.db.tasks, key));
+    for (const auto &key: ctx.db.tasks_sort.recs) {
+      auto &rec(db::get(ctx.db.tasks, key.second));
       Task tsk(ctx, rec);
       
       if (!id_sel.empty() && find_ci(id_str(tsk), id_sel) == str::npos) { continue; }

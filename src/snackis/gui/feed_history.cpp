@@ -76,14 +76,8 @@ namespace gui {
   }
   
   void load(FeedHistory &w, const Feed &fd, Time start) {
-    db::Rec<Post> pst_key;
-    db::set(pst_key, post_id, fd.id);
-    auto pst_fnd(db::find(w.ctx.db.posts, pst_key));
-    
-    if (pst_fnd) {
-      auto &pst(*pst_fnd);
-      add_post(w, fd, &pst, start, nullptr);
-    }
+    auto pst(db::find(w.ctx.db.posts, fd.id));
+    if (pst) { add_post(w, fd, pst, start, nullptr); }
 
     for (auto r: last_posts(fd, start, FEED_HISTORY_MAX)) {
       add_post(w, fd, r, start, nullptr);

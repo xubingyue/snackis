@@ -62,8 +62,8 @@ namespace gui {
     std::set<str> tags_sel(word_set(tags_str));
     str text_sel(trim(gtk_entry_get_text(GTK_ENTRY(text_fld))));
     
-    for (const auto &key: ctx.db.peers_sort) {
-      auto &rec(db::get(ctx.db.peers, key));
+    for (const auto &key: ctx.db.peers_sort.recs) {
+      auto &rec(db::get(ctx.db.peers, key.second));
       Peer peer(ctx, rec);
 
       if (!id_sel.empty() && find_ci(id_str(peer), id_sel) == str::npos) {

@@ -116,8 +116,8 @@ namespace gui {
     gtk_list_store_clear(store);
     size_t cnt(0);
     
-    for(const auto &key: ctx.db.inbox_sort) {
-      auto &rec(db::get(ctx.db.inbox, key));
+    for(const auto &key: ctx.db.inbox_sort.recs) {
+      auto &rec(db::get(ctx.db.inbox, key.second));
       Msg msg(ctx, rec);
 
       GtkTreeIter iter;

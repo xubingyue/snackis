@@ -72,8 +72,8 @@ namespace gui {
     str text_sel(trim(gtk_entry_get_text(GTK_ENTRY(text_fld)))); 
     auto &peer_sel(peer_fld.selected);
     
-    for (const auto &key: ctx.db.projects_sort) {
-      auto &rec(db::get(ctx.db.projects, key));
+    for (const auto &key: ctx.db.projects_sort.recs) {
+      auto &rec(db::get(ctx.db.projects, key.second));
       Project project(ctx, rec);
 
       if (!id_sel.empty() && find_ci(id_str(project), id_sel) == str::npos) {

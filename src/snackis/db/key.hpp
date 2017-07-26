@@ -24,7 +24,7 @@ namespace db {
   template <typename RecT, typename...ValT>
   typename Key<RecT, ValT...>::Type
   Key<RecT, ValT...>::operator ()(const ValT &...vals) const {
-    return make_tuple(vals...);
+    return std::make_tuple(vals...);
   }
 
   template <typename RecT, typename...ValT>

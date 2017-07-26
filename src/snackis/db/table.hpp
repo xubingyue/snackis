@@ -18,7 +18,6 @@
 #include "snackis/db/error.hpp"
 #include "snackis/db/index.hpp"
 #include "snackis/db/rec.hpp"
-#include "snackis/db/table_iter.hpp"
 #include "snackis/db/trans.hpp"
 
 namespace snackis {  
@@ -28,24 +27,22 @@ namespace db {
   
   template <typename RecT, typename...KeyT>
   struct Table: Index<RecT> {
+    using Key = db::Key<RecT, KeyT...>;
     using Cols = std::initializer_list<const BasicCol<RecT> *>;
     using OnInsert = func<void (Rec<RecT> &)>;
     using OnUpdate = func<void (const Rec<RecT> &, Rec<RecT> &)>;
-      
-    const Key<RecT, KeyT...> key;
+    
+    const Key key;
     std::set<Index<RecT> *> indexes;
-    std::map<typename Key<RecT, KeyT...>::Type, Rec<RecT>> recs;
+    std::map<typename Key::Type, Rec<RecT>> recs;
     std::vector<OnInsert> on_insert;
     std::vector<OnUpdate> on_update;
     
     Table(Ctx &ctx,
 	  const str &name,
-	  const Key<RecT, KeyT...> &key,
+	  const Key &key,
 	  const Schema<RecT> &cols);
     virtual ~Table();
-
-    TableIter<RecT, KeyT...> begin() const;
-    TableIter<RecT, KeyT...> end() const;
 
     bool insert(const Rec<RecT> &rec) override;
     bool update(const Rec<RecT> &rec) override;
@@ -114,19 +111,39 @@ namespace db {
   }
 
   template <typename RecT, typename...KeyT>
-  const Rec<RecT> *find(Table<RecT, KeyT...> &tbl, const Rec<RecT> &rec) {
-    auto k(tbl.key(rec));
-    auto fnd(tbl.recs.find(k));
+  const Rec<RecT> *find(Table<RecT, KeyT...> &tbl,
+			const typename Key<RecT, KeyT...>::Type &key) {
+    auto fnd(tbl.recs.find(key));
     if (fnd == tbl.recs.end()) { return nullptr; }
     return &fnd->second;
   }
 
   template <typename RecT, typename...KeyT>
-  const Rec<RecT> &get(Table<RecT, KeyT...> &tbl, const Rec<RecT> &rec) {
-    auto k(tbl.key(rec));
-    auto fnd(tbl.recs.find(k));
+  const Rec<RecT> *find(Table<RecT, KeyT...> &tbl, const KeyT &...vals) {
+    return find(tbl, tbl.key(vals...));
+  }
+
+  template <typename RecT, typename...KeyT>
+  const Rec<RecT> *find(Table<RecT, KeyT...> &tbl, const Rec<RecT> &rec) {
+    return find(tbl, tbl.key(rec));
+  }
+
+  template <typename RecT, typename...KeyT>
+  const Rec<RecT> &get(Table<RecT, KeyT...> &tbl,
+		       const typename Key<RecT, KeyT...>::Type &key) {
+    auto fnd(tbl.recs.find(key));
     CHECK(fnd != tbl.recs.end(), _);
     return fnd->second;
+  }
+
+  template <typename RecT, typename...KeyT>
+  const Rec<RecT> &get(Table<RecT, KeyT...> &tbl, const KeyT &...vals) {
+    return get(tbl, tbl.key(vals...));
+  }
+
+  template <typename RecT, typename...KeyT>
+  const Rec<RecT> &get(Table<RecT, KeyT...> &tbl, const Rec<RecT> &rec) {
+    return get(tbl, tbl.key(rec));
   }
 
   template <typename RecT, typename...KeyT>
@@ -224,8 +241,8 @@ namespace db {
 
   template <typename RecT, typename...KeyT>
   void dump(Table<RecT, KeyT...> &tbl, std::ostream &out) {    
-    for (auto &rec: tbl) {
-      write(tbl, TABLE_INSERT, rec, out);
+    for (auto &rec: tbl.recs) {
+      write(tbl, TABLE_INSERT, rec.second, out);
     }
   }
 
@@ -291,7 +308,7 @@ namespace db {
   template <typename RecT, typename...KeyT>
   Table<RecT, KeyT...>::Table(Ctx &ctx,
 			      const str &name,
-			      const Key<RecT, KeyT...> &key,
+			      const Key &key,
 			      const Schema<RecT> &cols):
     Index<RecT>(ctx, name, cols),
     key(key)
@@ -303,16 +320,6 @@ namespace db {
   template <typename RecT, typename...KeyT>
   Table<RecT, KeyT...>::~Table() {
     this->ctx.tables.erase(this->name);
-  }
-
-  template <typename RecT, typename...KeyT>
-  TableIter<RecT, KeyT...> Table<RecT, KeyT...>::begin() const {
-    return recs.begin();
-  }
-
-  template <typename RecT, typename...KeyT>
-  TableIter<RecT, KeyT...> Table<RecT, KeyT...>::end() const {
-    return recs.end();
   }
 
   template <typename RecT, typename...KeyT>

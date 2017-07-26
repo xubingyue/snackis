@@ -129,10 +129,10 @@ namespace net {
       if (tbl.recs.empty()) { break; }
       TRY(try_send);
 
-      auto i = tbl.begin();
-      Msg msg(ctx, *i);      
+      auto i = tbl.recs.begin();
+      Msg msg(ctx, i->second);      
       send(smtp, msg);
-      erase(tbl, *i);
+      erase(tbl, i->second);
 
       if (try_send.errors.empty()) {
 	db::commit(trans, nullopt);

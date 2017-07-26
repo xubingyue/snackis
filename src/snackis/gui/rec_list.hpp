@@ -133,9 +133,7 @@ namespace gui {
     auto &tbl(w.table());
     
     for (const auto &id: w.ids) {
-      db::Rec<RecT> key;
-      db::set(key, *std::get<0>(tbl.key), id);
-      auto rec(db::find(tbl, key));
+      auto rec(db::find(tbl, id));
       
       if (rec) {
 	RecT obj(w.ctx, *rec);
