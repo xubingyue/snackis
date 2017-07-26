@@ -128,15 +128,6 @@ void table_insert_tests() {
   Foo foo;
   Trans trans(ctx);
   CHECK(insert(tbl, foo), _);
-
-  for (const auto &rec: tbl) {
-    CHECK(Foo(tbl, rec).fuid == foo.fuid, _);
-  }
-
-  /*for (const auto &[k, v]: tbl) {
-    CHECK(k == tbl.key(foo.uid));
-    }*/
-
   CHECK(load(tbl, foo) ? true : false, _);
   CHECK(insert(tbl, foo), !_);
   commit(trans, nullopt);
