@@ -86,8 +86,6 @@ namespace gui {
     dismiss_btn(gtk_button_new_with_mnemonic("_Dismiss Selected")),
     cancel_btn(gtk_button_new_with_mnemonic("_Cancel"))
   {
-    GtkWidget *lbl;
-
     add_col(GTK_TREE_VIEW(lst), "From", COL_FROM);
     add_col(GTK_TREE_VIEW(lst), "Message", COL_INFO, true);
     g_signal_connect(lst, "row-activated", G_CALLBACK(on_activate), this);
@@ -96,9 +94,9 @@ namespace gui {
     g_signal_connect(sel, "changed", G_CALLBACK(on_sel_change), this);
     gtk_container_add(GTK_CONTAINER(panel), gtk_widget_get_parent(lst));
 
-    lbl = gtk_label_new(fmt("Press Return or double-click "
-			    "to handle Message").c_str());
-    gtk_container_add(GTK_CONTAINER(panel), lbl);
+    gtk_container_add(GTK_CONTAINER(panel),
+		      new_hint("Press Return or double-click to handle Message,\n"
+			       "or press F5 to refresh."));
 
     gtk_widget_set_halign(dismiss_btn, GTK_ALIGN_START);
     g_signal_connect(dismiss_btn, "clicked", G_CALLBACK(on_dismiss), this);

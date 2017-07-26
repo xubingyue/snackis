@@ -9,8 +9,8 @@
 namespace snackis {
 namespace gui {
   struct ProjectView: SharedView<Project> {
-    GtkWidget *find_tasks_btn, *new_task_btn, *find_posts_btn, *post_btn, *name_fld,
-      *tags_fld, *active_fld, *info_fld;
+    GtkWidget *new_project_btn, *find_tasks_btn, *new_task_btn, *find_posts_btn,
+      *post_btn, *name_fld, *tags_fld, *active_fld, *info_fld;
     PeerList peer_lst;
     FeedHistory post_lst;
     

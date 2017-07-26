@@ -10,7 +10,7 @@
 namespace snackis {
 namespace gui {
   struct PostView: SharedView<Post> {
-    GtkWidget *post_btn, *find_replies_btn, *reply_btn, *project_btn,
+    GtkWidget *new_post_btn, *find_replies_btn, *reply_btn, *project_btn,
       *task_btn, *feed_btn, *tags_fld, *body_fld;
     FeedSelect feed_fld;
     PeerList peer_lst;

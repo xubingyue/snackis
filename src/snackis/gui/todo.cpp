@@ -46,8 +46,9 @@ namespace gui {
     g_signal_connect(lst, "row-activated", G_CALLBACK(on_activate), this);
     gtk_container_add(GTK_CONTAINER(panel), gtk_widget_get_parent(lst));
 
-    GtkWidget *lbl(gtk_label_new("Press Return or double-click to view Task"));
-    gtk_container_add(GTK_CONTAINER(panel), lbl);
+    gtk_container_add(GTK_CONTAINER(panel),
+		      new_hint("Press Return or double-click to view Task,\n"
+			       "or press F5 to refresh."));
      
     gtk_widget_set_margin_top(cancel_btn, 10);
     gtk_widget_set_halign(cancel_btn, GTK_ALIGN_END);

@@ -23,6 +23,18 @@ namespace gui {
     }
   }
 
+  static void on_new_project(gpointer *_, ProjectView *v) {
+    Project prj(v->ctx);
+    prj.peer_ids = v->rec.peer_ids;
+    prj.name = trim(fmt("*COPY* %0", v->rec.name));
+    prj.tags = v->rec.tags;
+    prj.info = trim(fmt("*COPY*\n%0", v->rec.info));
+
+    auto pv(new ProjectView(prj));
+    pv->focused = pv->name_fld;
+    push_view(pv);
+  }
+  
   static void on_find_tasks(gpointer *_, ProjectView *v) {
     TaskSearch *ts = new TaskSearch(v->ctx);
     select<Project>(ts->project_fld, v->rec);
@@ -89,6 +101,7 @@ namespace gui {
   
   ProjectView::ProjectView(const Project &rec):
     SharedView<Project>("Project", rec),
+    new_project_btn(gtk_button_new_with_mnemonic("_New Project")),
     find_tasks_btn(gtk_button_new_with_mnemonic("_Find Tasks")),
     new_task_btn(gtk_button_new_with_mnemonic("New _Task")),
     find_posts_btn(gtk_button_new_with_mnemonic("Find Posts")),
@@ -101,6 +114,9 @@ namespace gui {
     post_lst(ctx)
   {
     const UId me(whoamid(ctx));
+
+    g_signal_connect(new_project_btn, "clicked", G_CALLBACK(on_new_project), this);
+    gtk_container_add(GTK_CONTAINER(menu), new_project_btn);
     g_signal_connect(find_tasks_btn, "clicked", G_CALLBACK(on_find_tasks), this);
     gtk_container_add(GTK_CONTAINER(menu), find_tasks_btn);
     g_signal_connect(new_task_btn, "clicked", G_CALLBACK(on_new_task), this);

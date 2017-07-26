@@ -38,7 +38,7 @@ namespace gui {
     return true;
   }
   
-  static void on_post(gpointer *_, PostView *v) {
+  static void on_new_post(gpointer *_, PostView *v) {
     Post ps(v->ctx);
     ps.feed_id = v->rec.feed_id;
     ps.peer_ids = v->rec.peer_ids;
@@ -122,7 +122,7 @@ namespace gui {
   
   PostView::PostView(const Post &post):
     SharedView<Post>("Post", post),
-    post_btn(gtk_button_new_with_mnemonic("New _Post")),
+    new_post_btn(gtk_button_new_with_mnemonic("New _Post")),
     find_replies_btn(gtk_button_new_with_mnemonic("_Find Replies")),
     reply_btn(gtk_button_new_with_mnemonic("New _Reply")),
     project_btn(gtk_button_new_with_mnemonic("View Project")),
@@ -134,8 +134,8 @@ namespace gui {
     peer_lst(ctx, "Peer", this->rec.peer_ids),
     post_lst(ctx)
   {
-    g_signal_connect(post_btn, "clicked", G_CALLBACK(on_post), this);
-    gtk_container_add(GTK_CONTAINER(menu), post_btn);
+    g_signal_connect(new_post_btn, "clicked", G_CALLBACK(on_new_post), this);
+    gtk_container_add(GTK_CONTAINER(menu), new_post_btn);
     gtk_widget_set_sensitive(find_replies_btn,
 			     find_feed_id(ctx, rec.id) ? true : false);
     g_signal_connect(find_replies_btn, "clicked", G_CALLBACK(on_find_replies), this);

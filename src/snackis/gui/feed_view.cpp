@@ -22,6 +22,18 @@ namespace gui {
     }
   }
 
+  static void on_new_feed(gpointer *_, FeedView *v) {
+    Feed fd(v->ctx);
+    fd.peer_ids = v->rec.peer_ids;
+    fd.name = trim(fmt("*COPY* %0", v->rec.name));
+    fd.tags = v->rec.tags;
+    fd.info = trim(fmt("*COPY*\n%0", v->rec.info));
+
+    auto fv(new FeedView(fd));
+    fv->focused = fv->name_fld;
+    push_view(fv);
+  }
+
   static void on_project(gpointer *_, FeedView *v) {
     push_view(new ProjectView(get_project_id(v->ctx, v->rec.id)));
   }
@@ -86,6 +98,7 @@ namespace gui {
 
   FeedView::FeedView(const Feed &feed):
     SharedView<Feed>("Feed", feed),
+    new_feed_btn(gtk_button_new_with_mnemonic("_New Feed")),
     find_posts_btn(gtk_button_new_with_mnemonic("_Find Posts")),
     new_post_btn(gtk_button_new_with_mnemonic("New _Post")),
     project_btn(gtk_button_new_with_mnemonic("View Project")),
@@ -98,6 +111,8 @@ namespace gui {
     peer_lst(ctx, "Peer", this->rec.peer_ids),
     post_lst(ctx)    
   {
+    g_signal_connect(new_feed_btn, "clicked", G_CALLBACK(on_new_feed), this);
+    gtk_container_add(GTK_CONTAINER(menu), new_feed_btn);
     g_signal_connect(find_posts_btn, "clicked", G_CALLBACK(on_find_posts), this);
     gtk_container_add(GTK_CONTAINER(menu), find_posts_btn);
     g_signal_connect(new_post_btn, "clicked", G_CALLBACK(on_new_post), this);

@@ -106,6 +106,12 @@ namespace gui {
     return w;
   }
 
+  GtkWidget *new_hint(const str &txt) {
+    GtkWidget *w(gtk_label_new(txt.c_str()));
+    gtk_label_set_justify(GTK_LABEL(w), GTK_JUSTIFY_CENTER);
+    return w;
+  }
+
   void set_width(GtkEntry *e, int w) {
     gtk_entry_set_max_length(GTK_ENTRY(e), w);
     gtk_entry_set_width_chars(GTK_ENTRY(e), w+1);

@@ -47,7 +47,7 @@ namespace gui {
     }
   }
 
-  static void on_task(gpointer *_, TaskView *v) {
+  static void on_new_task(gpointer *_, TaskView *v) {
     Task tsk(v->ctx);
     tsk.project_id = v->rec.project_id;
     tsk.peer_ids = v->rec.peer_ids;
@@ -118,7 +118,7 @@ namespace gui {
   
   TaskView::TaskView(const Task &tsk):
     SharedView<Task>("Task", tsk),
-    task_btn(gtk_button_new_with_mnemonic("New _Task")),
+    new_task_btn(gtk_button_new_with_mnemonic("New _Task")),
     find_posts_btn(gtk_button_new_with_mnemonic("_Find Posts")),
     post_btn(gtk_button_new_with_mnemonic("New _Post")),
     project_btn(gtk_button_new_with_mnemonic("_View Project")),
@@ -132,8 +132,8 @@ namespace gui {
     post_lst(ctx)
   {
     
-    g_signal_connect(task_btn, "clicked", G_CALLBACK(on_task), this);
-    gtk_container_add(GTK_CONTAINER(menu), task_btn);
+    g_signal_connect(new_task_btn, "clicked", G_CALLBACK(on_new_task), this);
+    gtk_container_add(GTK_CONTAINER(menu), new_task_btn);
     gtk_widget_set_sensitive(find_posts_btn,
 			     find_feed_id(ctx, rec.id) ? true : false);
     g_signal_connect(find_posts_btn, "clicked", G_CALLBACK(on_find_posts), this);

@@ -69,6 +69,7 @@ namespace gui {
   
   GtkWidget *new_grid();
   GtkWidget *new_label(const str &txt);
+  GtkWidget *new_hint(const str &txt);
   void set_width(GtkEntry *e, int w);
   GtkWidget *new_id_field();
   GtkWidget *new_combo_box(GtkTreeModel *mod);
