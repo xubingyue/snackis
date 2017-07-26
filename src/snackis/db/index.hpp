@@ -12,7 +12,7 @@ namespace db {
     Index(Ctx &ctx, const str &name, const Schema<RecT> &cols);
 
     virtual bool insert(const Rec<RecT> &rec) = 0;
-    virtual bool update(const Rec<RecT> &rec) = 0;
+    virtual bool update(const Rec<RecT> &rec, const Rec<RecT> &key) = 0;
     virtual bool erase(const Rec<RecT> &rec) = 0;
   };
 
@@ -25,6 +25,11 @@ namespace db {
   template <typename RecT>
   bool insert(Index<RecT> &idx, const Rec<RecT> &rec) {
     return idx.insert(rec);
+  }
+
+  template <typename RecT>
+  bool update(Index<RecT> &idx, const Rec<RecT> &rec, const Rec<RecT> &key) {
+    return idx.update(rec, key);
   }
 
   template <typename RecT>

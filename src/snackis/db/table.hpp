@@ -45,7 +45,7 @@ namespace db {
     virtual ~Table();
 
     bool insert(const Rec<RecT> &rec) override;
-    bool update(const Rec<RecT> &rec) override;
+    bool update(const Rec<RecT> &rec, const Rec<RecT> &key) override;
     bool erase(const Rec<RecT> &rec) override;
 
     void dump(std::ostream &out) override;
@@ -95,27 +95,27 @@ namespace db {
   template <typename RecT, typename...KeyT>
   opt<RecT> load(Table<RecT, KeyT...> &tbl, RecT &rec) {
     auto k(tbl.key(rec));
-    auto fnd(tbl.recs.find(k));
-    if (fnd == tbl.recs.end()) { return nullopt; }
-    copy(tbl, rec, fnd->second);
+    auto it(tbl.recs.find(k));
+    if (it == tbl.recs.end()) { return nullopt; }
+    copy(tbl, rec, it->second);
     return rec;
   }
 
   template <typename RecT, typename...KeyT>
   opt<Rec<RecT>> load(Table<RecT, KeyT...> &tbl, Rec<RecT> &rec) {
     auto k(tbl.key(rec));
-    auto fnd(tbl.recs.find(k));
-    if (fnd == tbl.recs.end()) { return nullopt; }
-    copy(tbl, rec, fnd->second);
+    auto it(tbl.recs.find(k));
+    if (it == tbl.recs.end()) { return nullopt; }
+    copy(tbl, rec, it->second);
     return rec;
   }
 
   template <typename RecT, typename...KeyT>
   const Rec<RecT> *find(Table<RecT, KeyT...> &tbl,
 			const typename Key<RecT, KeyT...>::Type &key) {
-    auto fnd(tbl.recs.find(key));
-    if (fnd == tbl.recs.end()) { return nullptr; }
-    return &fnd->second;
+    auto it(tbl.recs.find(key));
+    if (it == tbl.recs.end()) { return nullptr; }
+    return &it->second;
   }
 
   template <typename RecT, typename...KeyT>
@@ -131,9 +131,9 @@ namespace db {
   template <typename RecT, typename...KeyT>
   const Rec<RecT> &get(Table<RecT, KeyT...> &tbl,
 		       const typename Key<RecT, KeyT...>::Type &key) {
-    auto fnd(tbl.recs.find(key));
-    CHECK(fnd != tbl.recs.end(), _);
-    return fnd->second;
+    auto it(tbl.recs.find(key));
+    CHECK(it != tbl.recs.end(), _);
+    return it->second;
   }
 
   template <typename RecT, typename...KeyT>
@@ -147,18 +147,11 @@ namespace db {
   }
 
   template <typename RecT, typename...KeyT>
-  bool insert(Table<RecT, KeyT...> &tbl, const RecT &rec) {
-    Rec<RecT> trec;
-    copy(tbl, trec, rec);
-    return insert(tbl, trec);
-  }
-
-  template <typename RecT, typename...KeyT>
   bool insert(Table<RecT, KeyT...> &tbl, const Rec<RecT> &rec) {
     TRACE(fmt("Inserting into table: %0", tbl.name));
     auto k(tbl.key(rec));
-    auto fnd(tbl.recs.find(k));
-    if (fnd != tbl.recs.end()) { return false; }
+    auto it(tbl.recs.find(k));
+    if (it != tbl.recs.end()) { return false; }
 
     for (auto idx: tbl.indexes) {
       Rec<RecT> irec;
@@ -166,7 +159,7 @@ namespace db {
       if (!irec.empty()) { insert(*idx, irec); }
     }
 
-    auto it(tbl.recs.emplace(k, db::Rec<RecT>()).first);
+    it = tbl.recs.emplace(k, db::Rec<RecT>()).first;
     copy(tbl, it->second, rec);
     for (auto e: tbl.on_insert) { e(it->second); }
     log_change(get_trans(tbl.ctx), new Insert<RecT, KeyT...>(tbl, it->second));
@@ -174,52 +167,76 @@ namespace db {
   }
 
   template <typename RecT, typename...KeyT>
-  bool update(Table<RecT, KeyT...> &tbl, const RecT &rec) {
-    Rec<RecT> trec;
-    copy(tbl, trec, rec);
-    return update(tbl, trec);
+  bool insert(Table<RecT, KeyT...> &tbl, const RecT &rec) {
+    return insert(tbl, db::Rec<RecT>(tbl, rec));
   }
 
   template <typename RecT, typename...KeyT>
-  bool update(Table<RecT, KeyT...> &tbl, const Rec<RecT> &rec) {
+  bool update(Table<RecT, KeyT...> &tbl,
+	      const Rec<RecT> &rec,
+	      const typename Key<RecT, KeyT...>::Type &key) {
     TRACE(fmt("Updating table: %0", tbl.name));
-    auto k(tbl.key(rec));
-    auto fnd(tbl.recs.find(k));
-    if (fnd == tbl.recs.end() || rec == fnd->second) { return false; }
+    auto it(tbl.recs.find(key));
+    if (it == tbl.recs.end() || rec == it->second) { return false; }
     
     for (auto idx: tbl.indexes) {
-      erase(*idx, fnd->second);
-      
-      Rec<RecT> irec;
-      copy(*idx, irec, rec);
-      if (!irec.empty()) { insert(*idx, irec); }
+      update(*idx, Rec<RecT>(*idx, rec), it->second);
+    }
+
+    auto prev(it->second);
+    auto rec_key(tbl.key(rec));
+    
+    if (rec_key == key) {
+      it->second.clear();
+      copy(tbl, it->second, rec);
+    } else {
+      tbl.recs.erase(it);
+      it = tbl.recs.emplace(rec_key, db::Rec<RecT>()).first;
+      copy(tbl, it->second, rec);
     }
     
-    auto prev(fnd->second);
-    tbl.recs.erase(fnd);
-    auto it(tbl.recs.emplace(k, db::Rec<RecT>()).first);
-    copy(tbl, it->second, rec);
     for (auto e: tbl.on_update) { e(prev, it->second); }
     log_change(get_trans(tbl.ctx), new Update<RecT, KeyT...>(tbl, it->second, prev));
     return true;
   }
 
   template <typename RecT, typename...KeyT>
+  bool update(Table<RecT, KeyT...> &tbl, const Rec<RecT> &rec, const KeyT &...vals) {
+    return update(tbl, rec, tbl.key(vals...));
+  }
+
+  template <typename RecT, typename...KeyT>
+  bool update(Table<RecT, KeyT...> &tbl, const Rec<RecT> &rec, const Rec<RecT> &key) {
+    return update(tbl, rec, tbl.key(key));
+  }
+  
+  template <typename RecT, typename...KeyT>
+  bool update(Table<RecT, KeyT...> &tbl, const Rec<RecT> &rec) {
+    return update(tbl, rec, rec);
+  }
+
+  template <typename RecT, typename...KeyT>
+  bool update(Table<RecT, KeyT...> &tbl, const RecT &rec) {
+    return update(tbl, db::Rec<RecT>(tbl, rec));
+  }
+
+  template <typename RecT, typename...KeyT>
   bool upsert(Table<RecT, KeyT...> &tbl, const RecT &rec) {
-    if (insert(tbl, rec)) { return true; }
-    update(tbl, rec);
-    return false;
+    const db::Rec<RecT> tbl_rec(tbl, rec);
+    if (update(tbl, tbl_rec)) { return false; }
+    insert(tbl, tbl_rec);
+    return true;
   }
 
   template <typename RecT, typename...KeyT>
   bool erase(Table<RecT, KeyT...> &tbl,
 	     const typename Key<RecT, KeyT...>::Type &key) {
     TRACE(fmt("Erasing from table: %0", tbl.name));
-    auto fnd(tbl.recs.find(key));
-    if (fnd == tbl.recs.end()) { return false; }
-    log_change(get_trans(tbl.ctx), new Erase<RecT, KeyT...>(tbl, fnd->second));
-    for (auto idx: tbl.indexes) { erase(*idx, fnd->second); }
-    tbl.recs.erase(fnd);
+    auto it(tbl.recs.find(key));
+    if (it == tbl.recs.end()) { return false; }
+    log_change(get_trans(tbl.ctx), new Erase<RecT, KeyT...>(tbl, it->second));
+    for (auto idx: tbl.indexes) { erase(*idx, it->second); }
+    tbl.recs.erase(it);
     return true;
   }
 
@@ -336,8 +353,8 @@ namespace db {
   }
   
   template <typename RecT, typename...KeyT>
-  bool Table<RecT, KeyT...>::update(const Rec<RecT> &rec) {
-    return db::update(*this, rec);
+  bool Table<RecT, KeyT...>::update(const Rec<RecT> &rec, const Rec<RecT> &key) {
+    return db::update(*this, rec, key);
   }
   
   template <typename RecT, typename...KeyT>

@@ -16,7 +16,28 @@ namespace db {
   struct Col;
 
   template <typename RecT>
-  using Rec = std::map<const BasicCol<RecT> *, Val>;
+  struct Schema;
+
+  template <typename RecT>
+  struct Rec: std::map<const BasicCol<RecT> *, Val> {
+    Rec();
+    Rec(const Schema<RecT> &scm, const RecT &src);
+    Rec(const Schema<RecT> &scm, const Rec<RecT> &src);
+  };
+
+  template <typename RecT>
+  Rec<RecT>::Rec()
+  { }
+
+  template <typename RecT>
+  Rec<RecT>::Rec(const Schema<RecT> &scm, const RecT &src) {
+    copy(scm, *this, src);
+  }
+
+  template <typename RecT>
+  Rec<RecT>::Rec(const Schema<RecT> &scm, const Rec<RecT> &src) {
+    copy(scm, *this, src);
+  }
 
   template <typename RecT, typename ValT>
   opt<ValT> get(const Rec<RecT> &rec, const Col<RecT, ValT> &col) {

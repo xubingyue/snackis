@@ -1,5 +1,6 @@
 #include "snackis/snackis.hpp"
 #include "snackis/db/ctx.hpp"
+#include "snackis/db/error.hpp"
 #include "snackis/db/proc.hpp"
 
 namespace snackis {
