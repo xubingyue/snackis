@@ -132,7 +132,7 @@ namespace net {
       auto i = tbl.recs.begin();
       Msg msg(ctx, i->second);      
       send(smtp, msg);
-      erase(tbl, i->second);
+      db::erase(tbl, i->first);
 
       if (try_send.errors.empty()) {
 	db::commit(trans, nullopt);

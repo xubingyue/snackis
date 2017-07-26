@@ -35,10 +35,7 @@ namespace snackis {
 
   bool invite_accepted(const Msg &in) {
     Ctx &ctx(in.ctx);
-    db::Rec<Invite> inv;
-    set(inv, invite_to, in.from);
-
-    if (!erase(ctx.db.invites, inv)) { return false; }
+    if (!db::erase(ctx.db.invites, in.from)) { return false; }
     
     Peer peer(in);
     db::upsert(ctx.db.peers, peer);

@@ -212,22 +212,30 @@ namespace db {
   }
 
   template <typename RecT, typename...KeyT>
-  bool erase(Table<RecT, KeyT...> &tbl, const RecT &rec) {
-    Rec<RecT> trec;
-    copy(tbl.key, trec, rec);
-    return erase(tbl, trec);
-  }
-
-  template <typename RecT, typename...KeyT>
-  bool erase(Table<RecT, KeyT...> &tbl, const Rec<RecT> &rec) {
+  bool erase(Table<RecT, KeyT...> &tbl,
+	     const typename Key<RecT, KeyT...>::Type &key) {
     TRACE(fmt("Erasing from table: %0", tbl.name));
-    auto k(tbl.key(rec));
-    auto fnd(tbl.recs.find(k));
+    auto fnd(tbl.recs.find(key));
     if (fnd == tbl.recs.end()) { return false; }
     log_change(get_trans(tbl.ctx), new Erase<RecT, KeyT...>(tbl, fnd->second));
     for (auto idx: tbl.indexes) { erase(*idx, fnd->second); }
     tbl.recs.erase(fnd);
     return true;
+  }
+
+  template <typename RecT, typename...KeyT>
+  bool erase(Table<RecT, KeyT...> &tbl, const KeyT &...vals) {
+    return erase(tbl, tbl.key(vals...));
+  }
+
+  template <typename RecT, typename...KeyT>
+  bool erase(Table<RecT, KeyT...> &tbl, const Rec<RecT> &rec) {
+    return erase<RecT, KeyT...>(tbl, tbl.key(rec));
+  }
+
+  template <typename RecT, typename...KeyT>
+  bool erase(Table<RecT, KeyT...> &tbl, const RecT &rec) {
+    return erase(tbl, tbl.key(rec));
   }
 
   template <typename RecT, typename...KeyT>
