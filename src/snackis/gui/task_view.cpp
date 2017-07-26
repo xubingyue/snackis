@@ -52,6 +52,7 @@ namespace gui {
     tsk.project_id = v->rec.project_id;
     tsk.peer_ids = v->rec.peer_ids;
     tsk.name = trim(fmt("*COPY* %0", v->rec.name));
+    tsk.prio = v->rec.prio;
     tsk.tags = v->rec.tags;
     tsk.info = trim(fmt("*COPY*\n%0", v->rec.info));
 
