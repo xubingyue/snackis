@@ -39,9 +39,15 @@ namespace gui {
   }
   
   static void on_post(gpointer *_, PostView *v) {
-    Post post(v->ctx);
-    post.feed_id = v->rec.feed_id;
-    push_view(new PostView(post));
+    Post ps(v->ctx);
+    ps.feed_id = v->rec.feed_id;
+    ps.peer_ids = v->rec.peer_ids;
+    ps.tags = v->rec.tags;
+    ps.body = trim(fmt("*COPY*\n%0", v->rec.body));
+
+    auto pv(new PostView(ps));
+    pv->focused = pv->body_fld;
+    push_view(pv);
   }
 
   static void on_find_replies(gpointer *_, PostView *v) {

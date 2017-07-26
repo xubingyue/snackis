@@ -48,9 +48,16 @@ namespace gui {
   }
 
   static void on_task(gpointer *_, TaskView *v) {
-    Task task(v->ctx);
-    task.project_id = v->rec.project_id;
-    push_view(new TaskView(task));
+    Task tsk(v->ctx);
+    tsk.project_id = v->rec.project_id;
+    tsk.peer_ids = v->rec.peer_ids;
+    tsk.name = trim(fmt("*COPY* %0", v->rec.name));
+    tsk.tags = v->rec.tags;
+    tsk.info = trim(fmt("*COPY*\n%0", v->rec.info));
+
+    auto tv(new TaskView(tsk));
+    tv->focused = tv->name_fld;
+    push_view(tv);
   }
 
   static GtkWidget *init_general(TaskView &v) {
