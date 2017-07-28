@@ -76,12 +76,12 @@ namespace gui {
   }
   
   void load(FeedHistory &w, const Feed &fd, Time start) {
-    auto pst(db::find(w.ctx.db.posts, fd.id));
-    if (pst) { add_post(w, fd, pst, start, nullptr); }
-
     for (auto r: last_posts(fd, start, FEED_HISTORY_MAX)) {
       add_post(w, fd, r, start, nullptr);
     }
+
+    auto pst(db::find(w.ctx.db.posts, fd.id));
+    if (pst) { add_post(w, fd, pst, start, nullptr); }
   }
 
   size_t post_count(FeedHistory &w) {
