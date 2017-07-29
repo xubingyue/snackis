@@ -3,16 +3,15 @@
 
 #include <atomic>
 #include <condition_variable>
+#include <deque>
 #include <mutex>
-#include <vector>
 #include "snackis/core/error.hpp"
 
 namespace snackis {  
   template <typename T>
   struct Chan {
     const size_t max;
-    std::vector<T> buf;
-    size_t pos;
+    std::deque<T> buf;
     std::atomic<size_t> size;
     std::mutex mutex;
     std::condition_variable get_ok, put_ok;
@@ -27,7 +26,7 @@ namespace snackis {
 
   template <typename T>
   Chan<T>::Chan(size_t max):
-    max(max), pos(0), size(0), closed(false)
+    max(max), size(0), closed(false)
   { }
 
   template <typename T>
@@ -79,19 +78,13 @@ namespace snackis {
 
     ChanLock lock(c.mutex);
     
-    if (wait && c.pos == c.buf.size()) {
-      c.get_ok.wait(lock, [&c](){ return c.closed || c.pos < c.buf.size(); });
+    if (wait && c.buf.empty()) {
+      c.get_ok.wait(lock, [&c](){ return c.closed || !c.buf.empty(); });
     }
     
-    if (c.pos == c.buf.size()) { return nullopt; }
-    auto out(c.buf[c.pos]);
-    c.pos++;
-
-    if (c.pos == c.buf.size()) {
-      c.buf.clear();
-      c.pos = 0;
-    }
-    
+    if (c.buf.empty()) { return nullopt; }
+    auto out(c.buf.front());
+    c.buf.pop_front();
     c.size--;
     c.put_ok.notify_one();
     return out;
