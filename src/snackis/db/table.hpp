@@ -29,12 +29,14 @@ namespace db {
   struct Table: Index<RecT> {
     using Key = db::Key<RecT, KeyT...>;
     using Cols = std::initializer_list<const BasicCol<RecT> *>;
+    using Recs = std::map<typename Key::Type, Rec<RecT>>;
+    using RecIter = typename Recs::iterator;
     using OnInsert = func<void (Rec<RecT> &)>;
     using OnUpdate = func<void (const Rec<RecT> &, Rec<RecT> &)>;
     
     const Key key;
     std::set<Index<RecT> *> indexes;
-    std::map<typename Key::Type, Rec<RecT>> recs;
+    Recs recs;
     std::vector<OnInsert> on_insert;
     std::vector<OnUpdate> on_update;
     
@@ -62,7 +64,7 @@ namespace db {
 
     TableChange(TableOp op, Table<RecT, KeyT...> &table, const Rec<RecT> &rec);
     Path table_path() const override;
-    void write(std::ostream &out) const override;
+    virtual void write(std::ostream &out) const override;
   };
 
   template <typename RecT, typename...KeyT>
@@ -82,6 +84,7 @@ namespace db {
     void apply(Ctx &ctx) const override;
     void rollback() const override;
     void undo() const override;
+    void write(std::ostream &out) const override;
   };
 
   template <typename RecT, typename...KeyT>
@@ -154,9 +157,7 @@ namespace db {
     if (it != tbl.recs.end()) { return false; }
 
     for (auto idx: tbl.indexes) {
-      Rec<RecT> irec;
-      copy(*idx, irec, rec);
-      if (!irec.empty()) { insert(*idx, irec); }
+      insert(*idx, rec);
     }
 
     it = tbl.recs.emplace(k, db::Rec<RecT>()).first;
@@ -172,17 +173,17 @@ namespace db {
   }
 
   template <typename RecT, typename...KeyT>
-  bool update(Table<RecT, KeyT...> &tbl,
-	      const Rec<RecT> &rec,
-	      const typename Key<RecT, KeyT...>::Type &key) {
+  opt<std::pair<typename Table<RecT, KeyT...>::RecIter, db::Rec<RecT>>>
+  update_rec(Table<RecT, KeyT...> &tbl,
+	     const Rec<RecT> &rec,
+	     const typename Key<RecT, KeyT...>::Type &key) {
     TRACE(fmt("Updating table: %0", tbl.name));
     auto it(tbl.recs.find(key));
-    if (it == tbl.recs.end() || rec == it->second) { return false; }
-    
-    for (auto idx: tbl.indexes) {
-      update(*idx, Rec<RecT>(*idx, rec), it->second);
-    }
 
+    if (it == tbl.recs.end() || compare(tbl, rec, it->second) == 0) {
+      return nullopt;
+    }
+    
     auto prev(it->second);
     auto rec_key(tbl.key(rec));
     
@@ -194,7 +195,18 @@ namespace db {
       it = tbl.recs.emplace(rec_key, db::Rec<RecT>()).first;
       copy(tbl, it->second, rec);
     }
-    
+
+    return make_pair(it, prev);
+  }
+  
+  template <typename RecT, typename...KeyT>
+  bool update(Table<RecT, KeyT...> &tbl,
+	      const Rec<RecT> &rec,
+	      const typename Key<RecT, KeyT...>::Type &key) {
+    auto res(update_rec(tbl, rec, key));
+    if (!res) { return false; }
+    auto [it, prev] = *res;
+    for (auto idx: tbl.indexes) { update(*idx, rec, prev); }
     for (auto e: tbl.on_update) { e(prev, it->second); }
     log_change(get_trans(tbl.ctx), new Update<RecT, KeyT...>(tbl, it->second, prev));
     return true;
@@ -261,7 +273,7 @@ namespace db {
 	     std::ostream &out) {
     uint8_t op(_op);
     out.write(reinterpret_cast<const char *>(&op), sizeof op);
-    write(tbl, rec, out, tbl.ctx.secret);
+    write(rec, out, tbl.ctx.secret);
   }
 
   template <typename RecT, typename...KeyT>
@@ -417,23 +429,29 @@ namespace db {
   template <typename RecT, typename...KeyT>
   void Update<RecT, KeyT...>::apply(Ctx &ctx) const {
     auto &tbl(get_table<RecT, KeyT...>(ctx, this->table.name));
-    auto k(tbl.key(this->rec));
-    tbl.recs.erase(k);
-    tbl.recs.emplace(k, this->rec);
+    update_rec(tbl, this->rec, tbl.key(this->prev_rec));
   }
 
   template <typename RecT, typename...KeyT>
   void Update<RecT, KeyT...>::rollback() const {
-    auto k(this->table.key(this->prev_rec));
-    this->table.recs.erase(k);
-    this->table.recs.emplace(k, this->prev_rec);
+    update_rec(this->table, this->prev_rec, this->table.key(this->rec));
   }
 
   template <typename RecT, typename...KeyT>
   void Update<RecT, KeyT...>::undo() const {
-    update(this->table, this->prev_rec);
+    update(this->table, this->prev_rec, this->rec);
   }
 
+  template <typename RecT, typename...KeyT>
+  void Update<RecT, KeyT...>::write(std::ostream &out) const {
+    if (this->table.key(this->rec) == this->table.key(this->prev_rec)) {
+      TableChange<RecT, KeyT...>::write(out);
+    } else {
+      db::write(this->table, TABLE_ERASE, this->prev_rec, out);
+      db::write(this->table, TABLE_INSERT, this->rec, out);
+    }
+  }
+  
   template <typename RecT, typename...KeyT>
   Erase<RecT, KeyT...>::Erase(Table<RecT, KeyT...> &table, const Rec<RecT> &rec):
     TableChange<RecT, KeyT...>(TABLE_ERASE, table, rec)

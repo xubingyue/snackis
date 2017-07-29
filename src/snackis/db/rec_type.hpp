@@ -47,7 +47,7 @@ namespace db {
   
   template <typename RecT>
   void RecType<RecT>::write(const Rec<RecT> &val, std::ostream &out) const {
-    db::write(schema, val, out, nullopt);
+    db::write(val, out, nullopt);
   }
 }}
 

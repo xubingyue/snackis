@@ -49,7 +49,7 @@ namespace snackis {
     
     Stream buf;
     const db::Rec<Msg> rec(ctx.db.inbox, msg);
-    write(ctx.db.inbox, rec, buf, nullopt);
+    write(rec, buf, nullopt);
     str data(buf.str());
     
     if (encrypt) {

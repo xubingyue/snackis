@@ -4,8 +4,11 @@
 #include <map>
 #include <string>
 
+#include "snackis/core/int64_type.hpp"
 #include "snackis/core/opt.hpp"
+#include "snackis/core/str_type.hpp"
 #include "snackis/core/val.hpp"
+#include "snackis/crypt/secret.hpp"
 
 namespace snackis {
 namespace db {
@@ -53,6 +56,28 @@ namespace db {
   template <typename RecT>
   void copy(RecT &dest, const db::Rec<RecT> &src) {
     for (auto &f: src) { f.first->set(dest, f.second); }
+  }
+
+  template <typename RecT>
+  void write(const Rec<RecT> &rec,
+	     std::ostream &out,
+	     opt<crypt::Secret> sec) {
+    if (sec) {
+	Stream buf;
+	write(rec, buf, nullopt);
+	str data(buf.str());
+	const Data edata(encrypt(*sec, (unsigned char *)data.c_str(), data.size()));
+	int64_type.write(edata.size(), out);
+	out.write((char *)&edata[0], edata.size());
+    } else {
+      int64_type.write(rec.size(), out);
+    
+      for (auto f: rec) {
+	auto c(f.first);
+	str_type.write(c->name, out);
+	c->write(f.second, out);
+      }
+    }
   }
 }}
 

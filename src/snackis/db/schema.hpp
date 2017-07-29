@@ -4,12 +4,12 @@
 #include <initializer_list>
 #include <vector>
 
-#include <snackis/core/int64_type.hpp>
-#include <snackis/core/str.hpp>
-#include <snackis/core/str_type.hpp>
-#include <snackis/crypt/secret.hpp>
-#include <snackis/db/basic_col.hpp>
-#include <snackis/db/rec.hpp>
+#include "snackis/core/int64_type.hpp"
+#include "snackis/core/str.hpp"
+#include "snackis/core/str_type.hpp"
+#include "snackis/crypt/secret.hpp"
+#include "snackis/db/basic_col.hpp"
+#include "snackis/db/rec.hpp"
 
 namespace snackis {
 namespace db {
@@ -109,40 +109,7 @@ namespace db {
 	}
       }
     }
-  }
-  
-  template <typename RecT>
-  void write(const Schema<RecT> &scm,
-	     const Rec<RecT> &rec,
-	     std::ostream &out,
-	     opt<crypt::Secret> sec) {
-    if (sec) {
-	Stream buf;
-	write(scm, rec, buf, nullopt);
-	str data(buf.str());
-	const Data edata(encrypt(*sec, (unsigned char *)data.c_str(), data.size()));
-	int64_type.write(edata.size(), out);
-	out.write((char *)&edata[0], edata.size());
-    } else {
-      int64_t cnt(0);
-
-      for (auto c: scm.cols) {
-	auto found = rec.find(c);
-	if (found != rec.end()) { cnt++; }
-      }
-
-      int64_type.write(cnt, out);
-    
-      for (auto c: scm.cols) {
-	auto found = rec.find(c);
-	
-	if (found != rec.end()) {
-	  str_type.write(c->name, out);
-	  c->write(rec.at(c), out);
-	}
-      }
-    }
-  }
+  }  
 }}
 
 #endif

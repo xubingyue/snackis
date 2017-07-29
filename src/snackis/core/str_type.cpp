@@ -14,7 +14,8 @@ namespace snackis {
   Val StrType::to_val(const str &in) const { return in; }
 
   str StrType::read(std::istream &in) const {
-    int64_t len(int64_type.read(in)); 
+    int64_t len(int64_type.read(in));
+    if (!len) { return ""; }
     std::vector<char> data(len);
     in.read(&data[0], len);
     return str(data.begin(), data.end());
