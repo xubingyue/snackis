@@ -175,7 +175,7 @@ static void read_write_tests() {
   copy(tbl, rec, foo);
   
   Stream buf;
-  write(tbl, rec, buf, sec);
+  write(rec, buf, sec);
   Rec<Foo> rrec;
   read(tbl, buf, rrec, sec);
   CHECK(compare(tbl, rrec, rec), _ == 0);
@@ -192,6 +192,10 @@ static void email_tests() {
 }
 */
 
+namespace snabel {
+  void all_tests();
+}
+
 int main() {
   TRY(try_tests);
   std::cout << "Snackis v" << version_str() << std::endl;
@@ -206,5 +210,6 @@ int main() {
   table_slurp_tests();
   read_write_tests();
   //email_tests();
+  snabel::all_tests();
   return 0;
 }

@@ -4,7 +4,7 @@ set(CMAKE_CXX_COMPILER clang++)
 
 project(snackis)
 
-add_compile_options(-std=c++1z -stdlib=libc++ -fno-exceptions -Wall -Werror -Wno-unused-command-line-argument -O2)
+add_compile_options(-std=c++1z -stdlib=libc++ -fno-exceptions -Wall -Werror -Wno-unused-command-line-argument -g)
 set(CMAKE_EXE_LINKER_FLAGS "-stdlib=libc++")
 
 file(GLOB_RECURSE core_src src/snackis/core/*.cpp)
@@ -12,13 +12,14 @@ file(GLOB_RECURSE crypt_src src/snackis/crypt/*.cpp)
 file(GLOB_RECURSE db_src src/snackis/db/*.cpp)
 file(GLOB_RECURSE net_src src/snackis/net/*.cpp)
 file(GLOB snackis_src src/snackis/*.cpp)
+file(GLOB snabel_src src/snabel/*.cpp)
 
 add_library(libsnackis STATIC ${core_src} ${crypt_src} ${db_src} ${net_src} ${snackis_src})
 target_include_directories(libsnackis PUBLIC src/)
 target_link_libraries(libsnackis c++experimental curl pthread sodium uuid)
 set_target_properties(libsnackis PROPERTIES PREFIX "")
 
-add_executable(tests EXCLUDE_FROM_ALL ${core_src} ${crypt_src} ${db_src} ${net_src} ${snackis_src} src/tests.cpp)
+add_executable(tests EXCLUDE_FROM_ALL ${core_src} ${crypt_src} ${db_src} ${net_src} ${snackis_src} ${snabel_src} src/tests.cpp src/snabel_tests.cpp)
 target_include_directories(tests PUBLIC src/)
 target_link_libraries(tests c++experimental curl pthread sodium uuid)
 
