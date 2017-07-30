@@ -4,20 +4,20 @@
 #include <map>
 
 #include "snabel/fiber.hpp"
+#include "snackis/core/uid.hpp"
 
-namespace snabel {  
+namespace snabel {
   struct Exec {
-    std::map<size_t, Fiber> fibers;
+    std::map<UId, Fiber> fibers;
     Fiber &main;
-
     Type &i64_type, &str_type;
     
     Exec():
       main(fibers.emplace(std::piecewise_construct,
-			  std::forward_as_tuple(0),
-			  std::forward_as_tuple(*this, 0)).first->second),
-      i64_type((add_type(main.root_ctx, "i64"))),
-      str_type((add_type(main.root_ctx, "str")))
+			  std::forward_as_tuple(null_uid),
+			  std::forward_as_tuple(*this, null_uid)).first->second),
+      i64_type((add_type(get_ctx(main), "i64"))),
+      str_type((add_type(get_ctx(main), "str")))
     { }
 
     Exec(const Exec &) = delete;

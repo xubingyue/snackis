@@ -2,6 +2,16 @@
 #include "snackis/core/error.hpp"
 
 namespace snabel {
+  Coro::Coro(Exec &exe):
+    exec(exe), pc(0)
+  {
+    ctx.emplace_back(*this);
+  }
+
+  Ctx &get_ctx(Coro &cor) {
+    return cor.ctx.back();
+  }
+
   void push(Coro &cor, const Box &val) {
     cor.stack.push_back(val);
   }

@@ -2,11 +2,14 @@
 #define SNABEL_FIBER_HPP
 
 #include "snabel/coro.hpp"
+#include "snackis/core/uid.hpp"
 
 namespace snabel {
   struct Fiber: Coro {
-    Fiber(Exec &exe, int64_t id):
-      Coro(exe, id)
+    UId id;
+    
+    Fiber(Exec &exe, UId id):
+      Coro(exe), id(id)
     { }
   };
 }

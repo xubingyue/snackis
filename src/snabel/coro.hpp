@@ -11,20 +11,17 @@ namespace snabel {
   
   struct Coro {
     Exec &exec;
-    int64_t id;
     OpStream ops;
     int64_t pc;
-    Ctx root_ctx, *ctx;
+    std::vector<Ctx> ctx;
     std::vector<Box> stack;
     
-    Coro(Exec &exe, int64_t id):
-      exec(exe), id(id), pc(0), root_ctx(*this), ctx(&root_ctx)
-    { }
-
+    Coro(Exec &exe);
     Coro(const Coro &) = delete;
     const Coro &operator =(const Coro &) = delete;
   };
 
+  Ctx &get_ctx(Coro &cor);
   void push(Coro &cor, const Box &val);
   Box pop(Coro &cor);
 }

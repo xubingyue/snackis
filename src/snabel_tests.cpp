@@ -19,7 +19,7 @@ namespace snabel {
   
   void all_tests() {
     Exec exe;
-    Ctx &ctx(exe.main.root_ctx);
+    Ctx &ctx(get_ctx(exe.main));
     
     run(ctx,
 	{Push(exe.i64_type, int64_t(35)),
