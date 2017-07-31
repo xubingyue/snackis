@@ -4,23 +4,27 @@
 #include <utility>
 #include <variant>
 
-#include "snabel/box.hpp"
+#include "snabel/type.hpp"
 #include "snackis/core/func.hpp"
 
 namespace snabel {
+  using namespace snackis;
+
+  struct Box;
   struct Coro;
+  struct Ctx;
 
   enum OpCode { OP_BIND, OP_CALL, OP_PUSH };
 
   struct Op;
   
-  using OpStream = std::vector<Op>;
+  using OpSeq = std::vector<Op>;
 
   struct Bind
   { };
     
   struct Call {
-    using Fn = func<Box (Ctx &ctx, const std::vector<Box> &)>;
+    using Fn = func<void (Ctx &ctx)>;
     Fn fn;
 
     Call(Fn fn):
@@ -28,11 +32,18 @@ namespace snabel {
     { }
   };
 
+  using Val = std::variant<int64_t, str>;
+  
   struct Push {
-    Box it;
+    Type &type;
+    Val val;
     
     Push(Type &t, const Val &v):
-      it(t, v)
+      type(t), val(v)
+    { }
+
+    Push(const Push &p):
+      type(p.type), val(p.val)
     { }
   };
   
@@ -46,7 +57,7 @@ namespace snabel {
       code(cod), data(dat)
     { }
 
-    Op(const Bind &dat): Op(OP_BIND, dat)
+    Op(const Bind &dat): Op(OP_BIND, OpData(dat))
     { }
 
     Op(const Call &dat): Op(OP_CALL, dat)
@@ -57,7 +68,7 @@ namespace snabel {
   };
   
   void run(Ctx &ctx, const Op &op);
-  void run(Ctx &ctx, const OpStream &ops);
+  void run(Ctx &ctx, const OpSeq &ops);
 }
 
 #endif

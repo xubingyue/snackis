@@ -5,6 +5,10 @@
 #include "snackis/core/uid.hpp"
 
 namespace snabel {
+  using namespace snackis;
+
+  struct Exec;
+  
   struct Fiber: Coro {
     UId id;
     

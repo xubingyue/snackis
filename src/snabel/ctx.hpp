@@ -18,6 +18,8 @@ namespace snabel {
     std::map<str, Box> env;
     
     Ctx(Coro &cor, Ctx *par=nullptr);
+    Ctx(const Ctx &) = delete;
+    const Ctx &operator =(const Ctx &) = delete;
   };
 
   opt<Box> find_env(Ctx &ctx, const str &n);

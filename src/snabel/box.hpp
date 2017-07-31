@@ -3,24 +3,32 @@
 
 #include <variant>
 #include <vector>
+#include "snabel/op.hpp"
 #include "snabel/type.hpp"
 
 namespace snabel {  
   using namespace snackis;
 
-  using Val = std::variant<int64_t, str>;
+  struct Exec;
   
   struct Box {
+    using Val = std::variant<snabel::Val, Op, OpSeq>;
     Type &type;
     Val val;
     
-    Box(Type &t, const Val &v):
-      type(t), val(v)
-    { }
+    Box(Type &t, const snabel::Val &v);
+    Box(Exec &exe, const Op &v);
+    Box(Exec &exe, const OpSeq &v);
   };
 
   template <typename T>
-  T get(const Val &v) { return std::get<T>(v); }
+  T get(const Box &b) { return std::get<T>(std::get<snabel::Val>(b.val)); }
+
+  template <>
+  Op get(const Box &b);
+
+  template <>
+  OpSeq get(const Box &b);
 }
 
 #endif

@@ -5,16 +5,16 @@
 #include "snackis/core/error.hpp"
 
 namespace snabel {
-  static Box add_imp(Ctx &ctx, const std::vector<Box> &args) {
+  static void add_imp(Ctx &ctx) {
     Exec &exe(ctx.coro.exec);
     int64_t res(0);
 
-    for (auto &a: args) {
+    for (auto &a: ctx.coro.stack) {
       CHECK(&a.type == &exe.i64_type, _);
-      res += std::get<int64_t>(a.val);
+      res += get<int64_t>(a);
     }
     
-    return Box(exe.i64_type, res);
+    push(ctx.coro, exe.i64_type, res);
   }
   
   void all_tests() {
@@ -28,6 +28,6 @@ namespace snabel {
 	    Push(exe.str_type, str("foo")),
 	    Bind()});
     
-    CHECK(std::get<int64_t>(get_env(ctx, "foo").val) == 42, _);
+    CHECK(get<int64_t>(get_env(ctx, "foo")) == 42, _);
   }
 }

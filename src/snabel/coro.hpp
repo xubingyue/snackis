@@ -1,7 +1,7 @@
 #ifndef SNABEL_CORO_HPP
 #define SNABEL_CORO_HPP
 
-#include <vector>
+#include <list>
 
 #include "snabel/ctx.hpp"
 #include "snabel/op.hpp"
@@ -11,10 +11,10 @@ namespace snabel {
   
   struct Coro {
     Exec &exec;
-    OpStream ops;
+    OpSeq ops;
     int64_t pc;
-    std::vector<Ctx> ctx;
-    std::vector<Box> stack;
+    std::list<Ctx> ctx;
+    std::list<Box> stack;
     
     Coro(Exec &exe);
     Coro(const Coro &) = delete;
@@ -23,6 +23,7 @@ namespace snabel {
 
   Ctx &get_ctx(Coro &cor);
   void push(Coro &cor, const Box &val);
+  void push(Coro &cor, Type &typ, const Val &val);
   Box pop(Coro &cor);
 }
 
