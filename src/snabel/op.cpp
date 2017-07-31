@@ -7,10 +7,8 @@ namespace snabel {
     switch (op.code) {
     case OP_BIND: {
       auto n(get<str>(pop(ctx.coro)));
-      auto fnd(ctx.env.find(n));
-      if (fnd != ctx.env.end()) { ctx.env.erase(fnd); }
       auto v(pop(ctx.coro));
-      ctx.env.emplace(n, v);
+      put_env(ctx, n, v);
       break;
     }
     case OP_CALL: {

@@ -18,6 +18,8 @@ namespace snabel {
   }
   
   void all_tests() {
+    TRY(try_test);
+    
     Exec exe;
     Ctx &ctx(get_ctx(exe.main));
     Func &f(add_func(ctx, "+", {}, add_imp)); 
@@ -30,5 +32,6 @@ namespace snabel {
 	    Bind()});
     
     CHECK(get<int64_t>(get_env(ctx, "foo")) == 42, _);
+    CHECK(try_test.errors.empty(), _);
   }
 }
