@@ -18,13 +18,12 @@ namespace snabel {
     using CmpType = func<bool (const Type &, const Type &)>;
     
     Coro &coro;
-    Ctx *parent;
     std::list<Type> types;
     std::list<Func> funcs;
     std::map<str, Box> env;
     
-    Ctx(Coro &cor, Ctx *par=nullptr);
-    Ctx(const Ctx &) = delete;
+    Ctx(const Ctx &src);
+    Ctx(Coro &cor);
     const Ctx &operator =(const Ctx &) = delete;
   };
 

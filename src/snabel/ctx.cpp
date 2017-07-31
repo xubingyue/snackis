@@ -4,8 +4,12 @@
 #include "snackis/core/error.hpp"
 
 namespace snabel {
-  Ctx::Ctx(Coro &cor, Ctx *par):
-    coro(cor), parent(par)
+  Ctx::Ctx(const Ctx &src):
+    coro(src.coro), env(src.env)
+  { }
+
+  Ctx::Ctx(Coro &cor):
+    coro(cor)
   { }
 
   opt<Box> find_env(Ctx &ctx, const str &n) {
@@ -24,7 +28,7 @@ namespace snabel {
     auto fnd(ctx.env.find(n));
 
     if (fnd != ctx.env.end()) {
-      ERROR(Snabel, fmt("Name '%0' is already bound to %1", n, fnd->second));
+      ERROR(Snabel, fmt("Name '%0' is already bound to: %1", n, fnd->second));
     }
 
     ctx.env.emplace(std::piecewise_construct,

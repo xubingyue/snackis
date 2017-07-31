@@ -15,7 +15,8 @@ namespace snabel {
     }
     case OP_CALL: {
       auto c(std::get<Call>(op.data));
-      c.fn(ctx);
+      Ctx tmp(ctx);
+      c.fn(tmp);
       break;
     }
     case OP_PUSH: {
