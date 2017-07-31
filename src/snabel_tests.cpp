@@ -5,7 +5,7 @@
 #include "snackis/core/error.hpp"
 
 namespace snabel {
-  static void add_imp(Ctx &ctx) {
+  static void add_imp(Ctx &ctx, Func &fn) {
     Exec &exe(ctx.coro.exec);
     int64_t res(0);
 
@@ -20,11 +20,12 @@ namespace snabel {
   void all_tests() {
     Exec exe;
     Ctx &ctx(get_ctx(exe.main));
+    Func &f(add_func(ctx, "+", {}, add_imp)); 
     
     run(ctx,
 	{Push(exe.i64_type, int64_t(35)),
 	    Push(exe.i64_type, int64_t(7)),
-	    Call(add_imp),
+	    Call(f),
 	    Push(exe.str_type, str("foo")),
 	    Bind()});
     

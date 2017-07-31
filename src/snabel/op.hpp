@@ -4,6 +4,7 @@
 #include <utility>
 #include <variant>
 
+#include "snabel/func.hpp"
 #include "snabel/type.hpp"
 #include "snackis/core/func.hpp"
 
@@ -24,15 +25,14 @@ namespace snabel {
   { };
     
   struct Call {
-    using Fn = func<void (Ctx &ctx)>;
-    Fn fn;
+    Func &fn;
 
-    Call(Fn fn):
+    Call(Func &fn):
       fn(fn)
     { }
   };
 
-  using Val = std::variant<int64_t, str>;
+  using Val = std::variant<int64_t, str, Func *, Type *>;
   
   struct Push {
     Type &type;
