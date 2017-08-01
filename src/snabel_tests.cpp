@@ -101,7 +101,7 @@ namespace snabel {
     TRY(try_test);    
     Exec exe;
     Ctx &ctx(get_ctx(exe.main));
-    compile(exe, "42 reset! 2 stash! 3 4 + apply! *");
+    compile(exe, "42 reset 2 stash 3 4 + apply *");
     run(exe);
     CHECK(get<int64_t>(pop(ctx.coro)) == 14, _);
   }

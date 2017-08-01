@@ -57,11 +57,11 @@ namespace snabel {
     } else if (isdigit(tok.text[0]) || 
 	(tok.text.size() > 1 && tok.text[0] == '-' && isdigit(tok.text[1]))) {
       out.emplace_back(Push(exe.i64_type, to_int64(tok.text)));
-    } else if (tok.text == "apply!") {
+    } else if (tok.text == "apply") {
       out.emplace_back(Apply());
-    } else if (tok.text == "reset!") {
+    } else if (tok.text == "reset") {
       out.emplace_back(Reset());
-    } else if (tok.text == "stash!") {
+    } else if (tok.text == "stash") {
       out.emplace_back(Stash());
     } else {
       out.emplace_back(Id(tok.text));
