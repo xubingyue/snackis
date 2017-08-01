@@ -14,6 +14,27 @@ namespace snabel {
     imp(ctx, *this);
   }
 
+  std::vector<Box> get_args(const FuncImp imp, Ctx &ctx) {
+    auto i = imp.args.rbegin();
+    std::vector<Box> out;
+    
+    while (i != imp.args.rend() && !ctx.coro.stack->empty()) {
+      auto &typ(*i);
+      auto seq(dynamic_cast<Seq *>(typ));
+      auto &val(ctx.coro.stack->back());
+
+      if (!isa(val, *typ) && (!seq || !isa(val, seq->elem_type))) {
+	break;
+      }
+      
+      out.push_back(val);
+      ctx.coro.stack->pop_back();
+      if (!seq) { i++; }
+    }
+
+    return std::vector<Box>(out.rbegin(), out.rend());
+  }
+
   FuncImp &add_imp(Func &fn, const FuncImp::Args &args, FuncImp::Imp imp) {
     return fn.imps.emplace_front(fn, args, imp);
   }
@@ -37,7 +58,7 @@ namespace snabel {
 
     return true;
   }
-  
+
   opt<FuncImp> match(const Func &fn, const std::vector<Box> &args) {
     for (auto &imp: fn.imps) {
       if (match(imp, args)) { return imp; }
@@ -47,11 +68,11 @@ namespace snabel {
   }
 
   void call(Func &fn, Ctx &ctx) {
-    auto imp(match(fn, ctx.coro.stack));
+    auto imp(match(fn, *ctx.coro.stack));
     
     if (!imp) {
       ERROR(Snabel, fmt("Function not applicable:\n%0", 
-			ctx.coro.stack));
+			*ctx.coro.stack));
       return;
     }
     

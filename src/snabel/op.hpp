@@ -15,11 +15,14 @@ namespace snabel {
   struct Coro;
   struct Ctx;
 
-  enum OpCode { OP_CALL, OP_ID, OP_LET, OP_PUSH, OP_RESET };
+  enum OpCode { OP_BACKUP, OP_CALL, OP_ID, OP_LET, OP_PUSH, OP_RESET, OP_RESTORE };
 
   struct Op;
   
   using OpSeq = std::vector<Op>;
+
+  struct Backup
+  { };
 
   struct Call {
     Func fn;
@@ -66,10 +69,13 @@ namespace snabel {
     }
   };
 
-  struct Reset {
-  };
+  struct Reset
+  { };
 
-  using OpData = std::variant<Call, Id, Let, Push, Reset>;
+  struct Restore
+  { };
+
+  using OpData = std::variant<Backup, Call, Id, Let, Push, Reset, Restore>;
 
   struct Op {
     OpCode code;
@@ -77,6 +83,9 @@ namespace snabel {
     
     Op(OpCode cod, const OpData &dat):
       code(cod), data(dat)
+    { }
+
+    Op(const Backup &dat): Op(OP_BACKUP, dat)
     { }
 
     Op(const Call &dat): Op(OP_CALL, dat)
@@ -93,7 +102,10 @@ namespace snabel {
 
     Op(const Reset &dat): Op(OP_RESET, dat)
     { }
-  };
+
+    Op(const Restore &dat): Op(OP_RESTORE, dat)
+    { }
+};
   
   void run(Ctx &ctx, const Op &op);
   void run(Ctx &ctx, const OpSeq &ops);

@@ -3,9 +3,10 @@
 
 namespace snabel {
   Coro::Coro(Exec &exe):
-    exec(exe), pc(0)
+    exec(exe), pc(0), stack(nullptr)
   {
     ctx.emplace_back(*this);
+    backup(*this);
   }
 
   Ctx &get_ctx(Coro &cor) {
@@ -13,17 +14,29 @@ namespace snabel {
   }
 
   void push(Coro &cor, const Box &val) {
-    cor.stack.push_back(val);
+    cor.stack->push_back(val);
   }
 
   void push(Coro &cor, Type &typ, const Val &val) {
-    cor.stack.emplace_back(typ, val);
+    cor.stack->emplace_back(typ, val);
   }
   
   Box pop(Coro &cor) {
-    CHECK(!cor.stack.empty(), _);
-    auto res(cor.stack.back());
-    cor.stack.pop_back();
+    CHECK(!cor.stack->empty(), _);
+    auto res(cor.stack->back());
+    cor.stack->pop_back();
     return res;
+  }
+
+  void backup(Coro &cor) {
+    cor.stack = &cor.stacks.emplace_back(Coro::Stack());
+  }
+  
+  void restore(Coro &cor) {
+    auto prev(*cor.stack);
+    cor.stacks.pop_back();
+    CHECK(!cor.stacks.empty(), _);
+    cor.stack = &cor.stacks.back();
+    std::copy(prev.begin(), prev.end(), std::back_inserter(*cor.stack));
   }
 }

@@ -10,6 +10,10 @@ namespace snabel {
     Exec &exe(ctx.coro.exec);
     
     switch (op.code) {
+    case OP_BACKUP: {
+      backup(ctx.coro);
+      break;
+    }
     case OP_CALL: {
       auto c(std::get<Call>(op.data));
       call(c.fn, ctx);
@@ -44,7 +48,11 @@ namespace snabel {
       break;
     }
     case OP_RESET: {
-      ctx.coro.stack.clear();
+      ctx.coro.stack->clear();
+      break;
+    }
+    case OP_RESTORE: {
+      restore(ctx.coro);
       break;
     }
     default:

@@ -9,26 +9,12 @@ namespace snabel {
     ctx(ctx)
   { }
 
-  static void compile_tok(Compiler &cpr,
-			  size_t lnr,
-			  const Tok &tok,
-			  OpSeq &out) {
-    Ctx &ctx(cpr.ctx);
-    Exec &exe(ctx.coro.exec);
-
-    if (isdigit(tok.text[0]) || 
-	(tok.text.size() > 1 && tok.text[0] == '-' && isdigit(tok.text[1]))) {
-      out.emplace_back(Push(exe.i64_type, to_int64(tok.text)));
-    } else {
-      out.emplace_back(Id(tok.text));
-    }
-  }
-
   static void trace(Ctx &ctx, OpSeq &ops) {
     Exec &exe(ctx.coro.exec);
     
     for (auto &op: ops) {
       switch (op.code) {
+      case OP_BACKUP:
       case OP_CALL:
 	break;
       case OP_ID: {
@@ -49,6 +35,7 @@ namespace snabel {
       case OP_LET:
       case OP_PUSH:
       case OP_RESET:
+      case OP_RESTORE:
 	break;
       default:
 	ERROR(Snabel, fmt("Invalid op-code: %0", op.code));
@@ -56,17 +43,36 @@ namespace snabel {
     }
   }
 
-  static void compile_expr(Compiler &cpr,
-			   size_t lnr,
-			   const std::vector<Tok> &exp,
-			   OpSeq &out) {
+  void compile(Compiler &cpr,
+	       size_t lnr,
+	       const Tok &tok,
+	       OpSeq &out) {
+    Ctx &ctx(cpr.ctx);
+    Exec &exe(ctx.coro.exec);
+
+    if (tok.text[0] == '(') {
+      out.emplace_back(Backup());
+      compile(cpr, lnr, parse_expr(tok.text.substr(1, tok.text.size()-2)), out);
+      out.emplace_back(Restore());
+    } else if (isdigit(tok.text[0]) || 
+	(tok.text.size() > 1 && tok.text[0] == '-' && isdigit(tok.text[1]))) {
+      out.emplace_back(Push(exe.i64_type, to_int64(tok.text)));
+    } else {
+      out.emplace_back(Id(tok.text));
+    }
+  }
+
+  void compile(Compiler &cpr,
+	       size_t lnr,
+	       const std::vector<Tok> &exp,
+	       OpSeq &out) {
     OpSeq ops;
     
     if (exp[0].text == "let") {
       if (exp.size() < 3) {
 	ERROR(Snabel, fmt("Malformed let statement in line %0", lnr));
       } else {
-	compile_expr(cpr, lnr,
+	compile(cpr, lnr,
 		     std::vector<Tok>(std::next(exp.begin(), 2),
 				      exp.end()),
 		     ops);
@@ -74,7 +80,7 @@ namespace snabel {
 	ops.emplace_back(Let(exp[1].text));
       }
     } else {
-      for (auto t: exp) { compile_tok(cpr, lnr, t, ops); }	  
+      for (auto t: exp) { compile(cpr, lnr, t, ops); }	  
     }
 
     trace(cpr.ctx, ops);
@@ -93,7 +99,7 @@ namespace snabel {
 	}
 
 	for (auto &e: parse_line(ln)) {
-	  compile_expr(cpr, lnr, parse_expr(e), cpr.ops);
+	  compile(cpr, lnr, parse_expr(e), cpr.ops);
 	}
       }
       

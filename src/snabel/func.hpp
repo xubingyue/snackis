@@ -31,6 +31,7 @@ namespace snabel {
     std::list<FuncImp> imps;
   };
 
+  std::vector<Box> get_args(const FuncImp imp, Ctx &ctx);
   FuncImp &add_imp(Func &fn, const FuncImp::Args &args, FuncImp::Imp imp);
   opt<FuncImp> match(const Func &fn, const std::vector<Box> &args);
   void call(Func &fn, Ctx &ctx);

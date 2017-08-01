@@ -1,13 +1,15 @@
+#include <iostream>
 #include "snabel/error.hpp"
 #include "snabel/exec.hpp"
 #include "snabel/type.hpp"
 
 namespace snabel {
   static void add_i64(Ctx &ctx, FuncImp &fn) {
+    auto args(get_args(fn, ctx));
     Exec &exe(ctx.coro.exec);
     int64_t res(0);
 
-    for (auto &a: ctx.coro.stack) {
+    for (auto &a: args) {
       CHECK(&a.type == &exe.i64_type, _);
       res += get<int64_t>(a);
     }
@@ -16,10 +18,11 @@ namespace snabel {
   }
 
   static void mul_i64(Ctx &ctx, FuncImp &fn) {
+    auto args(get_args(fn, ctx));
     Exec &exe(ctx.coro.exec);
     int64_t res(1);
 
-    for (auto &a: ctx.coro.stack) {
+    for (auto &a: args) {
       CHECK(&a.type == &exe.i64_type, _);
       res *= get<int64_t>(a);
     }

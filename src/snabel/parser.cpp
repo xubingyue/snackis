@@ -104,7 +104,8 @@ namespace snabel {
       case '\n':
       case ' ':
 	if (j > i && !quoted) {
-	  out.emplace_back(trim(in.text.substr(i, j-i)), in.i+i);
+	  str s(trim(in.text.substr(i, j-i)));
+	  if (!s.empty()) { out.emplace_back(s, in.i+i); }
 	  
 	  while (j < in.text.size()-2 && (c == '\\' || isspace(c))) {
 	    j++;
@@ -118,7 +119,8 @@ namespace snabel {
       }
 
       if (j == in.text.size()-1) {
-	out.emplace_back(trim(in.text.substr(i)), in.i+i);
+	str s(trim(in.text.substr(i)));
+	if (!s.empty()) { out.emplace_back(s, in.i+i); }
       } else if (c == '(') {
 	size_t k(j);
 	str rest(in.text.substr(k));

@@ -8,15 +8,16 @@
 
 namespace snabel {
   static void test_func(Ctx &ctx, FuncImp &fn) {
+    auto args(get_args(fn, ctx));
+
     Exec &exe(ctx.coro.exec);
-    CHECK(ctx.coro.stack.size() == 1, _);
-    CHECK(&ctx.coro.stack.back().type == &exe.i64_type, _);
-    push(ctx.coro, exe.i64_type, 42-get<int64_t>(ctx.coro.stack.back()));
-  }
+    CHECK(args.size() == 1, _);
+    CHECK(&args[0].type == &exe.i64_type, _);
+    push(ctx.coro, exe.i64_type, 42-get<int64_t>(args[0]));
+  } 
   
   static void func_tests() {
     TRY(try_test);
-    
     Exec exe;
     Ctx &ctx(get_ctx(exe.main));
     Func f;
@@ -63,12 +64,19 @@ namespace snabel {
   }
 
   static void parens_tests() {
-    TRY(try_test);    
+    TRY(try_test);
+    
     auto ts(parse_expr(Expr("foo (bar (35 7)) baz")));
     CHECK(ts.size() == 3, _);
     CHECK(ts[0].text == "foo", _);
     CHECK(ts[1].text == "(bar (35 7))", _);
     CHECK(ts[2].text == "baz", _);
+
+    Exec exe;
+    Ctx &ctx(get_ctx(exe.main));
+    OpSeq ops(compile(ctx, "(1 1 +) (2 2 +) *"));
+    run(ctx, ops);
+    CHECK(get<int64_t>(pop(ctx.coro)) == 8, _);    
   }
 
   static void parse_tests() {

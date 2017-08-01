@@ -11,11 +11,13 @@ namespace snabel {
   struct Exec;
   
   struct Coro {
+    using Stack = std::vector<Box>;
     Exec &exec;
     OpSeq ops;
     int64_t pc;
     std::list<Ctx> ctx;
-    std::vector<Box> stack;
+    std::list<Stack> stacks;
+    Stack *stack;
     
     Coro(Exec &exe);
     Coro(const Coro &) = delete;
@@ -26,6 +28,8 @@ namespace snabel {
   void push(Coro &cor, const Box &val);
   void push(Coro &cor, Type &typ, const Val &val);
   Box pop(Coro &cor);
+  void backup(Coro &cor);
+  void restore(Coro &cor);
 }
 
 #endif
