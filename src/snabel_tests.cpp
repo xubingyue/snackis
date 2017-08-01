@@ -7,33 +7,25 @@
 #include "snackis/core/error.hpp"
 
 namespace snabel {
-  static void add(Ctx &ctx, FuncImp &fn) {
+  static void test_func(Ctx &ctx, FuncImp &fn) {
     Exec &exe(ctx.coro.exec);
-    int64_t res(0);
-
-    for (auto &a: ctx.coro.stack) {
-      CHECK(&a.type == &exe.i64_type, _);
-      res += get<int64_t>(a);
-    }
-    
-    push(ctx.coro, exe.i64_type, res);
+    CHECK(ctx.coro.stack.size() == 1, _);
+    CHECK(&ctx.coro.stack.back().type == &exe.i64_type, _);
+    push(ctx.coro, exe.i64_type, 42-get<int64_t>(ctx.coro.stack.back()));
   }
   
   static void func_tests() {
     TRY(try_test);
     
     Exec exe;
-    Ctx &ctx(get_ctx(exe.main));    
-    Func &f(add_func(ctx, "+"));
-    add_imp(f, {&exe.i64_type.seq}, add);
+    Ctx &ctx(get_ctx(exe.main));
+    Func f;
+    add_imp(f, {&exe.i64_type}, test_func);
     
     run(ctx,
-	{Push(exe.i64_type, int64_t(35)),
-	    Push(exe.i64_type, int64_t(7)),
-	    Call(f),
-	    Let("foo")});
-    
-    CHECK(get<int64_t>(get_env(ctx, "foo")) == 42, _);
+	{Push(exe.i64_type, int64_t(7)), Call(f) });
+
+    CHECK(get<int64_t>(pop(ctx.coro)) == 35, _);
   }
 
   static void parse_lines_tests() {
@@ -70,7 +62,8 @@ namespace snabel {
     CHECK(es[1].text == "bar", _);
   }
 
-  static void parse_parens_tests() {
+  static void parens_tests() {
+    TRY(try_test);    
     auto ts(parse_expr(Expr("foo (bar (35 7)) baz")));
     CHECK(ts.size() == 3, _);
     CHECK(ts[0].text == "foo", _);
@@ -82,15 +75,12 @@ namespace snabel {
     parse_lines_tests();
     parse_backslash_tests();
     parse_semicolon_tests();
-    parse_parens_tests();
   }
 
   static void compile_tests() {
     TRY(try_test);    
     Exec exe;
     Ctx &ctx(get_ctx(exe.main));
-    Func &f(add_func(ctx, "+"));
-    add_imp(f, {&exe.i64_type.seq}, add);
     OpSeq ops(compile(ctx, "let foo 35\nlet bar foo 14 -7 +"));
     run(ctx, ops);
     CHECK(get<int64_t>(get_env(ctx, "foo")) == 35, _);
@@ -100,6 +90,7 @@ namespace snabel {
   void all_tests() {
     func_tests();
     parse_tests();
+    parens_tests();
     compile_tests();
   }
 }

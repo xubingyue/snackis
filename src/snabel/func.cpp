@@ -25,8 +25,8 @@ namespace snabel {
     while (i != args.rend() && j != imp.args.rend()) {
       auto seq(dynamic_cast<Seq *>(*j));
 
-      if (!isa(*i, **j)) {
-	j++;
+      if (isa(*i, **j) || (seq && isa(*i, seq->elem_type))) {
+	if (!seq) { j++; }
       } else {
 	if (!seq) { return false; }
 	j++;
