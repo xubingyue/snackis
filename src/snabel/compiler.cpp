@@ -2,65 +2,12 @@
 #include "snabel/compiler.hpp"
 #include "snabel/error.hpp"
 #include "snabel/exec.hpp"
+#include "snabel/parser.hpp"
 
-namespace snabel {
-  struct Tok {
-    str text;
-    size_t i, j;
-    
-    Tok(const str &txt, size_t i, size_t j):
-      text(txt),
-      i(i), j(j)
-    { }
-  };
-  
+namespace snabel {  
   Compiler::Compiler(Ctx &ctx):
     ctx(ctx)
   { }
-
-  static std::vector<str> split_lines(const str &in) {
-    size_t i(0), j;
-    std::vector<str> out;
-    
-    while ((j=in.find('\n', i)) != str::npos) {
-      if (j > i && (i == 0 || in[i-1] == '\\')) {
-	out.push_back(trim(in.substr(i, j-i)));
-      }
-
-      i = j+1;
-    }
-
-    if (i < in.size()) { out.push_back(trim(in.substr(i))); }
-    return out;
-  }
-
-  static std::vector<Tok> parse_expr(const str &in) {
-    size_t i(0);
-    bool quoted(false);
-    std::vector<Tok> out;
-    
-    for (size_t j(0); j < in.size(); j++) {
-      auto &c(in[j]);
-      switch(c) {
-      case '"':
-	if (j == 0 || in[j-1] != '\\') { quoted = !quoted; }
-	break;
-      case ' ':
-	if (j > i && !quoted) {
-	  out.emplace_back(in.substr(i, j-i), i, j);
-	  i = j+1;
-	}
-	
-	break;
-      }
-
-      if (j == in.size()-1 && (j > i || c != ' ')) {
-	out.emplace_back(in.substr(i, j-i+1), i, j);
-      }
-    }
-
-    return out;
-  }
 
   static void compile_tok(Compiler &cpr,
 			  size_t lnr,
@@ -139,13 +86,15 @@ namespace snabel {
   void compile(Compiler &cpr, const str &in) {
     size_t lnr(0);
     
-    for (auto &ln: split_lines(in)) {
+    for (auto &ln: parse_lines(in)) {
       if (!ln.empty()) {
 	if (!cpr.ops.empty()) {
 	  cpr.ops.emplace_back(Reset());
 	}
-	
-	compile_expr(cpr, lnr, parse_expr(ln), cpr.ops);
+
+	for (auto &e: parse_line(ln)) {
+	  compile_expr(cpr, lnr, parse_expr(e), cpr.ops);
+	}
       }
       
       lnr++;

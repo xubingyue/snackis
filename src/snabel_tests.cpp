@@ -2,6 +2,7 @@
 #include "snabel/compiler.hpp"
 #include "snabel/exec.hpp"
 #include "snabel/op.hpp"
+#include "snabel/parser.hpp"
 #include "snabel/type.hpp"
 #include "snackis/core/error.hpp"
 
@@ -35,6 +36,14 @@ namespace snabel {
     CHECK(get<int64_t>(get_env(ctx, "foo")) == 42, _);
   }
 
+  void parse_tests() {
+    TRY(try_test);    
+    auto es(parse_line("foo;bar"));
+    CHECK(es.size() == 2, _);
+    CHECK(es[0].text == "foo", _);
+    CHECK(es[1].text == "bar", _);
+  }
+
   void compile_tests() {
     TRY(try_test);    
     Exec exe;
@@ -49,6 +58,7 @@ namespace snabel {
 
   void all_tests() {
     func_tests();
+    parse_tests();
     compile_tests();
   }
 }
