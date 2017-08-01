@@ -70,10 +70,19 @@ namespace snabel {
     CHECK(es[1].text == "bar", _);
   }
 
+  static void parse_parens_tests() {
+    auto ts(parse_expr(Expr("foo (bar (35 7)) baz")));
+    CHECK(ts.size() == 3, _);
+    CHECK(ts[0].text == "foo", _);
+    CHECK(ts[1].text == "(bar (35 7))", _);
+    CHECK(ts[2].text == "baz", _);
+  }
+
   static void parse_tests() {
     parse_lines_tests();
     parse_backslash_tests();
     parse_semicolon_tests();
+    parse_parens_tests();
   }
 
   static void compile_tests() {

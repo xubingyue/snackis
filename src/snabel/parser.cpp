@@ -1,16 +1,17 @@
 #include <iostream>
 
+#include "snabel/error.hpp"
 #include "snabel/parser.hpp"
 
 namespace snabel {
-  Expr::Expr(const str &txt, size_t i, size_t j):
+  Expr::Expr(const str &txt, size_t i):
     text(txt),
-    i(i), j(j)
+    i(i)
   { }
 
-  Tok::Tok(const str &txt, size_t i, size_t j):
+  Tok::Tok(const str &txt, size_t i):
     text(txt),
-    i(i), j(j)
+    i(i)
   { }
 
   std::vector<str> parse_lines(const str &in) {
@@ -47,7 +48,7 @@ namespace snabel {
 	break;
       case ';':
 	if (j > i && !quoted) {
-	  out.emplace_back(trim(in.substr(i, j-i)), i, j);
+	  out.emplace_back(trim(in.substr(i, j-i)), i);
 	  i = j+1;
 	  continue;
 	}
@@ -56,13 +57,36 @@ namespace snabel {
       }
 
       if (j == in.size()-1) {
-	out.emplace_back(trim(in.substr(i, j-i+1)), i, j);
+	out.emplace_back(trim(in.substr(i, j-i+1)), i);
       }
     }
 
     return out;
   }
 
+  size_t parse_parens(const str &in) {
+    bool quoted(false);
+    int depth(0);
+    
+    for (size_t i(0); i < in.size(); i++) {
+      auto &c(in[i]);
+      switch(c) {
+      case '"':
+	if (i == 0 || in[i-1] != '\\') { quoted = !quoted; }
+	break;
+      case '(':
+	depth++;
+	break;
+      case ')':
+	depth--;
+	if (!depth) { return i; }
+	break;
+      }
+    }
+
+    return str::npos;
+  }
+  
   std::vector<Tok> parse_expr(const Expr &in) {
     size_t i(0);
     bool quoted(false);
@@ -71,31 +95,43 @@ namespace snabel {
     for (size_t j(0); j < in.text.size(); j++) {
       auto c(in.text[j]);
 
-      switch(c) {
+      switch(c) {	
       case '"':
 	if (j == 0 || in.text[j-1] != '\\') { quoted = !quoted; }
 	break;
       case '\\':
+      case '(':
       case '\n':
       case ' ':
 	if (j > i && !quoted) {
-	  out.emplace_back(trim(in.text.substr(i, j-i)), in.i+i, in.j+j);
+	  out.emplace_back(trim(in.text.substr(i, j-i)), in.i+i);
 	  
-	  while (j < in.text.size()-2) {
+	  while (j < in.text.size()-2 && (c == '\\' || isspace(c))) {
 	    j++;
 	    c = in.text[j];
-	    if (c != '\\' && !isspace(c)) { break; }
 	  }
 	  
 	  i = j;
-	  continue;
 	}
 	
 	break;
       }
 
       if (j == in.text.size()-1) {
-	out.emplace_back(trim(in.text.substr(i)), in.i+i, in.j+j);
+	out.emplace_back(trim(in.text.substr(i)), in.i+i);
+      } else if (c == '(') {
+	size_t k(j);
+	str rest(in.text.substr(k));
+	k = parse_parens(rest);
+
+	if (k == str::npos) {
+	  ERROR(Snabel, "Unbalanced parenthesis");
+	  return out;
+	}
+
+	out.emplace_back(rest.substr(0, k+1), in.i+j);
+	j += k+1;
+	i = j;
       }
     }
 
