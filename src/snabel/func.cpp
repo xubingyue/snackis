@@ -23,7 +23,7 @@ namespace snabel {
     auto j = imp.args.rbegin();
     
     while (i != args.rend() && j != imp.args.rend()) {
-      auto seq(dynamic_cast<TypeSeq *>(*j));
+      auto seq(dynamic_cast<Seq *>(*j));
 
       if (!isa(*i, **j)) {
 	j++;

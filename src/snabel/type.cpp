@@ -17,7 +17,7 @@ namespace snabel {
     return &val.type == &typ;
   }
 
-  TypeSeq::TypeSeq(BasicType &elt):
+  Seq::Seq(BasicType &elt):
     BasicType(snackis::fmt("*%0", elt.name)),
     elem_type(elt)
   { }
