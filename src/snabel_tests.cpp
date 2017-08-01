@@ -41,7 +41,7 @@ namespace snabel {
     Ctx &ctx(get_ctx(exe.main));
     Func &f(add_func(ctx, "+"));
     add_imp(f, {&exe.i64_type.seq}, add);
-    OpSeq ops(compile(ctx, "let foo 35\nlet bar foo 7 +"));
+    OpSeq ops(compile(ctx, "let foo 35\nlet bar foo 14 -7 +"));
     run(ctx, ops);
     CHECK(get<int64_t>(get_env(ctx, "foo")) == 35, _);
     CHECK(get<int64_t>(get_env(ctx, "bar")) == 42, _);
