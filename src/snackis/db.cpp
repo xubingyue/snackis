@@ -12,10 +12,11 @@
 namespace snackis {  
   static void init_indexes(Db &db) {
     db.peers.indexes.insert(&db.peers_sort);
-    db.inbox.indexes.insert(&db.inbox_sort);
+    db.scripts.indexes.insert(&db.scripts_sort);
     db.feeds.indexes.insert(&db.feeds_sort);
     db.posts.indexes.insert(&db.posts_sort);
     db.posts.indexes.insert(&db.feed_posts);
+    db.inbox.indexes.insert(&db.inbox_sort);
     db.projects.indexes.insert(&db.projects_sort);
     db.tasks.indexes.insert(&db.tasks_sort);
   }
@@ -23,6 +24,19 @@ namespace snackis {
   static void init_events(Db &db, Ctx &ctx) {
     db.peers.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
 	db::set(curr_rec, peer_changed_at, now());
+      });
+
+    db.scripts.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
+	Script curr(ctx, curr_rec);
+	curr.changed_at = now();
+	auto fd(find_feed_id(ctx, curr.id));
+	
+	if (fd && fd->peer_ids != curr.peer_ids) {
+	  fd->peer_ids = curr.peer_ids;
+	  db::update(db.feeds, *fd);
+	}
+
+	db::copy(db.scripts, curr_rec, curr);
       });
 
     db.feeds.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {	
@@ -118,6 +132,13 @@ namespace snackis {
 
     peers_sort(ctx, "peers_sort", db::make_key(peer_name, peer_id), {}),
     
+    scripts(ctx, "scripts", script_key, script_cols),
+
+    scripts_sort(ctx, "scripts_sort", db::make_key(script_tags, script_id), {}),
+
+    scripts_share({&script_id, &script_created_at, &script_changed_at, &script_code,
+	  &script_peer_ids}),
+
     feeds(ctx, "feeds", feed_key, feed_cols),
 
     feeds_sort(ctx, "feeds_sort", db::make_key(feed_created_at, feed_id), {}),
@@ -139,11 +160,13 @@ namespace snackis {
     
     inbox(ctx, "inbox", db::make_key(msg_id),
 	  {&msg_type, &msg_fetched_at, &msg_peer_name, &msg_from, &msg_from_id,
-	      &msg_crypt_key, &msg_feed, &msg_post, &msg_project, &msg_task}),
+	      &msg_crypt_key, &msg_script, &msg_feed, &msg_post, &msg_project,
+	      &msg_task}),
     
     outbox(ctx, "outbox", db::make_key(msg_id),
 	   {&msg_type, &msg_from, &msg_from_id, &msg_to, &msg_to_id, &msg_peer_name,
-	       &msg_crypt_key, &msg_feed, &msg_post, &msg_project, &msg_task}),
+	       &msg_crypt_key, &msg_script, &msg_feed, &msg_post, &msg_project,
+	       &msg_task}),
 
     inbox_sort(ctx, "inbox_sort", db::make_key(msg_fetched_at, msg_id), {}),
 

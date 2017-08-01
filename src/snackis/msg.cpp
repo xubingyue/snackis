@@ -19,6 +19,7 @@ namespace snackis {
   db::Col<Msg, crypt::PubKey> msg_crypt_key("crypt_key",
 					    crypt::pub_key_type,
 					    &Msg::crypt_key);
+  db::Col<Msg, db::Rec<Script>> msg_script("script", script_type, &Msg::script);
   db::Col<Msg, db::Rec<Feed>> msg_feed("feed", feed_type, &Msg::feed);
   db::Col<Msg, db::Rec<Post>> msg_post("post", post_type, &Msg::post);
   db::Col<Msg, db::Rec<Project>> msg_project("project",
@@ -28,7 +29,7 @@ namespace snackis {
   
   const str
   Msg::INVITE("invite"), Msg::ACCEPT("accept"),
-    Msg::POST("post"), Msg::TASK("task");
+    Msg::SCRIPT("script"), Msg::POST("post"), Msg::TASK("task");
 
   Msg::Msg(Ctx &ctx, const str &type): IdRec(ctx), type(type) {
     Peer me(whoami(ctx));

@@ -7,6 +7,7 @@
 #include "snackis/peer.hpp"
 #include "snackis/post.hpp"
 #include "snackis/project.hpp"
+#include "snackis/script.hpp"
 #include "snackis/setting.hpp"
 #include "snackis/task.hpp"
 #include "snackis/core/str.hpp"
@@ -23,6 +24,10 @@ namespace snackis {
 	    
     db::Table<Peer, UId> peers;
     db::Table<Peer, str, UId> peers_sort;
+
+    db::Table<Script, UId> scripts;
+    db::Table<Script, std::set<str>, UId> scripts_sort;
+    db::Schema<Script> scripts_share;
 
     db::Table<Feed, UId> feeds;
     db::Table<Feed, Time, UId> feeds_sort;

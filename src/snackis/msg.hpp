@@ -3,6 +3,7 @@
 
 #include "snackis/id_rec.hpp"
 #include "snackis/project.hpp"
+#include "snackis/script.hpp"
 #include "snackis/task.hpp"
 #include "snackis/core/str.hpp"
 #include "snackis/core/time.hpp"
@@ -11,7 +12,7 @@
 
 namespace snackis {
   struct Msg: IdRec {
-    static const str INVITE, ACCEPT, POST, TASK;
+    static const str INVITE, ACCEPT, SCRIPT, POST, TASK;
     
     str type;
     Time fetched_at;
@@ -19,6 +20,7 @@ namespace snackis {
     UId from_id, to_id;
     str peer_name;
     crypt::PubKey crypt_key;
+    db::Rec<Script> script;
     db::Rec<Feed> feed;
     db::Rec<Post> post;
     db::Rec<Project> project;
@@ -35,6 +37,7 @@ namespace snackis {
   extern db::Col<Msg, Time>             msg_fetched_at;
   extern db::Col<Msg, str>              msg_peer_name;
   extern db::Col<Msg, crypt::PubKey>    msg_crypt_key;
+  extern db::Col<Msg, db::Rec<Script>>  msg_script;
   extern db::Col<Msg, db::Rec<Feed>>    msg_feed;
   extern db::Col<Msg, db::Rec<Post>>    msg_post;
   extern db::Col<Msg, db::Rec<Project>> msg_project;
