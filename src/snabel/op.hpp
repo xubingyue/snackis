@@ -15,16 +15,16 @@ namespace snabel {
   struct Coro;
   struct Ctx;
 
-  enum OpCode { OP_BIND, OP_CALL, OP_PUSH };
+  enum OpCode { OP_CALL, OP_LET, OP_PUSH };
 
   struct Op;
   
   using OpSeq = std::vector<Op>;
 
-  struct Bind {
+  struct Let {
     const str name;
     
-    Bind(const str &n):
+    Let(const str &n):
       name(n)
     { }
   };
@@ -52,7 +52,7 @@ namespace snabel {
     { }
   };
   
-  using OpData = std::variant<Bind, Call, Push>;
+  using OpData = std::variant<Let, Call, Push>;
 
   struct Op {
     OpCode code;
@@ -62,10 +62,10 @@ namespace snabel {
       code(cod), data(dat)
     { }
 
-    Op(const Bind &dat): Op(OP_BIND, OpData(dat))
+    Op(const Call &dat): Op(OP_CALL, dat)
     { }
 
-    Op(const Call &dat): Op(OP_CALL, dat)
+    Op(const Let &dat): Op(OP_LET, OpData(dat))
     { }
 
     Op(const Push &dat): Op(OP_PUSH, dat)

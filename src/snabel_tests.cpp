@@ -29,7 +29,7 @@ namespace snabel {
 	{Push(exe.i64_type, int64_t(35)),
 	    Push(exe.i64_type, int64_t(7)),
 	    Call(fi),
-	    Bind("foo")});
+	    Let("foo")});
     
     CHECK(get<int64_t>(get_env(ctx, "foo")) == 42, _);
     CHECK(try_test.errors.empty(), _);
@@ -43,7 +43,7 @@ namespace snabel {
     add_imp(f, {&exe.i64_type.seq}, add);
     //OpSeq ops(compile(ctx, "let foo 35 7 +"));
     //run(ctx, ops);
-    //CHECK(get<int64_t>(get_env(ctx, "foo")) == 42, _);
+    CHECK(get<int64_t>(get_env(ctx, "foo")) == 42, _);
     CHECK(try_test.errors.empty(), _);
   }
 
