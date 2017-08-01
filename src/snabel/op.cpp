@@ -1,25 +1,18 @@
 #include "snabel/box.hpp"
 #include "snabel/coro.hpp"
 #include "snabel/error.hpp"
+#include "snabel/exec.hpp"
 #include "snabel/func.hpp"
 #include "snabel/op.hpp"
 
 namespace snabel {
   void run(Ctx &ctx, const Op &op) {
+    Exec &exe(ctx.coro.exec);
+    
     switch (op.code) {
     case OP_CALL: {
       auto c(std::get<Call>(op.data));
-      
-      auto imp(match(c.fn, ctx.coro.stack));
-
-      if (!imp) {
-	ERROR(Snabel, fmt("Function not applicable:\n%0", 
-			  ctx.coro.stack));
-	break;
-      }
-      
-      Ctx tmp(ctx);
-      (*imp)(tmp);
+      call(c.fn, ctx);
       break;
     }
     case OP_ID: {
@@ -31,7 +24,12 @@ namespace snabel {
 	break;
       }
 
-      push(ctx.coro, *fnd);
+      if (&fnd->type == &exe.func_type) {
+	call(*get<Func *>(*fnd), ctx);
+      } else {
+	push(ctx.coro, *fnd);
+      }
+      
       break;
     }
     case OP_LET: {

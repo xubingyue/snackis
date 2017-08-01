@@ -1,4 +1,7 @@
 #include "snabel/box.hpp"
+#include "snabel/coro.hpp"
+#include "snabel/ctx.hpp"
+#include "snabel/error.hpp"
 #include "snabel/func.hpp"
 #include "snabel/type.hpp"
 
@@ -41,5 +44,18 @@ namespace snabel {
     }
 
     return nullopt;
+  }
+
+  void call(Func &fn, Ctx &ctx) {
+    auto imp(match(fn, ctx.coro.stack));
+    
+    if (!imp) {
+      ERROR(Snabel, fmt("Function not applicable:\n%0", 
+			ctx.coro.stack));
+      return;
+    }
+    
+    Ctx tmp(ctx);
+    (*imp)(tmp);
   }
 }

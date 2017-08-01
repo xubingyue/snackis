@@ -33,6 +33,7 @@ namespace snabel {
 
   FuncImp &add_imp(Func &fn, const FuncImp::Args &args, FuncImp::Imp imp);
   opt<FuncImp> match(const Func &fn, const std::vector<Box> &args);
+  void call(Func &fn, Ctx &ctx);
 }
 
 #endif
