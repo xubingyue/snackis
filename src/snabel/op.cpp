@@ -10,8 +10,8 @@ namespace snabel {
     Exec &exe(ctx.coro.exec);
     
     switch (op.code) {
-    case OP_BACKUP: {
-      backup(ctx.coro);
+    case OP_APPLY: {
+      apply(ctx.coro);
       break;
     }
     case OP_CALL: {
@@ -51,8 +51,8 @@ namespace snabel {
       ctx.coro.stack->clear();
       break;
     }
-    case OP_RESTORE: {
-      restore(ctx.coro);
+    case OP_STASH: {
+      stash(ctx.coro);
       break;
     }
     default:

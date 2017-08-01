@@ -28,8 +28,8 @@ namespace snabel {
   void push(Coro &cor, const Box &val);
   void push(Coro &cor, Type &typ, const Val &val);
   Box pop(Coro &cor);
-  void backup(Coro &cor);
-  void restore(Coro &cor);
+  void stash(Coro &cor);
+  void apply(Coro &cor);
 }
 
 #endif

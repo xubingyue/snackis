@@ -6,7 +6,7 @@ namespace snabel {
     exec(exe), pc(0), stack(nullptr)
   {
     ctx.emplace_back(*this);
-    backup(*this);
+    stash(*this);
   }
 
   Ctx &get_ctx(Coro &cor) {
@@ -28,11 +28,11 @@ namespace snabel {
     return res;
   }
 
-  void backup(Coro &cor) {
+  void stash(Coro &cor) {
     cor.stack = &cor.stacks.emplace_back(Coro::Stack());
   }
   
-  void restore(Coro &cor) {
+  void apply(Coro &cor) {
     auto prev(*cor.stack);
     cor.stacks.pop_back();
     CHECK(!cor.stacks.empty(), _);

@@ -14,7 +14,7 @@ namespace snabel {
     
     for (auto &op: ops) {
       switch (op.code) {
-      case OP_BACKUP:
+      case OP_APPLY:
       case OP_CALL:
 	break;
       case OP_ID: {
@@ -35,7 +35,7 @@ namespace snabel {
       case OP_LET:
       case OP_PUSH:
       case OP_RESET:
-      case OP_RESTORE:
+      case OP_STASH:
 	break;
       default:
 	ERROR(Snabel, fmt("Invalid op-code: %0", op.code));
@@ -51,9 +51,9 @@ namespace snabel {
     Exec &exe(ctx.coro.exec);
 
     if (tok.text[0] == '(') {
-      out.emplace_back(Backup());
+      out.emplace_back(Stash());
       compile(cpr, lnr, parse_expr(tok.text.substr(1, tok.text.size()-2)), out);
-      out.emplace_back(Restore());
+      out.emplace_back(Apply());
     } else if (isdigit(tok.text[0]) || 
 	(tok.text.size() > 1 && tok.text[0] == '-' && isdigit(tok.text[1]))) {
       out.emplace_back(Push(exe.i64_type, to_int64(tok.text)));
