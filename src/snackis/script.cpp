@@ -13,6 +13,7 @@ namespace snackis {
   db::Col<Script, Time> script_changed_at("changed_at",
 					  time_type,
 					  &Script::changed_at);
+  db::Col<Script, str> script_name("name", str_type, &Script::name);
   db::Col<Script, std::set<str>> script_tags("tags", str_set_type, &Script::tags);
   db::Col<Script, str> script_code("code", str_type, &Script::code);
   db::Col<Script, std::set<UId>> script_peer_ids("peer_ids",
@@ -22,7 +23,8 @@ namespace snackis {
   db::Key<Script, UId> script_key(script_id);
   
   db::Schema<Script> script_cols({&script_id, &script_owner_id, &script_created_at,
-	&script_changed_at, &script_tags, &script_code, &script_peer_ids});
+	&script_changed_at, &script_name, &script_tags, &script_code,
+	&script_peer_ids});
 
   db::RecType<Script> script_type(script_cols);
 
@@ -61,6 +63,31 @@ namespace snackis {
     auto found(find_script_id(ctx, id));
     CHECK(found, _);
     return *found;
+  }
+
+  Feed get_feed(const Script &sct) {
+    Ctx &ctx(sct.ctx);
+    db::Rec<Feed> rec;
+    db::set(rec, feed_id, sct.id);
+    Feed fd(ctx, rec);
+
+    if (!db::load(ctx.db.feeds, fd)) {
+      db::Trans trans(ctx);
+      TRY(try_create);
+      fd.name = fmt("Project %0", id_str(sct));
+      fd.tags = sct.tags;
+      fd.owner_id = sct.owner_id;
+      fd.active = true;
+      fd.visible = false;
+      fd.peer_ids = sct.peer_ids;
+      db::insert(ctx.db.feeds, fd);
+
+      if (try_create.errors.empty()) {
+	db::commit(trans, fmt("Created Script Feed %0", id_str(fd)));
+      }
+    }
+    
+    return fd;
   }
 
   void send(const Script &sct, const Peer &pr) {

@@ -7,6 +7,7 @@
 #include "snackis/gui/peer_view.hpp"
 #include "snackis/gui/post_view.hpp"
 #include "snackis/gui/project_view.hpp"
+#include "snackis/gui/script_view.hpp"
 #include "snackis/gui/task_view.hpp"
 
 namespace snackis {
@@ -59,6 +60,9 @@ namespace gui {
 	  push_view(pv);
 	} else if (msg.type == Msg::ACCEPT) {
 	  push_view(new PeerView(get_peer_id(ctx, msg.from_id)));
+	} else if (msg.type == Msg::SCRIPT) {
+	  Script sct(ctx, msg.script);
+	  push_view(new ScriptView(get_script_id(ctx, sct.id)));
 	} else if (msg.type == Msg::POST) {
 	  Post ps(ctx, msg.post);
 	  push_view(new PostView(get_post_id(ctx, ps.id)));

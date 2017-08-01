@@ -134,10 +134,12 @@ namespace snackis {
     
     scripts(ctx, "scripts", script_key, script_cols),
 
-    scripts_sort(ctx, "scripts_sort", db::make_key(script_tags, script_id), {}),
+    scripts_sort(ctx, "scripts_sort",
+		 db::make_key(script_name, script_created_at, script_id),
+		 {}),
 
-    scripts_share({&script_id, &script_created_at, &script_changed_at, &script_code,
-	  &script_peer_ids}),
+    scripts_share({&script_id, &script_created_at, &script_changed_at, &script_name,
+	  &script_code, &script_peer_ids}),
 
     feeds(ctx, "feeds", feed_key, feed_cols),
 

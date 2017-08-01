@@ -26,7 +26,7 @@ namespace snackis {
     db::Table<Peer, str, UId> peers_sort;
 
     db::Table<Script, UId> scripts;
-    db::Table<Script, std::set<str>, UId> scripts_sort;
+    db::Table<Script, str, Time, UId> scripts_sort;
     db::Schema<Script> scripts_share;
 
     db::Table<Feed, UId> feeds;

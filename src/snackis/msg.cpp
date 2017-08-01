@@ -124,6 +124,22 @@ namespace snackis {
       db::insert(ctx.db.inbox, msg);
     } else if (msg.type == Msg::ACCEPT) {
       if (invite_accepted(msg)) { db::insert(ctx.db.inbox, msg); }
+    } else if (msg.type == Msg::SCRIPT) {
+      Script sct(ctx, msg.script);
+      auto sct_fnd(find_script_id(ctx, sct.id));
+      
+      if (sct_fnd) {
+	if (sct_fnd->owner_id != msg.from_id) {
+	  log(ctx, "Skipping unauthorized script update: %0", id_str(sct));
+	  return;
+	}
+
+	copy(*sct_fnd, msg);
+	db::update(ctx.db.scripts, *sct_fnd);
+      } else {
+	db::insert(ctx.db.scripts, Script(msg));
+	db::insert(ctx.db.inbox, msg);
+      }
     } else if (msg.type == Msg::POST) {
       Feed fd(ctx, msg.feed);
       auto fd_fnd(find_feed_id(ctx, fd.id));
@@ -139,7 +155,7 @@ namespace snackis {
 	
 	if (ps_fnd) {
 	  if (ps_fnd->owner_id != msg.from_id) {
-	    log(ctx, "Skipping unauthorized update");
+	    log(ctx, "Skipping unauthorized post update: %0", id_str(ps));
 	    return;
 	  }
 
@@ -169,7 +185,7 @@ namespace snackis {
 
 	if (tsk_fnd) {
 	  if (tsk_fnd->owner_id != msg.from_id) {
-	    log(ctx, "Skipping unauthorized update");
+	    log(ctx, "Skipping unauthorized task update: %0", id_str(tsk));
 	    return;
 	  }
 
