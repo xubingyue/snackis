@@ -6,7 +6,7 @@
 #include "snabel/op.hpp"
 
 namespace snabel {
-  void run(Ctx &ctx, const Op &op) {
+  void run(const Op &op, Ctx &ctx) {
     Exec &exe(ctx.coro.exec);
     
     switch (op.code) {
@@ -57,12 +57,6 @@ namespace snabel {
     }
     default:
       ERROR(Snabel, fmt("Invalid op-code: %0", op.code));
-    }
-  }
-
-  void run(Ctx &ctx, const OpSeq &ops) {
-    for (auto &op: ops) {
-      run(ctx, op);
     }
   }
 }

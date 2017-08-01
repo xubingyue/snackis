@@ -21,6 +21,9 @@ namespace snabel {
     Exec(const Exec &) = delete;
     const Exec &operator =(const Exec &) = delete;
   };
+
+  void compile(Exec &exe, const str &in);
+  void run(Exec &exe);
 }
 
 #endif

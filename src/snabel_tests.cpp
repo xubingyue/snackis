@@ -19,14 +19,16 @@ namespace snabel {
   static void func_tests() {
     TRY(try_test);
     Exec exe;
-    Ctx &ctx(get_ctx(exe.main));
+    Coro &cor(exe.main);
+    
     Func f;
     add_imp(f, {&exe.i64_type}, test_func);
-    
-    run(ctx,
-	{Push(exe.i64_type, int64_t(7)), Call(f) });
 
-    CHECK(get<int64_t>(pop(ctx.coro)) == 35, _);
+    push(cor, Push(exe.i64_type, int64_t(7)));
+    push(cor, Call(f));
+    run(exe);
+
+    CHECK(get<int64_t>(pop(cor)) == 35, _);
   }
 
   static void parse_lines_tests() {
@@ -74,8 +76,8 @@ namespace snabel {
 
     Exec exe;
     Ctx &ctx(get_ctx(exe.main));
-    OpSeq ops(compile(ctx, "(1 1 +) (2 2 +) *"));
-    run(ctx, ops);
+    compile(exe, "(1 1 +) (2 2 +) *");
+    run(exe);
     CHECK(get<int64_t>(pop(ctx.coro)) == 8, _);    
   }
 
@@ -89,16 +91,27 @@ namespace snabel {
     TRY(try_test);    
     Exec exe;
     Ctx &ctx(get_ctx(exe.main));
-    OpSeq ops(compile(ctx, "let foo 35\nlet bar foo 14 -7 +"));
-    run(ctx, ops);
+    compile(exe, "let foo 35\nlet bar foo 14 -7 +");
+    run(exe);
     CHECK(get<int64_t>(get_env(ctx, "foo")) == 35, _);
     CHECK(get<int64_t>(get_env(ctx, "bar")) == 42, _);
   }
+
+  static void stack_tests() {
+    TRY(try_test);    
+    Exec exe;
+    Ctx &ctx(get_ctx(exe.main));
+    compile(exe, "42 reset! 2 stash! 3 4 + apply! *");
+    run(exe);
+    CHECK(get<int64_t>(pop(ctx.coro)) == 14, _);
+  }
+  
 
   void all_tests() {
     func_tests();
     parse_tests();
     parens_tests();
     compile_tests();
+    stack_tests();
   }
 }

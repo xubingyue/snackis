@@ -20,7 +20,11 @@ namespace snabel {
   void push(Coro &cor, Type &typ, const Val &val) {
     cor.stack->emplace_back(typ, val);
   }
-  
+
+  void push(Coro &cor, const Op &op) {
+    cor.ops.push_back(op);
+  }
+
   Box pop(Coro &cor) {
     CHECK(!cor.stack->empty(), _);
     auto res(cor.stack->back());

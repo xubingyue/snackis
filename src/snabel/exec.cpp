@@ -1,4 +1,5 @@
 #include <iostream>
+#include "snabel/compiler.hpp"
 #include "snabel/error.hpp"
 #include "snabel/exec.hpp"
 #include "snabel/type.hpp"
@@ -54,5 +55,22 @@ namespace snabel {
 
     Func &mul(add_func(ctx, "*"));
     add_imp(mul, {&i64_type.seq}, mul_i64);
+  }
+
+  void compile(Exec &exe, const str &in) {
+    Compiler cpr(exe.ctx);
+    compile(cpr, in);
+    std::copy(cpr.ops.begin(), cpr.ops.end(),
+	      std::back_inserter(exe.main.ops));
+  }
+
+  void run(Exec &exe) {
+    Coro &cor(exe.main);
+    Ctx &ctx(get_ctx(cor));
+    
+    while (cor.pc < cor.ops.size()) {
+      run(cor.ops[cor.pc], ctx);
+      cor.pc++;
+    }
   }
 }

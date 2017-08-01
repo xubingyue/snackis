@@ -27,6 +27,7 @@ namespace snabel {
   Ctx &get_ctx(Coro &cor);
   void push(Coro &cor, const Box &val);
   void push(Coro &cor, Type &typ, const Val &val);
+  void push(Coro &cor, const Op &op);
   Box pop(Coro &cor);
   void stash(Coro &cor);
   void apply(Coro &cor);

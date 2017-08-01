@@ -107,8 +107,7 @@ namespace snabel {
     { }
   };
   
-  void run(Ctx &ctx, const Op &op);
-  void run(Ctx &ctx, const OpSeq &ops);
+  void run(const Op &op, Ctx &ctx);
 }
 
 #endif

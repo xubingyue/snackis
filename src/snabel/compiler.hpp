@@ -24,7 +24,6 @@ namespace snabel {
 	       OpSeq &out);
   
   void compile(Compiler &cpr, const str &in);
-  OpSeq compile(Ctx &ctx, const str &in);
 }
 
 #endif
