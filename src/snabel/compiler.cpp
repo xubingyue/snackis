@@ -77,27 +77,6 @@ namespace snabel {
     }
   }
 
-  static OpSeq compile_ln(Compiler &cpr, size_t lnr, const str &in) {
-    auto toks(parse_expr(in));
-    OpSeq out;
-    
-    if (toks[0].text == "let") {
-      if (toks.size() < 3) {
-	ERROR(Snabel, fmt("Missing let value at line %0:\n%1", lnr, in));
-      } else {
-	for (auto i(std::next(toks.begin(), 2)); i != toks.end(); i++) {
-	  compile_tok(cpr, lnr, *i, out);
-	}
-	
-	out.emplace_back(Let(toks[1].text));
-      }
-    } else {
-      for (auto t: toks) { compile_tok(cpr, lnr, t, out); }	  
-    }
-
-    return out;
-  }
-
   static void trace(Ctx &ctx, OpSeq &ops) {
     Exec &exe(ctx.coro.exec);
     
@@ -129,21 +108,44 @@ namespace snabel {
       }
     }
   }
+
+  static void compile_expr(Compiler &cpr,
+			   size_t lnr,
+			   const std::vector<Tok> &exp,
+			   OpSeq &out) {
+    OpSeq ops;
+    
+    if (exp[0].text == "let") {
+      if (exp.size() < 3) {
+	ERROR(Snabel, fmt("Malformed let statement in line %0", lnr));
+      } else {
+	compile_expr(cpr, lnr,
+		     std::vector<Tok>(std::next(exp.begin(), 2),
+				      exp.end()),
+		     ops);
+
+	ops.emplace_back(Let(exp[1].text));
+      }
+    } else {
+      for (auto t: exp) { compile_tok(cpr, lnr, t, ops); }	  
+    }
+
+    trace(cpr.ctx, ops);
+    std::copy(ops.begin(), ops.end(),
+	      std::back_inserter(out));
+  }
+
   
   void compile(Compiler &cpr, const str &in) {
     size_t lnr(0);
     
     for (auto &ln: split_lines(in)) {
       if (!ln.empty()) {
-	auto ln_ops(compile_ln(cpr, lnr, ln));
-	
-	if (!cpr.ops.empty() && !ln_ops.empty()) {
+	if (!cpr.ops.empty()) {
 	  cpr.ops.emplace_back(Reset());
 	}
-
-	trace(cpr.ctx, ln_ops);
-	std::copy(ln_ops.begin(), ln_ops.end(),
-		  std::back_inserter(cpr.ops));
+	
+	compile_expr(cpr, lnr, parse_expr(ln), cpr.ops);
       }
       
       lnr++;
