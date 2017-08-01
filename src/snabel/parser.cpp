@@ -66,9 +66,9 @@ namespace snabel {
 
   size_t parse_parens(const str &in) {
     bool quoted(false);
-    int depth(0);
+    int depth(1);
     
-    for (size_t i(0); i < in.size(); i++) {
+    for (size_t i(1); i < in.size(); i++) {
       auto &c(in[i]);
       switch(c) {
       case '"':
