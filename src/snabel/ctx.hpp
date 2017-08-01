@@ -32,7 +32,7 @@ namespace snabel {
   void put_env(Ctx &ctx, const str &n, const Box &val);
 
   Type &add_type(Ctx &ctx, const str &n);
-  Func &add_func(Ctx &ctx, const str &n, const Func::Args &args, Func::Imp imp);
+  Func &add_func(Ctx &ctx, const str &n);
 }
 
 #endif

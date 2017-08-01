@@ -30,9 +30,9 @@ namespace snabel {
   };
     
   struct Call {
-    Func &fn;
+    FuncImp &fn;
 
-    Call(Func &fn):
+    Call(FuncImp &fn):
       fn(fn)
     { }
   };

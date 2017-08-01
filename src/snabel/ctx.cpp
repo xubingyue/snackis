@@ -42,8 +42,8 @@ namespace snabel {
     return res;
   }
 
-  Func &add_func(Ctx &ctx, const str &n, const Func::Args &args, Func::Imp imp) {
-    Func &res(ctx.funcs.emplace_back(args, imp));
+  Func &add_func(Ctx &ctx, const str &n) {
+    auto &res(ctx.funcs.emplace_back());
     put_env(ctx, n, Box(ctx.coro.exec, res));
     return res;
   }
