@@ -6,9 +6,9 @@ namespace snabel {
   void run(Ctx &ctx, const Op &op) {
     switch (op.code) {
     case OP_BIND: {
-      auto n(get<str>(pop(ctx.coro)));
+      auto b(std::get<Bind>(op.data));
       auto v(pop(ctx.coro));
-      put_env(ctx, n, v);
+      put_env(ctx, b.name, v);
       break;
     }
     case OP_CALL: {

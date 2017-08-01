@@ -28,8 +28,7 @@ namespace snabel {
 	{Push(exe.i64_type, int64_t(35)),
 	    Push(exe.i64_type, int64_t(7)),
 	    Call(f),
-	    Push(exe.str_type, str("foo")),
-	    Bind()});
+	    Bind("foo")});
     
     CHECK(get<int64_t>(get_env(ctx, "foo")) == 42, _);
     CHECK(try_test.errors.empty(), _);

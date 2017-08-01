@@ -21,8 +21,13 @@ namespace snabel {
   
   using OpSeq = std::vector<Op>;
 
-  struct Bind
-  { };
+  struct Bind {
+    const str name;
+    
+    Bind(const str &n):
+      name(n)
+    { }
+  };
     
   struct Call {
     Func &fn;
