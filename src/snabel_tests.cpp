@@ -40,7 +40,7 @@ namespace snabel {
     Exec exe;
     Ctx &ctx(get_ctx(exe.main));
     Func &f(add_func(ctx, "+"));
-    add_imp(f, {/*Seq(exe.i64_type)*/}, add);
+    add_imp(f, {&exe.i64_type.seq}, add);
     //OpSeq ops(compile(ctx, "let foo 35 7 +"));
     //run(ctx, ops);
     //CHECK(get<int64_t>(get_env(ctx, "foo")) == 42, _);

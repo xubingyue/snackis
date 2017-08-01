@@ -1,11 +1,29 @@
+#include "snabel/box.hpp"
 #include "snabel/type.hpp"
 
 namespace snabel {
-  Type::Type(const str &n):
+  BasicType::BasicType(const str &n):
     name(n)
   { }
 
-  bool operator <(const Type &x, const Type &y) {
+  BasicType::~BasicType()
+  { }
+
+  bool operator <(const BasicType &x, const BasicType &y) {
     return x.name < y.name;
   }
+
+  bool isa(const Box &val, const BasicType &typ) {
+    return &val.type == &typ;
+  }
+
+  TypeSeq::TypeSeq(BasicType &elt):
+    BasicType(snackis::fmt("*%0", elt.name)),
+    elem_type(elt)
+  { }
+
+  Type::Type(const str &n):
+    BasicType(n),
+    seq(*this)
+  { }
 }

@@ -9,17 +9,30 @@ namespace snabel {
 
   struct Box;
   
-  struct Type {
+  struct BasicType {
     const str name;
     
     func<str (const Box &)> fmt;
     
-    Type(const str &n);
-    Type(const Type &) = delete;
-    const Type &operator =(const Type &) = delete;
+    BasicType(const str &n);
+    BasicType(const BasicType &) = delete;
+    virtual ~BasicType();
+    const BasicType &operator =(const BasicType &) = delete;
   };
 
-  bool operator <(const Type &x, const Type &y);
+  struct TypeSeq: BasicType {
+    BasicType &elem_type;
+    TypeSeq(BasicType &elt);
+  };
+
+  struct Type: BasicType {
+    TypeSeq seq;
+
+    Type(const str &n);
+  };
+  
+  bool operator <(const BasicType &x, const BasicType &y);
+  bool isa(const Box &val, const BasicType &typ);
 }
 
 #endif
