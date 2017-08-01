@@ -1,4 +1,5 @@
 #include <iostream>
+#include "snabel/compiler.hpp"
 #include "snabel/exec.hpp"
 #include "snabel/op.hpp"
 #include "snabel/type.hpp"
@@ -21,34 +22,32 @@ namespace snabel {
     TRY(try_test);
     
     Exec exe;
-    Ctx &ctx(get_ctx(exe.main));
-    Func f;
-    auto &fi(add_imp(f, {}, add)); 
+    Ctx &ctx(get_ctx(exe.main));    
+    Func &f(add_func(ctx, "+"));
+    add_imp(f, {&exe.i64_type.seq}, add);
     
     run(ctx,
 	{Push(exe.i64_type, int64_t(35)),
 	    Push(exe.i64_type, int64_t(7)),
-	    Call(fi),
+	    Call(f),
 	    Let("foo")});
     
     CHECK(get<int64_t>(get_env(ctx, "foo")) == 42, _);
-    CHECK(try_test.errors.empty(), _);
   }
 
-  void parse_tests() {
+  void compile_tests() {
     TRY(try_test);    
     Exec exe;
     Ctx &ctx(get_ctx(exe.main));
     Func &f(add_func(ctx, "+"));
     add_imp(f, {&exe.i64_type.seq}, add);
-    //OpSeq ops(compile(ctx, "let foo 35 7 +"));
-    //run(ctx, ops);
-    CHECK(get<int64_t>(get_env(ctx, "foo")) == 42, _);
-    CHECK(try_test.errors.empty(), _);
+    OpSeq ops(compile(ctx, "let foo 35\nlet bar foo 7 +"));
+    run(ctx, ops);
+    CHECK(get<int64_t>(get_env(ctx, "bar")) == 42, _);
   }
 
   void all_tests() {
     func_tests();
-    parse_tests();
+    compile_tests();
   }
 }

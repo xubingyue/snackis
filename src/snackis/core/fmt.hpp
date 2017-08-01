@@ -1,7 +1,10 @@
 #ifndef SNACKIS_FMT_HPP
 #define SNACKIS_FMT_HPP
 
+#include <vector>
+
 #include "snackis/core/str.hpp"
+#include "snackis/core/stream.hpp"
 #include "snackis/core/tuple.hpp"
 
 namespace snackis {  
@@ -13,6 +16,20 @@ namespace snackis {
   
   template <>
   str fmt_arg(const str &arg);
+
+  template <typename T>
+  str fmt_arg(const std::vector<T> &arg) {
+    OutStream buf;
+    buf << '[';
+
+    for (size_t i(0); i < arg.size(); i++) {
+      if (i > 0) { buf << ' '; }
+      buf << fmt_arg(arg[i]);
+    };
+    
+    buf << ']';
+    return buf.str();
+  }
 
   template <typename...Args>
   str fmt(const str &in, const Args &..._args) {

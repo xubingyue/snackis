@@ -12,7 +12,7 @@ namespace snabel {
   }
 
   FuncImp &add_imp(Func &fn, const FuncImp::Args &args, FuncImp::Imp imp) {
-    return fn.imps.emplace_back(fn, args, imp);
+    return fn.imps.emplace_front(fn, args, imp);
   }
 
   static bool match(const FuncImp imp, const std::vector<Box> &args) {

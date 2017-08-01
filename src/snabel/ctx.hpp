@@ -28,6 +28,7 @@ namespace snabel {
   };
 
   opt<Box> find_env(Ctx &ctx, const str &n);
+
   Box get_env(Ctx &ctx, const str &n);
   void put_env(Ctx &ctx, const str &n, const Box &val);
 

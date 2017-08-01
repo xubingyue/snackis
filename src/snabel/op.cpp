@@ -1,5 +1,7 @@
 #include "snabel/box.hpp"
 #include "snabel/coro.hpp"
+#include "snabel/error.hpp"
+#include "snabel/func.hpp"
 #include "snabel/op.hpp"
 
 namespace snabel {
@@ -7,8 +9,29 @@ namespace snabel {
     switch (op.code) {
     case OP_CALL: {
       auto c(std::get<Call>(op.data));
+      
+      auto imp(match(c.fn, ctx.coro.stack));
+
+      if (!imp) {
+	ERROR(Snabel, fmt("Function not applicable:\n%0", 
+			  ctx.coro.stack));
+	break;
+      }
+      
       Ctx tmp(ctx);
-      c.fn(tmp);
+      (*imp)(tmp);
+      break;
+    }
+    case OP_ID: {
+      auto i(std::get<Id>(op.data));
+      auto fnd(find_env(ctx, i.text));
+
+      if (!fnd) {
+	ERROR(Snabel, fmt("Unknown identifier:\n%0", i.text));
+	break;
+      }
+
+      push(ctx.coro, *fnd);
       break;
     }
     case OP_LET: {
@@ -19,11 +42,15 @@ namespace snabel {
     }
     case OP_PUSH: {
       auto p(std::get<Push>(op.data));
-      push(ctx.coro, p.type, p.val);
+      push(ctx.coro, *p.type, p.val);
+      break;
+    }
+    case OP_RESET: {
+      ctx.coro.stack.clear();
       break;
     }
     default:
-      abort();
+      ERROR(Snabel, fmt("Invalid op-code: %0", op.code));
     }
   }
 

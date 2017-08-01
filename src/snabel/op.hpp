@@ -15,11 +15,27 @@ namespace snabel {
   struct Coro;
   struct Ctx;
 
-  enum OpCode { OP_CALL, OP_LET, OP_PUSH };
+  enum OpCode { OP_CALL, OP_ID, OP_LET, OP_PUSH, OP_RESET };
 
   struct Op;
   
   using OpSeq = std::vector<Op>;
+
+  struct Call {
+    Func fn;
+
+    Call(Func &fn):
+      fn(fn)
+    { }
+  };
+
+  struct Id {
+    str text;
+
+    Id(const str &txt):
+      text(txt)
+    { }
+  };
 
   struct Let {
     const str name;
@@ -29,30 +45,31 @@ namespace snabel {
     { }
   };
     
-  struct Call {
-    FuncImp &fn;
-
-    Call(FuncImp &fn):
-      fn(fn)
-    { }
-  };
-
   using Val = std::variant<int64_t, str, Func *, Type *>;
   
   struct Push {
-    Type &type;
+    Type *type;
     Val val;
     
     Push(Type &t, const Val &v):
-      type(t), val(v)
+      type(&t), val(v)
     { }
 
-    Push(const Push &p):
-      type(p.type), val(p.val)
+    Push(const Push &src):
+      type(src.type), val(src.val)
     { }
+
+    const Push &operator=(const Push &src) {
+      type = src.type;
+      val = src.val;
+      return *this;
+    }
   };
-  
-  using OpData = std::variant<Let, Call, Push>;
+
+  struct Reset {
+  };
+
+  using OpData = std::variant<Call, Id, Let, Push, Reset>;
 
   struct Op {
     OpCode code;
@@ -65,10 +82,16 @@ namespace snabel {
     Op(const Call &dat): Op(OP_CALL, dat)
     { }
 
+    Op(const Id &dat): Op(OP_ID, OpData(dat))
+    { }
+
     Op(const Let &dat): Op(OP_LET, OpData(dat))
     { }
 
     Op(const Push &dat): Op(OP_PUSH, dat)
+    { }
+
+    Op(const Reset &dat): Op(OP_RESET, dat)
     { }
   };
   

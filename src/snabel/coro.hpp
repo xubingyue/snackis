@@ -2,6 +2,7 @@
 #define SNABEL_CORO_HPP
 
 #include <list>
+#include <vector>
 
 #include "snabel/ctx.hpp"
 #include "snabel/op.hpp"
@@ -14,7 +15,7 @@ namespace snabel {
     OpSeq ops;
     int64_t pc;
     std::list<Ctx> ctx;
-    std::list<Box> stack;
+    std::vector<Box> stack;
     
     Coro(Exec &exe);
     Coro(const Coro &) = delete;
