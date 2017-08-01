@@ -26,14 +26,32 @@ namespace snackis {
 	db::set(curr_rec, peer_changed_at, now());
       });
 
+    db.scripts.on_insert.push_back([&](auto &rec) {
+	Script sct(ctx, rec);
+	if (sct.owner_id == whoamid(ctx)) { send(sct); }
+	db::copy(db.scripts, rec, sct);
+      });
+
     db.scripts.on_update.push_back([&](auto &prev_rec, auto &curr_rec) {
-	Script curr(ctx, curr_rec);
+	Script curr(ctx, curr_rec), prev(ctx, prev_rec);
 	curr.changed_at = now();
 	auto fd(find_feed_id(ctx, curr.id));
 	
 	if (fd && fd->peer_ids != curr.peer_ids) {
 	  fd->peer_ids = curr.peer_ids;
 	  db::update(db.feeds, *fd);
+	}
+
+	if (curr.owner_id == whoamid(ctx)) {
+	  if (db::compare(db.scripts_share, curr, prev) != 0) {
+	    send(curr);
+	  } else {
+	    std::set<UId> added;
+	    std::set_difference(curr.peer_ids.begin(), curr.peer_ids.end(),
+				prev.peer_ids.begin(), prev.peer_ids.end(),
+				std::inserter(added, added.end()));
+	    for (auto &id: added) { send(curr, get_peer_id(ctx, id)); }
+	  }
 	}
 
 	db::copy(db.scripts, curr_rec, curr);
