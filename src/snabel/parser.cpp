@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "snabel/parser.hpp"
 
 namespace snabel {
@@ -12,15 +14,20 @@ namespace snabel {
   { }
 
   std::vector<str> parse_lines(const str &in) {
-    size_t i(0), j;
+    size_t i(0), j(0);
     std::vector<str> out;
     
-    while ((j=in.find('\n', i)) != str::npos) {
-      if (j > i && (i == 0 || in[i-1] != '\\')) {
+    while ((j=in.find('\n', j)) != str::npos) {
+      if (j > 0 && in[j-1] == '\\') {
+	j += 2;
+      } else if (j > i) {
 	out.push_back(trim(in.substr(i, j-i)));
+	j++;
+	i = j;
+      } else {
+	j++;
+	i = j;
       }
-
-      i = j+1;
     }
 
     if (i < in.size()) { out.push_back(trim(in.substr(i))); }
@@ -62,15 +69,25 @@ namespace snabel {
     std::vector<Tok> out;
     
     for (size_t j(0); j < in.text.size(); j++) {
-      auto &c(in.text[j]);
+      auto c(in.text[j]);
+
       switch(c) {
       case '"':
 	if (j == 0 || in.text[j-1] != '\\') { quoted = !quoted; }
 	break;
+      case '\\':
+      case '\n':
       case ' ':
 	if (j > i && !quoted) {
 	  out.emplace_back(trim(in.text.substr(i, j-i)), in.i+i, in.j+j);
-	  i = j+1;
+	  
+	  while (j < in.text.size()-2) {
+	    j++;
+	    c = in.text[j];
+	    if (c != '\\' && !isspace(c)) { break; }
+	  }
+	  
+	  i = j;
 	  continue;
 	}
 	
@@ -78,7 +95,7 @@ namespace snabel {
       }
 
       if (j == in.text.size()-1) {
-	out.emplace_back(trim(in.text.substr(i, j-i+1)), in.i+i, in.j+j);
+	out.emplace_back(trim(in.text.substr(i)), in.i+i, in.j+j);
       }
     }
 

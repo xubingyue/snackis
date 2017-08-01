@@ -15,7 +15,7 @@ namespace snabel {
 			  OpSeq &out) {
     Ctx &ctx(cpr.ctx);
     Exec &exe(ctx.coro.exec);
-    
+
     if (isdigit(tok.text[0]) || 
 	(tok.text.size() > 1 && tok.text[0] == '-' && isdigit(tok.text[1]))) {
       out.emplace_back(Push(exe.i64_type, to_int64(tok.text)));

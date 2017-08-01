@@ -19,7 +19,7 @@ namespace snabel {
     push(ctx.coro, exe.i64_type, res);
   }
   
-  void func_tests() {
+  static void func_tests() {
     TRY(try_test);
     
     Exec exe;
@@ -36,7 +36,33 @@ namespace snabel {
     CHECK(get<int64_t>(get_env(ctx, "foo")) == 42, _);
   }
 
-  void parse_tests() {
+  static void parse_lines_tests() {
+    TRY(try_test);    
+    auto ls(parse_lines("foo\nbar\nbaz"));
+    CHECK(ls.size() == 3, _);
+    CHECK(ls[0] == "foo", _);
+    CHECK(ls[1] == "bar", _);
+    CHECK(ls[2] == "baz", _);
+  }
+
+  static void parse_backslash_tests() {
+    TRY(try_test);    
+    auto ls(parse_lines("foo\\\nbar\nbaz"));
+    CHECK(ls.size() == 2, _);
+    CHECK(ls[0] == "foo\\\nbar", _);
+    CHECK(ls[1] == "baz", _);
+    
+    auto es(parse_line(ls[0]));
+    CHECK(es.size() == 1, _);
+    CHECK(es[0].text == "foo\\\nbar", _);
+    
+    auto ts(parse_expr(es[0]));
+    CHECK(ts.size() == 2, _);
+    CHECK(ts[0].text == "foo", _);
+    CHECK(ts[1].text == "bar", _);
+  }
+
+  static void parse_semicolon_tests() {
     TRY(try_test);    
     auto es(parse_line("foo;bar"));
     CHECK(es.size() == 2, _);
@@ -44,7 +70,13 @@ namespace snabel {
     CHECK(es[1].text == "bar", _);
   }
 
-  void compile_tests() {
+  static void parse_tests() {
+    parse_lines_tests();
+    parse_backslash_tests();
+    parse_semicolon_tests();
+  }
+
+  static void compile_tests() {
     TRY(try_test);    
     Exec exe;
     Ctx &ctx(get_ctx(exe.main));
