@@ -16,6 +16,7 @@
 #include "snackis/gui/project_search.hpp"
 #include "snackis/gui/project_view.hpp"
 #include "snackis/gui/reader.hpp"
+#include "snackis/gui/script_search.hpp"
 #include "snackis/gui/script_view.hpp"
 #include "snackis/gui/task_search.hpp"
 #include "snackis/gui/task_view.hpp"
@@ -156,7 +157,9 @@ namespace gui {
 	return true;
       });
 
+    init_id_search<ScriptSearch, ScriptView, Script>(rdr, "script");
     init_new<ScriptView, Script>(rdr, "script");
+    init_search<ScriptSearch>(rdr, "script");
 
     init_id_search<FeedSearch, FeedView, Feed>(rdr, "feed");
     init_new<FeedView, Feed>(rdr, "feed");

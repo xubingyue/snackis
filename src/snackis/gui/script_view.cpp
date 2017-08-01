@@ -71,12 +71,12 @@ namespace gui {
     gtk_widget_set_margin_top(l, 5);    
     gtk_container_add(GTK_CONTAINER(frm), l);
     if (v.rec.owner_id != me) { read_only(GTK_TEXT_VIEW(v.code_fld)); }
+    gtk_text_view_set_monospace(GTK_TEXT_VIEW(v.code_fld), true);
     gtk_container_add(GTK_CONTAINER(frm), gtk_widget_get_parent(v.code_fld));
     set_str(GTK_TEXT_VIEW(v.code_fld), v.rec.code);
 
     return frm;
   }
-  
   
   ScriptView::ScriptView(const Script &rec):
     SharedView<Script>("Script", rec),
