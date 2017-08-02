@@ -46,9 +46,9 @@ namespace snabel {
     }
   }
 
-  Ctx &begin_scope(Coro &cor) {
+  Ctx &begin_scope(Coro &cor) {    
     stash_stack(cor);
-    
+
     if (cor.ctxs.empty()) {
       return cor.ctxs.emplace_back(cor);
     }

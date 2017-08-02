@@ -1,6 +1,7 @@
 #include "snabel/coro.hpp"
 #include "snabel/ctx.hpp"
 #include "snabel/error.hpp"
+#include "snabel/exec.hpp"
 #include "snackis/core/error.hpp"
 
 namespace snabel {
@@ -38,13 +39,13 @@ namespace snabel {
 
   Type &add_type(Ctx &ctx, const str &n) {
     Type &res(ctx.types.emplace_back(n)); 
-    put_env(ctx, n, Box(ctx.coro.exec, res));
+    put_env(ctx, n, Box(ctx.coro.exec.meta_type, &res));
     return res;
   }
 
   Func &add_func(Ctx &ctx, const str &n) {
     auto &res(ctx.funcs.emplace_back(n));
-    put_env(ctx, n, Box(ctx.coro.exec, res));
+    put_env(ctx, n, Box(ctx.coro.exec.func_type, &res));
     return res;
   }
 }

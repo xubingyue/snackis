@@ -4,35 +4,26 @@
 #include <variant>
 
 #include "snabel/op.hpp"
-#include "snabel/type.hpp"
-
 #include "snackis/core/fmt.hpp"
 
 namespace snabel {  
   using namespace snackis;
 
+  struct Func;
   struct Exec;
+  struct Type;
   
+  using Val = std::variant<int64_t, str, Func *, Type *, Op, OpSeq>;
+
   struct Box {
-    using Val = std::variant<snabel::Val, Op, OpSeq>;
     Type &type;
     Val val;
 
-    Box(Type &t, const snabel::Val &v);
-    Box(Exec &exe, const Op &v);
-    Box(Exec &exe, const OpSeq &v);
-    Box(Exec &exe, Func &v);
-    Box(Exec &exe, Type &v);
+    Box(Type &t, const Val &v);
   };
 
   template <typename T>
-  T get(const Box &b) { return std::get<T>(std::get<snabel::Val>(b.val)); }
-
-  template <>
-  Op get(const Box &b);
-
-  template <>
-  OpSeq get(const Box &b);
+  T get(const Box &b) { return std::get<T>(b.val); }
 }
 
 namespace snackis {

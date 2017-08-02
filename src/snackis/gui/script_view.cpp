@@ -64,8 +64,8 @@ namespace gui {
       
       gtk_list_store_set(v->bcode_store, &iter,
 			 BCODE_PTR, &op,
-			 BCODE_NAME, name(op).c_str(),
-			 BCODE_INFO, info(op).c_str(),
+			 BCODE_NAME, op.name.c_str(),
+			 BCODE_INFO, op.info().c_str(),
 			 -1);
     }
     
@@ -81,7 +81,9 @@ namespace gui {
   static void on_run(gpointer *_, ScriptView *v) {
     TRY(try_run);
     snabel::rewind(v->exec);
+    snabel::begin_scope(v->exec.main);
     snabel::run(v->exec);
+    snabel::end_scope(v->exec.main);
     log(v->ctx, "Result: %0", pop(v->exec.main));
   }
   

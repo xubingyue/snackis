@@ -6,200 +6,106 @@
 #include "snabel/op.hpp"
 
 namespace snabel {
-  Apply::Apply()
-  { }
-
-  Begin::Begin()
-  { }
-
-  Call::Call(Func &fn):
-    fn(fn)
-  { }
-
-  End::End()
-  { }
-
-  Id::Id(const str &txt):
-    text(txt)
-  { }
-
-  Let::Let(const str &n):
-    name(n)
-  { }
-    
-  Push::Push(Type &t, const Val &v):
-    type(&t), val(v)
-  { }
-  
-  Push::Push(const Push &src):
-    type(src.type), val(src.val)
-  { }
-  
-  const Push &Push::operator=(const Push &src) {
-    type = src.type;
-    val = src.val;
-    return *this;
+  Op Op::make_apply() {
+    Op op(OP_APPLY, "Apply");
+    op.run = [](auto &ctx) { apply_stack(ctx.coro); };
+    return op;
   }
 
-  Reset::Reset()
-  { }
-
-  Stash::Stash()
-  { }
-
-  Op::Op(OpCode cod, const OpData &dat):
-    code(cod), data(dat)
-  { }
-
-  Op::Op(const Apply &dat):
-    Op(OP_APPLY, dat)
-  { }
-  
-  Op::Op(const Begin &dat):
-    Op(OP_BEGIN, dat)
-  { }
-  
-  Op::Op(const Call &dat):
-    Op(OP_CALL, dat)
-  { }
-  
-  Op::Op(const End &dat):
-    Op(OP_END, dat)
-  { }
-  
-  Op::Op(const Id &dat):
-    Op(OP_ID, dat)
-  { }
-  
-  Op::Op(const Let &dat):
-    Op(OP_LET, dat)
-  { }
-  
-  Op::Op(const Push &dat):
-    Op(OP_PUSH, dat)
-  { }
-
-  Op::Op(const Reset &dat):
-    Op(OP_RESET, dat)
-  { }
-  
-  Op::Op(const Stash &dat):
-    Op(OP_STASH, dat)
-  { }
-
-  str name(const Op &op) {
-    switch (op.code) {
-    case OP_APPLY:
-      return "Apply";
-    case OP_BEGIN:
-      return "Begin";
-    case OP_CALL:
-      return "Call";
-    case OP_END:
-      return "End";
-    case OP_ID:
-      return "Id";
-    case OP_LET:
-      return "Let";
-    case OP_PUSH:
-      return "Push";
-    case OP_RESET:
-      return "Reset";
-    case OP_STASH:
-      return "Stash";
-    default:
-      return "?";
-    };
+  Op Op::make_begin() {
+    Op op(OP_BEGIN, "Begin");
+    op.run = [](auto &ctx) { begin_scope(ctx.coro); };
+    return op;
   }
   
-  str info(const Op &op) {
-    switch (op.code) {
-    case OP_CALL: {
-      auto c(std::get<Call>(op.data));
-      return c.fn.name;
-      }
-    case OP_ID: {
-      auto i(std::get<Id>(op.data));
-      return i.text;
-      }
-    case OP_LET: {
-      auto l(std::get<Let>(op.data));
-      return l.name;
-      }
-    case OP_PUSH: {
-      auto p(std::get<Push>(op.data));
-      return fmt_arg(Box(*p.type, p.val));
-      }
-    case OP_APPLY:
-    case OP_BEGIN:
-    case OP_END:
-    case OP_RESET:
-    case OP_STASH:
-      return "";
-    default:
-      return "?";
-    }
+  Op Op::make_call(Func &fn) {
+    Op op(OP_CALL, "Call");
+    op.info = [&fn]() { return fn.name; };
+    op.run = [&fn](auto &ctx) { call(fn, ctx); };
+    return op;
+  }
+
+  Op Op::make_end() {
+    Op op(OP_END, "End");
+    op.run = [](auto &ctx) { end_scope(ctx.coro); };
+    return op;
   }
   
-  void run(const Op &op, Ctx &ctx) {
-    Exec &exe(ctx.coro.exec);
-    
-    switch (op.code) {
-    case OP_APPLY: {
-      apply_stack(ctx.coro);
-      break;
-    }
-    case OP_BEGIN: {
-      begin_scope(ctx.coro);
-      break;
-    }
-    case OP_CALL: {
-      auto c(std::get<Call>(op.data));
-      call(c.fn, ctx);
-      break;
-    }
-    case OP_END: {
-      end_scope(ctx.coro);
-      break;
-    }
-    case OP_ID: {
-      auto i(std::get<Id>(op.data));
-      auto fnd(find_env(ctx, i.text));
+  Op Op::make_id(const str &txt) {
+    Op op(OP_ID, "Id");
+    op.info = [txt]() { return txt; };
+    op.run = [txt](auto &ctx) {
+      auto fnd(find_env(ctx, txt));
 
       if (!fnd) {
-	ERROR(Snabel, fmt("Unknown identifier:\n%0", i.text));
-	break;
+	ERROR(Snabel, fmt("Unknown identifier:\n%0", txt));
+	return;
       }
 
-      if (&fnd->type == &exe.func_type) {
+      if (&fnd->type == &ctx.coro.exec.func_type) {
 	call(*get<Func *>(*fnd), ctx);
       } else {
 	push(ctx.coro, *fnd);
       }
-      
-      break;
-    }
-    case OP_LET: {
-      auto b(std::get<Let>(op.data));
-      auto v(pop(ctx.coro));
-      put_env(ctx, b.name, v);
-      break;
-    }
-    case OP_PUSH: {
-      auto p(std::get<Push>(op.data));
-      push(ctx.coro, *p.type, p.val);
-      break;
-    }
-    case OP_RESET: {
-      ctx.coro.stack->clear();
-      break;
-    }
-    case OP_STASH: {
-      stash_stack(ctx.coro);
-      break;
-    }
-    default:
-      ERROR(Snabel, fmt("Invalid op-code: %0", op.code));
-    }
+    };    
+
+    op.trace = [txt](auto &op, auto &ctx, auto &out) {
+	auto fnd(find_env(ctx, txt));
+
+	if (fnd) {
+	  if (&fnd->type == &ctx.coro.exec.func_type) {
+	    out.emplace_back(Op::make_call(*get<Func *>(*fnd)));
+	  } else {
+	    out.emplace_back(Op::make_push(*fnd));
+	  }
+	} else {
+	  out.emplace_back(op);
+	}
+    };
+
+    return op;
   }
+
+  Op Op::make_let(const str &id) {
+    Op op(OP_LET, "Let");
+    op.info = [id]() { return id; };
+    op.run = [id](auto &ctx) {
+      auto v(pop(ctx.coro));
+      put_env(ctx, id, v);
+    };
+    return op;
+  }
+  
+  Op Op::make_push(const Box &it) {
+    Op op(OP_PUSH, "Push");
+    op.info = [it]() { return fmt_arg(it); };
+    op.run = [it](auto &ctx) { push(ctx.coro, it); };
+    return op;
+  }
+
+  Op Op::make_reset() {
+    Op op(OP_RESET, "Reset");
+    op.run = [](auto &ctx) { ctx.coro.stack->clear(); };
+    return op;
+  }
+  
+  Op Op::make_stash() {
+    Op op(OP_STASH, "Stash");
+    op.run = [](auto &ctx) { stash_stack(ctx.coro); };
+    return op;
+  }
+
+  static str def_info() {
+    return "";
+  }
+
+  static void def_run(Ctx &ctx) {
+    CHECK(false, _);
+  }
+
+  Op::Op(OpCode cod, const str &nam):
+    code(cod), name(nam),
+    info(def_info), run(def_run),
+    trace([](auto &op, auto &ctx, auto &out) { out.emplace_back(op); })
+  { }
 }

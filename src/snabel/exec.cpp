@@ -66,14 +66,11 @@ namespace snabel {
 
   void run(Exec &exe) {
     Coro &cor(exe.main);
-    begin_scope(cor);
     
     while (cor.pc < cor.ops.size()) {
-      run(cor.ops[cor.pc], get_ctx(cor));
+      cor.ops[cor.pc].run(get_ctx(cor));
       cor.pc++;
     }
-
-    end_scope(cor);
   }
 
   void reset(Exec &exe) {
