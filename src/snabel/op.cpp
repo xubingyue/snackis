@@ -54,12 +54,14 @@ namespace snabel {
 
 	if (fnd) {
 	  if (&fnd->type == &ctx.coro.exec.func_type) {
-	    out.emplace_back(Op::make_call(*get<Func *>(*fnd)));
+	    Op op(Op::make_call(*get<Func *>(*fnd)));
+	    op.trace(op, ctx, out);
 	  } else {
-	    out.emplace_back(Op::make_push(*fnd));
+	    Op op(Op::make_push(*fnd));
+	    op.trace(op, ctx, out);
 	  }
 	} else {
-	  out.emplace_back(op);
+	  out.push_back(op);
 	}
     };
 
