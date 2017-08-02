@@ -51,18 +51,15 @@ namespace snabel {
 
     op.trace = [txt](auto &op, auto &ctx, auto &out) {
 	auto fnd(find_env(ctx, txt));
-
-	if (fnd) {
-	  if (&fnd->type == &ctx.coro.exec.func_type) {
-	    Op op(Op::make_call(*get<Func *>(*fnd)));
-	    op.trace(op, ctx, out);
-	  } else {
-	    Op op(Op::make_push(*fnd));
-	    op.trace(op, ctx, out);
-	  }
+	if (!fnd) { return false; }	
+	
+	if (&fnd->type == &ctx.coro.exec.func_type) {
+	  snabel::trace(Op::make_call(*get<Func *>(*fnd)), ctx, out);
 	} else {
-	  out.push_back(op);
+	  snabel::trace(Op::make_push(*fnd), ctx, out);
 	}
+	
+	return true;
     };
 
     return op;
@@ -105,9 +102,18 @@ namespace snabel {
     CHECK(false, _);
   }
 
+  static bool def_trace(const Op &op, Ctx &ctx, OpSeq &out) {
+    return false;
+  }
+
   Op::Op(OpCode cod, const str &nam):
     code(cod), name(nam),
-    info(def_info), run(def_run),
-    trace([](auto &op, auto &ctx, auto &out) { out.emplace_back(op); })
+    info(def_info), run(def_run), trace(def_trace)
   { }
+
+  bool trace(const Op &op, Ctx &ctx, OpSeq &out) {
+    if (op.trace(op, ctx, out)) { return true; }
+    out.push_back(op);
+    return false;
+  }
 }

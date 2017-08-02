@@ -25,7 +25,7 @@ namespace snabel {
     str name;
     func<str ()> info;
     func<void (Ctx &)> run;
-    func<void (const Op &, Ctx &, OpSeq &)> trace;
+    func<bool (const Op &, Ctx &, OpSeq &)> trace;
     
     static Op make_apply();
     static Op make_begin();
@@ -39,6 +39,8 @@ namespace snabel {
 
     Op(OpCode cod, const str &nam);
   };
+
+  bool trace(const Op &op, Ctx &ctx, OpSeq &out);
 }
 
 #endif

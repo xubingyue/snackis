@@ -8,9 +8,22 @@ namespace snabel {
     ctx(ctx)
   { }
 
-  static OpSeq trace(Ctx &ctx, const OpSeq &in) {
+  static OpSeq trace(Ctx &ctx, OpSeq in) {
     OpSeq out;
-    for (auto &op: in) { op.trace(op, ctx, out); }
+
+    while (true) {
+      bool done(true);
+      
+      for (auto &op: in) {
+	if (trace(op, ctx, out)) { done = false; }
+      }
+
+      if (done) { break; }
+      
+      in.clear();
+      out.swap(in);
+    }
+    
     return out;
   }
 

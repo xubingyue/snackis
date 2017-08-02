@@ -38,13 +38,13 @@ namespace snabel {
   }
 
   Type &add_type(Ctx &ctx, const str &n) {
-    Type &res(ctx.types.emplace_back(n)); 
+    Type &res(ctx.types.emplace_front(n)); 
     put_env(ctx, n, Box(ctx.coro.exec.meta_type, &res));
     return res;
   }
 
   Func &add_func(Ctx &ctx, const str &n) {
-    auto &res(ctx.funcs.emplace_back(n));
+    auto &res(ctx.funcs.emplace_front(n));
     put_env(ctx, n, Box(ctx.coro.exec.func_type, &res));
     return res;
   }
