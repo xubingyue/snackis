@@ -139,27 +139,31 @@ namespace gui {
 	gtk_list_store_set(store, &iter, COL_INFO, "Invite", -1);
       } else if (msg.type == Msg::ACCEPT) {
 	gtk_list_store_set(store, &iter, COL_INFO, "Invite accepted", -1);
+      } else if (msg.type == Msg::SCRIPT) {
+	Script sct(ctx, msg.script);
+	gtk_list_store_set(store, &iter,
+			   COL_INFO, fmt("New script:\n%0", sct.name).c_str(),
+			   -1);
       } else if (msg.type == Msg::POST) {
 	Post ps(ctx, msg.post);
 	Feed fd(get_feed_id(ctx, ps.feed_id));
 	
 	gtk_list_store_set(store, &iter,
-			   COL_INFO,
-			   fmt("New post in feed '%0':\n%1",
-			       fd.name, ps.body).c_str(),
+			   COL_INFO, fmt("New post in feed '%0':\n%1",
+					 fd.name, ps.body).c_str(),
 			   -1);
       } else if (msg.type == Msg::TASK) {
 	Task tsk(ctx, msg.task);
 	Project prj(get_project_id(ctx, tsk.project_id));
 	
 	gtk_list_store_set(store, &iter,
-			   COL_INFO,
-			   fmt("New task in project '%0':\n%1",
-			       prj.name, tsk.name).c_str(),
+			   COL_INFO, fmt("New task in project '%0':\n%1",
+					 prj.name, tsk.name).c_str(),
 			   -1);
       } else {
-	gtk_list_store_set(store, &iter, COL_INFO,
-			   fmt("Invalid message type: %0", msg.type).c_str(),
+	gtk_list_store_set(store, &iter,
+			   COL_INFO, fmt("Invalid message type: %0",
+					 msg.type).c_str(),
 			   -1);
       }
 

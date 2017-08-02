@@ -72,4 +72,11 @@ namespace snabel {
       cor.pc++;
     }
   }
+
+  void reset(Exec &exe) {
+    Coro &cor(exe.main);
+    cor.ops.clear();
+    cor.pc = 0;
+    cor.stack->clear();
+  }
 }

@@ -32,6 +32,6 @@ namespace snabel {
 namespace snackis {
   template <>
   str fmt_arg(const snabel::Box &arg) {
-    return fmt("%0 :: %1", arg.type.fmt(arg), arg.type.name);
+    return fmt("%0|%1", arg.type.fmt(arg), arg.type.name);
   }
 }

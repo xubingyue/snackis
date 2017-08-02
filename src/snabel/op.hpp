@@ -22,37 +22,31 @@ namespace snabel {
   
   using OpSeq = std::vector<Op>;
 
-  struct BasicOp {
-    str name, info;
-
-    BasicOp(const str &nam, const str &inf="");
-  };
-    
-  struct Apply: BasicOp {
+  struct Apply {
     Apply();
   };
 
-  struct Begin: BasicOp {
+  struct Begin {
     Begin();
   };
 
-  struct Call: BasicOp {
+  struct Call {
     Func fn;
 
     Call(Func &fn);
   };
 
-  struct End: BasicOp {
+  struct End {
     End();
   };
 
-  struct Id: BasicOp {
+  struct Id {
     str text;
 
     Id(const str &txt);
   };
 
-  struct Let: BasicOp {
+  struct Let {
     const str name;
     
     Let(const str &n);
@@ -60,7 +54,7 @@ namespace snabel {
     
   using Val = std::variant<int64_t, str, Func *, Type *>;
   
-  struct Push: BasicOp {
+  struct Push {
     Type *type;
     Val val;
     
@@ -69,11 +63,11 @@ namespace snabel {
     const Push &operator=(const Push &src);
   };
 
-  struct Reset: BasicOp {
+  struct Reset {
     Reset();
   };
 
-  struct Stash: BasicOp {
+  struct Stash {
     Stash();
   };
 
@@ -96,6 +90,8 @@ namespace snabel {
   };
   
   void run(const Op &op, Ctx &ctx);
+  str name(const Op &op);
+  str info(const Op &op);
 }
 
 #endif

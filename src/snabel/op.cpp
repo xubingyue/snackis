@@ -6,93 +6,140 @@
 #include "snabel/op.hpp"
 
 namespace snabel {
-  BasicOp::BasicOp(const str &nam, const str &inf):
-    name(nam), info(inf)
-  { }
-    
-  Apply::Apply():
-    BasicOp("Apply")
+  Apply::Apply()
   { }
 
-  Begin::Begin():
-    BasicOp("Begin")
+  Begin::Begin()
   { }
 
   Call::Call(Func &fn):
-    BasicOp("Call", fmt("#%0", to_str(fn.id).substr(0, 8))),
     fn(fn)
   { }
 
-  End::End():
-    BasicOp("End")
+  End::End()
   { }
 
   Id::Id(const str &txt):
-    BasicOp("Id", txt),
     text(txt)
   { }
 
   Let::Let(const str &n):
-    BasicOp("Let", n),
     name(n)
   { }
     
   Push::Push(Type &t, const Val &v):
-    BasicOp("Push", fmt_arg(Box(t, v))),
     type(&t), val(v)
   { }
   
   Push::Push(const Push &src):
-    BasicOp(src),
     type(src.type), val(src.val)
   { }
   
   const Push &Push::operator=(const Push &src) {
-    name = src.name;
-    info = src.info;
     type = src.type;
     val = src.val;
     return *this;
   }
 
-  Reset::Reset():
-    BasicOp("Reset")
+  Reset::Reset()
   { }
 
-  Stash::Stash():
-    BasicOp("Stash")
+  Stash::Stash()
   { }
 
   Op::Op(OpCode cod, const OpData &dat):
     code(cod), data(dat)
   { }
 
-  Op::Op(const Apply &dat): Op(OP_APPLY, dat)
+  Op::Op(const Apply &dat):
+    Op(OP_APPLY, dat)
   { }
   
-  Op::Op(const Begin &dat): Op(OP_BEGIN, dat)
+  Op::Op(const Begin &dat):
+    Op(OP_BEGIN, dat)
   { }
   
-  Op::Op(const Call &dat): Op(OP_CALL, dat)
+  Op::Op(const Call &dat):
+    Op(OP_CALL, dat)
   { }
   
-  Op::Op(const End &dat): Op(OP_END, dat)
+  Op::Op(const End &dat):
+    Op(OP_END, dat)
   { }
   
-  Op::Op(const Id &dat): Op(OP_ID, dat)
+  Op::Op(const Id &dat):
+    Op(OP_ID, dat)
   { }
   
-  Op::Op(const Let &dat): Op(OP_LET, dat)
+  Op::Op(const Let &dat):
+    Op(OP_LET, dat)
   { }
   
-  Op::Op(const Push &dat): Op(OP_PUSH, dat)
+  Op::Op(const Push &dat):
+    Op(OP_PUSH, dat)
   { }
 
-  Op::Op(const Reset &dat): Op(OP_RESET, dat)
+  Op::Op(const Reset &dat):
+    Op(OP_RESET, dat)
   { }
   
-  Op::Op(const Stash &dat): Op(OP_STASH, dat)
+  Op::Op(const Stash &dat):
+    Op(OP_STASH, dat)
   { }
+
+  str name(const Op &op) {
+    switch (op.code) {
+    case OP_APPLY:
+      return "Apply";
+    case OP_BEGIN:
+      return "Begin";
+    case OP_CALL:
+      return "Call";
+    case OP_END:
+      return "End";
+    case OP_ID:
+      return "Id";
+    case OP_LET:
+      return "Let";
+    case OP_PUSH:
+      return "Push";
+    case OP_RESET:
+      return "Reset";
+    case OP_STASH:
+      return "Stash";
+    default:
+      return "?";
+    };
+  }
+  
+  str info(const Op &op) {
+    switch (op.code) {
+    case OP_CALL: {
+      auto c(std::get<Call>(op.data));
+      return fmt("#%0", to_str(c.fn.id).substr(0, 8));
+      }
+    case OP_ID: {
+      auto i(std::get<Id>(op.data));
+      return i.text;
+      }
+    case OP_LET: {
+      auto l(std::get<Let>(op.data));
+      return l.name;
+      }
+    case OP_PUSH: {
+      auto p(std::get<Push>(op.data));
+      return fmt_arg(Box(*p.type, p.val));
+      }
+    case OP_APPLY:
+    case OP_BEGIN:
+    case OP_END:
+    case OP_RESET:
+    case OP_STASH:
+      return "";
+    default:
+      return "?";
+    }
+  }
   
   void run(const Op &op, Ctx &ctx) {
     Exec &exe(ctx.coro.exec);
