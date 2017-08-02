@@ -6,6 +6,7 @@
 
 #include "snackis/core/func.hpp"
 #include "snackis/core/opt.hpp"
+#include "snackis/core/uid.hpp"
 
 namespace snabel {
   using namespace snackis;
@@ -28,7 +29,9 @@ namespace snabel {
   };
 
   struct Func {
+    UId id;
     std::list<FuncImp> imps;
+    Func();
   };
 
   std::vector<Box> get_args(const FuncImp imp, Ctx &ctx);

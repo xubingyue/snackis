@@ -6,6 +6,94 @@
 #include "snabel/op.hpp"
 
 namespace snabel {
+  BasicOp::BasicOp(const str &nam, const str &inf):
+    name(nam), info(inf)
+  { }
+    
+  Apply::Apply():
+    BasicOp("Apply")
+  { }
+
+  Begin::Begin():
+    BasicOp("Begin")
+  { }
+
+  Call::Call(Func &fn):
+    BasicOp("Call", fmt("#%0", to_str(fn.id).substr(0, 8))),
+    fn(fn)
+  { }
+
+  End::End():
+    BasicOp("End")
+  { }
+
+  Id::Id(const str &txt):
+    BasicOp("Id", txt),
+    text(txt)
+  { }
+
+  Let::Let(const str &n):
+    BasicOp("Let", n),
+    name(n)
+  { }
+    
+  Push::Push(Type &t, const Val &v):
+    BasicOp("Push", fmt_arg(Box(t, v))),
+    type(&t), val(v)
+  { }
+  
+  Push::Push(const Push &src):
+    BasicOp(src),
+    type(src.type), val(src.val)
+  { }
+  
+  const Push &Push::operator=(const Push &src) {
+    name = src.name;
+    info = src.info;
+    type = src.type;
+    val = src.val;
+    return *this;
+  }
+
+  Reset::Reset():
+    BasicOp("Reset")
+  { }
+
+  Stash::Stash():
+    BasicOp("Stash")
+  { }
+
+  Op::Op(OpCode cod, const OpData &dat):
+    code(cod), data(dat)
+  { }
+
+  Op::Op(const Apply &dat): Op(OP_APPLY, dat)
+  { }
+  
+  Op::Op(const Begin &dat): Op(OP_BEGIN, dat)
+  { }
+  
+  Op::Op(const Call &dat): Op(OP_CALL, dat)
+  { }
+  
+  Op::Op(const End &dat): Op(OP_END, dat)
+  { }
+  
+  Op::Op(const Id &dat): Op(OP_ID, dat)
+  { }
+  
+  Op::Op(const Let &dat): Op(OP_LET, dat)
+  { }
+  
+  Op::Op(const Push &dat): Op(OP_PUSH, dat)
+  { }
+
+  Op::Op(const Reset &dat): Op(OP_RESET, dat)
+  { }
+  
+  Op::Op(const Stash &dat): Op(OP_STASH, dat)
+  { }
+  
   void run(const Op &op, Ctx &ctx) {
     Exec &exe(ctx.coro.exec);
     

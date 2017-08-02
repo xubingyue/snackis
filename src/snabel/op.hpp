@@ -22,65 +22,60 @@ namespace snabel {
   
   using OpSeq = std::vector<Op>;
 
-  struct Apply
-  { };
+  struct BasicOp {
+    str name, info;
 
-  struct Begin
-  { };
+    BasicOp(const str &nam, const str &inf="");
+  };
+    
+  struct Apply: BasicOp {
+    Apply();
+  };
 
-  struct Call {
+  struct Begin: BasicOp {
+    Begin();
+  };
+
+  struct Call: BasicOp {
     Func fn;
 
-    Call(Func &fn):
-      fn(fn)
-    { }
+    Call(Func &fn);
   };
 
-  struct End
-  { };
+  struct End: BasicOp {
+    End();
+  };
 
-  struct Id {
+  struct Id: BasicOp {
     str text;
 
-    Id(const str &txt):
-      text(txt)
-    { }
+    Id(const str &txt);
   };
 
-  struct Let {
+  struct Let: BasicOp {
     const str name;
     
-    Let(const str &n):
-      name(n)
-    { }
+    Let(const str &n);
   };
     
   using Val = std::variant<int64_t, str, Func *, Type *>;
   
-  struct Push {
+  struct Push: BasicOp {
     Type *type;
     Val val;
     
-    Push(Type &t, const Val &v):
-      type(&t), val(v)
-    { }
-
-    Push(const Push &src):
-      type(src.type), val(src.val)
-    { }
-
-    const Push &operator=(const Push &src) {
-      type = src.type;
-      val = src.val;
-      return *this;
-    }
+    Push(Type &t, const Val &v);
+    Push(const Push &src);
+    const Push &operator=(const Push &src);
   };
 
-  struct Reset
-  { };
+  struct Reset: BasicOp {
+    Reset();
+  };
 
-  struct Stash
-  { };
+  struct Stash: BasicOp {
+    Stash();
+  };
 
   using OpData = std::variant<Apply, Begin, Call, End, Id, Let, Push, Reset, Stash>;
 
@@ -88,36 +83,16 @@ namespace snabel {
     OpCode code;
     OpData data;
     
-    Op(OpCode cod, const OpData &dat):
-      code(cod), data(dat)
-    { }
-
-    Op(const Apply &dat): Op(OP_APPLY, dat)
-    { }
-
-    Op(const Begin &dat): Op(OP_BEGIN, dat)
-    { }
-
-    Op(const Call &dat): Op(OP_CALL, dat)
-    { }
-
-    Op(const End &dat): Op(OP_END, dat)
-    { }
-
-    Op(const Id &dat): Op(OP_ID, OpData(dat))
-    { }
-
-    Op(const Let &dat): Op(OP_LET, OpData(dat))
-    { }
-
-    Op(const Push &dat): Op(OP_PUSH, dat)
-    { }
-
-    Op(const Reset &dat): Op(OP_RESET, dat)
-    { }
-
-    Op(const Stash &dat): Op(OP_STASH, dat)
-    { }
+    Op(OpCode cod, const OpData &dat);
+    Op(const Apply &dat);
+    Op(const Begin &dat);
+    Op(const Call &dat);
+    Op(const End &dat);
+    Op(const Id &dat);
+    Op(const Let &dat);
+    Op(const Push &dat);
+    Op(const Reset &dat);
+    Op(const Stash &dat);
   };
   
   void run(const Op &op, Ctx &ctx);

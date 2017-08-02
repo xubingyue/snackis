@@ -14,6 +14,10 @@ namespace snabel {
     imp(ctx, *this);
   }
 
+  Func::Func():
+    id(true)
+  { }
+
   std::vector<Box> get_args(const FuncImp imp, Ctx &ctx) {
     auto i = imp.args.rbegin();
     std::vector<Box> out;
