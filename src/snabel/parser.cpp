@@ -47,11 +47,9 @@ namespace snabel {
       case '"':
 	if (j == 0 || in[j-1] != '\\') { quoted = !quoted; }
 	break;
-      case '{':
       case '(':
 	depth++;
 	break;
-      case '}':
       case ')':
 	depth--;
 	break;
@@ -108,7 +106,6 @@ namespace snabel {
 	if (j == 0 || in.text[j-1] != '\\') { quoted = !quoted; }
 	break;
       case '\\':
-      case '{':
       case '(':
       case '\n':
       case ' ':
@@ -130,13 +127,13 @@ namespace snabel {
       if (j == in.text.size()-1) {
 	str s(trim(in.text.substr(i)));
 	if (!s.empty()) { out.emplace_back(s, in.i+i); }
-      } else if (c == '{' || c == '(') {
+      } else if (c == '(') {
 	size_t k(j);
 	str rest(in.text.substr(k));
-	k = parse_pair(rest, c, (c == '{') ? '}' : ')');
+	k = parse_pair(rest, '(', ')');
 
 	if (k == str::npos) {
-	  ERROR(Snabel, "Unbalanced pair");
+	  ERROR(Snabel, "Unbalanced parenthesis");
 	  return out;
 	}
 

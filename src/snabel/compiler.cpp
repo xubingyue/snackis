@@ -52,14 +52,14 @@ namespace snabel {
     Ctx &ctx(cpr.ctx);
     Exec &exe(ctx.coro.exec);
 
-    if (tok.text[0] == '{' || tok.text[0] == '(') {
-      out.emplace_back((tok.text[0] == '{') ? Op(Do()) : Op(Stash()));
-      
+    if (tok.text[0] == '(') {
+      out.emplace_back(Do());
+
       for (auto &e: parse_exprs(tok.text.substr(1, tok.text.size()-2))) {
 	compile(cpr, lnr, parse_expr(e), out);
       }
       
-      out.emplace_back((tok.text[0] == '{') ? Op(End()) : Op(Apply()));
+      out.emplace_back(End());
     } else if (isdigit(tok.text[0]) || 
 	(tok.text.size() > 1 && tok.text[0] == '-' && isdigit(tok.text[1]))) {
       out.emplace_back(Push(exe.i64_type, to_int64(tok.text)));

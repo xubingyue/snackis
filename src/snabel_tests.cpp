@@ -111,12 +111,12 @@ namespace snabel {
     Exec exe;
     Ctx &ctx(get_ctx(exe.main));
     
-    compile(exe, "{let foo 21;foo}");
+    compile(exe, "(let foo 21;foo)");
     run(exe);
     CHECK(get<int64_t>(pop(ctx.coro)) == 21, _);
     CHECK(!find_env(ctx, "foo"), _);
 
-    compile(exe, "do; let bar 42; bar end");
+    compile(exe, "do\nlet bar 42\nbar end");
     run(exe);
     CHECK(get<int64_t>(pop(ctx.coro)) == 42, _);
     CHECK(!find_env(ctx, "bar"), _);
