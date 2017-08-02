@@ -29,9 +29,9 @@ namespace snabel {
   };
 
   struct Func {
-    UId id;
+    str name;
     std::list<FuncImp> imps;
-    Func();
+    Func(const str &nam);
   };
 
   using ArgSeq = std::deque<Box>;

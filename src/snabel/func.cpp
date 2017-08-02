@@ -14,8 +14,8 @@ namespace snabel {
     imp(ctx, *this);
   }
 
-  Func::Func():
-    id(true)
+  Func::Func(const str &nam):
+    name(nam)
   { }
 
   ArgSeq get_args(const FuncImp imp, Ctx &ctx) {

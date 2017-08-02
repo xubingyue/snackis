@@ -43,7 +43,7 @@ namespace snabel {
   }
 
   Func &add_func(Ctx &ctx, const str &n) {
-    auto &res(ctx.funcs.emplace_back());
+    auto &res(ctx.funcs.emplace_back(n));
     put_env(ctx, n, Box(ctx.coro.exec, res));
     return res;
   }

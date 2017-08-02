@@ -116,7 +116,7 @@ namespace snabel {
     switch (op.code) {
     case OP_CALL: {
       auto c(std::get<Call>(op.data));
-      return fmt("#%0", to_str(c.fn.id).substr(0, 8));
+      return c.fn.name;
       }
     case OP_ID: {
       auto i(std::get<Id>(op.data));

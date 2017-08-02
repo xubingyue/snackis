@@ -21,7 +21,7 @@ namespace snabel {
     Exec exe;
     Coro &cor(exe.main);
     
-    Func f;
+    Func f("test-func");
     add_imp(f, {&exe.i64_type}, test_func);
 
     push(cor, Push(exe.i64_type, int64_t(7)));
