@@ -25,6 +25,7 @@ namespace snabel {
   void compile(Exec &exe, const str &in);
   void run(Exec &exe);
   void reset(Exec &exe);
+  void rewind(Exec &exe);
 }
 
 #endif

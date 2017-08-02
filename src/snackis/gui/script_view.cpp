@@ -79,6 +79,8 @@ namespace gui {
   }
 
   static void on_run(gpointer *_, ScriptView *v) {
+    TRY(try_run);
+    snabel::rewind(v->exec);
     snabel::run(v->exec);
     log(v->ctx, "Result: %0", pop(v->exec.main));
   }
