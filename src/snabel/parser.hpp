@@ -21,7 +21,7 @@ namespace snabel {
   };
 
   std::vector<str> parse_lines(const str &in);
-  std::vector<Expr> parse_line(const str &in);
+  std::vector<Expr> parse_exprs(const str &in);
   size_t parse_parens(const str &in);
   std::vector<Tok> parse_expr(const Expr &in);
 }

@@ -5,12 +5,11 @@ namespace snabel {
   Coro::Coro(Exec &exe):
     exec(exe), pc(0), stack(nullptr)
   {
-    ctx.emplace_back(*this);
-    stash(*this);
+    do_scope(*this);
   }
 
   Ctx &get_ctx(Coro &cor) {
-    return cor.ctx.back();
+    return cor.ctxs.back();
   }
 
   void push(Coro &cor, const Box &val) {
@@ -32,15 +31,34 @@ namespace snabel {
     return res;
   }
 
-  void stash(Coro &cor) {
+  void stash_stack(Coro &cor) {
     cor.stack = &cor.stacks.emplace_back(Coro::Stack());
   }
   
-  void apply(Coro &cor) {
+  void apply_stack(Coro &cor) {
     auto prev(*cor.stack);
     cor.stacks.pop_back();
     CHECK(!cor.stacks.empty(), _);
     cor.stack = &cor.stacks.back();
-    std::copy(prev.begin(), prev.end(), std::back_inserter(*cor.stack));
+
+    if (!prev.empty()) {
+      cor.stack->emplace_back(prev.back());
+    }
+  }
+
+  Ctx &do_scope(Coro &cor) {
+    stash_stack(cor);
+    
+    if (cor.ctxs.empty()) {
+      return cor.ctxs.emplace_back(cor);
+    }
+
+    return cor.ctxs.emplace_back(cor.ctxs.back());
+  }
+  
+  void end_scope(Coro &cor) {
+    apply_stack(cor);
+    CHECK(!cor.ctxs.empty(), _);
+    cor.ctxs.pop_back();
   }
 }

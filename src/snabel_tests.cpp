@@ -47,7 +47,7 @@ namespace snabel {
     CHECK(ls[0] == "foo\\\nbar", _);
     CHECK(ls[1] == "baz", _);
     
-    auto es(parse_line(ls[0]));
+    auto es(parse_exprs(ls[0]));
     CHECK(es.size() == 1, _);
     CHECK(es[0].text == "foo\\\nbar", _);
     
@@ -59,7 +59,7 @@ namespace snabel {
 
   static void parse_semicolon_tests() {
     TRY(try_test);    
-    auto es(parse_line("foo;bar"));
+    auto es(parse_exprs("foo;bar"));
     CHECK(es.size() == 2, _);
     CHECK(es[0].text == "foo", _);
     CHECK(es[1].text == "bar", _);
@@ -105,7 +105,23 @@ namespace snabel {
     run(exe);
     CHECK(get<int64_t>(pop(ctx.coro)) == 14, _);
   }
-  
+
+  static void scope_tests() {
+    TRY(try_test);    
+    Exec exe;
+    Ctx &ctx(get_ctx(exe.main));
+    
+    compile(exe, "{let foo 21;foo}");
+    run(exe);
+    CHECK(get<int64_t>(pop(ctx.coro)) == 21, _);
+    CHECK(!find_env(ctx, "foo"), _);
+
+    compile(exe, "do; let bar 42; bar end");
+    run(exe);
+    CHECK(get<int64_t>(pop(ctx.coro)) == 42, _);
+    CHECK(!find_env(ctx, "bar"), _);
+
+  }
 
   void all_tests() {
     func_tests();
@@ -113,5 +129,6 @@ namespace snabel {
     parens_tests();
     compile_tests();
     stack_tests();
+    scope_tests();
   }
 }

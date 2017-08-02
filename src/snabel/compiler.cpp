@@ -16,6 +16,8 @@ namespace snabel {
       switch (op.code) {
       case OP_APPLY:
       case OP_CALL:
+      case OP_DO:
+      case OP_END:
 	break;
       case OP_ID: {
 	auto i(std::get<Id>(op.data));
@@ -50,15 +52,23 @@ namespace snabel {
     Ctx &ctx(cpr.ctx);
     Exec &exe(ctx.coro.exec);
 
-    if (tok.text[0] == '(') {
-      out.emplace_back(Stash());
-      compile(cpr, lnr, parse_expr(tok.text.substr(1, tok.text.size()-2)), out);
-      out.emplace_back(Apply());
+    if (tok.text[0] == '{' || tok.text[0] == '(') {
+      out.emplace_back((tok.text[0] == '{') ? Op(Do()) : Op(Stash()));
+      
+      for (auto &e: parse_exprs(tok.text.substr(1, tok.text.size()-2))) {
+	compile(cpr, lnr, parse_expr(e), out);
+      }
+      
+      out.emplace_back((tok.text[0] == '{') ? Op(End()) : Op(Apply()));
     } else if (isdigit(tok.text[0]) || 
 	(tok.text.size() > 1 && tok.text[0] == '-' && isdigit(tok.text[1]))) {
       out.emplace_back(Push(exe.i64_type, to_int64(tok.text)));
     } else if (tok.text == "apply") {
       out.emplace_back(Apply());
+    } else if (tok.text == "do") {
+      out.emplace_back(Do());
+    } else if (tok.text == "end") {
+      out.emplace_back(End());
     } else if (tok.text == "reset") {
       out.emplace_back(Reset());
     } else if (tok.text == "stash") {
@@ -72,6 +82,7 @@ namespace snabel {
 	       size_t lnr,
 	       const std::vector<Tok> &exp,
 	       OpSeq &out) {
+    if (exp.empty()) { return; }
     OpSeq ops;
     
     if (exp[0].text == "let") {
@@ -100,11 +111,7 @@ namespace snabel {
     
     for (auto &ln: parse_lines(in)) {
       if (!ln.empty()) {
-	if (!cpr.ops.empty()) {
-	  cpr.ops.emplace_back(Reset());
-	}
-
-	for (auto &e: parse_line(ln)) {
+	for (auto &e: parse_exprs(ln)) {
 	  compile(cpr, lnr, parse_expr(e), cpr.ops);
 	}
       }

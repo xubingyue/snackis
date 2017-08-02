@@ -11,12 +11,20 @@ namespace snabel {
     
     switch (op.code) {
     case OP_APPLY: {
-      apply(ctx.coro);
+      apply_stack(ctx.coro);
       break;
     }
     case OP_CALL: {
       auto c(std::get<Call>(op.data));
       call(c.fn, ctx);
+      break;
+    }
+    case OP_DO: {
+      do_scope(ctx.coro);
+      break;
+    }
+    case OP_END: {
+      end_scope(ctx.coro);
       break;
     }
     case OP_ID: {
@@ -52,7 +60,7 @@ namespace snabel {
       break;
     }
     case OP_STASH: {
-      stash(ctx.coro);
+      stash_stack(ctx.coro);
       break;
     }
     default:

@@ -35,9 +35,10 @@ namespace snabel {
     return out;
   }
 
-  std::vector<Expr> parse_line(const str &in) {
+  std::vector<Expr> parse_exprs(const str &in) {
     size_t i(0);
     bool quoted(false);
+    int depth(0);
     std::vector<Expr> out;
     
     for (size_t j(0); j < in.size(); j++) {
@@ -46,9 +47,18 @@ namespace snabel {
       case '"':
 	if (j == 0 || in[j-1] != '\\') { quoted = !quoted; }
 	break;
+      case '{':
+      case '(':
+	depth++;
+	break;
+      case '}':
+      case ')':
+	depth--;
+	break;
       case ';':
-	if (j > i && !quoted) {
-	  out.emplace_back(trim(in.substr(i, j-i)), i);
+	if (j > i && !quoted && !depth) {
+	  str s(trim(in.substr(i, j-i)));
+	  if (!s.empty()) { out.emplace_back(s, i); }
 	  i = j+1;
 	  continue;
 	}
@@ -57,30 +67,28 @@ namespace snabel {
       }
 
       if (j == in.size()-1) {
-	out.emplace_back(trim(in.substr(i, j-i+1)), i);
+	str s(trim(in.substr(i, j-i+1)));
+	if (!s.empty()) { out.emplace_back(s, i); }
       }
     }
 
     return out;
   }
 
-  size_t parse_parens(const str &in) {
+  size_t parse_pair(const str &in, char fst, char lst) {
     bool quoted(false);
     int depth(1);
     
     for (size_t i(1); i < in.size(); i++) {
       auto &c(in[i]);
-      switch(c) {
-      case '"':
+
+      if (c == '"') {
 	if (i == 0 || in[i-1] != '\\') { quoted = !quoted; }
-	break;
-      case '(':
+      } else if (c == fst) {
 	depth++;
-	break;
-      case ')':
+      } else if (c == lst) {
 	depth--;
 	if (!depth) { return i; }
-	break;
       }
     }
 
@@ -100,6 +108,7 @@ namespace snabel {
 	if (j == 0 || in.text[j-1] != '\\') { quoted = !quoted; }
 	break;
       case '\\':
+      case '{':
       case '(':
       case '\n':
       case ' ':
@@ -121,13 +130,13 @@ namespace snabel {
       if (j == in.text.size()-1) {
 	str s(trim(in.text.substr(i)));
 	if (!s.empty()) { out.emplace_back(s, in.i+i); }
-      } else if (c == '(') {
+      } else if (c == '{' || c == '(') {
 	size_t k(j);
 	str rest(in.text.substr(k));
-	k = parse_parens(rest);
+	k = parse_pair(rest, c, (c == '{') ? '}' : ')');
 
 	if (k == str::npos) {
-	  ERROR(Snabel, "Unbalanced parenthesis");
+	  ERROR(Snabel, "Unbalanced pair");
 	  return out;
 	}
 
