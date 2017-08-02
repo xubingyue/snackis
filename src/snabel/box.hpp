@@ -2,7 +2,6 @@
 #define SNABEL_BOX_HPP
 
 #include <variant>
-#include <vector>
 
 #include "snabel/op.hpp"
 #include "snabel/type.hpp"

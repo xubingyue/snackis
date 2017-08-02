@@ -1,8 +1,8 @@
 #ifndef SNABEL_CORO_HPP
 #define SNABEL_CORO_HPP
 
+#include <deque>
 #include <list>
-#include <vector>
 
 #include "snabel/ctx.hpp"
 #include "snabel/op.hpp"
@@ -11,7 +11,7 @@ namespace snabel {
   struct Exec;
   
   struct Coro {
-    using Stack = std::vector<Box>;
+    using Stack = std::deque<Box>;
     Exec &exec;
     OpSeq ops;
     int64_t pc;

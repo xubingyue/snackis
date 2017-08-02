@@ -14,9 +14,9 @@ namespace snabel {
     i(i)
   { }
 
-  std::vector<str> parse_lines(const str &in) {
+  StrSeq parse_lines(const str &in) {
     size_t i(0), j(0);
-    std::vector<str> out;
+    StrSeq out;
     
     while ((j=in.find('\n', j)) != str::npos) {
       if (j > 0 && in[j-1] == '\\') {
@@ -35,11 +35,11 @@ namespace snabel {
     return out;
   }
 
-  std::vector<Expr> parse_exprs(const str &in) {
+  ExprSeq parse_exprs(const str &in) {
     size_t i(0);
     bool quoted(false);
     int depth(0);
-    std::vector<Expr> out;
+    ExprSeq out;
     
     for (size_t j(0); j < in.size(); j++) {
       auto &c(in[j]);
@@ -93,10 +93,10 @@ namespace snabel {
     return str::npos;
   }
   
-  std::vector<Tok> parse_expr(const Expr &in) {
+  TokSeq parse_expr(const Expr &in) {
     size_t i(0);
     bool quoted(false);
-    std::vector<Tok> out;
+    TokSeq out;
     
     for (size_t j(0); j < in.text.size(); j++) {
       auto c(in.text[j]);

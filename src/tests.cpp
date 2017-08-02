@@ -128,10 +128,9 @@ void table_insert_tests() {
   Foo foo;
   Trans trans(ctx);
   CHECK(insert(tbl, foo), _);
-  CHECK(load(tbl, foo) ? true : false, _);
-  CHECK(insert(tbl, foo), !_);
-  commit(trans, nullopt);
-  CHECK(load(tbl, foo) ? true : false, _);
+  CHECK(load(tbl, foo), _);
+  CHECK(!insert(tbl, foo), _);
+  CHECK(load(tbl, foo), _);
 }
 
 static void table_slurp_tests() {

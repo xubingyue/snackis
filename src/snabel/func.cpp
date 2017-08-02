@@ -18,9 +18,9 @@ namespace snabel {
     id(true)
   { }
 
-  std::vector<Box> get_args(const FuncImp imp, Ctx &ctx) {
+  ArgSeq get_args(const FuncImp imp, Ctx &ctx) {
     auto i = imp.args.rbegin();
-    std::vector<Box> out;
+    ArgSeq out;
     
     while (i != imp.args.rend() && !ctx.coro.stack->empty()) {
       auto &typ(*i);
@@ -36,14 +36,14 @@ namespace snabel {
       if (!seq) { i++; }
     }
 
-    return std::vector<Box>(out.rbegin(), out.rend());
+    return ArgSeq(out.rbegin(), out.rend());
   }
 
   FuncImp &add_imp(Func &fn, const FuncImp::Args &args, FuncImp::Imp imp) {
     return fn.imps.emplace_front(fn, args, imp);
   }
 
-  static bool match(const FuncImp imp, const std::vector<Box> &args) {
+  static bool match(const FuncImp imp, const ArgSeq &args) {
     auto i = args.rbegin();
     auto j = imp.args.rbegin();
     
@@ -63,7 +63,7 @@ namespace snabel {
     return true;
   }
 
-  opt<FuncImp> match(const Func &fn, const std::vector<Box> &args) {
+  opt<FuncImp> match(const Func &fn, const ArgSeq &args) {
     for (auto &imp: fn.imps) {
       if (match(imp, args)) { return imp; }
     }

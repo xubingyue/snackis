@@ -2,7 +2,7 @@
 #define SNABEL_FUNC_HPP
 
 #include <list>
-#include <vector>
+#include <deque>
 
 #include "snackis/core/func.hpp"
 #include "snackis/core/opt.hpp"
@@ -17,7 +17,7 @@ namespace snabel {
   struct Func;
   
   struct FuncImp {
-    using Args = std::vector<BasicType *>;
+    using Args = std::deque<BasicType *>;
     using Imp = func<void (Ctx &, FuncImp &)>;
 
     Func &func;
@@ -34,9 +34,11 @@ namespace snabel {
     Func();
   };
 
-  std::vector<Box> get_args(const FuncImp imp, Ctx &ctx);
+  using ArgSeq = std::deque<Box>;
+  
+  ArgSeq get_args(const FuncImp imp, Ctx &ctx);
   FuncImp &add_imp(Func &fn, const FuncImp::Args &args, FuncImp::Imp imp);
-  opt<FuncImp> match(const Func &fn, const std::vector<Box> &args);
+  opt<FuncImp> match(const Func &fn, const ArgSeq &args);
   void call(Func &fn, Ctx &ctx);
 }
 

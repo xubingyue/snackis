@@ -1,6 +1,7 @@
 #ifndef SNABEL_OP_HPP
 #define SNABEL_OP_HPP
 
+#include <deque>
 #include <utility>
 #include <variant>
 
@@ -20,7 +21,7 @@ namespace snabel {
 
   struct Op;
   
-  using OpSeq = std::vector<Op>;
+  using OpSeq = std::deque<Op>;
 
   struct Apply {
     Apply();

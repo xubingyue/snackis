@@ -2,10 +2,9 @@
 #define SNABEL_COMPILER_HPP
 
 #include "snabel/op.hpp"
+#include "snabel/parser.hpp"
 
 namespace snabel {
-  struct Tok;
-  
   struct Compiler {
     Ctx &ctx;
     OpSeq ops;
@@ -20,7 +19,7 @@ namespace snabel {
 
   void compile(Compiler &cpr,
 	       size_t lnr,
-	       const std::vector<Tok> &exp,
+	       const TokSeq &exp,
 	       OpSeq &out);
   
   void compile(Compiler &cpr, const str &in);

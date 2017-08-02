@@ -2,7 +2,6 @@
 #include "snabel/compiler.hpp"
 #include "snabel/error.hpp"
 #include "snabel/exec.hpp"
-#include "snabel/parser.hpp"
 
 namespace snabel {  
   Compiler::Compiler(Ctx &ctx):
@@ -80,7 +79,7 @@ namespace snabel {
 
   void compile(Compiler &cpr,
 	       size_t lnr,
-	       const std::vector<Tok> &exp,
+	       const TokSeq &exp,
 	       OpSeq &out) {
     if (exp.empty()) { return; }
     OpSeq ops;
@@ -90,8 +89,8 @@ namespace snabel {
 	ERROR(Snabel, fmt("Malformed let statement in line %0", lnr));
       } else {
 	compile(cpr, lnr,
-		     std::vector<Tok>(std::next(exp.begin(), 2),
-				      exp.end()),
+		     TokSeq(std::next(exp.begin(), 2),
+			    exp.end()),
 		     ops);
 
 	ops.emplace_back(Let(exp[1].text));
