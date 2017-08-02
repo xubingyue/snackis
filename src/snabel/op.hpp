@@ -15,7 +15,7 @@ namespace snabel {
   struct Coro;
   struct Ctx;
 
-  enum OpCode { OP_APPLY, OP_CALL, OP_DO, OP_END, OP_ID, OP_LET, OP_PUSH,
+  enum OpCode { OP_APPLY, OP_BEGIN, OP_CALL, OP_END, OP_ID, OP_LET, OP_PUSH,
 		OP_RESET, OP_STASH};
 
   struct Op;
@@ -25,6 +25,9 @@ namespace snabel {
   struct Apply
   { };
 
+  struct Begin
+  { };
+
   struct Call {
     Func fn;
 
@@ -32,9 +35,6 @@ namespace snabel {
       fn(fn)
     { }
   };
-
-  struct Do
-  { };
 
   struct End
   { };
@@ -82,7 +82,7 @@ namespace snabel {
   struct Stash
   { };
 
-  using OpData = std::variant<Apply, Call, Do, End, Id, Let, Push, Reset, Stash>;
+  using OpData = std::variant<Apply, Begin, Call, End, Id, Let, Push, Reset, Stash>;
 
   struct Op {
     OpCode code;
@@ -95,10 +95,10 @@ namespace snabel {
     Op(const Apply &dat): Op(OP_APPLY, dat)
     { }
 
-    Op(const Call &dat): Op(OP_CALL, dat)
+    Op(const Begin &dat): Op(OP_BEGIN, dat)
     { }
 
-    Op(const Do &dat): Op(OP_DO, dat)
+    Op(const Call &dat): Op(OP_CALL, dat)
     { }
 
     Op(const End &dat): Op(OP_END, dat)

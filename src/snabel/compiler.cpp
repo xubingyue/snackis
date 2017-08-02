@@ -15,8 +15,8 @@ namespace snabel {
     for (auto &op: ops) {
       switch (op.code) {
       case OP_APPLY:
+      case OP_BEGIN:
       case OP_CALL:
-      case OP_DO:
       case OP_END:
 	break;
       case OP_ID: {
@@ -53,7 +53,7 @@ namespace snabel {
     Exec &exe(ctx.coro.exec);
 
     if (tok.text[0] == '(') {
-      out.emplace_back(Do());
+      out.emplace_back(Begin());
 
       for (auto &e: parse_exprs(tok.text.substr(1, tok.text.size()-2))) {
 	compile(cpr, lnr, parse_expr(e), out);
@@ -65,8 +65,8 @@ namespace snabel {
       out.emplace_back(Push(exe.i64_type, to_int64(tok.text)));
     } else if (tok.text == "apply") {
       out.emplace_back(Apply());
-    } else if (tok.text == "do") {
-      out.emplace_back(Do());
+    } else if (tok.text == "begin") {
+      out.emplace_back(Begin());
     } else if (tok.text == "end") {
       out.emplace_back(End());
     } else if (tok.text == "reset") {

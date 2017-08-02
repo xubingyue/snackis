@@ -5,7 +5,7 @@ namespace snabel {
   Coro::Coro(Exec &exe):
     exec(exe), pc(0), stack(nullptr)
   {
-    do_scope(*this);
+    begin_scope(*this);
   }
 
   Ctx &get_ctx(Coro &cor) {
@@ -46,7 +46,7 @@ namespace snabel {
     }
   }
 
-  Ctx &do_scope(Coro &cor) {
+  Ctx &begin_scope(Coro &cor) {
     stash_stack(cor);
     
     if (cor.ctxs.empty()) {

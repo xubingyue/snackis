@@ -31,7 +31,7 @@ namespace snabel {
   Box pop(Coro &cor);
   void stash_stack(Coro &cor);
   void apply_stack(Coro &cor);
-  Ctx &do_scope(Coro &cor);
+  Ctx &begin_scope(Coro &cor);
   void end_scope(Coro &cor);
 }
 
