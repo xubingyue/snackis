@@ -74,15 +74,14 @@ namespace snabel {
   }
 
   void reset(Exec &exe) {
-    Coro &cor(exe.main);
-    cor.ops.clear();
-    cor.stack->clear();
-    while (cor.ctxs.size() > 1) { cor.ctxs.pop_back(); }
-    begin_scope(cor);
+    exe.main.ops.clear();
     rewind(exe);
   }
 
   void rewind(Exec &exe) {
+    Coro &cor(exe.main);
+    cor.stack->clear();
+    while (cor.ctxs.size() > 1) { cor.ctxs.pop_back(); }
     exe.main.pc = 0;
   }
 }

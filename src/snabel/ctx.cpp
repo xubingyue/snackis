@@ -48,4 +48,16 @@ namespace snabel {
     put_env(ctx, n, Box(ctx.coro.exec.func_type, &res));
     return res;
   }
+
+  bool add_label(Ctx &ctx, const str &tag, bool silent) {
+    auto fnd(ctx.labels.find(tag));
+
+    if (fnd != ctx.labels.end()) {
+      if (!silent) { ERROR(Snabel, fmt("Duplicate label: %0", tag)); }
+      return false;
+    }
+
+    ctx.labels.emplace(tag, ctx.coro.pc);
+    return true;
+  }
 }

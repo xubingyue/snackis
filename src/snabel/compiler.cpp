@@ -8,9 +8,10 @@ namespace snabel {
     ctx(ctx)
   { }
 
-  static OpSeq trace(Ctx &ctx, OpSeq in) {
-    OpSeq out;
-
+  static void trace(Ctx &ctx, OpSeq &out) {
+    OpSeq in;
+    in.swap(out);
+    
     while (true) {
       bool done(true);
       
@@ -23,8 +24,6 @@ namespace snabel {
       in.clear();
       out.swap(in);
     }
-    
-    return out;
   }
 
   void compile(Compiler &cpr,
@@ -42,9 +41,8 @@ namespace snabel {
       }
       
       out.emplace_back(Op::make_end());
-    } else if (isdigit(tok.text[0]) || 
-	(tok.text.size() > 1 && tok.text[0] == '-' && isdigit(tok.text[1]))) {
-      out.emplace_back(Op::make_push(Box(exe.i64_type, to_int64(tok.text))));
+    } else if (tok.text[0] == '@') {
+      out.emplace_back(Op::make_label(tok.text.substr(1)));
     } else if (tok.text == "apply") {
       out.emplace_back(Op::make_apply());
     } else if (tok.text == "begin") {
@@ -55,7 +53,10 @@ namespace snabel {
       out.emplace_back(Op::make_reset());
     } else if (tok.text == "stash") {
       out.emplace_back(Op::make_stash());
-    } else {
+    } else if (isdigit(tok.text[0]) || 
+	(tok.text.size() > 1 && tok.text[0] == '-' && isdigit(tok.text[1]))) {
+      out.emplace_back(Op::make_push(Box(exe.i64_type, to_int64(tok.text))));
+    }  else {
       out.emplace_back(Op::make_id(tok.text));
     }
   }
@@ -82,7 +83,7 @@ namespace snabel {
       for (auto t: exp) { compile(cpr, lnr, t, ops); }	  
     }
 
-    ops = trace(cpr.ctx, ops);
+    trace(cpr.ctx, ops);
     std::copy(ops.begin(), ops.end(),
 	      std::back_inserter(out));
   }

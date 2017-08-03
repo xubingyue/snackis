@@ -20,6 +20,7 @@ namespace snabel {
     Coro &coro;
     std::list<Type> types;
     std::list<Func> funcs;
+    std::map<str, int64_t> labels;
     std::map<str, Box> env;
     
     Ctx(const Ctx &src);
@@ -34,6 +35,7 @@ namespace snabel {
 
   Type &add_type(Ctx &ctx, const str &n);
   Func &add_func(Ctx &ctx, const str &n);
+  bool add_label(Ctx &ctx, const str &tag, bool silent=false);
 }
 
 #endif

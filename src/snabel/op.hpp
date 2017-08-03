@@ -15,7 +15,7 @@ namespace snabel {
   struct Func;
   struct Op;
 
-  enum OpCode { OP_APPLY, OP_BEGIN, OP_CALL, OP_END, OP_ID, OP_LET, OP_PUSH,
+  enum OpCode { OP_APPLY, OP_BEGIN, OP_CALL, OP_END, OP_ID, OP_LABEL, OP_LET, OP_PUSH,
 		OP_RESET, OP_STASH};
 
   using OpSeq = std::deque<Op>;
@@ -25,13 +25,14 @@ namespace snabel {
     str name;
     func<str ()> info;
     func<void (Ctx &)> run;
-    func<bool (const Op &, Ctx &, OpSeq &)> trace;
+    func<bool (const Op &op, Ctx &, OpSeq &)> trace;
     
     static Op make_apply();
     static Op make_begin();
     static Op make_call(Func &fn);
     static Op make_end();
     static Op make_id(const str &txt);
+    static Op make_label(const str &tag);
     static Op make_let(const str &id);
     static Op make_push(const Box &it);
     static Op make_reset();

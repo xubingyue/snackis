@@ -65,6 +65,23 @@ namespace snabel {
     return op;
   }
 
+  Op Op::make_label(const str &tag) {
+    Op op(OP_LABEL, "Label");
+    op.info = [tag]() { return tag; };
+
+    op.run = [tag](auto &ctx) {
+      add_label(ctx, tag);
+    };
+
+    op.trace = [tag](auto &op, auto &ctx, auto &out) {
+      if (!add_label(ctx, tag, true)) { return false; }
+      out.push_back(op);
+      return true;
+    };
+
+    return op;
+  }
+  
   Op Op::make_let(const str &id) {
     Op op(OP_LET, "Let");
     op.info = [id]() { return id; };
