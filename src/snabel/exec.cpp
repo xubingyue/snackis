@@ -5,8 +5,7 @@
 #include "snabel/type.hpp"
 
 namespace snabel {
-  static void add_i64(Scope &scp, FuncImp &fn) {
-    auto args(get_args(fn, scp));
+  static void add_i64(Scope &scp, FuncImp &fn, const ArgSeq &args) {
     Exec &exe(scp.coro.exec);
     int64_t res(0);
 
@@ -18,8 +17,7 @@ namespace snabel {
     push(scp.coro, exe.i64_type, res);
   }
 
-  static void mul_i64(Scope &scp, FuncImp &fn) {
-    auto args(get_args(fn, scp));
+  static void mul_i64(Scope &scp, FuncImp &fn, const ArgSeq &args) {
     Exec &exe(scp.coro.exec);
     int64_t res(1);
 
@@ -51,9 +49,9 @@ namespace snabel {
     str_type.fmt = [](auto &v) { return get<str>(v); };
 
     Func &add(add_func(scope, "+"));
-    add_imp(add, {&i64_type.seq}, add_i64);
+    add_imp(add, {&i64_type.seq}, i64_type, add_i64);
 
     Func &mul(add_func(scope, "*"));
-    add_imp(mul, {&i64_type.seq}, mul_i64);
+    add_imp(mul, {&i64_type.seq}, i64_type, mul_i64);
   }
 }

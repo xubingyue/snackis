@@ -34,10 +34,10 @@ namespace snabel {
     const Scope &operator =(const Scope &) = delete;
   };
 
-  opt<Box> find_env(Scope &scp, const str &n);
-
+  Box *find_env(Scope &scp, const str &n);
   Box get_env(Scope &scp, const str &n);
   void put_env(Scope &scp, const str &n, const Box &val);
+  bool rem_env(Scope &scp, const str &n);
 
   Type &add_type(Scope &scp, const str &n);
   Func &add_func(Scope &scp, const str &n);

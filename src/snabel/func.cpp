@@ -6,48 +6,54 @@
 #include "snabel/type.hpp"
 
 namespace snabel {
-  FuncImp::FuncImp(Func &fn, const Args &args, Imp imp):
-    func(fn), args(args), imp(imp)
+  FuncImp::FuncImp(Func &fn, const Args &args, Type &rt, Imp imp):
+    func(fn), args(args), res_type(rt), imp(imp)
   { }
   
-  void FuncImp::operator ()(Scope &scp) {
-    imp(scp, *this);
-  }
+  void FuncImp::operator ()(Coro &cor) {
+    auto args(get_args(*this, cor));
+    Scope &tmp(begin_scope(cor));
+    imp(tmp, *this, args);
+    end_scope(cor);
+ }
 
   Func::Func(const str &nam):
     name(nam)
   { }
 
-  ArgSeq get_args(const FuncImp imp, Scope &scp) {
+  ArgSeq get_args(const FuncImp &imp, Coro &cor) {
     auto i = imp.args.rbegin();
     ArgSeq out;
     
-    while (i != imp.args.rend() && !scp.coro.stack->empty()) {
+    while (i != imp.args.rend() && !cor.stack->empty()) {
       auto &typ(*i);
       auto seq(dynamic_cast<Seq *>(typ));
-      auto &val(scp.coro.stack->back());
+      auto &val(cor.stack->back());
 
       if (!isa(val, *typ) && (!seq || !isa(val, seq->elem_type))) {
 	break;
       }
       
       out.push_back(val);
-      scp.coro.stack->pop_back();
+      cor.stack->pop_back();
       if (!seq) { i++; }
     }
 
     return ArgSeq(out.rbegin(), out.rend());
   }
 
-  FuncImp &add_imp(Func &fn, const FuncImp::Args &args, FuncImp::Imp imp) {
-    return fn.imps.emplace_front(fn, args, imp);
+  FuncImp &add_imp(Func &fn,
+		   const FuncImp::Args &args,
+		   Type &rt,
+		   FuncImp::Imp imp) {
+    return fn.imps.emplace_front(fn, args, rt, imp);
   }
 
-  static bool match(const FuncImp imp, const ArgSeq &args) {
-    auto i = args.rbegin();
+  static bool match(const FuncImp &imp, const Coro &cor) {
+    auto i = cor.stack->rbegin();
     auto j = imp.args.rbegin();
     
-    while (i != args.rend() && j != imp.args.rend()) {
+    while (i != cor.stack->rend() && j != imp.args.rend()) {
       auto seq(dynamic_cast<Seq *>(*j));
 
       if (isa(*i, **j) || (seq && isa(*i, seq->elem_type))) {
@@ -63,24 +69,11 @@ namespace snabel {
     return true;
   }
 
-  opt<FuncImp> match(const Func &fn, const ArgSeq &args) {
+  FuncImp *match(Func &fn, const Coro &cor) {
     for (auto &imp: fn.imps) {
-      if (match(imp, args)) { return imp; }
+      if (match(imp, cor)) { return &imp; }
     }
 
-    return nullopt;
-  }
-
-  void call(Func &fn, Scope &scp) {
-    auto imp(match(fn, *scp.coro.stack));
-    
-    if (!imp) {
-      ERROR(Snabel, fmt("Function not applicable:\n%0", 
-			*scp.coro.stack));
-      return;
-    }
-    
-    Scope tmp(scp);
-    (*imp)(tmp);
+    return nullptr;
   }
 }

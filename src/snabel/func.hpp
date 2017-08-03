@@ -13,19 +13,23 @@ namespace snabel {
 
   struct BasicType;
   struct Box;
+  struct Coro;
   struct Scope;
   struct Func;
   
+  using ArgSeq = std::deque<Box>;
+
   struct FuncImp {
     using Args = std::deque<BasicType *>;
-    using Imp = func<void (Scope &, FuncImp &)>;
+    using Imp = func<void (Scope &, FuncImp &, const ArgSeq &)>;
 
     Func &func;
     Args args;
+    Type &res_type;
     Imp imp;
 
-    FuncImp(Func &fn, const Args &args, Imp imp);    
-    void operator ()(Scope &scp);
+    FuncImp(Func &fn, const Args &args, Type &rt, Imp imp);    
+    void operator ()(Coro &cor);
   };
 
   struct Func {
@@ -33,13 +37,13 @@ namespace snabel {
     std::list<FuncImp> imps;
     Func(const str &nam);
   };
-
-  using ArgSeq = std::deque<Box>;
   
-  ArgSeq get_args(const FuncImp imp, Scope &scp);
-  FuncImp &add_imp(Func &fn, const FuncImp::Args &args, FuncImp::Imp imp);
-  opt<FuncImp> match(const Func &fn, const ArgSeq &args);
-  void call(Func &fn, Scope &scp);
+  ArgSeq get_args(const FuncImp &imp, Coro &cor);
+  FuncImp &add_imp(Func &fn,
+		   const FuncImp::Args &args,
+		   Type &rt,
+		   FuncImp::Imp imp);
+  FuncImp *match(Func &fn, const Coro &cor);
 }
 
 #endif

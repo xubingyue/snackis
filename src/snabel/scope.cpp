@@ -17,10 +17,10 @@ namespace snabel {
     coro(cor)
   { }
 
-  opt<Box> find_env(Scope &scp, const str &n) {
+  Box *find_env(Scope &scp, const str &n) {
     auto fnd(scp.env.find(n));
-    if (fnd == scp.env.end()) { return nullopt; }
-    return fnd->second;
+    if (fnd == scp.env.end()) { return nullptr; }
+    return &fnd->second;
   }
 
   Box get_env(Scope &scp, const str &n) {
@@ -39,6 +39,10 @@ namespace snabel {
     scp.env.emplace(std::piecewise_construct,
 		    std::forward_as_tuple(n),
 		    std::forward_as_tuple(val));
+  }
+
+  bool rem_env(Scope &scp, const str &n) {
+    return scp.env.erase(n) == 1;
   }
 
   Type &add_type(Scope &scp, const str &n) {

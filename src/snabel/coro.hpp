@@ -27,7 +27,6 @@ namespace snabel {
   Scope &get_scope(Coro &cor);
   void push(Coro &cor, const Box &val);
   void push(Coro &cor, Type &typ, const Val &val);
-  void push(Coro &cor, const Op &op);
   Box pop(Coro &cor);
   void stash_stack(Coro &cor);
   void apply_stack(Coro &cor);
@@ -35,7 +34,7 @@ namespace snabel {
   void end_scope(Coro &cor);
   void rewind(Coro &cor);  
   void compile(Coro &cor, const str &in);
-  void run(Coro &cor); 
+  void run(Coro &cor, bool scope=true); 
 }
 
 #endif

@@ -12,7 +12,7 @@ namespace snabel {
 
   struct Box;
   struct Scope;
-  struct Func;
+  struct FuncImp;
   struct Op;
 
   enum OpCode { OP_APPLY, OP_BEGIN, OP_CALL, OP_END, OP_ID, OP_JUMP, OP_LABEL,
@@ -30,7 +30,7 @@ namespace snabel {
     
     static Op make_apply();
     static Op make_begin();
-    static Op make_call(Func &fn);
+    static Op make_call(FuncImp &imp);
     static Op make_end();
     static Op make_id(const str &txt);
     static Op make_jump(const str &tag);

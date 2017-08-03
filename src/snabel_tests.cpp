@@ -7,14 +7,12 @@
 #include "snackis/core/error.hpp"
 
 namespace snabel {
-  static void test_func(Scope &scp, FuncImp &fn) {
-    auto args(get_args(fn, scp));
-
+  static void test_func(Scope &scp, FuncImp &fn, const ArgSeq &args) {
     Exec &exe(scp.coro.exec);
     CHECK(args.size() == 1, _);
     CHECK(&args[0].type == &exe.i64_type, _);
     push(scp.coro, exe.i64_type, 42-get<int64_t>(args[0]));
-  } 
+  }
   
   static void func_tests() {
     TRY(try_test);
@@ -22,10 +20,10 @@ namespace snabel {
     Coro &cor(exe.main);
     
     Func f("test-func");
-    add_imp(f, {&exe.i64_type}, test_func);
+    auto &fi(add_imp(f, {&exe.i64_type}, exe.i64_type, test_func));
 
-    push(cor, Op::make_push(Box(exe.i64_type, int64_t(7))));
-    push(cor, Op::make_call(f));
+    cor.ops.push_back(Op::make_push(Box(exe.i64_type, int64_t(7))));
+    cor.ops.push_back(Op::make_call(fi));
     run(exe.main);
 
     CHECK(get<int64_t>(pop(cor)) == 35, _);
@@ -78,7 +76,7 @@ namespace snabel {
     Scope &scp(get_scope(exe.main));
     compile(exe.main, "(1 1 +) (2 2 +) *");
     run(exe.main);
-    CHECK(get<int64_t>(pop(scp.coro)) == 8, _);    
+    CHECK(get<int64_t>(pop(scp.coro)) == 8, _);
   }
 
   static void parse_tests() {
@@ -92,9 +90,9 @@ namespace snabel {
     Exec exe;
     Scope &scp(get_scope(exe.main));
     compile(exe.main, "let foo 35\nlet bar foo 14 -7 +");
-    run(exe.main);
+    run(exe.main, false);
     CHECK(get<int64_t>(get_env(scp, "foo")) == 35, _);
-    //CHECK(get<int64_t>(get_env(scp, "bar")) == 42, _);
+    CHECK(get<int64_t>(get_env(scp, "bar")) == 42, _);
   }
 
   static void stack_tests() {

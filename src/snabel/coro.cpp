@@ -1,6 +1,7 @@
 #include "snabel/compiler.hpp"
 #include "snabel/coro.hpp"
 #include "snabel/parser.hpp"
+#include "snackis/core/defer.hpp"
 #include "snackis/core/error.hpp"
 
 namespace snabel {
@@ -20,10 +21,6 @@ namespace snabel {
 
   void push(Coro &cor, Type &typ, const Val &val) {
     cor.stack->emplace_back(typ, val);
-  }
-
-  void push(Coro &cor, const Op &op) {
-    cor.ops.push_back(op);
   }
 
   Box pop(Coro &cor) {
@@ -72,10 +69,12 @@ namespace snabel {
 
   static void trace(Coro &cor) {
     OpSeq in;
-    in.swap(cor.ops);
+    cor.ops.swap(in);
     
     while (true) {
       rewind(cor);
+      begin_scope(cor);
+      DEFER({ end_scope(cor); });
       bool done(true);
       
       for (auto &op: in) {
@@ -87,7 +86,7 @@ namespace snabel {
       
       in.clear();
       cor.ops.swap(in);
-    }
+    }    
   }
 
   void compile(Coro &cor, const str &in) {
@@ -106,16 +105,15 @@ namespace snabel {
     trace(cor);
   }
 
-  void run(Coro &cor) {
+  void run(Coro &cor, bool scope) {
     rewind(cor);
-    begin_scope(cor);
+    if (scope) { begin_scope(cor); }
     
     while (cor.pc < cor.ops.size()) {
       run(cor.ops[cor.pc], get_scope(cor));
       cor.pc++;
     }
 
-    end_scope(cor);
-  }
-  
+    if (scope) { end_scope(cor); }
+  }  
 }
