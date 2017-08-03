@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "snabel/box.hpp"
 #include "snabel/coro.hpp"
 #include "snabel/error.hpp"
@@ -70,13 +72,37 @@ namespace snabel {
     op.info = [tag]() { return tag; };
 
     op.run = [tag](auto &ctx) {
-      add_label(ctx, tag);
+      auto fnd(ctx.labels.find(tag));
+      
+      if (fnd == ctx.labels.end()) {
+	ERROR(Snabel, fmt("Missing label: %0", tag));
+	return;
+      }
+
+      if (fnd->second != ctx.coro.pc) {
+	ERROR(Snabel, fmt("Label moved: %0", tag));
+      }
     };
 
-    op.trace = [tag](auto &op, auto &ctx, auto &out) {
-      if (!add_label(ctx, tag, true)) { return false; }
-      out.push_back(op);
-      return true;
+    int64_t prev_pc(-1);
+    op.trace = [tag, prev_pc](auto &op, auto &ctx, auto &out) mutable {
+      auto fnd(ctx.labels.find(tag));
+
+      if (fnd == ctx.labels.end()) {
+	ctx.labels.emplace(tag, ctx.coro.trace_pc);
+	out.push_back(op);
+	prev_pc = ctx.coro.trace_pc;
+	return true;
+      }
+
+      if (prev_pc == -1 || fnd->second == prev_pc) {
+	fnd->second = ctx.coro.trace_pc;
+	prev_pc = ctx.coro.trace_pc;
+      } else {
+	ERROR(Snabel, fmt("Duplicate label: %0", tag));
+      }
+      
+      return false;
     };
 
     return op;

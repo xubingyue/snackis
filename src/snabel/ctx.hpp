@@ -35,7 +35,6 @@ namespace snabel {
 
   Type &add_type(Ctx &ctx, const str &n);
   Func &add_func(Ctx &ctx, const str &n);
-  bool add_label(Ctx &ctx, const str &tag, bool silent=false);
 }
 
 #endif

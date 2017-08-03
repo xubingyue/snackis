@@ -14,7 +14,7 @@ namespace snabel {
     using Stack = std::deque<Box>;
     Exec &exec;
     OpSeq ops;
-    int64_t pc;
+    int64_t pc, trace_pc;
     std::list<Ctx> ctxs;
     std::list<Stack> stacks;
     Stack *stack;

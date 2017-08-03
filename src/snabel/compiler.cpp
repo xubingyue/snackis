@@ -8,24 +8,6 @@ namespace snabel {
     ctx(ctx)
   { }
 
-  static void trace(Ctx &ctx, OpSeq &out) {
-    OpSeq in;
-    in.swap(out);
-    
-    while (true) {
-      bool done(true);
-      
-      for (auto &op: in) {
-	if (trace(op, ctx, out)) { done = false; }
-      }
-
-      if (done) { break; }
-      
-      in.clear();
-      out.swap(in);
-    }
-  }
-
   void compile(Compiler &cpr,
 	       size_t lnr,
 	       const Tok &tok,
@@ -66,7 +48,6 @@ namespace snabel {
 	       const TokSeq &exp,
 	       OpSeq &out) {
     if (exp.empty()) { return; }
-    OpSeq ops;
     
     if (exp[0].text == "let") {
       if (exp.size() < 3) {
@@ -75,17 +56,13 @@ namespace snabel {
 	compile(cpr, lnr,
 		     TokSeq(std::next(exp.begin(), 2),
 			    exp.end()),
-		     ops);
+		     out);
 
-	ops.emplace_back(Op::make_let(exp[1].text));
+	out.emplace_back(Op::make_let(exp[1].text));
       }
     } else {
-      for (auto t: exp) { compile(cpr, lnr, t, ops); }	  
+      for (auto t: exp) { compile(cpr, lnr, t, out); }	  
     }
-
-    trace(cpr.ctx, ops);
-    std::copy(ops.begin(), ops.end(),
-	      std::back_inserter(out));
   }
 
   

@@ -57,11 +57,32 @@ namespace snabel {
     add_imp(mul, {&i64_type.seq}, mul_i64);
   }
 
+  static void trace(Exec &exe) {
+    OpSeq in;
+    in.swap(exe.main.ops);
+    
+    while (true) {
+      bool done(true);
+      exe.main.trace_pc = 0;
+      
+      for (auto &op: in) {
+	if (trace(op, exe.ctx, exe.main.ops)) { done = false; }
+	exe.main.trace_pc++;
+      }
+
+      if (done) { break; }
+      
+      in.clear();
+      exe.main.ops.swap(in);
+    }
+  }  
+  
   void compile(Exec &exe, const str &in) {
     Compiler cpr(exe.ctx);
     compile(cpr, in);
     std::copy(cpr.ops.begin(), cpr.ops.end(),
 	      std::back_inserter(exe.main.ops));
+    trace(exe);
   }
 
   void run(Exec &exe) {
