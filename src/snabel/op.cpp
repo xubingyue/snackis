@@ -23,7 +23,17 @@ namespace snabel {
     };
 
     op.trace = [&imp](auto &op, auto &scp, auto &out) {
-      pop_args(imp, scp.coro);
+      auto args(pop_args(imp, scp.coro));
+
+      if (imp.pure && std::find_if(args.begin(), args.end(),
+				   [](auto &a){ return undef(a); }) == args.end()) {
+	imp(scp.coro, args);
+	auto res(peek(scp.coro));
+	out.push_back(make_pop(args.size()));
+	out.push_back(make_push(res));
+	return true;
+      }
+
       push(scp.coro, imp.res_type, undef);
       return false;
     };
@@ -151,6 +161,17 @@ namespace snabel {
     };
 
     return op;
+  }
+
+  Op Op::make_pop(size_t cnt) {
+    Op op(OP_POP, "Pop");
+    op.info = [cnt](auto &op, auto &scp) { return fmt_arg(cnt); };
+    
+    op.run = [cnt](auto &op, auto &scp) {
+      for (size_t i(0); i < cnt; i++) { pop(scp.coro); }
+    };
+
+    return op;    
   }
 
   Op Op::make_pop_env() {

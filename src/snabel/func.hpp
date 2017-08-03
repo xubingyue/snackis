@@ -27,8 +27,10 @@ namespace snabel {
     Args args;
     Type &res_type;
     Imp imp;
-
-    FuncImp(Func &fn, const Args &args, Type &rt, Imp imp);    
+    bool pure;
+    
+    FuncImp(Func &fn, const Args &args, Type &rt, Imp imp, bool pur=true);
+    void operator ()(Coro &cor, const ArgSeq &args);
     void operator ()(Coro &cor);
   };
 

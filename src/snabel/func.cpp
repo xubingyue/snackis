@@ -6,16 +6,20 @@
 #include "snabel/type.hpp"
 
 namespace snabel {
-  FuncImp::FuncImp(Func &fn, const Args &args, Type &rt, Imp imp):
-    func(fn), args(args), res_type(rt), imp(imp)
+  FuncImp::FuncImp(Func &fn, const Args &args, Type &rt, Imp imp, bool pur):
+    func(fn), args(args), res_type(rt), imp(imp), pure(pur)
   { }
   
-  void FuncImp::operator ()(Coro &cor) {
-    auto args(pop_args(*this, cor));
+  void FuncImp::operator ()(Coro &cor, const ArgSeq &args) {
     Scope &tmp(begin_scope(cor));
     imp(tmp, *this, args);
     end_scope(cor);
- }
+  }
+
+  void FuncImp::operator ()(Coro &cor) {
+    auto args(pop_args(*this, cor));
+    (*this)(cor, args);
+  }
 
   Func::Func(const str &nam):
     name(nam)

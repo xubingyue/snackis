@@ -47,6 +47,12 @@ namespace snabel {
     curr_stack(cor).emplace_back(typ, val);
   }
 
+  Box peek(Coro &cor) {
+    auto &s(curr_stack(cor));
+    CHECK(!s.empty(), _);
+    return s.back();
+  }
+
   Box pop(Coro &cor) {
     auto &s(curr_stack(cor));
     CHECK(!s.empty(), _);

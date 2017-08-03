@@ -16,7 +16,7 @@ namespace snabel {
   struct Op;
 
   enum OpCode { OP_BEGIN, OP_CALL, OP_END, OP_ID, OP_JUMP, OP_LABEL,
-		OP_LET, OP_POP_ENV, OP_POP_STACK, OP_PUSH, OP_PUSH_ENV,
+		OP_LET, OP_POP, OP_POP_ENV, OP_POP_STACK, OP_PUSH, OP_PUSH_ENV,
 		OP_PUSH_STACK, OP_RESET};
 
   using OpSeq = std::deque<Op>;
@@ -36,6 +36,7 @@ namespace snabel {
     static Op make_jump(const str &tag);
     static Op make_label(const str &tag);
     static Op make_let(const str &id);
+    static Op make_pop(size_t cnt);
     static Op make_pop_env();
     static Op make_pop_stack();
     static Op make_push(const Box &it);
