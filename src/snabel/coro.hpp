@@ -45,7 +45,8 @@ namespace snabel {
   void end_scope(Coro &cor);
 
   void rewind(Coro &cor);  
-  void compile(Coro &cor, const str &in);
+  bool compile(Coro &cor, const str &in, bool optimize=true);
+  bool optimize(Coro &cor);
   void run(Coro &cor); 
 }
 

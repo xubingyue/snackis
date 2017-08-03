@@ -14,7 +14,7 @@ namespace gui {
     GtkListStore *bcode_store;
 
     GtkWidget *new_script_btn, *find_posts_btn, *post_btn, *name_fld,
-      *tags_fld, *code_fld, *bcode_lst, *generate_btn, *run_btn;
+      *tags_fld, *code_fld, *bcode_lst, *generate_btn, *optimize_fld, *run_btn;
     
     PeerList peer_lst;
     FeedHistory post_lst;

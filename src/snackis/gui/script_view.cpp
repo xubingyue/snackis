@@ -55,7 +55,9 @@ namespace gui {
 
   static void on_generate(gpointer *_, ScriptView *v) {
     TRY(try_generate);
-    snabel::compile(v->exec.main, get_str(GTK_TEXT_VIEW(v->code_fld)));    
+    auto code(get_str(GTK_TEXT_VIEW(v->code_fld)));
+    auto optimize(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->optimize_fld)));
+    snabel::compile(v->exec.main, code, optimize);    
     gtk_list_store_clear(v->bcode_store);
 
     for (auto &op: v->exec.main.ops) {
@@ -106,9 +108,13 @@ namespace gui {
     gtk_container_add(GTK_CONTAINER(left), gtk_widget_get_parent(v.code_fld));
     set_str(GTK_TEXT_VIEW(v.code_fld), v.rec.code);
 
+    GtkWidget *left_btns(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
+    gtk_container_add(GTK_CONTAINER(left), left_btns);
     gtk_widget_set_halign(v.generate_btn, GTK_ALIGN_START);
     g_signal_connect(v.generate_btn, "clicked", G_CALLBACK(on_generate), &v);
-    gtk_container_add(GTK_CONTAINER(left), v.generate_btn);
+    gtk_container_add(GTK_CONTAINER(left_btns), v.generate_btn);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(v.optimize_fld), true);
+    gtk_container_add(GTK_CONTAINER(left_btns), v.optimize_fld);
 
     GtkWidget *right(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
     gtk_container_add(GTK_CONTAINER(frm), right);
@@ -159,6 +165,7 @@ namespace gui {
     code_fld(new_text_view()),
     bcode_lst(new_tree_view(GTK_TREE_MODEL(bcode_store))),
     generate_btn(gtk_button_new_with_mnemonic("_Generate Bytecode")),
+    optimize_fld(gtk_check_button_new_with_label("Optimize")),    
     run_btn(gtk_button_new_with_mnemonic("_Run Bytecode")),
     peer_lst(ctx, "Peer", this->rec.peer_ids),
     post_lst(ctx)

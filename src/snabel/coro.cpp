@@ -104,29 +104,33 @@ namespace snabel {
     cor.pc = 0;
   }
 
-  static void trace(Coro &cor) {
+  static bool trace(Coro &cor, bool optimize) {
     OpSeq in;
     cor.ops.swap(in);
     auto &scp(cor.scopes.front());
+    bool res(false);
     
     while (true) {
       push_env(scp);
       bool done(true);
       
       for (auto &op: in) {
-	if (trace(op, curr_scope(cor), cor.ops)) { done = false; }
+	if (trace(op, curr_scope(cor), optimize, cor.ops)) { done = false; }
 	cor.pc++;
       }
 
       rewind(cor);
-      if (done) { break; }
+      if (done || !optimize) { break; }
       
       in.clear();
       cor.ops.swap(in);
-    }    
+      res = true;
+    }
+
+    return res;
   }
 
-  void compile(Coro &cor, const str &in) {
+  bool compile(Coro &cor, const str &in, bool optimize) {
     cor.ops.clear();
     size_t lnr(0);
     for (auto &ln: parse_lines(in)) {
@@ -139,8 +143,10 @@ namespace snabel {
       lnr++;
     }
 
-    trace(cor);
+    return trace(cor, optimize);
   }
+
+  bool optimize(Coro &cor) { return trace(cor, true); }
 
   void run(Coro &cor) {
     while (cor.pc < cor.ops.size()) {

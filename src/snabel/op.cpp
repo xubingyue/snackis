@@ -22,10 +22,12 @@ namespace snabel {
       imp(scp.coro);
     };
 
-    op.trace = [&imp](auto &op, auto &scp, auto &out) {
+    op.trace = [&imp](auto &op, auto &scp, bool optimize, auto &out) {
       auto args(pop_args(imp, scp.coro));
 
-      if (imp.pure && std::find_if(args.begin(), args.end(),
+      if (optimize &&
+	  imp.pure &&
+	  std::find_if(args.begin(), args.end(),
 				   [](auto &a){ return undef(a); }) == args.end()) {
 	imp(scp.coro, args);
 	auto res(peek(scp.coro));
@@ -55,22 +57,22 @@ namespace snabel {
       auto fnd(find_env(scp, txt));
 
       if (!fnd) {
-	ERROR(Snabel, fmt("Unknown identifier:\n%0", txt));
+	ERROR(Snabel, fmt("Unknown identifier: %0", txt));
 	return;
       }
 
       push(scp.coro, *fnd);
     };    
 
-    op.trace = [txt](auto &op, auto &scp, auto &out) {
+    op.trace = [txt](auto &op, auto &scp, bool optimize, auto &out) {
 	auto fnd(find_env(scp, txt));
-	if (!fnd) {return false; }	
+	if (!fnd) {return false; }
 
 	if (undef(*fnd)) {
 	  push(scp.coro, *fnd);
 	  return false;
 	}
-	  
+
 	if (&fnd->type == &scp.coro.exec.func_type) {
 	  Func &fn(*get<Func *>(*fnd));
 	  auto imp(match(fn, scp.coro));
@@ -79,10 +81,12 @@ namespace snabel {
 	    ERROR(Snabel, fmt("Function not applicable:\n%0", 
 			      curr_stack(scp.coro)));
 	  }
-
-	  snabel::trace(Op::make_call(*imp), scp, out);
+	  
+	  (*imp)(scp.coro);
+	  out.push_back(Op::make_call(*imp));
 	} else {
-	  snabel::trace(Op::make_push(*fnd), scp, out);
+	  push(scp.coro, *fnd);
+	  out.push_back(Op::make_push(*fnd));
 	}
 	
 	return true;
@@ -115,7 +119,7 @@ namespace snabel {
 
     return op;
 
-    op.trace = [tag](auto &op, auto &scp, auto &out) {
+    op.trace = [tag](auto &op, auto &scp, bool optimize, auto &out) {
       return false;
     };
   }
@@ -125,7 +129,7 @@ namespace snabel {
     op.info = [tag](auto &op, auto &scp) { return tag; };
 
     int64_t prev_pc(-1);
-    op.trace = [tag, prev_pc](auto &op, auto &scp, auto &out) mutable {
+    op.trace = [tag, prev_pc](auto &op, auto &scp, bool optimize, auto &out) mutable {
       Coro &cor(scp.coro);
       auto fnd(scp.labels.find(tag));
 
@@ -171,10 +175,12 @@ namespace snabel {
       for (size_t i(0); i < cnt; i++) { pop(scp.coro); }
     };
 
-    op.trace = [cnt](auto &op, auto &scp, auto &out) mutable {
-      while (cnt > 0 && !out.empty() && out.back().code == OP_PUSH) {
-	out.pop_back();
-	cnt--;
+    op.trace = [cnt](auto &op, auto &scp, bool optimize, auto &out) mutable {
+      if (optimize) {
+	while (cnt > 0 && !out.empty() && out.back().code == OP_PUSH) {
+	  out.pop_back();
+	  cnt--;
+	}
       }
 
       for (size_t i(0); i < cnt; i++) { pop(scp.coro); }
@@ -228,7 +234,7 @@ namespace snabel {
   static void def_run(const Op &op, Scope &scp) {
   }
 
-  static bool def_trace(const Op &op, Scope &scp, OpSeq &out) {
+  static bool def_trace(const Op &op, Scope &scp, bool optimize, OpSeq &out) {
     op.run(op, scp);
     return false;
   }
@@ -242,8 +248,8 @@ namespace snabel {
     return op.info(op, scp);
   }
 
-  bool trace(const Op &op, Scope &scp, OpSeq &out) {
-    if (op.trace(op, scp, out)) { return true; }
+  bool trace(const Op &op, Scope &scp, bool optimize, OpSeq &out) {
+    if (op.trace(op, scp, optimize, out)) { return true; }
     out.push_back(op);
     return false;
   }
