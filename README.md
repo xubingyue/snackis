@@ -52,7 +52,7 @@ Once inside, the first thing you probably want to do is to have a look at the se
 Type ```lock``` and press ```Return``` in the reader to lock Snackis and return to the login screen, the application will keep running in the background until closed.
 
 ### Undo
-Snackis logs all changes to an undo-stack, type ```undo``` and press ```Return``` in the reader to view the stack.
+Snackis logs all changes to an undo-stack, type ```undo``` and press ```Return``` in the reader to view and/or manage the stack.
 
 ![undo example](images/undo.png?raw=true)
 
@@ -76,7 +76,7 @@ Snackis stores all outgoing messages in an outbox that may be manually emptied a
 Type ```fetch``` and press return in the reader to fetch email manually. Automatic fetching at regular intervals is supported through ```Imap Poll``` in ```Setup```.
 
 ### Email Security
-If you haven't previously used external clients with your email-address, it's quite likely that you'll get an error when Snackis tries connecting to the server. Most email providers will send a message to your inbox with a warning and instructions on how to enable external access. Rest assured that there is nothing insecure about Snackis way of accessing your email, and as long as you don't type in your server-details anywhere else nothing bad can happen as a consequence of allowing external access to your account.
+If you haven't previously used external clients with your email-address, it's quite likely that you'll get an error when Snackis tries connecting to the server. Most email providers will send a message to your inbox with a warning and instructions on how to enable external access. Rest assured that there is nothing insecure about Snackis way of accessing your email; and as long as you don't type in your server-details anywhere else, nothing bad can happen.
 
 ### Inbox
 Incoming messages arrive in the inbox, type ```inbox``` end press ```Return``` in the reader to open the inbox form.
