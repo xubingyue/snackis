@@ -171,6 +171,16 @@ namespace snabel {
       for (size_t i(0); i < cnt; i++) { pop(scp.coro); }
     };
 
+    op.trace = [cnt](auto &op, auto &scp, auto &out) mutable {
+      while (cnt > 0 && !out.empty() && out.back().code == OP_PUSH) {
+	out.pop_back();
+	cnt--;
+      }
+
+      for (size_t i(0); i < cnt; i++) { pop(scp.coro); }
+      return !cnt;
+    };
+
     return op;    
   }
 
