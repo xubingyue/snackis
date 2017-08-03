@@ -33,7 +33,6 @@ namespace snabel {
     main(fibers.emplace(std::piecewise_construct,
 			std::forward_as_tuple(null_uid),
 			std::forward_as_tuple(*this, null_uid)).first->second),
-    scope(get_scope(main)),
     meta_type((add_type(main, "Type"))),
     op_type((add_type(main, "Op"))),
     op_seq_type((add_type(main, "OpSeq"))),
