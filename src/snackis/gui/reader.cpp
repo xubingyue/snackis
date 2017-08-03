@@ -33,12 +33,12 @@ namespace gui {
     if (in.empty()) { return true; }
     auto fnd(rdr->cmds.lower_bound(in));
     if (fnd == rdr->cmds.end()) { return true; }
-    const str fnd_str(fnd->first);
+    const str fnd_str(*fnd);
     if (fnd_str.find(in) != 0) { return true; }
     size_t i(fnd_str.size());
       
-    while (fnd != rdr->cmds.end() && fnd->first.find(in) == 0) {
-      const str nxt_str(fnd->first);
+    while (fnd != rdr->cmds.end() && fnd->find(in) == 0) {
+      const str nxt_str(*fnd);
       size_t j(0);
       
       while (j < fnd_str.size() && j < nxt_str.size()) {
@@ -55,20 +55,27 @@ namespace gui {
     return true;
   }
 
+  static void add_cmd(Reader &rdr,
+		      const str &id,
+		      const snabel::ArgTypes &args,
+		      Reader::Cmd cmd) {
+    CHECK(rdr.cmds.insert(id).second, _);
+    snabel::Func &f(add_func(rdr.exec.main, id));
+    add_imp(f, args, rdr.exec.void_type,
+	    [cmd](snabel::Scope &scp, snabel::FuncImp &fn, const snabel::Args &args) {
+	      cmd(args);
+	    });
+  };
+  
   template <typename SearchT, typename ViewT, typename RecT>
   static void init_id_search(Reader &rdr, const str &id) {
     Ctx &ctx(rdr.ctx);
-    
-    rdr.cmds.emplace(id, [&ctx, id](auto args) {
-	if (args.size() != 1) {
-	  log(ctx, "Invalid number of arguments, syntax: %0 ea362b58", id);
-	  return false;
-	}
-	
-	auto *v(new SearchT(ctx));
-	auto id(args.back());
-	gui::set_str(GTK_ENTRY(v->id_fld), id);
 
+    add_cmd(rdr, id, {&rdr.exec.str_type}, [&ctx, id](auto args) {
+	auto *v(new SearchT(ctx));
+	auto id(snabel::get<str>(args[0]));
+	gui::set_str(GTK_ENTRY(v->id_fld), id);
+	
 	if (find(*v) == 1) {
 	  auto rec(first_rec(*v));
 	  CHECK(rec != nullptr, _);
@@ -77,8 +84,6 @@ namespace gui {
 	} else {
 	  push_view(v);
 	}
-	
-	return true;
       });
   }
 
@@ -86,14 +91,8 @@ namespace gui {
   static void init_new(Reader &rdr, const str &id) {
     Ctx &ctx(rdr.ctx);
 
-    rdr.cmds.emplace(fmt("%0-new", id), [&ctx, id](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: %0-new", id);
-	  return false;
-	}
-	
+    add_cmd(rdr, fmt("%0-new", id), {}, [&ctx, id](auto args) {
 	push_view(new ViewT(RecT(ctx)));
-	return true;
       });
   }
 
@@ -101,60 +100,30 @@ namespace gui {
   static void init_search(Reader &rdr, const str &id) {
     Ctx &ctx(rdr.ctx);
 
-    rdr.cmds.emplace(fmt("%0-search", id), [&ctx, id](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: %0-search", id);
-	  return false;
-	}
-	
+    add_cmd(rdr, fmt("%0-search", id), {}, [&ctx, id](auto args) {
 	push_view(new ViewT(ctx));
-	return true;
       });
   }
   
   static void init_cmds(Reader &rdr) {
     Ctx &ctx(rdr.ctx);
 
-    rdr.cmds.emplace("clear", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: clear");
-	  return false;
-	}
-	
+    add_cmd(rdr, "clear", {}, [&ctx](auto args) {
 	clear(*console);
-	return true;
       });
 
-    rdr.cmds.emplace("decrypt", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: decrypt");
-	  return false;
-	}
-	
+    add_cmd(rdr, "decrypt", {}, [&ctx](auto args) {
 	push_view(new Decrypt(ctx));
-	return true;
       });
 
-    rdr.cmds.emplace("rewrite!", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: rewrite!");
-	  return false;
-	}
-
+    add_cmd(rdr, "rewrite!", {}, [&ctx](auto args) {
 	log(ctx, "Rewriting database...");
 	log(ctx, fmt("Finished rewriting, %0k reclaimed",
 		     rewrite_db(ctx) / 1000));
-	return true;
       });
 
-    rdr.cmds.emplace("encrypt", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: encrypt");
-	  return false;
-	}
-	
+    add_cmd(rdr, "encrypt", {}, [&ctx](auto args) {
 	push_view(new Encrypt(ctx));
-	return true;
       });
 
     init_id_search<ScriptSearch, ScriptView, Script>(rdr, "script");
@@ -165,58 +134,37 @@ namespace gui {
     init_new<FeedView, Feed>(rdr, "feed");
     init_search<FeedSearch>(rdr, "feed");
 
-    rdr.cmds.emplace("fetch", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: fetch");
-	  return false;
-	}
-
+    add_cmd(rdr, "fetch", {}, [&ctx](auto args) {
 	imap_worker->go.notify_one();
-	return true;
       });
 
-    rdr.cmds.emplace("inbox", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: inbox");
-	  return false;
-	}
-
+    add_cmd(rdr, "inbox", {}, [&ctx](auto args) {
 	refresh(ctx);
+
 	if (ctx.db.inbox.recs.empty()) {
 	  log(ctx, "Inbox is empty");
-	  return true;
+	} else {
+	  if (!inbox) { inbox.reset(new Inbox(ctx)); }
+	  push_view(inbox.get());
 	}
-
-	if (!inbox) { inbox.reset(new Inbox(ctx)); }
-	push_view(inbox.get());
-	return true;
       });
 
-    rdr.cmds.emplace("invite", [&ctx](auto args) {
-	if (args.size() != 1) {
-	  log(ctx, "Invalid number of arguments, syntax: invite foo@bar.com");
-	  return false;
-	}
-	
+    add_cmd(rdr, "invite", {&rdr.exec.str_type}, [&ctx](auto args) {
 	db::Trans trans(ctx);
 	TRY(try_invite);
-	Invite inv(ctx, args[0]);
+	Invite inv(ctx, snabel::get<str>(args[0]));
 	load(ctx.db.invites, inv);
 	send(inv);
-	if (!try_invite.errors.empty()) { return false; }
-	log(ctx, fmt("Saved new invite: %0", inv.to));
-	db::commit(trans, fmt("Created invite: ", inv.to));
-	return true;
+	
+	if (try_invite.errors.empty()) {
+	  log(ctx, fmt("Saved new invite: %0", inv.to));
+	  db::commit(trans, fmt("Created invite: ", inv.to));
+	}
       });
 
-    rdr.cmds.emplace("lock", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: lock");
-	  return false;
-	}
+    add_cmd(rdr, "lock", {}, [&ctx](auto args) {
 	gtk_widget_hide(left_panel);
 	push_view(new Login(ctx));
-	return true;
       });
 
     init_id_search<PeerSearch, PeerView, Peer>(rdr, "peer");
@@ -229,62 +177,36 @@ namespace gui {
     init_id_search<ProjectSearch, ProjectView, Project>(rdr, "project");
     init_new<ProjectView, Project>(rdr, "project");
     init_search<ProjectSearch>(rdr, "project");
-    
-    rdr.cmds.emplace("send", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: send");
-	  return false;
-	}
 
+    add_cmd(rdr, "send", {}, [&ctx](auto args) {
 	if (ctx.db.outbox.recs.empty()) {
 	  log(ctx, "Nothing to send");
-	  return false;
+	} else {
+	  smtp_worker->go.notify_one();
 	}
-	
-	smtp_worker->go.notify_one();
-	return true;
       });
 
-    rdr.cmds.emplace("setup", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: setup");
-	  return false;
-	}
-
+    add_cmd(rdr, "setup", {}, [&ctx](auto args) {
 	if (!setup) { setup.reset(new Setup(ctx)); }
 	push_view(setup.get());
-	return true;
       });
 
     init_id_search<TaskSearch, TaskView, Task>(rdr, "task");
     init_new<TaskView, Task>(rdr, "task");
     init_search<TaskSearch>(rdr, "task");
 
-    rdr.cmds.emplace("todo", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: todo");
-	  return false;
-	}
-
+    add_cmd(rdr, "todo", {}, [&ctx](auto args) {
 	if (!todo) { todo.reset(new Todo(ctx)); }
 	push_view(todo.get());
-	return true;
       });
     
-    rdr.cmds.emplace("undo", [&ctx](auto args) {
-	if (!args.empty()) {
-	  log(ctx, "Invalid number of arguments, syntax: inbox");
-	  return false;
-	}
-
+    add_cmd(rdr, "undo", {}, [&ctx](auto args) {
 	if (ctx.undo_stack.empty()) {
 	  log(ctx, "Nothing to undo");
-	  return true;
+	} else {
+	  if (!undo) { undo.reset(new Undo(ctx)); }
+	  push_view(undo.get());
 	}
-
-	if (!undo) { undo.reset(new Undo(ctx)); }
-	push_view(undo.get());
-	return true;
       });
   }
   
@@ -297,53 +219,23 @@ namespace gui {
     for(auto &cmd: rdr.cmds) {
       GtkTreeIter iter;
       gtk_list_store_append(mod, &iter);
-      gtk_list_store_set(mod, &iter, 0, cmd.first.c_str(), -1);
+      gtk_list_store_set(mod, &iter, 0, cmd.c_str(), -1);
     }
 
     gtk_entry_completion_set_model(comp, GTK_TREE_MODEL(mod));
     
   }
   
-  static std::pair<str, std::vector<str>> parse_cmd(Reader &rdr, const str &in) {
-    InStream in_words(in);
-    str id;
-    in_words >> id;
-    std::vector<str> args;
-    str arg;
-    while (in_words >> arg) { args.push_back(arg); }
-    return std::make_pair(id, args);
-  }
-  
-  static opt<Reader::Cmd> find_cmd(Reader &rdr, const str &_in) {
-    str in(_in);
-    
-    if (in.empty()) {
-      if (!rdr.last_cmd) { return nullopt; }
-      in = *rdr.last_cmd;
-    }
-
-    auto parsed(parse_cmd(rdr, in));
-
-    auto found(rdr.cmds.find(parsed.first));
-    if (found == rdr.cmds.end()) { return nullopt; }
-    return found->second; 
-  }
-
   static bool exec_cmd(Reader &rdr, const str &in) {
-    Ctx &ctx(rdr.ctx);
     TRY(try_exec);
 
-    auto parsed(parse_cmd(rdr, in));
-    auto cmd(find_cmd(rdr, parsed.first));
-      
-    if (!cmd){
-      log(ctx, fmt("Unknown command: '%0'", in));
-      return false;
-    }
-      
-    if (!(*cmd)(parsed.second)) { return false; }
-      
-    if (!in.empty()) {
+    auto &cor(rdr.exec.main);
+    snabel::compile(cor, in, false);    
+    begin_scope(cor);
+    snabel::run(cor);
+    end_scope(cor);
+     
+    if (try_exec.errors.empty()) {
       rdr.last_cmd = in;
       gtk_entry_set_placeholder_text(GTK_ENTRY(rdr.entry), in.c_str());
     }
@@ -353,9 +245,15 @@ namespace gui {
 
   static void on_activate(GtkWidget *_, Reader *rdr) {
     const str in(gtk_entry_get_text(GTK_ENTRY(rdr->entry)));
-    auto cmd(find_cmd(*rdr, in));
-    if (cmd) { gtk_entry_set_text(GTK_ENTRY(rdr->entry), ""); }
-    if (!exec_cmd(*rdr, in)) { gtk_widget_grab_focus(rdr->entry); }
+
+    if (exec_cmd(*rdr, in)) {
+      auto res(peek(rdr->exec.main));
+      set_str(GTK_ENTRY(rdr->entry), res ? fmt_arg(*res) : "");
+    }
+    
+    if (!get_str(GTK_ENTRY(rdr->entry)).empty()) {
+      gtk_widget_grab_focus(rdr->entry);
+    }
   }
 
   Reader::Reader(Ctx &ctx): ctx(ctx), entry(gtk_entry_new()) {

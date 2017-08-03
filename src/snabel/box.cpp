@@ -16,7 +16,7 @@ namespace snabel {
 namespace snackis {
   template <>
   str fmt_arg(const snabel::Box &arg) {
-    return fmt("%0|%1",
+    return fmt("%0:%1",
 	       snabel::undef(arg) ? "undef" : arg.type.fmt(arg),
 	       arg.type.name);
   }

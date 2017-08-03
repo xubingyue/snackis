@@ -47,9 +47,9 @@ namespace snabel {
     curr_stack(cor).emplace_back(typ, val);
   }
 
-  Box peek(Coro &cor) {
+  opt<Box> peek(Coro &cor) {
     auto &s(curr_stack(cor));
-    CHECK(!s.empty(), _);
+    if (s.empty()) { return nullopt; }
     return s.back();
   }
 

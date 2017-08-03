@@ -2,7 +2,6 @@
 #define SNACKIS_GUI_SCRIPT_VIEW_HPP
 
 #include "snabel/exec.hpp"
-
 #include "snackis/script.hpp"
 #include "snackis/gui/feed_history.hpp"
 #include "snackis/gui/peer_list.hpp"

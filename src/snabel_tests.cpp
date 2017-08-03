@@ -7,7 +7,7 @@
 #include "snackis/core/error.hpp"
 
 namespace snabel {
-  static void test_func(Scope &scp, FuncImp &fn, const ArgSeq &args) {
+  static void test_func(Scope &scp, FuncImp &fn, const Args &args) {
     Exec &exe(scp.coro.exec);
     CHECK(args.size() == 1, _);
     CHECK(&args[0].type == &exe.i64_type, _);

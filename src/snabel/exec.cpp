@@ -5,7 +5,7 @@
 #include "snabel/type.hpp"
 
 namespace snabel {
-  static void add_i64(Scope &scp, FuncImp &fn, const ArgSeq &args) {
+  static void add_i64(Scope &scp, FuncImp &fn, const Args &args) {
     Exec &exe(scp.coro.exec);
     int64_t res(0);
 
@@ -17,13 +17,39 @@ namespace snabel {
     push(scp.coro, exe.i64_type, res);
   }
 
-  static void mul_i64(Scope &scp, FuncImp &fn, const ArgSeq &args) {
+  static void sub_i64(Scope &scp, FuncImp &fn, const Args &args) {
+    Exec &exe(scp.coro.exec);
+    int64_t res(get<int64_t>(args[0]));
+
+    if (args.size() == 1) { res = -res; }
+    else {
+      for (auto i=std::next(args.begin()); i != args.end(); i++) {
+	CHECK(&i->type == &exe.i64_type, _);
+	res -= get<int64_t>(*i);
+      }
+    }
+    
+    push(scp.coro, exe.i64_type, res);
+  }
+
+  static void mul_i64(Scope &scp, FuncImp &fn, const Args &args) {
     Exec &exe(scp.coro.exec);
     int64_t res(1);
 
     for (auto &a: args) {
       CHECK(&a.type == &exe.i64_type, _);
       res *= get<int64_t>(a);
+    }
+    
+    push(scp.coro, exe.i64_type, res);
+  }
+
+  static void mod_i64(Scope &scp, FuncImp &fn, const Args &args) {
+    Exec &exe(scp.coro.exec);
+    int64_t res(get<int64_t>(args[0]));
+    for (auto i=std::next(args.begin()); i != args.end(); i++) {
+      CHECK(&i->type == &exe.i64_type, _);
+      res %= get<int64_t>(*i);
     }
     
     push(scp.coro, exe.i64_type, res);
@@ -38,7 +64,8 @@ namespace snabel {
     op_seq_type((add_type(main, "OpSeq"))),
     func_type((add_type(main, "Func"))),
     i64_type((add_type(main, "I64"))),
-    str_type((add_type(main, "Str")))
+    str_type((add_type(main, "Str"))),
+    void_type((add_type(main, "Void")))
   {
     meta_type.fmt = [](auto &v) { return get<Type *>(v)->name; };
     op_type.fmt = [](auto &v) { return fmt_arg(get<Op>(v).code); };
@@ -50,7 +77,13 @@ namespace snabel {
     Func &add(add_func(main, "+"));
     add_imp(add, {&i64_type.seq}, i64_type, add_i64);
 
+    Func &sub(add_func(main, "-"));
+    add_imp(sub, {&i64_type.seq}, i64_type, sub_i64);
+    
     Func &mul(add_func(main, "*"));
     add_imp(mul, {&i64_type.seq}, i64_type, mul_i64);
+
+    Func &mod(add_func(main, "%"));
+    add_imp(mod, {&i64_type.seq}, i64_type, mod_i64);
   }
 }

@@ -18,7 +18,10 @@ namespace snabel {
       out.emplace_back(Op::make_end());
     } else if (tok.text[0] == '@') {
       out.emplace_back(Op::make_label(tok.text.substr(1)));
-    }  else if (tok.text == "begin") {
+    } else if (tok.text[0] == '"') {
+      out.emplace_back(Op::make_push(Box(exe.str_type,
+					 tok.text.substr(1, tok.text.size()-2))));
+    } else if (tok.text == "begin") {
       out.emplace_back(Op::make_begin());
     } else if (tok.text == "end") {
       out.emplace_back(Op::make_end());

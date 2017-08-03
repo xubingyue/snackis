@@ -29,10 +29,22 @@ namespace snabel {
 	  imp.pure &&
 	  std::find_if(args.begin(), args.end(),
 				   [](auto &a){ return undef(a); }) == args.end()) {
-	imp(scp.coro, args);
-	auto res(peek(scp.coro));
-	out.push_back(make_pop(args.size()));
-	out.push_back(make_push(res));
+	imp(scp.coro, args);	
+
+	if (!args.empty()) {
+	  out.push_back(make_pop(args.size()));
+	}
+
+	if (&imp.res_type != &scp.coro.exec.void_type) {
+	  auto res(peek(scp.coro));
+	  
+	  if (res){
+	    out.push_back(make_push(*res));
+	  } else {
+	    ERROR(Snabel, fmt("Missing result from function: %0", imp.func.name));
+	  }
+	}
+	
 	return true;
       }
 

@@ -165,7 +165,7 @@ namespace gui {
     code_fld(new_text_view()),
     bcode_lst(new_tree_view(GTK_TREE_MODEL(bcode_store))),
     generate_btn(gtk_button_new_with_mnemonic("_Generate Bytecode")),
-    optimize_fld(gtk_check_button_new_with_label("Optimize")),    
+    optimize_fld(gtk_check_button_new_with_mnemonic("_Optimize")),    
     run_btn(gtk_button_new_with_mnemonic("_Run Bytecode")),
     peer_lst(ctx, "Peer", this->rec.peer_ids),
     post_lst(ctx)
