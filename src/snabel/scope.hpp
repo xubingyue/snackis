@@ -21,8 +21,6 @@ namespace snabel {
   };
   
   struct Scope {
-    using CmpType = func<bool (const Type &, const Type &)>;
-    
     Coro &coro;
     std::list<Type> types;
     std::list<Func> funcs;

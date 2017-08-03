@@ -41,7 +41,7 @@ namespace snabel {
     };
 
     op.trace = [&imp](auto &op, auto &scp, auto &out) {
-      get_args(imp, scp.coro);
+      pop_args(imp, scp.coro);
       push(scp.coro, imp.res_type, undef);
       return false;
     };

@@ -11,7 +11,7 @@ namespace snabel {
   { }
   
   void FuncImp::operator ()(Coro &cor) {
-    auto args(get_args(*this, cor));
+    auto args(pop_args(*this, cor));
     Scope &tmp(begin_scope(cor));
     imp(tmp, *this, args);
     end_scope(cor);
@@ -21,7 +21,7 @@ namespace snabel {
     name(nam)
   { }
 
-  ArgSeq get_args(const FuncImp &imp, Coro &cor) {
+  ArgSeq pop_args(const FuncImp &imp, Coro &cor) {
     auto i = imp.args.rbegin();
     ArgSeq out;
     

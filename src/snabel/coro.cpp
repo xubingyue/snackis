@@ -70,17 +70,20 @@ namespace snabel {
   static void trace(Coro &cor) {
     OpSeq in;
     cor.ops.swap(in);
+    auto &scp(cor.scopes.front());
+    auto env(scp.env);
     
     while (true) {
-      rewind(cor);
-      begin_scope(cor);
-      DEFER({ end_scope(cor); });
       bool done(true);
       
       for (auto &op: in) {
 	if (trace(op, get_scope(cor), cor.ops)) { done = false; }
 	cor.pc++;
       }
+
+      rewind(cor);
+      scp.env.clear();
+      std::copy(env.begin(), env.end(), std::inserter(scp.env, scp.env.end()));
       
       if (done) { break; }
       

@@ -38,7 +38,7 @@ namespace snabel {
     Func(const str &nam);
   };
   
-  ArgSeq get_args(const FuncImp &imp, Coro &cor);
+  ArgSeq pop_args(const FuncImp &imp, Coro &cor);
   FuncImp &add_imp(Func &fn,
 		   const FuncImp::Args &args,
 		   Type &rt,
