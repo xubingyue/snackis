@@ -44,16 +44,4 @@ namespace snabel {
   bool rem_env(Scope &scp, const str &n) {
     return scp.env.erase(n) == 1;
   }
-
-  Type &add_type(Scope &scp, const str &n) {
-    Type &res(scp.types.emplace_front(n)); 
-    put_env(scp, n, Box(scp.coro.exec.meta_type, &res));
-    return res;
-  }
-
-  Func &add_func(Scope &scp, const str &n) {
-    auto &res(scp.funcs.emplace_front(n));
-    put_env(scp, n, Box(scp.coro.exec.func_type, &res));
-    return res;
-  }
 }

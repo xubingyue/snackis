@@ -15,6 +15,8 @@ namespace snabel {
     Exec &exec;
     OpSeq ops;
     int64_t pc;
+    std::list<Type> types;
+    std::list<Func> funcs;
     std::list<Scope> scopes;
     std::list<Stack> stacks;
     Stack *stack;
@@ -24,6 +26,9 @@ namespace snabel {
     const Coro &operator =(const Coro &) = delete;
   };
 
+  Type &add_type(Coro &cor, const str &n);
+  Func &add_func(Coro &cor, const str &n);
+  
   Scope &get_scope(Coro &cor);
   void push(Coro &cor, const Box &val);
   void push(Coro &cor, Type &typ, const Val &val);

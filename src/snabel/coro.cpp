@@ -1,5 +1,6 @@
 #include "snabel/compiler.hpp"
 #include "snabel/coro.hpp"
+#include "snabel/exec.hpp"
 #include "snabel/parser.hpp"
 #include "snackis/core/defer.hpp"
 #include "snackis/core/error.hpp"
@@ -9,6 +10,18 @@ namespace snabel {
     exec(exe), pc(0), stack(nullptr)
   {
     begin_scope(*this);
+  }
+
+  Type &add_type(Coro &cor, const str &n) {
+    Type &res(cor.types.emplace_front(n)); 
+    put_env(cor.scopes.front(), n, Box(cor.exec.meta_type, &res));
+    return res;
+  }
+
+  Func &add_func(Coro &cor, const str &n) {
+    auto &res(cor.funcs.emplace_front(n));
+    put_env(cor.scopes.front(), n, Box(cor.exec.func_type, &res));
+    return res;
   }
 
   Scope &get_scope(Coro &cor) {

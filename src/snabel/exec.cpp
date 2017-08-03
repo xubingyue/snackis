@@ -34,12 +34,12 @@ namespace snabel {
 			std::forward_as_tuple(null_uid),
 			std::forward_as_tuple(*this, null_uid)).first->second),
     scope(get_scope(main)),
-    meta_type((add_type(scope, "Type"))),
-    op_type((add_type(scope, "Op"))),
-    op_seq_type((add_type(scope, "OpSeq"))),
-    func_type((add_type(scope, "Func"))),
-    i64_type((add_type(scope, "I64"))),
-    str_type((add_type(scope, "Str")))
+    meta_type((add_type(main, "Type"))),
+    op_type((add_type(main, "Op"))),
+    op_seq_type((add_type(main, "OpSeq"))),
+    func_type((add_type(main, "Func"))),
+    i64_type((add_type(main, "I64"))),
+    str_type((add_type(main, "Str")))
   {
     meta_type.fmt = [](auto &v) { return get<Type *>(v)->name; };
     op_type.fmt = [](auto &v) { return fmt_arg(get<Op>(v).code); };
@@ -48,10 +48,10 @@ namespace snabel {
     i64_type.fmt = [](auto &v) { return fmt_arg(get<int64_t>(v)); };
     str_type.fmt = [](auto &v) { return get<str>(v); };
 
-    Func &add(add_func(scope, "+"));
+    Func &add(add_func(main, "+"));
     add_imp(add, {&i64_type.seq}, i64_type, add_i64);
 
-    Func &mul(add_func(scope, "*"));
+    Func &mul(add_func(main, "*"));
     add_imp(mul, {&i64_type.seq}, i64_type, mul_i64);
   }
 }
