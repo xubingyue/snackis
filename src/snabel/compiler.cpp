@@ -4,22 +4,15 @@
 #include "snabel/exec.hpp"
 
 namespace snabel {  
-  Compiler::Compiler(Scope &scp):
-    scope(scp)
-  { }
-
-  void compile(Compiler &cpr,
+  void compile(Exec &exe,
 	       size_t lnr,
 	       const Tok &tok,
 	       OpSeq &out) {
-    Scope &scp(cpr.scope);
-    Exec &exe(scp.coro.exec);
-
     if (tok.text[0] == '(') {
       out.emplace_back(Op::make_begin());
 
       for (auto &e: parse_exprs(tok.text.substr(1, tok.text.size()-2))) {
-	compile(cpr, lnr, parse_expr(e), out);
+	compile(exe, lnr, parse_expr(e), out);
       }
       
       out.emplace_back(Op::make_end());
@@ -43,7 +36,7 @@ namespace snabel {
     }
   }
 
-  void compile(Compiler &cpr,
+  void compile(Exec &exe,
 	       size_t lnr,
 	       const TokSeq &exp,
 	       OpSeq &out) {
@@ -53,30 +46,15 @@ namespace snabel {
       if (exp.size() < 3) {
 	ERROR(Snabel, fmt("Malformed let statement in line %0", lnr));
       } else {
-	compile(cpr, lnr,
-		     TokSeq(std::next(exp.begin(), 2),
-			    exp.end()),
-		     out);
-
+	compile(exe, lnr,
+		TokSeq(std::next(exp.begin(), 2),
+		       exp.end()),
+		out);
+	
 	out.emplace_back(Op::make_let(exp[1].text));
       }
     } else {
-      for (auto t: exp) { compile(cpr, lnr, t, out); }	  
-    }
-  }
-
-  
-  void compile(Compiler &cpr, const str &in) {
-    size_t lnr(0);
-    
-    for (auto &ln: parse_lines(in)) {
-      if (!ln.empty()) {
-	for (auto &e: parse_exprs(ln)) {
-	  compile(cpr, lnr, parse_expr(e), cpr.ops);
-	}
-      }
-      
-      lnr++;
+      for (auto t: exp) { compile(exe, lnr, t, out); }	  
     }
   }
 }

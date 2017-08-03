@@ -79,10 +79,17 @@ namespace snabel {
   }  
   
   void compile(Exec &exe, const str &in) {
-    Compiler cpr(exe.scope);
-    compile(cpr, in);
-    std::copy(cpr.ops.begin(), cpr.ops.end(),
-	      std::back_inserter(exe.main.ops));
+    size_t lnr(0);
+    for (auto &ln: parse_lines(in)) {
+      if (!ln.empty()) {
+	for (auto &e: parse_exprs(ln)) {
+	  compile(exe, lnr, parse_expr(e), exe.main.ops);
+	}
+      }
+      
+      lnr++;
+    }
+
     trace(exe);
   }
 
