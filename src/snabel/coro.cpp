@@ -76,6 +76,7 @@ namespace snabel {
   }
   
   void end_scope(Coro &cor) {
+    CHECK(!cor.scopes.empty(), _);
     auto prev_stack(curr_stack(cor));
     pop_stack(cor);
 
@@ -83,7 +84,6 @@ namespace snabel {
       curr_stack(cor).emplace_back(prev_stack.back());
     }
 
-    CHECK(!cor.scopes.empty(), _);
     cor.scopes.pop_back();
   }
 
