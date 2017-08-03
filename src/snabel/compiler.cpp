@@ -4,16 +4,16 @@
 #include "snabel/exec.hpp"
 
 namespace snabel {  
-  Compiler::Compiler(Ctx &ctx):
-    ctx(ctx)
+  Compiler::Compiler(Scope &scp):
+    scope(scp)
   { }
 
   void compile(Compiler &cpr,
 	       size_t lnr,
 	       const Tok &tok,
 	       OpSeq &out) {
-    Ctx &ctx(cpr.ctx);
-    Exec &exe(ctx.coro.exec);
+    Scope &scp(cpr.scope);
+    Exec &exe(scp.coro.exec);
 
     if (tok.text[0] == '(') {
       out.emplace_back(Op::make_begin());

@@ -4,7 +4,7 @@
 #include <deque>
 #include <list>
 
-#include "snabel/ctx.hpp"
+#include "snabel/scope.hpp"
 #include "snabel/op.hpp"
 
 namespace snabel {
@@ -14,8 +14,8 @@ namespace snabel {
     using Stack = std::deque<Box>;
     Exec &exec;
     OpSeq ops;
-    int64_t pc, trace_pc;
-    std::list<Ctx> ctxs;
+    int64_t pc;
+    std::list<Scope> scopes;
     std::list<Stack> stacks;
     Stack *stack;
     
@@ -24,14 +24,14 @@ namespace snabel {
     const Coro &operator =(const Coro &) = delete;
   };
 
-  Ctx &get_ctx(Coro &cor);
+  Scope &get_scope(Coro &cor);
   void push(Coro &cor, const Box &val);
   void push(Coro &cor, Type &typ, const Val &val);
   void push(Coro &cor, const Op &op);
   Box pop(Coro &cor);
   void stash_stack(Coro &cor);
   void apply_stack(Coro &cor);
-  Ctx &begin_scope(Coro &cor);
+  Scope &begin_scope(Coro &cor);
   void end_scope(Coro &cor);
 }
 

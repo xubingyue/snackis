@@ -3,13 +3,13 @@
 
 namespace snabel {
   Coro::Coro(Exec &exe):
-    exec(exe), pc(0), trace_pc(-1), stack(nullptr)
+    exec(exe), pc(0), stack(nullptr)
   {
     begin_scope(*this);
   }
 
-  Ctx &get_ctx(Coro &cor) {
-    return cor.ctxs.back();
+  Scope &get_scope(Coro &cor) {
+    return cor.scopes.back();
   }
 
   void push(Coro &cor, const Box &val) {
@@ -46,19 +46,19 @@ namespace snabel {
     }
   }
 
-  Ctx &begin_scope(Coro &cor) {    
+  Scope &begin_scope(Coro &cor) {    
     stash_stack(cor);
 
-    if (cor.ctxs.empty()) {
-      return cor.ctxs.emplace_back(cor);
+    if (cor.scopes.empty()) {
+      return cor.scopes.emplace_back(cor);
     }
 
-    return cor.ctxs.emplace_back(cor.ctxs.back());
+    return cor.scopes.emplace_back(cor.scopes.back());
   }
   
   void end_scope(Coro &cor) {
     apply_stack(cor);
-    CHECK(!cor.ctxs.empty(), _);
-    cor.ctxs.pop_back();
+    CHECK(!cor.scopes.empty(), _);
+    cor.scopes.pop_back();
   }
 }

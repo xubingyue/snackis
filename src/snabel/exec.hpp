@@ -12,7 +12,7 @@ namespace snabel {
   struct Exec {
     std::map<UId, Fiber> fibers;
     Fiber &main;
-    Ctx &ctx;
+    Scope &scope;
     Type &meta_type,
       &op_type, &op_seq_type,
       &func_type, &i64_type, &str_type;

@@ -6,10 +6,10 @@
 
 namespace snabel {
   struct Compiler {
-    Ctx &ctx;
+    Scope &scope;
     OpSeq ops;
     
-    Compiler(Ctx &ctx);
+    Compiler(Scope &scp);
   };
 
   void compile(Compiler &cpr,

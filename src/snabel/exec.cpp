@@ -5,9 +5,9 @@
 #include "snabel/type.hpp"
 
 namespace snabel {
-  static void add_i64(Ctx &ctx, FuncImp &fn) {
-    auto args(get_args(fn, ctx));
-    Exec &exe(ctx.coro.exec);
+  static void add_i64(Scope &scp, FuncImp &fn) {
+    auto args(get_args(fn, scp));
+    Exec &exe(scp.coro.exec);
     int64_t res(0);
 
     for (auto &a: args) {
@@ -15,12 +15,12 @@ namespace snabel {
       res += get<int64_t>(a);
     }
     
-    push(ctx.coro, exe.i64_type, res);
+    push(scp.coro, exe.i64_type, res);
   }
 
-  static void mul_i64(Ctx &ctx, FuncImp &fn) {
-    auto args(get_args(fn, ctx));
-    Exec &exe(ctx.coro.exec);
+  static void mul_i64(Scope &scp, FuncImp &fn) {
+    auto args(get_args(fn, scp));
+    Exec &exe(scp.coro.exec);
     int64_t res(1);
 
     for (auto &a: args) {
@@ -28,20 +28,20 @@ namespace snabel {
       res *= get<int64_t>(a);
     }
     
-    push(ctx.coro, exe.i64_type, res);
+    push(scp.coro, exe.i64_type, res);
   }
   
   Exec::Exec():
     main(fibers.emplace(std::piecewise_construct,
 			std::forward_as_tuple(null_uid),
 			std::forward_as_tuple(*this, null_uid)).first->second),
-    ctx(get_ctx(main)),
-    meta_type((add_type(ctx, "Type"))),
-    op_type((add_type(ctx, "Op"))),
-    op_seq_type((add_type(ctx, "OpSeq"))),
-    func_type((add_type(ctx, "Func"))),
-    i64_type((add_type(ctx, "I64"))),
-    str_type((add_type(ctx, "Str")))
+    scope(get_scope(main)),
+    meta_type((add_type(scope, "Type"))),
+    op_type((add_type(scope, "Op"))),
+    op_seq_type((add_type(scope, "OpSeq"))),
+    func_type((add_type(scope, "Func"))),
+    i64_type((add_type(scope, "I64"))),
+    str_type((add_type(scope, "Str")))
   {
     meta_type.fmt = [](auto &v) { return get<Type *>(v)->name; };
     op_type.fmt = [](auto &v) { return fmt_arg(get<Op>(v).code); };
@@ -50,10 +50,10 @@ namespace snabel {
     i64_type.fmt = [](auto &v) { return fmt_arg(get<int64_t>(v)); };
     str_type.fmt = [](auto &v) { return get<str>(v); };
 
-    Func &add(add_func(ctx, "+"));
+    Func &add(add_func(scope, "+"));
     add_imp(add, {&i64_type.seq}, add_i64);
 
-    Func &mul(add_func(ctx, "*"));
+    Func &mul(add_func(scope, "*"));
     add_imp(mul, {&i64_type.seq}, mul_i64);
   }
 
@@ -63,11 +63,12 @@ namespace snabel {
     
     while (true) {
       bool done(true);
-      exe.main.trace_pc = 0;
+      int64_t pc(0);
       
       for (auto &op: in) {
-	if (trace(op, exe.ctx, exe.main.ops)) { done = false; }
-	exe.main.trace_pc++;
+	op.pc = pc;
+	if (trace(op, exe.scope, exe.main.ops)) { done = false; }
+	pc++;
       }
 
       if (done) { break; }
@@ -78,7 +79,7 @@ namespace snabel {
   }  
   
   void compile(Exec &exe, const str &in) {
-    Compiler cpr(exe.ctx);
+    Compiler cpr(exe.scope);
     compile(cpr, in);
     std::copy(cpr.ops.begin(), cpr.ops.end(),
 	      std::back_inserter(exe.main.ops));
@@ -89,7 +90,7 @@ namespace snabel {
     Coro &cor(exe.main);
     
     while (cor.pc < cor.ops.size()) {
-      cor.ops[cor.pc].run(get_ctx(cor));
+      run(cor.ops[cor.pc], get_scope(cor));
       cor.pc++;
     }
   }
@@ -102,7 +103,7 @@ namespace snabel {
   void rewind(Exec &exe) {
     Coro &cor(exe.main);
     cor.stack->clear();
-    while (cor.ctxs.size() > 1) { cor.ctxs.pop_back(); }
+    while (cor.scopes.size() > 1) { cor.scopes.pop_back(); }
     exe.main.pc = 0;
   }
 }

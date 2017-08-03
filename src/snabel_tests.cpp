@@ -7,13 +7,13 @@
 #include "snackis/core/error.hpp"
 
 namespace snabel {
-  static void test_func(Ctx &ctx, FuncImp &fn) {
-    auto args(get_args(fn, ctx));
+  static void test_func(Scope &scp, FuncImp &fn) {
+    auto args(get_args(fn, scp));
 
-    Exec &exe(ctx.coro.exec);
+    Exec &exe(scp.coro.exec);
     CHECK(args.size() == 1, _);
     CHECK(&args[0].type == &exe.i64_type, _);
-    push(ctx.coro, exe.i64_type, 42-get<int64_t>(args[0]));
+    push(scp.coro, exe.i64_type, 42-get<int64_t>(args[0]));
   } 
   
   static void func_tests() {
@@ -75,10 +75,10 @@ namespace snabel {
     CHECK(ts[2].text == "baz", _);
 
     Exec exe;
-    Ctx &ctx(get_ctx(exe.main));
+    Scope &scp(get_scope(exe.main));
     compile(exe, "(1 1 +) (2 2 +) *");
     run(exe);
-    CHECK(get<int64_t>(pop(ctx.coro)) == 8, _);    
+    CHECK(get<int64_t>(pop(scp.coro)) == 8, _);    
   }
 
   static void parse_tests() {
@@ -90,36 +90,36 @@ namespace snabel {
   static void compile_tests() {
     TRY(try_test);
     Exec exe;
-    Ctx &ctx(get_ctx(exe.main));
+    Scope &scp(get_scope(exe.main));
     compile(exe, "let foo 35\nlet bar foo 14 -7 +");
     run(exe);
-    CHECK(get<int64_t>(get_env(ctx, "foo")) == 35, _);
-    //CHECK(get<int64_t>(get_env(ctx, "bar")) == 42, _);
+    CHECK(get<int64_t>(get_env(scp, "foo")) == 35, _);
+    //CHECK(get<int64_t>(get_env(scp, "bar")) == 42, _);
   }
 
   static void stack_tests() {
     TRY(try_test);    
     Exec exe;
-    Ctx &ctx(get_ctx(exe.main));
+    Scope &scp(get_scope(exe.main));
     compile(exe, "42 reset 2 stash 3 4 + apply *");
     run(exe);
-    CHECK(get<int64_t>(pop(ctx.coro)) == 14, _);
+    CHECK(get<int64_t>(pop(scp.coro)) == 14, _);
   }
 
   static void scope_tests() {
     TRY(try_test);    
     Exec exe;
-    Ctx &ctx(get_ctx(exe.main));
+    Scope &scp(get_scope(exe.main));
     
     compile(exe, "(let foo 21;foo)");
     run(exe);
-    CHECK(get<int64_t>(pop(ctx.coro)) == 21, _);
-    CHECK(!find_env(ctx, "foo"), _);
+    CHECK(get<int64_t>(pop(scp.coro)) == 21, _);
+    CHECK(!find_env(scp, "foo"), _);
 
     compile(exe, "begin\nlet bar 42\nbar\nend");
     run(exe);
-    CHECK(get<int64_t>(pop(ctx.coro)) == 42, _);
-    CHECK(!find_env(ctx, "bar"), _);
+    CHECK(get<int64_t>(pop(scp.coro)) == 42, _);
+    CHECK(!find_env(scp, "bar"), _);
 
   }
 

@@ -1,6 +1,6 @@
 #include "snabel/box.hpp"
 #include "snabel/coro.hpp"
-#include "snabel/ctx.hpp"
+#include "snabel/scope.hpp"
 #include "snabel/error.hpp"
 #include "snabel/func.hpp"
 #include "snabel/type.hpp"
@@ -10,29 +10,29 @@ namespace snabel {
     func(fn), args(args), imp(imp)
   { }
   
-  void FuncImp::operator ()(Ctx &ctx) {
-    imp(ctx, *this);
+  void FuncImp::operator ()(Scope &scp) {
+    imp(scp, *this);
   }
 
   Func::Func(const str &nam):
     name(nam)
   { }
 
-  ArgSeq get_args(const FuncImp imp, Ctx &ctx) {
+  ArgSeq get_args(const FuncImp imp, Scope &scp) {
     auto i = imp.args.rbegin();
     ArgSeq out;
     
-    while (i != imp.args.rend() && !ctx.coro.stack->empty()) {
+    while (i != imp.args.rend() && !scp.coro.stack->empty()) {
       auto &typ(*i);
       auto seq(dynamic_cast<Seq *>(typ));
-      auto &val(ctx.coro.stack->back());
+      auto &val(scp.coro.stack->back());
 
       if (!isa(val, *typ) && (!seq || !isa(val, seq->elem_type))) {
 	break;
       }
       
       out.push_back(val);
-      ctx.coro.stack->pop_back();
+      scp.coro.stack->pop_back();
       if (!seq) { i++; }
     }
 
@@ -71,16 +71,16 @@ namespace snabel {
     return nullopt;
   }
 
-  void call(Func &fn, Ctx &ctx) {
-    auto imp(match(fn, *ctx.coro.stack));
+  void call(Func &fn, Scope &scp) {
+    auto imp(match(fn, *scp.coro.stack));
     
     if (!imp) {
       ERROR(Snabel, fmt("Function not applicable:\n%0", 
-			*ctx.coro.stack));
+			*scp.coro.stack));
       return;
     }
     
-    Ctx tmp(ctx);
+    Scope tmp(scp);
     (*imp)(tmp);
   }
 }

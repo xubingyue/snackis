@@ -1,5 +1,5 @@
-#ifndef SNABEL_CTX_HPP
-#define SNABEL_CTX_HPP
+#ifndef SNABEL_SCOPE_HPP
+#define SNABEL_SCOPE_HPP
 
 #include <list>
 #include <map>
@@ -14,7 +14,7 @@ namespace snabel {
   
   struct Coro;
   
-  struct Ctx {
+  struct Scope {
     using CmpType = func<bool (const Type &, const Type &)>;
     
     Coro &coro;
@@ -23,18 +23,18 @@ namespace snabel {
     std::map<str, int64_t> labels;
     std::map<str, Box> env;
     
-    Ctx(const Ctx &src);
-    Ctx(Coro &cor);
-    const Ctx &operator =(const Ctx &) = delete;
+    Scope(const Scope &src);
+    Scope(Coro &cor);
+    const Scope &operator =(const Scope &) = delete;
   };
 
-  opt<Box> find_env(Ctx &ctx, const str &n);
+  opt<Box> find_env(Scope &scp, const str &n);
 
-  Box get_env(Ctx &ctx, const str &n);
-  void put_env(Ctx &ctx, const str &n, const Box &val);
+  Box get_env(Scope &scp, const str &n);
+  void put_env(Scope &scp, const str &n, const Box &val);
 
-  Type &add_type(Ctx &ctx, const str &n);
-  Func &add_func(Ctx &ctx, const str &n);
+  Type &add_type(Scope &scp, const str &n);
+  Func &add_func(Scope &scp, const str &n);
 }
 
 #endif

@@ -10,55 +10,55 @@
 namespace snabel {
   Op Op::make_apply() {
     Op op(OP_APPLY, "Apply");
-    op.run = [](auto &ctx) { apply_stack(ctx.coro); };
+    op.run = [](auto &op, auto &scp) { apply_stack(scp.coro); };
     return op;
   }
 
   Op Op::make_begin() {
     Op op(OP_BEGIN, "Begin");
-    op.run = [](auto &ctx) { begin_scope(ctx.coro); };
+    op.run = [](auto &op, auto &scp) { begin_scope(scp.coro); };
     return op;
   }
   
   Op Op::make_call(Func &fn) {
     Op op(OP_CALL, "Call");
-    op.info = [&fn]() { return fn.name; };
-    op.run = [&fn](auto &ctx) { call(fn, ctx); };
+    op.info = [&fn](auto &op) { return fn.name; };
+    op.run = [&fn](auto &op, auto &scp) { call(fn, scp); };
     return op;
   }
 
   Op Op::make_end() {
     Op op(OP_END, "End");
-    op.run = [](auto &ctx) { end_scope(ctx.coro); };
+    op.run = [](auto &op, auto &scp) { end_scope(scp.coro); };
     return op;
   }
   
   Op Op::make_id(const str &txt) {
     Op op(OP_ID, "Id");
-    op.info = [txt]() { return txt; };
-    op.run = [txt](auto &ctx) {
-      auto fnd(find_env(ctx, txt));
+    op.info = [txt](auto &op) { return txt; };
+    op.run = [txt](auto &op, auto &scp) {
+      auto fnd(find_env(scp, txt));
 
       if (!fnd) {
 	ERROR(Snabel, fmt("Unknown identifier:\n%0", txt));
 	return;
       }
 
-      if (&fnd->type == &ctx.coro.exec.func_type) {
-	call(*get<Func *>(*fnd), ctx);
+      if (&fnd->type == &scp.coro.exec.func_type) {
+	call(*get<Func *>(*fnd), scp);
       } else {
-	push(ctx.coro, *fnd);
+	push(scp.coro, *fnd);
       }
     };    
 
-    op.trace = [txt](auto &op, auto &ctx, auto &out) {
-	auto fnd(find_env(ctx, txt));
+    op.trace = [txt](auto &op, auto &scp, auto &out) {
+	auto fnd(find_env(scp, txt));
 	if (!fnd) { return false; }	
 	
-	if (&fnd->type == &ctx.coro.exec.func_type) {
-	  snabel::trace(Op::make_call(*get<Func *>(*fnd)), ctx, out);
+	if (&fnd->type == &scp.coro.exec.func_type) {
+	  snabel::trace(Op::make_call(*get<Func *>(*fnd)), scp, out);
 	} else {
-	  snabel::trace(Op::make_push(*fnd), ctx, out);
+	  snabel::trace(Op::make_push(*fnd), scp, out);
 	}
 	
 	return true;
@@ -67,37 +67,50 @@ namespace snabel {
     return op;
   }
 
+  static Op make_jump(const str &tag) {
+    Op op(OP_JUMP, "Jump");
+
+    op.info = [tag](auto &op) {
+      return fmt("%0 (%1)", tag, op.pc);
+    };
+
+    op.run = [tag](auto &op, auto &scp) {
+      scp.coro.pc = op.pc;
+    };
+
+    return op;
+  }
+  
   Op Op::make_label(const str &tag) {
     Op op(OP_LABEL, "Label");
-    op.info = [tag]() { return tag; };
+    op.info = [tag](auto &op) { return tag; };
 
-    op.run = [tag](auto &ctx) {
-      auto fnd(ctx.labels.find(tag));
+    op.run = [tag](auto &op, auto &scp) {
+      auto fnd(scp.labels.find(tag));
       
-      if (fnd == ctx.labels.end()) {
+      if (fnd == scp.labels.end()) {
 	ERROR(Snabel, fmt("Missing label: %0", tag));
 	return;
       }
 
-      if (fnd->second != ctx.coro.pc) {
+      if (fnd->second != scp.coro.pc) {
 	ERROR(Snabel, fmt("Label moved: %0", tag));
       }
     };
 
     int64_t prev_pc(-1);
-    op.trace = [tag, prev_pc](auto &op, auto &ctx, auto &out) mutable {
-      auto fnd(ctx.labels.find(tag));
+    op.trace = [tag, prev_pc](auto &op, auto &scp, auto &out) mutable {
+      auto fnd(scp.labels.find(tag));
 
-      if (fnd == ctx.labels.end()) {
-	ctx.labels.emplace(tag, ctx.coro.trace_pc);
+      if (fnd == scp.labels.end()) {
+	scp.labels.emplace(tag, op.pc);
 	out.push_back(op);
-	prev_pc = ctx.coro.trace_pc;
+	prev_pc = op.pc;
 	return true;
       }
 
       if (prev_pc == -1 || fnd->second == prev_pc) {
-	fnd->second = ctx.coro.trace_pc;
-	prev_pc = ctx.coro.trace_pc;
+	prev_pc = fnd->second = op.pc;
       } else {
 	ERROR(Snabel, fmt("Duplicate label: %0", tag));
       }
@@ -110,53 +123,61 @@ namespace snabel {
   
   Op Op::make_let(const str &id) {
     Op op(OP_LET, "Let");
-    op.info = [id]() { return id; };
-    op.run = [id](auto &ctx) {
-      auto v(pop(ctx.coro));
-      put_env(ctx, id, v);
+    op.info = [id](auto &op) { return id; };
+    op.run = [id](auto &op, auto &scp) {
+      auto v(pop(scp.coro));
+      put_env(scp, id, v);
     };
     return op;
   }
   
   Op Op::make_push(const Box &it) {
     Op op(OP_PUSH, "Push");
-    op.info = [it]() { return fmt_arg(it); };
-    op.run = [it](auto &ctx) { push(ctx.coro, it); };
+    op.info = [it](auto &op) { return fmt_arg(it); };
+    op.run = [it](auto &op, auto &scp) { push(scp.coro, it); };
     return op;
   }
 
   Op Op::make_reset() {
     Op op(OP_RESET, "Reset");
-    op.run = [](auto &ctx) { ctx.coro.stack->clear(); };
+    op.run = [](auto &op, auto &scp) { scp.coro.stack->clear(); };
     return op;
   }
   
   Op Op::make_stash() {
     Op op(OP_STASH, "Stash");
-    op.run = [](auto &ctx) { stash_stack(ctx.coro); };
+    op.run = [](auto &op, auto &scp) { stash_stack(scp.coro); };
     return op;
   }
 
-  static str def_info() {
+  static str def_info(const Op &op) {
     return "";
   }
 
-  static void def_run(Ctx &ctx) {
+  static void def_run(const Op &op, Scope &scp) {
     CHECK(false, _);
   }
 
-  static bool def_trace(const Op &op, Ctx &ctx, OpSeq &out) {
+  static bool def_trace(const Op &op, Scope &scp, OpSeq &out) {
     return false;
   }
 
   Op::Op(OpCode cod, const str &nam):
-    code(cod), name(nam),
+    code(cod), name(nam), pc(-1),
     info(def_info), run(def_run), trace(def_trace)
   { }
 
-  bool trace(const Op &op, Ctx &ctx, OpSeq &out) {
-    if (op.trace(op, ctx, out)) { return true; }
+  str info(const Op &op) {
+    return op.info(op);
+  }
+
+  bool trace(const Op &op, Scope &scp, OpSeq &out) {
+    if (op.trace(op, scp, out)) { return true; }
     out.push_back(op);
     return false;
+  }
+
+  void run(const Op &op, Scope &scp) {
+    op.run(op, scp);
   }
 }
