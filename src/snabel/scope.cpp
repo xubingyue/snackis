@@ -5,6 +5,10 @@
 #include "snackis/core/error.hpp"
 
 namespace snabel {
+  Label::Label(int64_t dep, int64_t pc):
+    depth(dep), pc(pc)
+  { }
+  
   Scope::Scope(const Scope &src):
     coro(src.coro), labels(src.labels), env(src.env)
   { }

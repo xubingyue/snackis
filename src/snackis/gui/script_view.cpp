@@ -55,9 +55,7 @@ namespace gui {
 
   static void on_generate(gpointer *_, ScriptView *v) {
     TRY(try_generate);
-    snabel::reset(v->exec);
-    snabel::compile(v->exec, get_str(GTK_TEXT_VIEW(v->code_fld)));
-    
+    snabel::compile(v->exec.main, get_str(GTK_TEXT_VIEW(v->code_fld)));    
     gtk_list_store_clear(v->bcode_store);
 
     for (auto &op: v->exec.main.ops) {
@@ -67,7 +65,7 @@ namespace gui {
       gtk_list_store_set(v->bcode_store, &iter,
 			 BCODE_PTR, &op,
 			 BCODE_NAME, op.name.c_str(),
-			 BCODE_INFO, info(op).c_str(),
+			 BCODE_INFO, info(op, v->exec.scope).c_str(),
 			 -1);
     }
 
@@ -84,10 +82,7 @@ namespace gui {
 
   static void on_run(gpointer *_, ScriptView *v) {
     TRY(try_run);
-    snabel::rewind(v->exec);
-    snabel::begin_scope(v->exec.main);
-    snabel::run(v->exec);
-    snabel::end_scope(v->exec.main);
+    snabel::run(v->exec.main);
     log(v->ctx, "Result: %0", pop(v->exec.main));
   }
   

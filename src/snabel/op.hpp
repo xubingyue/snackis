@@ -23,9 +23,8 @@ namespace snabel {
   struct Op {
     OpCode code;
     str name;
-    int64_t pc;
     
-    func<str (const Op &op)> info;
+    func<str (const Op &op, Scope &)> info;
     func<void (const Op &op, Scope &)> run;
     func<bool (const Op &op, Scope &, OpSeq &)> trace;
     
@@ -44,7 +43,7 @@ namespace snabel {
     Op(OpCode cod, const str &nam);
   };
 
-  str info(const Op &op);
+  str info(const Op &op, Scope &scp);
   bool trace(const Op &op, Scope &scp, OpSeq &out);
   void run(const Op &op, Scope &scp);
 }

@@ -17,12 +17,16 @@ namespace snabel {
   Op Op::make_begin() {
     Op op(OP_BEGIN, "Begin");
     op.run = [](auto &op, auto &scp) { begin_scope(scp.coro); };
+    op.trace = [](auto &op, auto &scp, auto &out) {
+      begin_scope(scp.coro);
+      return false;
+    };
     return op;
   }
   
   Op Op::make_call(Func &fn) {
     Op op(OP_CALL, "Call");
-    op.info = [&fn](auto &op) { return fn.name; };
+    op.info = [&fn](auto &op, auto &scp) { return fn.name; };
     op.run = [&fn](auto &op, auto &scp) { call(fn, scp); };
     return op;
   }
@@ -30,12 +34,16 @@ namespace snabel {
   Op Op::make_end() {
     Op op(OP_END, "End");
     op.run = [](auto &op, auto &scp) { end_scope(scp.coro); };
+    op.trace = [](auto &op, auto &scp, auto &out) {
+      end_scope(scp.coro);
+      return false;
+    };
     return op;
   }
   
   Op Op::make_id(const str &txt) {
     Op op(OP_ID, "Id");
-    op.info = [txt](auto &op) { return txt; };
+    op.info = [txt](auto &op, auto &scp) { return txt; };
     op.run = [txt](auto &op, auto &scp) {
       auto fnd(find_env(scp, txt));
 
@@ -70,12 +78,23 @@ namespace snabel {
   static Op make_jump(const str &tag) {
     Op op(OP_JUMP, "Jump");
 
-    op.info = [tag](auto &op) {
-      return fmt("%0 (%1)", tag, op.pc);
+    op.info = [tag](auto &op, auto &scp) {
+      auto fnd(scp.labels.find(tag));
+      int64_t pc((fnd == scp.labels.end()) ? -1 : fnd->second.pc);
+      return fmt("%0 (%1)", tag, pc);
     };
 
     op.run = [tag](auto &op, auto &scp) {
-      scp.coro.pc = op.pc;
+      auto fnd(scp.labels.find(tag));
+      if (fnd == scp.labels.end()) {
+	ERROR(Snabel, fmt("Missing label: %0", tag));
+      }
+
+      while (scp.coro.scopes.size() > fnd->second.depth) {
+	scp.coro.scopes.pop_back();
+      }
+      
+      scp.coro.pc = fnd->second.pc;
     };
 
     return op;
@@ -83,34 +102,25 @@ namespace snabel {
   
   Op Op::make_label(const str &tag) {
     Op op(OP_LABEL, "Label");
-    op.info = [tag](auto &op) { return tag; };
-
-    op.run = [tag](auto &op, auto &scp) {
-      auto fnd(scp.labels.find(tag));
-      
-      if (fnd == scp.labels.end()) {
-	ERROR(Snabel, fmt("Missing label: %0", tag));
-	return;
-      }
-
-      if (fnd->second != scp.coro.pc) {
-	ERROR(Snabel, fmt("Label moved: %0", tag));
-      }
-    };
+    op.info = [tag](auto &op, auto &scp) { return tag; };
 
     int64_t prev_pc(-1);
     op.trace = [tag, prev_pc](auto &op, auto &scp, auto &out) mutable {
+      Coro &cor(scp.coro);
       auto fnd(scp.labels.find(tag));
 
       if (fnd == scp.labels.end()) {
-	scp.labels.emplace(tag, op.pc);
+	scp.labels.emplace(std::piecewise_construct,
+			   std::forward_as_tuple(tag),
+			   std::forward_as_tuple(cor.scopes.size(), cor.pc));
 	out.push_back(op);
-	prev_pc = op.pc;
+	prev_pc = cor.pc;
 	return true;
       }
 
-      if (prev_pc == -1 || fnd->second == prev_pc) {
-	prev_pc = fnd->second = op.pc;
+      if (prev_pc == -1 || fnd->second.pc == prev_pc) {
+	fnd->second.depth = cor.scopes.size();
+	prev_pc = fnd->second.pc = cor.pc;
       } else {
 	ERROR(Snabel, fmt("Duplicate label: %0", tag));
       }
@@ -123,7 +133,7 @@ namespace snabel {
   
   Op Op::make_let(const str &id) {
     Op op(OP_LET, "Let");
-    op.info = [id](auto &op) { return id; };
+    op.info = [id](auto &op, auto &scp) { return id; };
     op.run = [id](auto &op, auto &scp) {
       auto v(pop(scp.coro));
       put_env(scp, id, v);
@@ -133,7 +143,7 @@ namespace snabel {
   
   Op Op::make_push(const Box &it) {
     Op op(OP_PUSH, "Push");
-    op.info = [it](auto &op) { return fmt_arg(it); };
+    op.info = [it](auto &op, auto &scp) { return fmt_arg(it); };
     op.run = [it](auto &op, auto &scp) { push(scp.coro, it); };
     return op;
   }
@@ -150,12 +160,11 @@ namespace snabel {
     return op;
   }
 
-  static str def_info(const Op &op) {
+  static str def_info(const Op &op, Scope &scp) {
     return "";
   }
 
   static void def_run(const Op &op, Scope &scp) {
-    CHECK(false, _);
   }
 
   static bool def_trace(const Op &op, Scope &scp, OpSeq &out) {
@@ -163,12 +172,12 @@ namespace snabel {
   }
 
   Op::Op(OpCode cod, const str &nam):
-    code(cod), name(nam), pc(-1),
+    code(cod), name(nam),
     info(def_info), run(def_run), trace(def_trace)
   { }
 
-  str info(const Op &op) {
-    return op.info(op);
+  str info(const Op &op, Scope &scp) {
+    return op.info(op, scp);
   }
 
   bool trace(const Op &op, Scope &scp, OpSeq &out) {

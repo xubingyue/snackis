@@ -33,6 +33,9 @@ namespace snabel {
   void apply_stack(Coro &cor);
   Scope &begin_scope(Coro &cor);
   void end_scope(Coro &cor);
+  void rewind(Coro &cor);  
+  void compile(Coro &cor, const str &in);
+  void run(Coro &cor); 
 }
 
 #endif

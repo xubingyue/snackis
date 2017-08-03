@@ -1,4 +1,6 @@
+#include "snabel/compiler.hpp"
 #include "snabel/coro.hpp"
+#include "snabel/parser.hpp"
 #include "snackis/core/error.hpp"
 
 namespace snabel {
@@ -61,4 +63,59 @@ namespace snabel {
     CHECK(!cor.scopes.empty(), _);
     cor.scopes.pop_back();
   }
+
+  void rewind(Coro &cor) {
+    cor.stack->clear();
+    while (cor.scopes.size() > 1) { cor.scopes.pop_back(); }
+    cor.pc = 0;
+  }
+
+  static void trace(Coro &cor) {
+    OpSeq in;
+    in.swap(cor.ops);
+    
+    while (true) {
+      rewind(cor);
+      bool done(true);
+      
+      for (auto &op: in) {
+	if (trace(op, get_scope(cor), cor.ops)) { done = false; }
+	cor.pc++;
+      }
+      
+      if (done) { break; }
+      
+      in.clear();
+      cor.ops.swap(in);
+    }
+  }
+
+  void compile(Coro &cor, const str &in) {
+    cor.ops.clear();
+    size_t lnr(0);
+    for (auto &ln: parse_lines(in)) {
+      if (!ln.empty()) {
+	for (auto &e: parse_exprs(ln)) {
+	  compile(cor.exec, lnr, parse_expr(e), cor.ops);
+	}
+      }
+      
+      lnr++;
+    }
+
+    trace(cor);
+  }
+
+  void run(Coro &cor) {
+    rewind(cor);
+    begin_scope(cor);
+    
+    while (cor.pc < cor.ops.size()) {
+      run(cor.ops[cor.pc], get_scope(cor));
+      cor.pc++;
+    }
+
+    end_scope(cor);
+  }
+  
 }

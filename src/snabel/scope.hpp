@@ -13,6 +13,12 @@ namespace snabel {
   using namespace snackis;
   
   struct Coro;
+
+  struct Label {
+    int64_t depth, pc;
+    
+    Label(int64_t depth, int64_t pc);
+  };
   
   struct Scope {
     using CmpType = func<bool (const Type &, const Type &)>;
@@ -20,7 +26,7 @@ namespace snabel {
     Coro &coro;
     std::list<Type> types;
     std::list<Func> funcs;
-    std::map<str, int64_t> labels;
+    std::map<str, Label> labels;
     std::map<str, Box> env;
     
     Scope(const Scope &src);

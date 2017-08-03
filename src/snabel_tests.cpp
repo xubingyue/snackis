@@ -26,7 +26,7 @@ namespace snabel {
 
     push(cor, Op::make_push(Box(exe.i64_type, int64_t(7))));
     push(cor, Op::make_call(f));
-    run(exe);
+    run(exe.main);
 
     CHECK(get<int64_t>(pop(cor)) == 35, _);
   }
@@ -76,8 +76,8 @@ namespace snabel {
 
     Exec exe;
     Scope &scp(get_scope(exe.main));
-    compile(exe, "(1 1 +) (2 2 +) *");
-    run(exe);
+    compile(exe.main, "(1 1 +) (2 2 +) *");
+    run(exe.main);
     CHECK(get<int64_t>(pop(scp.coro)) == 8, _);    
   }
 
@@ -91,8 +91,8 @@ namespace snabel {
     TRY(try_test);
     Exec exe;
     Scope &scp(get_scope(exe.main));
-    compile(exe, "let foo 35\nlet bar foo 14 -7 +");
-    run(exe);
+    compile(exe.main, "let foo 35\nlet bar foo 14 -7 +");
+    run(exe.main);
     CHECK(get<int64_t>(get_env(scp, "foo")) == 35, _);
     //CHECK(get<int64_t>(get_env(scp, "bar")) == 42, _);
   }
@@ -101,8 +101,8 @@ namespace snabel {
     TRY(try_test);    
     Exec exe;
     Scope &scp(get_scope(exe.main));
-    compile(exe, "42 reset 2 stash 3 4 + apply *");
-    run(exe);
+    compile(exe.main, "42 reset 2 stash 3 4 + apply *");
+    run(exe.main);
     CHECK(get<int64_t>(pop(scp.coro)) == 14, _);
   }
 
@@ -111,13 +111,13 @@ namespace snabel {
     Exec exe;
     Scope &scp(get_scope(exe.main));
     
-    compile(exe, "(let foo 21;foo)");
-    run(exe);
+    compile(exe.main, "(let foo 21;foo)");
+    run(exe.main);
     CHECK(get<int64_t>(pop(scp.coro)) == 21, _);
     CHECK(!find_env(scp, "foo"), _);
 
-    compile(exe, "begin\nlet bar 42\nbar\nend");
-    run(exe);
+    compile(exe.main, "begin\nlet bar 42\nbar\nend");
+    run(exe.main);
     CHECK(get<int64_t>(pop(scp.coro)) == 42, _);
     CHECK(!find_env(scp, "bar"), _);
 
