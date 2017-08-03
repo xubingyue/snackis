@@ -23,19 +23,20 @@ namespace snabel {
 
   ArgSeq pop_args(const FuncImp &imp, Coro &cor) {
     auto i = imp.args.rbegin();
+    auto &s(curr_stack(cor));
     ArgSeq out;
     
-    while (i != imp.args.rend() && !cor.stack->empty()) {
+    while (i != imp.args.rend() && !s.empty()) {
       auto &typ(*i);
       auto seq(dynamic_cast<Seq *>(typ));
-      auto &val(cor.stack->back());
+      auto &val(s.back());
 
       if (!isa(val, *typ) && (!seq || !isa(val, seq->elem_type))) {
 	break;
       }
       
       out.push_back(val);
-      cor.stack->pop_back();
+      s.pop_back();
       if (!seq) { i++; }
     }
 
@@ -50,10 +51,11 @@ namespace snabel {
   }
 
   static bool match(const FuncImp &imp, const Coro &cor) {
-    auto i = cor.stack->rbegin();
+    auto &s(curr_stack(cor));
+    auto i = s.rbegin();
     auto j = imp.args.rbegin();
     
-    while (i != cor.stack->rend() && j != imp.args.rend()) {
+    while (i != s.rend() && j != imp.args.rend()) {
       auto seq(dynamic_cast<Seq *>(*j));
 
       if (isa(*i, **j) || (seq && isa(*i, seq->elem_type))) {

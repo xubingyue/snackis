@@ -19,16 +19,22 @@ namespace snabel {
     
     Label(int64_t depth, int64_t pc);
   };
+
+  using Env = std::map<str, Box>;
   
   struct Scope {
     Coro &coro;
     std::map<str, Label> labels;
-    std::map<str, Box> env;
+    std::list<Env> envs;
     
     Scope(const Scope &src);
     Scope(Coro &cor);
     const Scope &operator =(const Scope &) = delete;
   };
+
+  Env &curr_env(Scope &scp);
+  Env &push_env(Scope &scp);
+  void pop_env(Scope &scp);
 
   Box *find_env(Scope &scp, const str &n);
   Box get_env(Scope &scp, const str &n);

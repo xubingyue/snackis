@@ -7,9 +7,24 @@
 
 namespace snabel {
   Coro::Coro(Exec &exe):
-    exec(exe), pc(0), stack(nullptr)
+    exec(exe), pc(0)
   {
     begin_scope(*this);
+  }
+
+  Scope &curr_scope(Coro &cor) {
+    CHECK(!cor.scopes.empty(), _);
+    return cor.scopes.back();
+  }
+
+  Stack &curr_stack(Coro &cor) {
+    CHECK(!cor.stacks.empty(), _);
+    return cor.stacks.back();
+  }
+
+  const Stack &curr_stack(const Coro &cor) {
+    CHECK(!cor.stacks.empty(), _);
+    return cor.stacks.back();
   }
 
   Type &add_type(Coro &cor, const str &n) {
@@ -24,42 +39,34 @@ namespace snabel {
     return res;
   }
 
-  Scope &get_scope(Coro &cor) {
-    return cor.scopes.back();
-  }
-
   void push(Coro &cor, const Box &val) {
-    cor.stack->push_back(val);
+    curr_stack(cor).push_back(val);
   }
 
   void push(Coro &cor, Type &typ, const Val &val) {
-    cor.stack->emplace_back(typ, val);
+    curr_stack(cor).emplace_back(typ, val);
   }
 
   Box pop(Coro &cor) {
-    CHECK(!cor.stack->empty(), _);
-    auto res(cor.stack->back());
-    cor.stack->pop_back();
+    auto &s(curr_stack(cor));
+    CHECK(!s.empty(), _);
+    auto res(s.back());
+    s.pop_back();
     return res;
   }
 
-  void stash_stack(Coro &cor) {
-    cor.stack = &cor.stacks.emplace_back(Coro::Stack());
+  Stack &push_stack(Coro &cor) {
+    return cor.stacks.emplace_back(Stack());
   }
   
-  void apply_stack(Coro &cor) {
-    auto prev(*cor.stack);
+  void pop_stack(Coro &cor) {
+    CHECK(!cor.stacks.empty(), _);
     cor.stacks.pop_back();
     CHECK(!cor.stacks.empty(), _);
-    cor.stack = &cor.stacks.back();
-
-    if (!prev.empty()) {
-      cor.stack->emplace_back(prev.back());
-    }
   }
 
   Scope &begin_scope(Coro &cor) {    
-    stash_stack(cor);
+    push_stack(cor);
 
     if (cor.scopes.empty()) {
       return cor.scopes.emplace_back(cor);
@@ -69,14 +76,25 @@ namespace snabel {
   }
   
   void end_scope(Coro &cor) {
-    apply_stack(cor);
+    auto prev_stack(curr_stack(cor));
+    pop_stack(cor);
+
+    if (!prev_stack.empty()) {
+      curr_stack(cor).emplace_back(prev_stack.back());
+    }
+
     CHECK(!cor.scopes.empty(), _);
     cor.scopes.pop_back();
   }
 
   void rewind(Coro &cor) {
-    cor.stack->clear();
     while (cor.scopes.size() > 1) { cor.scopes.pop_back(); }
+    while (cor.stacks.size() > 1) { cor.stacks.pop_back(); }
+    curr_stack(cor).clear();
+
+    Scope &scp(curr_scope(cor));
+    while (scp.envs.size() > 1) { scp.envs.pop_back(); }
+    
     cor.pc = 0;
   }
 
@@ -84,20 +102,17 @@ namespace snabel {
     OpSeq in;
     cor.ops.swap(in);
     auto &scp(cor.scopes.front());
-    auto env(scp.env);
     
     while (true) {
+      push_env(scp);
       bool done(true);
       
       for (auto &op: in) {
-	if (trace(op, get_scope(cor), cor.ops)) { done = false; }
+	if (trace(op, curr_scope(cor), cor.ops)) { done = false; }
 	cor.pc++;
       }
 
       rewind(cor);
-      scp.env.clear();
-      std::copy(env.begin(), env.end(), std::inserter(scp.env, scp.env.end()));
-      
       if (done) { break; }
       
       in.clear();
@@ -121,15 +136,10 @@ namespace snabel {
     trace(cor);
   }
 
-  void run(Coro &cor, bool scope) {
-    rewind(cor);
-    if (scope) { begin_scope(cor); }
-    
+  void run(Coro &cor) {
     while (cor.pc < cor.ops.size()) {
-      run(cor.ops[cor.pc], get_scope(cor));
+      run(cor.ops[cor.pc], curr_scope(cor));
       cor.pc++;
     }
-
-    if (scope) { end_scope(cor); }
   }  
 }

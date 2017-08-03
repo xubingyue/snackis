@@ -73,10 +73,11 @@ namespace snabel {
     CHECK(ts[2].text == "baz", _);
 
     Exec exe;
-    Scope &scp(get_scope(exe.main));
+    Scope &scp(curr_scope(exe.main));
     compile(exe.main, "(1 1 +) (2 2 +) *");
     run(exe.main);
     CHECK(get<int64_t>(pop(scp.coro)) == 8, _);
+    
   }
 
   static void parse_tests() {
@@ -88,9 +89,9 @@ namespace snabel {
   static void compile_tests() {
     TRY(try_test);
     Exec exe;
-    Scope &scp(get_scope(exe.main));
+    Scope &scp(curr_scope(exe.main));
     compile(exe.main, "let foo 35\nlet bar foo 14 -7 +");
-    run(exe.main, false);
+    run(exe.main);
     CHECK(get<int64_t>(get_env(scp, "foo")) == 35, _);
     CHECK(get<int64_t>(get_env(scp, "bar")) == 42, _);
   }
@@ -98,16 +99,16 @@ namespace snabel {
   static void stack_tests() {
     TRY(try_test);    
     Exec exe;
-    Scope &scp(get_scope(exe.main));
-    compile(exe.main, "42 reset 2 stash 3 4 + apply *");
+    Scope &scp(curr_scope(exe.main));
+    compile(exe.main, "42 reset 1 push-stack 2 + pop-stack");
     run(exe.main);
-    CHECK(get<int64_t>(pop(scp.coro)) == 14, _);
+    CHECK(get<int64_t>(pop(scp.coro)) == 1, _);
   }
 
   static void scope_tests() {
     TRY(try_test);    
     Exec exe;
-    Scope &scp(get_scope(exe.main));
+    Scope &scp(curr_scope(exe.main));
     
     compile(exe.main, "(let foo 21;foo)");
     run(exe.main);

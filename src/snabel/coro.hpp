@@ -10,8 +10,9 @@
 namespace snabel {
   struct Exec;
   
+  using Stack = std::deque<Box>;
+
   struct Coro {
-    using Stack = std::deque<Box>;
     Exec &exec;
     OpSeq ops;
     int64_t pc;
@@ -19,27 +20,32 @@ namespace snabel {
     std::list<Func> funcs;
     std::list<Scope> scopes;
     std::list<Stack> stacks;
-    Stack *stack;
     
     Coro(Exec &exe);
     Coro(const Coro &) = delete;
     const Coro &operator =(const Coro &) = delete;
   };
 
+  Scope &curr_scope(Coro &cor);
+  const Stack &curr_stack(const Coro &cor);
+  Stack &curr_stack(Coro &cor);
+
   Type &add_type(Coro &cor, const str &n);
   Func &add_func(Coro &cor, const str &n);
   
-  Scope &get_scope(Coro &cor);
   void push(Coro &cor, const Box &val);
   void push(Coro &cor, Type &typ, const Val &val);
   Box pop(Coro &cor);
-  void stash_stack(Coro &cor);
-  void apply_stack(Coro &cor);
+
+  Stack &push_stack(Coro &cor);
+  void pop_stack(Coro &cor);
+  
   Scope &begin_scope(Coro &cor);
   void end_scope(Coro &cor);
+
   void rewind(Coro &cor);  
   void compile(Coro &cor, const str &in);
-  void run(Coro &cor, bool scope=true); 
+  void run(Coro &cor); 
 }
 
 #endif

@@ -18,16 +18,20 @@ namespace snabel {
       out.emplace_back(Op::make_end());
     } else if (tok.text[0] == '@') {
       out.emplace_back(Op::make_label(tok.text.substr(1)));
-    } else if (tok.text == "apply") {
-      out.emplace_back(Op::make_apply());
-    } else if (tok.text == "begin") {
+    }  else if (tok.text == "begin") {
       out.emplace_back(Op::make_begin());
     } else if (tok.text == "end") {
       out.emplace_back(Op::make_end());
+    } else if (tok.text == "pop-env") {
+      out.emplace_back(Op::make_pop_env());
+    } else if (tok.text == "pop-stack") {
+      out.emplace_back(Op::make_pop_stack());
+    } else if (tok.text == "push-env") {
+      out.emplace_back(Op::make_push_env());
+    } else if (tok.text == "push-stack") {
+      out.emplace_back(Op::make_push_stack());
     } else if (tok.text == "reset") {
       out.emplace_back(Op::make_reset());
-    } else if (tok.text == "stash") {
-      out.emplace_back(Op::make_stash());
     } else if (isdigit(tok.text[0]) || 
 	(tok.text.size() > 1 && tok.text[0] == '-' && isdigit(tok.text[1]))) {
       out.emplace_back(Op::make_push(Box(exe.i64_type, to_int64(tok.text))));
