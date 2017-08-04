@@ -43,6 +43,9 @@ Snackis UI is divided into three parts; to the left is the read-only console, wh
 #### Style
 The entire UI may be styled by editing ```/gui.css```, running the application with an empty file displays the default GTK-style.
 
+#### Reader
+The reader is backed by Snackis scripting-language, [Snabel](https://github.com/andreas-gone-wild/snackis/blob/master/snabel.md). Besides commands, which are implemented as regular functions; Snabel offers arithmetic operators (+-*%) and more; see [Scripts](https://github.com/andreas-gone-wild/snackis/blob/master/README.md#scripts) for more information.
+
 ### Setup
 Once inside, the first thing you probably want to do is to have a look at the setup. Type ```setup``` and press ```Return``` in the reader to open the setup view. Imap/Smtp are required to do anything beyond local/personal use.
 
@@ -57,10 +60,10 @@ Snackis logs all changes to an undo-stack, type ```undo``` and press ```Return``
 ![undo example](images/undo.png?raw=true)
 
 ### Invites
-Type ```invite foo@bar.com``` in the reader and press ```Return``` to create a new invite. Snackis will send an email containing your public encryption-key to the specified address. When an invite is accepted, a reply is sent to inform the inviting peer. The easiest way to see how it works is to send an invite to your own address.
+Type ```"foo@bar.com" invite``` in the reader and press ```Return``` to create a new invite. Snackis will send an email containing your public encryption-key to the specified address. When an invite is accepted, a reply is sent to inform the inviting peer. The easiest way to see how it works is to send an invite to your own address.
 
 ### Peers
-Type ```peer-search``` in the reader and press ```Return``` to search Peers locally. Peers are sorted by name. A short-cut is provided to find peers by id; execute ```peer id``` to open the specified peer, any unique part of the id will do.
+Type ```peer-search``` in the reader and press ```Return``` to search Peers locally. Peers are sorted by name. A short-cut is provided to find peers by id; execute ```"#" peer``` to open the specified peer, any unique part of the id will do.
 
 ![peer search example](images/peer_search.png?raw=true)
 
@@ -89,7 +92,7 @@ Snackis main mode of communication is using feeds/posts. Type ```feed-new``` in 
 ![feed example](images/feed.png?raw=true)
 
 #### Searching
-Type ```feed-search``` in the reader and press ```Return``` to search feeds. Tasks are sorted descending by time of creation. A short-cut is provided to find feeds by id, execute ```feed id``` to open the specified feed, any unique part of the id will do.
+Type ```feed-search``` in the reader and press ```Return``` to search feeds. Tasks are sorted descending by time of creation. A short-cut is provided to find feeds by id, execute ```"#" feed``` to open the specified feed, any unique part of the id will do.
 
 ![feed search example](images/feed_search.png?raw=true)
 
@@ -99,7 +102,7 @@ Type ```post-new``` in the reader and press ```Return``` to post in existing fee
 ![post example](images/post.png?raw=true)
 
 #### Searching
-Type ```post-search``` in the reader and press ```Return``` to search posts. Posts are sorted descending by time of creation. A short-cut is provided to find posts by id, execute ```post id``` to open the specified post, any unique part of the id will do.
+Type ```post-search``` in the reader and press ```Return``` to search posts. Posts are sorted descending by time of creation. A short-cut is provided to find posts by id, execute ```"#" post``` to open the specified post, any unique part of the id will do.
 
 ![post search example](images/post_search.png?raw=true)
 
@@ -109,7 +112,7 @@ Projects are sets of tasks that may be shared among a set of peers. Each project
 ![project example](images/project.png?raw=true)
 
 #### Searching
-Type ```project-search``` in the reader and press ```Return``` to search projects. Projects are sorted by name. A short-cut is provided to find projects by id, execute ```project id``` to open the specified project, any unique part of the id will do.
+Type ```project-search``` in the reader and press ```Return``` to search projects. Projects are sorted by name. A short-cut is provided to find projects by id, execute ```"#" project``` to open the specified project, any unique part of the id will do.
 
 ![project search example](images/project_search.png?raw=true)
 
@@ -119,7 +122,7 @@ Each Task belongs to a project and changes are automatically propagated to all p
 ![task example](images/task.png?raw=true)
 
 #### Searching
-Type ```task-search``` in the reader and press ```Return``` to search tasks. Tasks are sorted by priority and time of creation.  A short-cut is provided to find tasks by id, execute ```task id``` to open the specified task, any unique part of the id will do.
+Type ```task-search``` in the reader and press ```Return``` to search tasks. Tasks are sorted by priority and time of creation.  A short-cut is provided to find tasks by id, execute ```"#" task``` to open the specified task, any unique part of the id will do.
 
 ![task search example](images/task_search.png?raw=true)
 
@@ -140,6 +143,16 @@ Type ```decrypt``` and press ```Return``` in the reader to open the decryption v
 
 ### Algorithms
 Snackis delegates anything concerning encryption to [libsodium](https://github.com/jedisct1/libsodium). The IETF-variant of ```ChaCha20-Poly1305``` is used to encrypt the master password and database, while ```XSalsa20```/```X25519``` with ```Poly1305 MAC```-authentication is used for everything else. The master password is hashed using ```Scrypt```, and encrypted using the hash as key for future validation.
+
+### Scripts
+Snackis implements its own compiled, statically typed, post-fix scripting language called [Snabel](https://github.com/andreas-gone-wild/snackis/blob/master/snabel.md). Type ```script-new``` and press ```Return``` in the reader to open the script view.
+
+![script example](images/script.png?raw=true)
+
+#### Searching
+Type ```script-search``` in the reader and press ```Return``` to search tasks. Scripts are sorted by name and time of creation.  A short-cut is provided to find scripts by id, execute ```"#" script``` to open the specified script, any unique part of the id will do.
+
+![script search example](images/script_search.png?raw=true)
 
 ### License
 Snackis is licensed under the GNU General Public License Version 3.
