@@ -8,6 +8,12 @@
 #include "snabel/op.hpp"
 
 namespace snabel {
+  Op Op::make_backup() {
+    Op op(OP_BACKUP, "Backup");
+    op.run = [](auto &op, auto &scp) { backup_stack(scp.coro); };
+    return op;
+  }
+
   Op Op::make_begin() {
     Op op(OP_BEGIN, "Begin");
     op.run = [](auto &op, auto &scp) { begin_scope(scp.coro); };
@@ -212,6 +218,12 @@ namespace snabel {
   Op Op::make_reset() {
     Op op(OP_RESET, "Reset");
     op.run = [](auto &op, auto &scp) { curr_stack(scp.coro).clear(); };
+    return op;
+  }
+
+  Op Op::make_restore() {
+    Op op(OP_RESTORE, "Restore");
+    op.run = [](auto &op, auto &scp) { restore_stack(scp.coro); };
     return op;
   }
   

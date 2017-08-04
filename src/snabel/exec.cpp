@@ -69,11 +69,11 @@ namespace snabel {
   {
     meta_type.fmt = [](auto &v) { return get<Type *>(v)->name; };
     op_type.fmt = [](auto &v) { return fmt_arg(get<Op>(v).code); };
-    op_seq_type.fmt = [](auto &v) { return fmt_arg(get<OpSeq>(v).size()); };
+    op_seq_type.fmt = [](auto &v) { return "n/a"; };
     func_type.fmt = [](auto &v) { return fmt_arg(size_t(get<Func *>(v))); };
     i64_type.fmt = [](auto &v) { return fmt_arg(get<int64_t>(v)); };
     str_type.fmt = [](auto &v) { return fmt("\"%0\"", get<str>(v)); };
-    void_type.fmt = [](auto &v) { return ""; };
+    void_type.fmt = [](auto &v) { return "n/a"; };
 
     Func &add(add_func(main, "+"));
     add_imp(add, {&i64_type.seq}, i64_type, add_i64);

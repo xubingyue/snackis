@@ -61,18 +61,23 @@ namespace snabel {
     return res;
   }
 
-  Stack &push_stack(Coro &cor) {
+  Stack &backup_stack(Coro &cor) {
     return cor.stacks.emplace_back(Stack());
   }
   
-  void pop_stack(Coro &cor) {
+  void restore_stack(Coro &cor) {
     CHECK(!cor.stacks.empty(), _);
+    auto prev(cor.stacks.back());
     cor.stacks.pop_back();
     CHECK(!cor.stacks.empty(), _);
+
+    if (!prev.empty()) {
+      curr_stack(cor).emplace_back(prev.back());
+    }
   }
 
   Scope &begin_scope(Coro &cor) {    
-    push_stack(cor);
+    backup_stack(cor);
 
     if (cor.scopes.empty()) {
       return cor.scopes.emplace_back(cor);
@@ -83,13 +88,7 @@ namespace snabel {
   
   void end_scope(Coro &cor) {
     CHECK(!cor.scopes.empty(), _);
-    auto prev_stack(curr_stack(cor));
-    pop_stack(cor);
-
-    if (!prev_stack.empty()) {
-      curr_stack(cor).emplace_back(prev_stack.back());
-    }
-
+    restore_stack(cor);
     cor.scopes.pop_back();
   }
 
@@ -135,9 +134,7 @@ namespace snabel {
     size_t lnr(0);
     for (auto &ln: parse_lines(in)) {
       if (!ln.empty()) {
-	for (auto &e: parse_exprs(ln)) {
-	  compile(cor.exec, lnr, parse_expr(e), cor.ops);
-	}
+	compile(cor.exec, lnr, parse_expr(ln), cor.ops);
       }
       
       lnr++;

@@ -4,11 +4,6 @@
 #include "snabel/parser.hpp"
 
 namespace snabel {
-  Expr::Expr(const str &txt, size_t i):
-    text(txt),
-    i(i)
-  { }
-
   Tok::Tok(const str &txt, size_t i):
     text(txt),
     i(i)
@@ -35,44 +30,6 @@ namespace snabel {
     return out;
   }
 
-  ExprSeq parse_exprs(const str &in) {
-    size_t i(0);
-    bool quoted(false);
-    int depth(0);
-    ExprSeq out;
-    
-    for (size_t j(0); j < in.size(); j++) {
-      auto &c(in[j]);
-      switch(c) {
-      case '"':
-	if (j == 0 || in[j-1] != '\\') { quoted = !quoted; }
-	break;
-      case '(':
-	depth++;
-	break;
-      case ')':
-	depth--;
-	break;
-      case ';':
-	if (j > i && !quoted && !depth) {
-	  str s(trim(in.substr(i, j-i)));
-	  if (!s.empty()) { out.emplace_back(s, i); }
-	  i = j+1;
-	  continue;
-	}
-	
-	break;
-      }
-
-      if (j == in.size()-1) {
-	str s(trim(in.substr(i, j-i+1)));
-	if (!s.empty()) { out.emplace_back(s, i); }
-      }
-    }
-
-    return out;
-  }
-
   size_t parse_pair(const str &in, char fst, char lst) {
     bool quoted(false);
     int depth(1);
@@ -93,30 +50,32 @@ namespace snabel {
     return str::npos;
   }
   
-  TokSeq parse_expr(const Expr &in) {
+  TokSeq parse_expr(const str &in) {
     size_t i(0);
     bool quoted(false);
     TokSeq out;
     
-    for (size_t j(0); j < in.text.size(); j++) {
-      auto c(in.text[j]);
+    for (size_t j(0); j < in.size(); j++) {
+      auto c(in[j]);
 
       switch(c) {	
       case '"':
-	if (j == 0 || in.text[j-1] != '\\') { quoted = !quoted; }
+	if (j == 0 || in[j-1] != '\\') { quoted = !quoted; }
 	if (quoted) { break; }
 	j++;
       case '\\':
+      case '{':
       case '(':
       case '\n':
+      case ';':
       case ' ':
 	if (j > i) {
-	  str s(trim(in.text.substr(i, j-i)));
-	  if (!s.empty()) { out.emplace_back(s, in.i+i); }
+	  str s(trim(in.substr(i, j-i)));
+	  if (!s.empty()) { out.emplace_back(s, i); }
 	  
-	  while (j < in.text.size()-2 && (c == '\\' || isspace(c))) {
+	  while (j < in.size()-2 && (c == '\\' || isspace(c))) {
 	    j++;
-	    c = in.text[j];
+	    c = in[j];
 	  }
 	  
 	  i = j;
@@ -125,22 +84,25 @@ namespace snabel {
 	break;
       }
 
-      if (j == in.text.size()-1) {
-	str s(trim(in.text.substr(i)));
-	if (!s.empty()) { out.emplace_back(s, in.i+i); }
-      } else if (c == '(') {
+      if (j == in.size()-1) {
+	str s(trim(in.substr(i)));
+	if (!s.empty()) { out.emplace_back(s, i); }
+      } else if (c == '{' || c == '(') {
 	size_t k(j);
-	str rest(in.text.substr(k));
-	k = parse_pair(rest, '(', ')');
+	str rest(in.substr(k));
+	k = parse_pair(rest, c, (c == '(') ? ')' : '}');
 
 	if (k == str::npos) {
-	  ERROR(Snabel, "Unbalanced parenthesis");
+	  ERROR(Snabel, fmt("Unbalanced %0", c));
 	  return out;
 	}
 
-	out.emplace_back(rest.substr(0, k+1), in.i+j);
+	out.emplace_back(rest.substr(0, k+1), j);
 	j += k+1;
 	i = j;
+      } else if (c == ';') {
+	out.emplace_back(";", j);
+	i++;
       }
     }
 

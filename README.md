@@ -145,7 +145,7 @@ Type ```decrypt``` and press ```Return``` in the reader to open the decryption v
 Snackis delegates anything concerning encryption to [libsodium](https://github.com/jedisct1/libsodium). The IETF-variant of ```ChaCha20-Poly1305``` is used to encrypt the master password and database, while ```XSalsa20```/```X25519``` with ```Poly1305 MAC```-authentication is used for everything else. The master password is hashed using ```Scrypt```, and encrypted using the hash as key for future validation.
 
 ### Scripts
-Snackis includes a custom, statically typed post-fix language called [Snabel](https://github.com/andreas-gone-wild/snackis/blob/master/snabel.md). Type ```script-new``` and press ```Return``` in the reader to open the script view.
+Snackis includes a custom, statically typed postfix language called [Snabel](https://github.com/andreas-gone-wild/snackis/blob/master/snabel.md). Type ```script-new``` and press ```Return``` in the reader to open the script view.
 
 ![script example](images/script.png?raw=true)
 

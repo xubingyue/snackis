@@ -38,8 +38,8 @@ namespace snabel {
   opt<Box> peek(Coro &cor);
   Box pop(Coro &cor);
 
-  Stack &push_stack(Coro &cor);
-  void pop_stack(Coro &cor);
+  Stack &backup_stack(Coro &cor);
+  void restore_stack(Coro &cor);
   
   Scope &begin_scope(Coro &cor);
   void end_scope(Coro &cor);

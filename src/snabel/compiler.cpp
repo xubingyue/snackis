@@ -8,13 +8,16 @@ namespace snabel {
 	       size_t lnr,
 	       const Tok &tok,
 	       OpSeq &out) {
-    if (tok.text[0] == '(') {
+    if (tok.text[0] == '{') {      
+      OpSeq seq;
+      str e(tok.text.substr(1, tok.text.size()-2));
+      compile(exe, lnr, parse_expr(e), seq);
+      out.push_back(Op::make_push(Box(exe.op_seq_type,
+				      seq)));
+    } else if (tok.text[0] == '(') {
       out.emplace_back(Op::make_begin());
-
-      for (auto &e: parse_exprs(tok.text.substr(1, tok.text.size()-2))) {
-	compile(exe, lnr, parse_expr(e), out);
-      }
-      
+      str e(tok.text.substr(1, tok.text.size()-2));
+      compile(exe, lnr, parse_expr(e), out);
       out.emplace_back(Op::make_end());
     } else if (tok.text[0] == '@') {
       out.emplace_back(Op::make_label(tok.text.substr(1)));
@@ -45,12 +48,22 @@ namespace snabel {
       if (exp.size() < 3) {
 	ERROR(Snabel, fmt("Malformed let statement in line %0", lnr));
       } else {
-	compile(exe, lnr,
-		TokSeq(std::next(exp.begin(), 2),
-		       exp.end()),
-		out);
+	auto i(std::next(exp.begin(), 2));
+	
+	for (; i != exp.end(); i++) {
+	  if (i->text == ";") {
+	    i++;
+	    break;
+	  }
+	  
+	  compile(exe, lnr, *i, out);
+	}
 	
 	out.emplace_back(Op::make_let(exp[1].text));
+
+	if (i != exp.end()) {
+	  compile(exe, lnr, TokSeq(i, exp.end()), out);
+	}
       }
     } else {
       for (auto t: exp) { compile(exe, lnr, t, out); }	  
