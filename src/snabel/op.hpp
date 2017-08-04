@@ -15,8 +15,8 @@ namespace snabel {
   struct FuncImp;
   struct Op;
 
-  enum OpCode { OP_BACKUP, OP_BEGIN, OP_CALL, OP_END, OP_ID, OP_JUMP, OP_LABEL,
-		OP_LET, OP_POP, OP_PUSH, OP_RESET, OP_RESTORE};
+  enum OpCode { OP_BEGIN, OP_CALL, OP_END, OP_ID, OP_JUMP, OP_LABEL,
+		OP_LET, OP_POP, OP_PUSH, OP_RESET};
 
   using OpSeq = std::deque<Op>;
 
@@ -28,7 +28,6 @@ namespace snabel {
     func<void (const Op &op, Scope &)> run;
     func<bool (const Op &op, Scope &, bool optimize, OpSeq &)> trace;
     
-    static Op make_backup();
     static Op make_begin();
     static Op make_call(FuncImp &imp);
     static Op make_end();
@@ -39,7 +38,6 @@ namespace snabel {
     static Op make_pop(size_t cnt);
     static Op make_push(const Box &it);
     static Op make_reset();
-    static Op make_restore();
 
     Op(OpCode cod, const str &nam);
   };
