@@ -25,14 +25,6 @@ namespace snabel {
       out.emplace_back(Op::make_begin());
     } else if (tok.text == "end") {
       out.emplace_back(Op::make_end());
-    } else if (tok.text == "pop-env") {
-      out.emplace_back(Op::make_pop_env());
-    } else if (tok.text == "pop-stack") {
-      out.emplace_back(Op::make_pop_stack());
-    } else if (tok.text == "push-env") {
-      out.emplace_back(Op::make_push_env());
-    } else if (tok.text == "push-stack") {
-      out.emplace_back(Op::make_push_stack());
     } else if (tok.text == "reset") {
       out.emplace_back(Op::make_reset());
     } else if (isdigit(tok.text[0]) || 

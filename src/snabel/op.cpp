@@ -202,34 +202,10 @@ namespace snabel {
     return op;    
   }
 
-  Op Op::make_pop_env() {
-    Op op(OP_POP_ENV, "Pop Env");
-    op.run = [](auto &op, auto &scp) { pop_env(scp); };
-    return op;
-  }
-
-  Op Op::make_pop_stack() {
-    Op op(OP_POP_STACK, "Pop Stack");
-    op.run = [](auto &op, auto &scp) { pop_stack(scp.coro); };
-    return op;
-  }
-
   Op Op::make_push(const Box &it) {
     Op op(OP_PUSH, "Push");
     op.info = [it](auto &op, auto &scp) { return fmt_arg(it); };
     op.run = [it](auto &op, auto &scp) { push(scp.coro, it); };
-    return op;
-  }
-
-  Op Op::make_push_env() {
-    Op op(OP_PUSH_ENV, "Push Env");
-    op.run = [](auto &op, auto &scp) { push_env(scp); };
-    return op;
-  }
-
-  Op Op::make_push_stack() {
-    Op op(OP_PUSH_STACK, "Push Stack");
-    op.run = [](auto &op, auto &scp) { push_stack(scp.coro); };
     return op;
   }
 

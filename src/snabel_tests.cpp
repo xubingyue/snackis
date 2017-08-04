@@ -100,9 +100,9 @@ namespace snabel {
     TRY(try_test);    
     Exec exe;
     Scope &scp(curr_scope(exe.main));
-    compile(exe.main, "42 reset 1 push-stack 2 + pop-stack");
+    compile(exe.main, "42 reset");
     run(exe.main);
-    CHECK(get<int64_t>(pop(scp.coro)) == 1, _);
+    CHECK(!peek(scp.coro), _);
   }
 
   static void scope_tests() {
