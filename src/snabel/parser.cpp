@@ -104,12 +104,12 @@ namespace snabel {
       switch(c) {	
       case '"':
 	if (j == 0 || in.text[j-1] != '\\') { quoted = !quoted; }
-	break;
+	if (quoted) { break; }
       case '\\':
       case '(':
       case '\n':
       case ' ':
-	if (j > i && !quoted) {
+	if (j > i) {
 	  str s(trim(in.text.substr(i, j-i)));
 	  if (!s.empty()) { out.emplace_back(s, in.i+i); }
 	  

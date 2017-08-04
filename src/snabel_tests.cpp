@@ -63,6 +63,21 @@ namespace snabel {
     CHECK(es[1].text == "bar", _);
   }
 
+  static void parse_string_tests() {
+    auto ts(parse_expr(Expr("1 \"foo\" +")));
+    CHECK(ts.size() == 3, _);
+    CHECK(ts[0].text == "1", _);
+    CHECK(ts[1].text == "\"foo\"", _);
+    CHECK(ts[2].text == "+", _);
+  }
+  
+  static void parse_tests() {
+    parse_lines_tests();
+    parse_backslash_tests();
+    parse_semicolon_tests();
+    parse_string_tests();
+  }
+
   static void parens_tests() {
     TRY(try_test);
     
@@ -78,12 +93,6 @@ namespace snabel {
     run(exe.main);
     CHECK(get<int64_t>(pop(scp.coro)) == 8, _);
     
-  }
-
-  static void parse_tests() {
-    parse_lines_tests();
-    parse_backslash_tests();
-    parse_semicolon_tests();
   }
 
   static void compile_tests() {
