@@ -64,7 +64,13 @@ namespace snabel {
   }
 
   static void parse_string_tests() {
-    auto ts(parse_expr(Expr("1 \"foo\" +")));
+    auto ts(parse_expr(Expr("\"foo\" 1 +")));
+    CHECK(ts.size() == 3, _);
+    CHECK(ts[0].text == "\"foo\"", _);
+    CHECK(ts[1].text == "1", _);
+    CHECK(ts[2].text == "+", _);
+
+    ts = parse_expr(Expr("1 \"foo\" +"));
     CHECK(ts.size() == 3, _);
     CHECK(ts[0].text == "1", _);
     CHECK(ts[1].text == "\"foo\"", _);

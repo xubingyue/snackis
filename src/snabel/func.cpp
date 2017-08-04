@@ -56,8 +56,9 @@ namespace snabel {
 
   static bool match(const FuncImp &imp, const Coro &cor) {
     auto &s(curr_stack(cor));
-    auto i = s.rbegin();
-    auto j = imp.args.rbegin();
+    auto i(s.rbegin());
+    auto j(imp.args.rbegin());
+    size_t cnt(0);
     
     while (i != s.rend() && j != imp.args.rend()) {
       auto seq(dynamic_cast<Seq *>(*j));
@@ -65,11 +66,11 @@ namespace snabel {
       if (isa(*i, **j) || (seq && isa(*i, seq->elem_type))) {
 	if (!seq) { j++; }
       } else {
-	if (!seq) { return false; }
-	j++;
+	return cnt > 0;
       }
 
       i++;
+      cnt++;
     }
 
     return true;

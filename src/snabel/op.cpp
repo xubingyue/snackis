@@ -89,13 +89,13 @@ namespace snabel {
 	  Func &fn(*get<Func *>(*fnd));
 	  auto imp(match(fn, scp.coro));
 
-	  if (!imp) {
-	    ERROR(Snabel, fmt("Function not applicable:\n%0", 
-			      curr_stack(scp.coro)));
-	  }
-	  
-	  (*imp)(scp.coro);
-	  out.push_back(Op::make_call(*imp));
+	  if (imp) {
+	    (*imp)(scp.coro);
+	    out.push_back(Op::make_call(*imp));
+	  } else {
+	    ERROR(Snabel, fmt("Function not applicable: %0\n%1", 
+			      fn.name, curr_stack(scp.coro)));
+	  }	  
 	} else {
 	  push(scp.coro, *fnd);
 	  out.push_back(Op::make_push(*fnd));

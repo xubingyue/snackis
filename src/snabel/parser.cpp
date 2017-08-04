@@ -105,6 +105,7 @@ namespace snabel {
       case '"':
 	if (j == 0 || in.text[j-1] != '\\') { quoted = !quoted; }
 	if (quoted) { break; }
+	j++;
       case '\\':
       case '(':
       case '\n':
