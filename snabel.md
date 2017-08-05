@@ -5,8 +5,8 @@
 Like the scientific calculators of ancient times, and most printers in active use; but unlike most popular programming languages; Snabel expects arguments before operations.
 
 ```
-> 3 4 35 + 10 %
-2::I64
+> 7 42 + 42 %
+7::I64
 ```
 
 ### Expressions
