@@ -28,9 +28,8 @@ n/a::Lambda
 3::I64
 ```
 
-
 ### Bindings
-Snabel supports introducing named bindings using the ```let```-keyword. Bindings are lexically scoped, and the value for a specific name is not allowed to change once bound. ```;``` may be used to separate bindings from surrounding code without adding line-breaks.
+Snabel supports named bindings using the ```let```-keyword. Bound identifiers are lexically scoped, and never change their value once bound in a specific scope. Semicolons may be used to separate bindings from surrounding code within a line.
 
 ```
 > let fn {7 +}; 35 fn call
