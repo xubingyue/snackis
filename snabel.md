@@ -62,4 +62,4 @@ Snabel's control structures are based on the idea of jumping to offsets within t
 ```
 
 ### Running the code
-Snabel is designed to eventually be compiled as a standalone library, but the code is currently being developed inside [Snackis](https://github.com/andreas-gone-wild/snackis). The easiest way to trying out the examples is to first get Snackis up and running, and then execute 'script-new' to open the script view.
+Snabel is designed to eventually be compiled as a standalone library, but the code is currently being developed as part of [Snackis](https://github.com/andreas-gone-wild/snackis). The easiest way to trying out the examples is to first get Snackis up and running, and then execute 'script-new' to open the script view.

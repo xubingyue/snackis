@@ -117,7 +117,7 @@ namespace gui {
     GtkWidget *right(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
     gtk_container_add(GTK_CONTAINER(frm), right);
     
-    gtk_container_add(GTK_CONTAINER(right), new_label("Bytecode"));
+    gtk_container_add(GTK_CONTAINER(right), new_label("Compiled"));
     add_col(GTK_TREE_VIEW(v.bcode_lst), "Name", BCODE_NAME);
     add_col(GTK_TREE_VIEW(v.bcode_lst), "Info", BCODE_INFO, true);
     gtk_container_add(GTK_CONTAINER(right), gtk_widget_get_parent(v.bcode_lst));
