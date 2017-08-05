@@ -16,7 +16,7 @@ namespace snabel {
   struct Scope;
   struct Op;
 
-  enum OpCode { OP_BACKUP, OP_CALL, OP_DROP, OP_DYNCALL,
+  enum OpCode { OP_BACKUP, OP_CALL, OP_DROP, OP_DYNCALL, OP_FENCE,
 	        OP_GROUP, OP_ID, OP_JUMP, OP_LABEL, OP_LAMBDA, OP_LET,
 		OP_PUSH, OP_RESET, OP_RESTORE, OP_RETURN, OP_UNGROUP, OP_UNLAMBDA};
 
@@ -33,6 +33,7 @@ namespace snabel {
     static Op make_call(Func &fn);
     static Op make_drop(size_t cnt=1);
     static Op make_dyncall(opt<Label> lbl=nullopt);
+    static Op make_fence();    
     static Op make_group(bool copy_stack);
     static Op make_id(const str &txt);
     static Op make_jump(const str &tag, opt<Label> lbl=nullopt);

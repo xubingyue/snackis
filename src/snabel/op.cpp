@@ -152,7 +152,19 @@ namespace snabel {
     
     return op;    
   }
+
+  Op Op::make_fence() {
+    Op op(OP_FENCE);
+
+    op.compile = [](auto &op, auto &scp, auto &out) {
+      op.run(op, scp);
+      return false;
+    };
     
+    op.run = [](auto &op, auto &scp) { scp.labels.clear(); };
+    return op;
+  }
+  
   Op Op::make_group(bool copy_stack) {
     Op op(OP_GROUP);
 
@@ -287,6 +299,7 @@ namespace snabel {
       out.push_back(Op::make_jump(fmt("_exit%0", tag)));
       out.push_back(Op::make_label(fmt("_enter%0", tag)));
       out.push_back(Op::make_group(true));
+      out.push_back(Op::make_fence());
       return true;
     };
     
@@ -464,6 +477,8 @@ namespace snabel {
       return "Drop";
     case OP_DYNCALL:
       return "Dyncall";
+    case OP_FENCE:
+      return "Fence";
     case OP_GROUP:
       return "Group";
     case OP_ID:
