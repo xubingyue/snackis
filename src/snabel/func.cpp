@@ -55,7 +55,9 @@ namespace snabel {
   }
 
   static bool match(const FuncImp &imp, const Coro &cor) {
+    if (imp.args.empty()) { return true; }
     auto &s(curr_stack(cor));
+    if (s.size() < imp.args.size()) { return false; }
     auto i(s.rbegin());
     auto j(imp.args.rbegin());
     size_t cnt(0);
@@ -66,14 +68,14 @@ namespace snabel {
       if (isa(*i, **j) || (seq && isa(*i, seq->elem_type))) {
 	if (!seq) { j++; }
       } else {
-	return cnt > 0;
+	break;
       }
 
       i++;
       cnt++;
     }
 
-    return true;
+    return cnt > 0;
   }
 
   FuncImp *match(Func &fn, const Coro &cor) {

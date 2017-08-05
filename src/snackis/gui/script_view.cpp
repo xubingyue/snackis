@@ -66,7 +66,7 @@ namespace gui {
       
       gtk_list_store_set(v->bcode_store, &iter,
 			 BCODE_PTR, &op,
-			 BCODE_NAME, op.name.c_str(),
+			 BCODE_NAME, name(op).c_str(),
 			 BCODE_INFO, info(op, curr_scope(v->exec.main)).c_str(),
 			 -1);
     }
@@ -89,7 +89,8 @@ namespace gui {
     begin_scope(cor);
     snabel::run(cor);
     end_scope(cor);
-    log(v->ctx, "Result: %0", pop(v->exec.main));
+    auto res(peek(v->exec.main));
+    log(v->ctx, "Result: %0", res ? fmt_arg(*res) : "n/a");
   }
   
   static GtkWidget *init_code(ScriptView &v) {

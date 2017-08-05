@@ -23,7 +23,6 @@ namespace snabel {
 
   struct Op {
     OpCode code;
-    str name;
     
     func<str (const Op &op, Scope &)> info;
     func<bool (const Op &op, Scope &, bool optimize, OpSeq &)> compile;
@@ -40,9 +39,10 @@ namespace snabel {
     static Op make_push(const Box &it);
     static Op make_reset();
 
-    Op(OpCode cod, const str &nam);
+    Op(OpCode cod);
   };
 
+  str name(const Op &op);
   str info(const Op &op, Scope &scp);
   bool compile(const Op &op, Scope &scp, bool optimize, OpSeq &out);
   void run(const Op &op, Scope &scp);

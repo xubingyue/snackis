@@ -14,7 +14,7 @@ namespace snabel {
     Fiber &main;
     Type &meta_type,
       &op_type, &op_seq_type,
-      &func_type, &i64_type, &str_type, &void_type;
+      &func_type, &i64_type, &str_type, &undef_type, &void_type;
     
     Exec();
     Exec(const Exec &) = delete;

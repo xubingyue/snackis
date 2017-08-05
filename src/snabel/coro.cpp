@@ -120,7 +120,7 @@ namespace snabel {
     while (true) {
       OpSeq out;
       bool done(true);
-      cor.pc = 0;
+      rewind(cor);
       push_env(scp);
       
       for (auto &op: cor.ops) {
@@ -134,7 +134,7 @@ namespace snabel {
       if (done) { break; }
     }
 
-    cor.pc = 0;
+    rewind(cor);
     return true;
   }
 

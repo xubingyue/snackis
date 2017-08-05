@@ -50,7 +50,7 @@ namespace snabel {
     
     if (exp[0].text == "let") {
       if (exp.size() < 3) {
-	ERROR(Snabel, fmt("Malformed let statement in line %0", lnr));
+	ERROR(Snabel, fmt("Malformed binding on line %0", lnr));
       } else {
 	auto i(std::next(exp.begin(), 2));
 	

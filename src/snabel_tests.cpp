@@ -91,7 +91,7 @@ namespace snabel {
     TRY(try_test);
     Exec exe;
     Scope &scp(curr_scope(exe.main));
-    compile(exe.main, "let foo 35\nlet bar foo 14 -7 +");
+    compile(exe.main, "let foo 35\nlet bar foo 7 +");
     run(exe.main);
     CHECK(get<int64_t>(get_env(scp, "foo")) == 35, _);
     CHECK(get<int64_t>(get_env(scp, "bar")) == 42, _);
@@ -126,9 +126,9 @@ namespace snabel {
     TRY(try_test);    
     Exec exe;
     Scope &scp(curr_scope(exe.main));
-    compile(exe.main, "42 !exit 7 @exit +");
+    compile(exe.main, "1 2 !exit 3 @exit +");
     run(exe.main);
-    CHECK(get<int64_t>(pop(scp.coro)) == 42, _);
+    CHECK(get<int64_t>(pop(scp.coro)) == 3, _);
   }
 
   static void drop_tests() {
