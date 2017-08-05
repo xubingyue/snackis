@@ -31,14 +31,29 @@ namespace snabel {
 
       if (imp && imp->pure && !imp->args.empty()) {
 	auto args(pop_args(*imp, scp.coro));
-	(*imp)(scp.coro, args);
-	out.push_back(Op::make_drop(args.size()));	
-	out.push_back(Op::make_push(pop(scp.coro)));	
-	return true;
-      } else {
-	s.clear();
+
+	if (std::find_if(args.begin(), args.end(),
+			 [](auto &a){ return undef(a); }) == args.end()) {
+	  (*imp)(scp.coro, args);
+	  out.push_back(Op::make_drop(args.size()));	
+	  out.push_back(Op::make_push(pop(scp.coro)));
+	  return true;
+	}
       }
 
+      if (!imp && fn.imps.size() == 1) { imp = &fn.imps.front(); }
+
+      if (imp) {
+	auto args(pop_args(*imp, scp.coro));
+
+	if (&imp->res_type != &scp.coro.exec.void_type) {
+	  push(scp.coro, Box(imp->res_type, undef));
+	}
+	
+	return false;
+      }
+
+      s.clear();
       return false;
     };
     

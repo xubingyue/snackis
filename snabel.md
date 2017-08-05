@@ -19,3 +19,11 @@ Snabel supports dividing expressions into parts using parentheses, each level st
 > {1 2 +}
 n/a::OpSeq
 ```
+
+### Bindings
+Snabel supports introducing named bindings using the ```let```-keyword. Bindings are lexically scoped, and the value for a specific name is not allowed to change once bound.
+
+```
+> let foo 35; foo 7 +
+42::I64
+```
