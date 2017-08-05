@@ -4,11 +4,7 @@
 #include "snabel/exec.hpp"
 #include "snackis/core/error.hpp"
 
-namespace snabel {
-  Label::Label(int64_t dep, int64_t pc):
-    depth(dep), pc(pc)
-  { }
-  
+namespace snabel {  
   Scope::Scope(const Scope &src):
     coro(src.coro), labels(src.labels), envs(src.envs)
   { }

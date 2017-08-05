@@ -104,28 +104,28 @@ namespace snabel {
   }
 
   static bool trace(Coro &cor, bool optimize) {
-    OpSeq in;
-    cor.ops.swap(in);
     auto &scp(cor.scopes.front());
     bool res(false);
     
     while (true) {
-      push_env(scp);
+      OpSeq out;
       bool done(true);
+      cor.pc = 0;
+      push_env(scp);
       
-      for (auto &op: in) {
-	if (trace(op, curr_scope(cor), optimize, cor.ops)) { done = false; }
+      for (auto &op: cor.ops) {
+	if (trace(op, curr_scope(cor), optimize, out)) { done = false; }
 	cor.pc++;
       }
 
-      rewind(cor);
-      if (done || !optimize) { break; }
-      
-      in.clear();
-      cor.ops.swap(in);
+      cor.ops.clear();
+      cor.ops.swap(out);
+      pop_env(scp);
+      if (done) { break; }
       res = true;
     }
 
+    cor.pc = 0;
     return res;
   }
 

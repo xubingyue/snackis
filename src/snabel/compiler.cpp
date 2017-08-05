@@ -15,26 +15,28 @@ namespace snabel {
       out.push_back(Op::make_push(Box(exe.op_seq_type,
 				      seq)));
     } else if (tok.text[0] == '(') {
-      out.emplace_back(Op::make_begin());
+      out.push_back(Op::make_begin());
       str e(tok.text.substr(1, tok.text.size()-2));
       compile(exe, lnr, parse_expr(e), out);
-      out.emplace_back(Op::make_end());
+      out.push_back(Op::make_end());
     } else if (tok.text[0] == '@') {
-      out.emplace_back(Op::make_label(tok.text.substr(1)));
+      out.push_back(Op::make_label(tok.text.substr(1)));
+    } else if (tok.text[0] == '!') {
+      out.push_back(Op::make_jump(tok.text.substr(1)));
     } else if (tok.text[0] == '"') {
-      out.emplace_back(Op::make_push(Box(exe.str_type,
-					 tok.text.substr(1, tok.text.size()-2))));
+      out.push_back(Op::make_push(Box(exe.str_type,
+				      tok.text.substr(1, tok.text.size()-2))));
     } else if (tok.text == "begin") {
-      out.emplace_back(Op::make_begin());
+      out.push_back(Op::make_begin());
     } else if (tok.text == "end") {
-      out.emplace_back(Op::make_end());
+      out.push_back(Op::make_end());
     } else if (tok.text == "reset") {
-      out.emplace_back(Op::make_reset());
+      out.push_back(Op::make_reset());
     } else if (isdigit(tok.text[0]) || 
 	(tok.text.size() > 1 && tok.text[0] == '-' && isdigit(tok.text[1]))) {
-      out.emplace_back(Op::make_push(Box(exe.i64_type, to_int64(tok.text))));
+      out.push_back(Op::make_push(Box(exe.i64_type, to_int64(tok.text))));
     }  else {
-      out.emplace_back(Op::make_id(tok.text));
+      out.push_back(Op::make_id(tok.text));
     }
   }
 
@@ -59,7 +61,7 @@ namespace snabel {
 	  compile(exe, lnr, *i, out);
 	}
 	
-	out.emplace_back(Op::make_let(exp[1].text));
+	out.push_back(Op::make_let(exp[1].text));
 
 	if (i != exp.end()) {
 	  compile(exe, lnr, TokSeq(i, exp.end()), out);

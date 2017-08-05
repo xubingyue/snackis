@@ -20,10 +20,10 @@ namespace snabel {
     Coro &cor(exe.main);
     
     Func f("test-func");
-    auto &fi(add_imp(f, {&exe.i64_type}, exe.i64_type, test_func));
+    add_imp(f, {&exe.i64_type}, exe.i64_type, test_func);
 
     cor.ops.push_back(Op::make_push(Box(exe.i64_type, int64_t(7))));
-    cor.ops.push_back(Op::make_call(fi));
+    cor.ops.push_back(Op::make_call(f));
     run(exe.main);
 
     CHECK(get<int64_t>(pop(cor)) == 35, _);
@@ -122,6 +122,15 @@ namespace snabel {
     CHECK(!find_env(scp, "bar"), _);
   }
 
+  static void jump_tests() {
+    TRY(try_test);    
+    Exec exe;
+    //Scope &scp(curr_scope(exe.main));
+    compile(exe.main, "42 !exit 7 @exit +");
+    run(exe.main);
+    //CHECK(get<int64_t>(pop(scp.coro)) == 42, _);
+  }
+
   void all_tests() {
     func_tests();
     parse_tests();
@@ -129,5 +138,6 @@ namespace snabel {
     compile_tests();
     stack_tests();
     scope_tests();
+    jump_tests();
   }
 }

@@ -14,44 +14,21 @@ namespace snabel {
     return op;
   }
   
-  Op Op::make_call(FuncImp &imp) {
+  Op Op::make_call(Func &fn) {
     Op op(OP_CALL, "Call");
-    op.info = [&imp](auto &op, auto &scp) { return imp.func.name; };
+    op.info = [&fn](auto &op, auto &scp) { return fn.name; };
 
-    op.run = [&imp](auto &op, auto &scp) {
-      imp(scp.coro);
-    };
-
-    op.trace = [&imp](auto &op, auto &scp, bool optimize, auto &out) {
-      auto args(pop_args(imp, scp.coro));
-
-      if (optimize &&
-	  imp.pure &&
-	  std::find_if(args.begin(), args.end(),
-				   [](auto &a){ return undef(a); }) == args.end()) {
-	imp(scp.coro, args);	
-
-	if (!args.empty()) {
-	  out.push_back(make_pop(args.size()));
-	}
-
-	if (&imp.res_type != &scp.coro.exec.void_type) {
-	  auto res(peek(scp.coro));
-	  
-	  if (res){
-	    out.push_back(make_push(*res));
-	  } else {
-	    ERROR(Snabel, fmt("Missing result from function: %0", imp.func.name));
-	  }
-	}
-	
-	return true;
+    op.run = [&fn](auto &op, auto &scp) {
+      auto imp(match(fn, scp.coro));
+      
+      if (imp) {
+	(*imp)(scp.coro);
+      } else {
+	ERROR(Snabel, fmt("Function not applicable: %0\n%1", 
+			  fn.name, curr_stack(scp.coro)));
       }
-
-      push(scp.coro, imp.res_type, undef);
-      return false;
     };
-    
+
     return op;
   }
 
@@ -78,62 +55,52 @@ namespace snabel {
 
     op.trace = [txt](auto &op, auto &scp, bool optimize, auto &out) {
 	auto fnd(find_env(scp, txt));
-	if (!fnd) {return false; }
 
-	if (undef(*fnd)) {
-	  push(scp.coro, *fnd);
+	if (!fnd) {
+	  ERROR(Snabel, fmt("Unknown identifier: %0", txt));
 	  return false;
 	}
 
 	if (&fnd->type == &scp.coro.exec.func_type) {
 	  Func &fn(*get<Func *>(*fnd));
-	  auto imp(match(fn, scp.coro));
-
-	  if (imp) {
-	    (*imp)(scp.coro);
-	    out.push_back(Op::make_call(*imp));
-	  } else {
-	    ERROR(Snabel, fmt("Function not applicable: %0\n%1", 
-			      fn.name, curr_stack(scp.coro)));
-	  }	  
-	} else {
-	  push(scp.coro, *fnd);
-	  out.push_back(Op::make_push(*fnd));
+	  out.push_back(Op::make_call(fn));
+	  return true;
 	}
 	
-	return true;
+	return false;
     };
 
     return op;
   }
 
-  static Op make_jump(const str &tag) {
+  Op Op::make_jump(const str &tag, opt<Label> lbl) {
     Op op(OP_JUMP, "Jump");
 
-    op.info = [tag](auto &op, auto &scp) {
-      auto fnd(scp.labels.find(tag));
-      int64_t pc((fnd == scp.labels.end()) ? -1 : fnd->second.pc);
-      return fmt("%0 (%1)", tag, pc);
+    op.info = [tag, lbl](auto &op, auto &scp) {
+      return fmt("%0 (%1)", tag, lbl ? to_str(lbl->pc) : "?");
     };
 
-    op.run = [tag](auto &op, auto &scp) {
-      auto fnd(scp.labels.find(tag));
-      if (fnd == scp.labels.end()) {
+    op.run = [tag, lbl](auto &op, auto &scp) {
+      if (lbl) {
+	while (scp.coro.scopes.size() > lbl->depth) {
+	  scp.coro.scopes.pop_back();
+	}
+
+	scp.coro.pc = lbl->pc;
+      } else {
 	ERROR(Snabel, fmt("Missing label: %0", tag));
       }
+    };
 
-      while (scp.coro.scopes.size() > fnd->second.depth) {
-	scp.coro.scopes.pop_back();
-      }
-      
-      scp.coro.pc = fnd->second.pc;
+    op.trace = [tag, lbl](auto &op, auto &scp, bool optimize, auto &out) {      
+      auto fnd(scp.labels.find(tag));
+      if (fnd == scp.labels.end()) { return false; }
+      if (lbl && fnd->second.pc == lbl->pc) { return false; }
+      out.push_back(Op::make_jump(tag, fnd->second));
+      return true;
     };
 
     return op;
-
-    op.trace = [tag](auto &op, auto &scp, bool optimize, auto &out) {
-      return false;
-    };
   }
   
   Op Op::make_label(const str &tag) {
@@ -149,11 +116,13 @@ namespace snabel {
 	scp.labels.emplace(std::piecewise_construct,
 			   std::forward_as_tuple(tag),
 			   std::forward_as_tuple(cor.scopes.size(), cor.pc));
-	out.push_back(op);
 	prev_pc = cor.pc;
+	out.push_back(op);
 	return true;
       }
 
+      if (prev_pc == cor.pc) { return false; }
+      
       if (prev_pc == -1 || fnd->second.pc == prev_pc) {
 	fnd->second.depth = cor.scopes.size();
 	prev_pc = fnd->second.pc = cor.pc;
@@ -161,7 +130,8 @@ namespace snabel {
 	ERROR(Snabel, fmt("Duplicate label: %0", tag));
       }
       
-      return false;
+      out.push_back(op);
+      return true;
     };
 
     return op;
@@ -174,6 +144,27 @@ namespace snabel {
     op.run = [id](auto &op, auto &scp) {
       auto v(pop(scp.coro));
       put_env(scp, id, v);
+    };
+
+    int64_t prev_pc(-1);
+    op.trace = [id, prev_pc](auto &op, auto &scp, bool optimize, auto &out) mutable {
+      auto fnd(find_env(scp, id));
+      auto &exe(scp.coro.exec);
+      
+      if (fnd) {
+	if (&fnd->type == &exe.i64_type) {
+	  if (get<int64_t>(*fnd) != prev_pc) {
+	    ERROR(Snabel, fmt("Duplicate binding: %0", id));
+	  }
+	} else {
+	  ERROR(Snabel, fmt("Duplicate binding: %0\n%1", id, *fnd));
+	}
+      } else {
+	put_env(scp, id, Box(exe.i64_type, scp.coro.pc));
+	prev_pc = scp.coro.pc;
+      }
+
+      return false;
     };
 
     return op;
@@ -189,14 +180,22 @@ namespace snabel {
 
     op.trace = [cnt](auto &op, auto &scp, bool optimize, auto &out) mutable {
       if (optimize) {
-	while (cnt > 0 && !out.empty() && out.back().code == OP_PUSH) {
+	auto i(0);
+	
+	while (i < cnt && !out.empty() && out.back().code == OP_PUSH) {
 	  out.pop_back();
-	  cnt--;
+	  i++;
+	}
+
+	if (i == cnt) { return true; }
+
+	if (i) {
+	  out.push_back(Op::make_pop(cnt-i));
+	  return true;
 	}
       }
 
-      for (size_t i(0); i < cnt; i++) { pop(scp.coro); }
-      return !cnt;
+      return false;
     };
 
     return op;    
@@ -223,7 +222,6 @@ namespace snabel {
   }
 
   static bool def_trace(const Op &op, Scope &scp, bool optimize, OpSeq &out) {
-    op.run(op, scp);
     return false;
   }
 

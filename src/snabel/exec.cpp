@@ -86,5 +86,9 @@ namespace snabel {
 
     Func &mod(add_func(main, "%"));
     add_imp(mod, {&i64_type.seq}, i64_type, mod_i64);
+
+    /*add_macro(main, "reset", [](auto &in, auto &out) {
+	out.push_back(Op::make_reset());
+	});*/
   }
 }

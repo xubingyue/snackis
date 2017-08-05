@@ -4,6 +4,7 @@
 #include <deque>
 #include <utility>
 
+#include "snabel/label.hpp"
 #include "snackis/core/func.hpp"
 #include "snackis/core/str.hpp"
 
@@ -11,8 +12,8 @@ namespace snabel {
   using namespace snackis;
 
   struct Box;
+  struct Func;
   struct Scope;
-  struct FuncImp;
   struct Op;
 
   enum OpCode { OP_BEGIN, OP_CALL, OP_END, OP_ID, OP_JUMP, OP_LABEL,
@@ -29,10 +30,10 @@ namespace snabel {
     func<bool (const Op &op, Scope &, bool optimize, OpSeq &)> trace;
     
     static Op make_begin();
-    static Op make_call(FuncImp &imp);
+    static Op make_call(Func &fn);
     static Op make_end();
     static Op make_id(const str &txt);
-    static Op make_jump(const str &tag);
+    static Op make_jump(const str &tag, opt<Label> lbl=nullopt);
     static Op make_label(const str &tag);
     static Op make_let(const str &id);
     static Op make_pop(size_t cnt);

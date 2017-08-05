@@ -6,6 +6,7 @@
 
 #include "snabel/box.hpp"
 #include "snabel/func.hpp"
+#include "snabel/label.hpp"
 #include "snabel/type.hpp"
 #include "snackis/core/str.hpp"
 
@@ -13,12 +14,6 @@ namespace snabel {
   using namespace snackis;
   
   struct Coro;
-
-  struct Label {
-    int64_t depth, pc;
-    
-    Label(int64_t depth, int64_t pc);
-  };
 
   using Env = std::map<str, Box>;
   
