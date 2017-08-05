@@ -5,8 +5,8 @@
 Just like Yoda of Star-Wars fame, and scientific calculators of ancient times; as well as most printers in active use; but unlike currently trending programming languages; Snabel expects arguments before operations.
 
 ```
-> 7 42 + 42 %
-7::I64
+> 7 42 + 10 %
+9::I64
 ```
 
 ### Expressions
@@ -24,7 +24,7 @@ Using braces instead of parentheses pushes a pointer to the compiled expression 
 > {1 2 +}
 n/a::Lambda
 
-> 1 {2 +} call
+> {1 2 +} call
 3::I64
 ```
 

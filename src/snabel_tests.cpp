@@ -140,6 +140,22 @@ namespace snabel {
     CHECK(exe.main.ops.size() == 1, _);
   }
 
+  static void lambda_tests() {
+    TRY(try_test);    
+    Exec exe;
+    compile(exe.main, "{1 2 +} call");
+    run(exe.main);
+    CHECK(get<int64_t>(pop(exe.main)) == 3, _);
+
+    compile(exe.main, "2 {3 +} call");
+    run(exe.main);
+    CHECK(get<int64_t>(pop(exe.main)) == 5, _);
+
+    compile(exe.main, "let fn {7 +}; 35 fn call");
+    run(exe.main);
+    CHECK(get<int64_t>(pop(exe.main)) == 42, _);
+  }
+
   void all_tests() {
     func_tests();
     parse_tests();
@@ -148,5 +164,6 @@ namespace snabel {
     stack_tests();
     scope_tests();
     jump_tests();
+    lambda_tests();
   }
 }
