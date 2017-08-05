@@ -1,5 +1,5 @@
 # Snabel
-#### A flexible, statically typed language embedded in C++
+#### A statically typed scripting-language embedded in C++
 
 ### Postfix
 Like the scientific calculators of ancient times, and most printers in active use; but unlike most popular programming languages; Snabel expects arguments before operations.
