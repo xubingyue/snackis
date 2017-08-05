@@ -4,8 +4,8 @@
 #include <deque>
 #include <list>
 
-#include "snabel/scope.hpp"
 #include "snabel/op.hpp"
+#include "snabel/scope.hpp"
 
 namespace snabel {
   struct Exec;
@@ -15,7 +15,7 @@ namespace snabel {
   struct Coro {
     Exec &exec;
     OpSeq ops;
-    int64_t pc;
+    int64_t pc, return_pc;
     std::list<Type> types;
     std::list<Func> funcs;
     std::list<Scope> scopes;
@@ -38,12 +38,13 @@ namespace snabel {
   opt<Box> peek(Coro &cor);
   Box pop(Coro &cor);
 
-  Stack &backup_stack(Coro &cor);
+  Stack &backup_stack(Coro &cor, bool copy);
   void restore_stack(Coro &cor);
   
-  Scope &begin_scope(Coro &cor);
+  Scope &begin_scope(Coro &cor, bool copy_stack);
   void end_scope(Coro &cor);
 
+  void jump(Coro &cor, const Label &lbl);
   void rewind(Coro &cor);  
   bool compile(Coro &cor, const str &in, bool optimize=true);
   void run(Coro &cor); 

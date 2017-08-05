@@ -9,13 +9,12 @@ namespace snabel {
 	       const Tok &tok,
 	       OpSeq &out) {
     if (tok.text[0] == '{') {      
-      OpSeq seq;
+      out.push_back(Op::make_begin_lambda());
       str e(tok.text.substr(1, tok.text.size()-2));
-      compile(exe, lnr, parse_expr(e), seq);
-      out.push_back(Op::make_push(Box(exe.op_seq_type,
-				      seq)));
+      compile(exe, lnr, parse_expr(e), out);
+      out.push_back(Op::make_end_lambda());
     } else if (tok.text[0] == '(') {
-      out.push_back(Op::make_begin());
+      out.push_back(Op::make_begin(false));
       str e(tok.text.substr(1, tok.text.size()-2));
       compile(exe, lnr, parse_expr(e), out);
       out.push_back(Op::make_end());
@@ -27,11 +26,13 @@ namespace snabel {
       out.push_back(Op::make_push(Box(exe.str_type,
 				      tok.text.substr(1, tok.text.size()-2))));
     } else if (tok.text == "begin") {
-      out.push_back(Op::make_begin());
+      out.push_back(Op::make_begin_lambda());
+    } else if (tok.text == "call") {
+      out.push_back(Op::make_dyncall());
     } else if (tok.text == "drop") {
       out.push_back(Op::make_drop());
     } else if (tok.text == "end") {
-      out.push_back(Op::make_end());
+      out.push_back(Op::make_end_lambda());
     } else if (tok.text == "reset") {
       out.push_back(Op::make_reset());
     } else if (isdigit(tok.text[0]) || 
@@ -52,6 +53,7 @@ namespace snabel {
       if (exp.size() < 3) {
 	ERROR(Snabel, fmt("Malformed binding on line %0", lnr));
       } else {
+	out.push_back(Op::make_backup(false));
 	auto i(std::next(exp.begin(), 2));
 	
 	for (; i != exp.end(); i++) {
@@ -63,6 +65,7 @@ namespace snabel {
 	  compile(exe, lnr, *i, out);
 	}
 	
+	out.push_back(Op::make_restore());
 	out.push_back(Op::make_let(exp[1].text));
 
 	if (i != exp.end()) {

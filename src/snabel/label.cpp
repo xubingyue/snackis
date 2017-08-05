@@ -1,7 +1,7 @@
 #include "snabel/label.hpp"
 
 namespace snabel {
-  Label::Label(int64_t dep, int64_t pc):
-    depth(dep), pc(pc)
+  Label::Label(const str &tag, int64_t dep, int64_t pc):
+    tag(tag), depth(dep), pc(pc)
   { }
 }

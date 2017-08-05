@@ -90,9 +90,10 @@ namespace snabel {
   static void compile_tests() {
     TRY(try_test);
     Exec exe;
-    Scope &scp(curr_scope(exe.main));
     compile(exe.main, "let foo 35\nlet bar foo 7 +");
     run(exe.main);
+
+    Scope &scp(curr_scope(exe.main));
     CHECK(get<int64_t>(get_env(scp, "foo")) == 35, _);
     CHECK(get<int64_t>(get_env(scp, "bar")) == 42, _);
   }
@@ -109,17 +110,18 @@ namespace snabel {
   static void scope_tests() {
     TRY(try_test);    
     Exec exe;
-    Scope &scp(curr_scope(exe.main));
     
     compile(exe.main, "(let foo 21;foo)");
     run(exe.main);
-    CHECK(get<int64_t>(pop(scp.coro)) == 21, _);
-    CHECK(!find_env(scp, "foo"), _);
+    Scope &scp1(curr_scope(exe.main));
+    CHECK(get<int64_t>(pop(scp1.coro)) == 21, _);
+    CHECK(!find_env(scp1, "foo"), _);
 
-    compile(exe.main, "begin\nlet bar 42\nbar\nend");
+    compile(exe.main, "begin\nlet bar 42\nbar\nend call");
     run(exe.main);
-    CHECK(get<int64_t>(pop(scp.coro)) == 42, _);
-    CHECK(!find_env(scp, "bar"), _);
+    Scope &scp2(curr_scope(exe.main));
+    CHECK(get<int64_t>(pop(scp2.coro)) == 42, _);
+    CHECK(!find_env(scp2, "bar"), _);
   }
 
   static void jump_tests() {

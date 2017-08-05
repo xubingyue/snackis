@@ -7,6 +7,7 @@
 #include "snabel/box.hpp"
 #include "snabel/func.hpp"
 #include "snabel/label.hpp"
+#include "snabel/sym.hpp"
 #include "snabel/type.hpp"
 #include "snackis/core/str.hpp"
 
@@ -21,6 +22,7 @@ namespace snabel {
     Coro &coro;
     std::map<str, Label> labels;
     std::list<Env> envs;
+    std::list<Sym> lambda_stack;
     
     Scope(const Scope &src);
     Scope(Coro &cor);

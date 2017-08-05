@@ -1,3 +1,4 @@
+#include <iostream>
 #include "snabel/compiler.hpp"
 #include "snabel/coro.hpp"
 #include "snabel/exec.hpp"
@@ -7,9 +8,9 @@
 
 namespace snabel {
   Coro::Coro(Exec &exe):
-    exec(exe), pc(0)
+    exec(exe), pc(0), return_pc(-1)
   {
-    begin_scope(*this);
+    begin_scope(*this, false);
   }
 
   Scope &curr_scope(Coro &cor) {
@@ -61,8 +62,12 @@ namespace snabel {
     return res;
   }
 
-  Stack &backup_stack(Coro &cor) {
-    return cor.stacks.emplace_back(Stack());
+  Stack &backup_stack(Coro &cor, bool copy) {
+    if (cor.stacks.empty() || !copy) {
+      return cor.stacks.emplace_back();
+    }
+
+    return cor.stacks.emplace_back(cor.stacks.back());
   }
   
   void restore_stack(Coro &cor) {
@@ -76,8 +81,8 @@ namespace snabel {
     }
   }
 
-  Scope &begin_scope(Coro &cor) {    
-    backup_stack(cor);
+  Scope &begin_scope(Coro &cor, bool copy_stack) {    
+    backup_stack(cor, copy_stack);
 
     if (cor.scopes.empty()) {
       return cor.scopes.emplace_back(cor);
@@ -90,6 +95,14 @@ namespace snabel {
     CHECK(!cor.scopes.empty(), _);
     restore_stack(cor);
     cor.scopes.pop_back();
+  }
+
+  void jump(Coro &cor, const Label &lbl) {
+    while (cor.scopes.size() > lbl.depth) {
+      cor.scopes.pop_back();
+    }
+
+    cor.pc = lbl.pc;    
   }
 
   void rewind(Coro &cor) {
@@ -115,23 +128,28 @@ namespace snabel {
       lnr++;
     }
 
-    auto &scp(curr_scope(cor));
-    
+    begin_scope(cor, false);
+
     while (true) {
+      TRY(try_compile);
       OpSeq out;
       bool done(true);
-      rewind(cor);
-      push_env(scp);
+      push_env(curr_scope(cor));
+      cor.pc = 0;
       
       for (auto &op: cor.ops) {
-	if (compile(op, curr_scope(cor), optimize, out)) { done = false; }
+	if (compile(op, curr_scope(cor), optimize, out)) {
+	  done = false;
+	}
+	
 	cor.pc++;
       }
 
       cor.ops.clear();
       cor.ops.swap(out);
-      pop_env(scp);
+      pop_env(curr_scope(cor));
       if (done) { break; }
+      try_compile.errors.clear();
     }
 
     rewind(cor);
@@ -139,6 +157,8 @@ namespace snabel {
   }
 
   void run(Coro &cor) {
+    begin_scope(cor, false);
+
     while (cor.pc < cor.ops.size()) {
       run(cor.ops[cor.pc], curr_scope(cor));
       cor.pc++;

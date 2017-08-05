@@ -6,9 +6,22 @@
 #include "snabel/exec.hpp"
 #include "snabel/func.hpp"
 #include "snabel/op.hpp"
+#include "snackis/core/defer.hpp"
 
 namespace snabel {
-  Op Op::make_begin() {
+  Op Op::make_backup(bool copy) {
+    Op op(OP_BACKUP);
+
+    op.compile = [](auto &op, auto &scp, bool optimize, auto &out) {
+      if (optimize) { op.run(op, scp); }
+      return false;
+    };
+    
+    op.run = [copy](auto &op, auto &scp) { backup_stack(scp.coro, copy); };
+    return op;
+  }
+
+  Op Op::make_begin(bool copy_stack) {
     Op op(OP_BEGIN);
 
     op.compile = [](auto &op, auto &scp, bool optimize, auto &out) mutable {
@@ -16,10 +29,28 @@ namespace snabel {
       return false;
     };
     
-    op.run = [](auto &op, auto &scp) { begin_scope(scp.coro); };
+    op.run = [copy_stack](auto &op, auto &scp) { begin_scope(scp.coro, copy_stack); };
     return op;
   }
-  
+
+  Op Op::make_begin_lambda() {
+    Op op(OP_BEGIN_LAMBDA);
+
+    op.compile = [](auto &op, auto &scp, bool optimize, auto &out) mutable {
+      Coro &cor(scp.coro);
+      //if (optimize) { curr_stack(cor).clear(); }
+      
+      const Sym tag(gensym(cor.exec));
+      scp.lambda_stack.push_back(tag);
+      out.push_back(Op::make_jump(fmt("_exit%0", tag)));
+      out.push_back(Op::make_label(fmt("_enter%0", tag)));
+      out.push_back(Op::make_begin(true));
+      return true;
+    };
+    
+    return op;
+  }
+
   Op Op::make_call(Func &fn) {
     Op op(OP_CALL);
     op.info = [&fn](auto &op, auto &scp) { return fn.name; };
@@ -105,21 +136,97 @@ namespace snabel {
     
     return op;    
   }
+
+  Op Op::make_dyncall(opt<Label> lbl) {
+    Op op(OP_DYNCALL);
+
+    op.info = [lbl](auto &op, auto &scp) {
+      return lbl ? lbl->tag : "";
+    };
+
+    op.compile = [lbl](auto &op, auto &scp, bool optimize, auto &out) mutable {
+      auto &cor(scp.coro);
+      auto &exe(cor.exec);
+      
+      if (optimize) {
+	DEFER({ curr_stack(cor).clear(); });
+	auto fn(peek(cor));
+	
+	if (fn && &fn->type == &exe.lambda_type) {
+	  auto fnd(scp.labels.find(get<str>(*fn)));
+	  
+	  if (fnd != scp.labels.end()) {
+	    out.push_back(Op::make_drop(1));
+	    out.push_back(Op::make_dyncall(fnd->second));
+	    return true;
+	  }
+	}
+      }
+      
+      return false;
+    };
+
+    op.run = [lbl](auto &op, auto &scp) mutable {
+      auto &cor(scp.coro);
+      cor.return_pc = cor.pc;
+
+      if (!lbl) {
+	auto fn(pop(cor));
+	str n(get<str>(fn));
+	auto fnd(scp.labels.find(n));
+
+	if (fnd == scp.labels.end()) {
+	  ERROR(Snabel, fmt("Missing dyncall target: %0", n));
+	} else {
+	  lbl.emplace(fnd->second);
+	}      
+      }
+
+      if (lbl) { jump(cor, *lbl); }
+    };
+    
+    return op;    
+  }
   
   Op Op::make_end() {
     Op op(OP_END);
 
     op.compile = [](auto &op, auto &scp, bool optimize, auto &out) mutable {
       if (optimize) {
-	bool clear(curr_stack(scp.coro).empty());
+	auto &cor(scp.coro);
+	bool clear(curr_stack(cor).empty());
 	op.run(op, scp);
-	if (clear) { curr_stack(scp.coro).clear(); }
+	if (clear) { curr_stack(cor).clear(); }
       }
       
       return false;
     };
 
     op.run = [](auto &op, auto &scp) { end_scope(scp.coro); };
+    return op;
+  }
+
+  Op Op::make_end_lambda() {
+    Op op(OP_END_LAMBDA);
+
+    op.compile = [](auto &op, auto &scp, bool optimize, auto &out) mutable {
+      Coro &cor(scp.coro);
+      //if (optimize) { curr_stack(cor).clear(); }
+      
+      if (scp.lambda_stack.empty()) {
+	ERROR(Snabel, "Missing lambda start");
+	return false;
+      }
+
+      const Sym tag(scp.lambda_stack.back());
+      scp.lambda_stack.pop_back();
+      out.push_back(Op::make_end());
+      out.push_back(Op::make_return());
+      out.push_back(Op::make_label(fmt("_exit%0", tag)));
+      out.push_back(Op::make_push(Box(cor.exec.lambda_type, fmt("_enter%0", tag))));
+      return true;
+    };
+    
     return op;
   }
   
@@ -142,10 +249,15 @@ namespace snabel {
 	  return true;
 	}
 
-	if (optimize && &fnd->type != &scp.coro.exec.undef_type) {
-	  push(scp.coro, *fnd);
-	  out.push_back(Op::make_push(*fnd));
-	  return true;
+	if (optimize) {
+	  if (&fnd->type != &scp.coro.exec.undef_type &&
+	      &fnd->type != &scp.coro.exec.void_type) {
+	    push(scp.coro, *fnd);
+	    out.push_back(Op::make_push(*fnd));
+	    return true;
+	  }
+
+	  curr_stack(scp.coro).clear();
 	}
 	
 	return false;
@@ -183,11 +295,7 @@ namespace snabel {
 
     op.run = [tag, lbl](auto &op, auto &scp) {
       if (lbl) {
-	while (scp.coro.scopes.size() > lbl->depth) {
-	  scp.coro.scopes.pop_back();
-	}
-
-	scp.coro.pc = lbl->pc;
+	jump(scp.coro, *lbl);
       } else {
 	ERROR(Snabel, fmt("Missing label: %0", tag));
       }
@@ -209,7 +317,7 @@ namespace snabel {
       if (fnd == scp.labels.end()) {
 	scp.labels.emplace(std::piecewise_construct,
 			   std::forward_as_tuple(tag),
-			   std::forward_as_tuple(cor.scopes.size(), cor.pc));
+			   std::forward_as_tuple(tag, cor.scopes.size(), cor.pc));
 	prev_pc = cor.pc;
 	out.push_back(op);
 	return true;
@@ -241,8 +349,8 @@ namespace snabel {
       auto fnd(find_env(scp, id));
       auto &exe(scp.coro.exec);
       
-      if (fnd) {
-	if (&fnd->type == &exe.undef_type) {
+      if (fnd && &fnd->type != &exe.undef_type) {
+	if (&fnd->type == &exe.void_type) {
 	  if (get<int64_t>(*fnd) != prev_pc) {
 	    ERROR(Snabel, fmt("Duplicate binding: %0", id));
 	  }
@@ -264,7 +372,7 @@ namespace snabel {
 	
 	if (optimize) {
 	  auto &s(curr_stack(scp.coro));
-	  
+
 	  if (s.size() == 1) {
 	    val.emplace(s.back());
 	    s.pop_back();
@@ -273,7 +381,7 @@ namespace snabel {
 	  }
 	}
 	
-	put_env(scp, id, val ? *val : Box(exe.undef_type, scp.coro.pc));
+	put_env(scp, id, val ? *val : Box(exe.void_type, scp.coro.pc));
 	prev_pc = scp.coro.pc;
       }
 
@@ -320,6 +428,30 @@ namespace snabel {
     return op;
   }
 
+  Op Op::make_restore() {
+    Op op(OP_RESTORE);
+
+    op.compile = [](auto &op, auto &scp, bool optimize, auto &out) {
+      if (optimize) { op.run(op, scp); }
+      return false;
+    };
+    
+    op.run = [](auto &op, auto &scp) { restore_stack(scp.coro); };
+    return op;
+  }
+
+  Op Op::make_return() {
+    Op op(OP_RETURN);
+
+    op.run = [](auto &op, auto &scp) {
+      Coro &cor(scp.coro);
+      cor.pc = cor.return_pc;
+      cor.return_pc = -1;
+    };
+    
+    return op;
+  }
+
   static str def_info(const Op &op, Scope &scp) { return ""; }
 
   static bool def_compile(const Op &op, Scope &scp, bool optimize, OpSeq &out) {
@@ -336,14 +468,22 @@ namespace snabel {
 
   str name(const Op &op) {
     switch (op.code){
+    case OP_BACKUP:
+      return "Backup";
     case OP_BEGIN:
       return "Begin";
+    case OP_BEGIN_LAMBDA:
+      return "BeginLambda";
     case OP_CALL:
       return "Call";
     case OP_DROP:
       return "Drop";
+    case OP_DYNCALL:
+      return "Dyncall";
     case OP_END:
       return "End";
+    case OP_END_LAMBDA:
+      return "EndLambda";
     case OP_ID:
       return "Id";
     case OP_JUMP:
@@ -356,6 +496,10 @@ namespace snabel {
       return "Push";
     case OP_RESET:
       return "Reset";
+    case OP_RESTORE:
+      return "Restore";
+    case OP_RETURN:
+      return "Return";
     };
 
     ERROR(Snabel, fmt("Invalid op code: %0", op.code));

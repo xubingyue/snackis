@@ -2,12 +2,16 @@
 #define SNABEL_LABEL_HPP
 
 #include <cstdint>
+#include "snackis/core/str.hpp"
 
 namespace snabel {
+  using namespace snackis;
+  
   struct Label {
+    const str tag;
     int64_t depth, pc;
     
-    Label(int64_t depth, int64_t pc);
+    Label(const str &tag, int64_t depth, int64_t pc);
   };
 }
 

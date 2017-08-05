@@ -231,7 +231,7 @@ namespace gui {
 
     auto &cor(rdr.exec.main);
     snabel::compile(cor, in, false);    
-    begin_scope(cor);
+    begin_scope(cor, false);
     snabel::run(cor);
     end_scope(cor);
      

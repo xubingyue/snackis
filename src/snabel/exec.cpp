@@ -54,7 +54,7 @@ namespace snabel {
     
     push(scp.coro, exe.i64_type, res);
   }
-  
+
   Exec::Exec():
     main(fibers.emplace(std::piecewise_construct,
 			std::forward_as_tuple(null_uid),
@@ -64,6 +64,7 @@ namespace snabel {
     op_seq_type((add_type(main, "OpSeq"))),
     func_type((add_type(main, "Func"))),
     i64_type((add_type(main, "I64"))),
+    lambda_type((add_type(main, "Lambda"))),
     str_type((add_type(main, "Str"))),
     undef_type((add_type(main, "Undef"))),
     void_type((add_type(main, "Void")))
@@ -73,6 +74,7 @@ namespace snabel {
     op_seq_type.fmt = [](auto &v) { return "n/a"; };
     func_type.fmt = [](auto &v) { return fmt_arg(size_t(get<Func *>(v))); };
     i64_type.fmt = [](auto &v) { return fmt_arg(get<int64_t>(v)); };
+    lambda_type.fmt = [](auto &v) { return "n/a"; };
     str_type.fmt = [](auto &v) { return fmt("\"%0\"", get<str>(v)); };
     undef_type.fmt = [](auto &v) { return "n/a"; };
     void_type.fmt = [](auto &v) { return "n/a"; };
@@ -92,5 +94,9 @@ namespace snabel {
     /*add_macro(main, "reset", [](auto &in, auto &out) {
 	out.push_back(Op::make_reset());
 	});*/
+  }
+
+  Sym gensym(Exec &exe) {
+    return exe.next_sym.fetch_add(1);
   }
 }

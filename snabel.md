@@ -10,20 +10,29 @@ Like the scientific calculators of ancient times, and most printers in active us
 ```
 
 ### Expressions
-Snabel supports dividing expressions into parts using parentheses, each level starts with a fresh stack and the result is pushed to the outer stack on exit. Using braces instead of parentheses pushes the expression as is to the outer stack for later evaluation.
+Snabel supports dividing expressions into parts using parentheses, each level starts with a fresh stack and the result is pushed to the outer stack on exit. 
 
 ```
 > (1 2 +) (2 2 *) +
 7::I64
-
-> {1 2 +}
-n/a::OpSeq
 ```
+
+### Lambdas
+Using braces instead of parentheses pushes the compiled expression to the stack for later evaluation.
+
+```
+> {1 2 +}
+n/a::Lambda
+
+> 1 {2 +} call
+3::I64
+```
+
 
 ### Bindings
-Snabel supports introducing named bindings using the ```let```-keyword. Bindings are lexically scoped, and the value for a specific name is not allowed to change once bound.
+Snabel supports introducing named bindings using the ```let```-keyword. Bindings are lexically scoped, and the value for a specific name is not allowed to change once bound. ```;``` may be used to separate bindings from surrounding code without adding line-breaks.
 
 ```
-> let foo 35; foo 7 +
+> let fn {7 +}; 35 fn call
 42::I64
 ```
