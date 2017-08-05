@@ -20,14 +20,7 @@ namespace snabel {
     const BasicType &operator =(const BasicType &) = delete;
   };
 
-  struct Seq: BasicType {
-    BasicType &elem_type;
-    Seq(BasicType &elt);
-  };
-
   struct Type: BasicType {
-    Seq seq;
-
     Type(const str &n);
   };
   

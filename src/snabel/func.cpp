@@ -32,16 +32,11 @@ namespace snabel {
     
     while (i != imp.args.rend() && !s.empty()) {
       auto &typ(*i);
-      auto seq(dynamic_cast<Seq *>(typ));
       auto &val(s.back());
-
-      if (!isa(val, *typ) && (!seq || !isa(val, seq->elem_type))) {
-	break;
-      }
-      
+      if (!isa(val, *typ)) { break; }
       out.push_back(val);
       s.pop_back();
-      if (!seq) { i++; }
+      i++;
     }
 
     return Args(out.rbegin(), out.rend());
@@ -60,22 +55,14 @@ namespace snabel {
     if (s.size() < imp.args.size()) { return false; }
     auto i(s.rbegin());
     auto j(imp.args.rbegin());
-    size_t cnt(0);
     
     while (i != s.rend() && j != imp.args.rend()) {
-      auto seq(dynamic_cast<Seq *>(*j));
-
-      if (isa(*i, **j) || (seq && isa(*i, seq->elem_type))) {
-	if (!seq) { j++; }
-      } else {
-	break;
-      }
-
+      if (!isa(*i, **j)) { return false; }
       i++;
-      cnt++;
+      j++;
     }
 
-    return cnt > 0;
+    return true;
   }
 
   FuncImp *match(Func &fn, const Coro &cor) {

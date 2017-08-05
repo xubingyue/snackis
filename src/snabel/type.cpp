@@ -17,13 +17,7 @@ namespace snabel {
     return &val.type == &typ;
   }
 
-  Seq::Seq(BasicType &elt):
-    BasicType(snackis::fmt("*%0", elt.name)),
-    elem_type(elt)
-  { }
-
   Type::Type(const str &n):
-    BasicType(n),
-    seq(*this)
+    BasicType(n)
   { }
 }
