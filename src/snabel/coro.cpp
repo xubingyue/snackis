@@ -8,7 +8,7 @@
 
 namespace snabel {
   Coro::Coro(Exec &exe):
-    exec(exe), pc(0), return_pc(-1)
+    exec(exe), pc(0)
   {
     begin_scope(*this, false);
   }

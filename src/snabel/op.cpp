@@ -167,7 +167,7 @@ namespace snabel {
 
     op.run = [lbl](auto &op, auto &scp) mutable {
       auto &cor(scp.coro);
-      cor.return_pc = cor.pc;
+      cor.return_pcs.push_back(cor.pc);
 
       if (!lbl) {
 	auto fn(pop(cor));
@@ -433,8 +433,8 @@ namespace snabel {
 
     op.run = [](auto &op, auto &scp) {
       Coro &cor(scp.coro);
-      cor.pc = cor.return_pc;
-      cor.return_pc = -1;
+      cor.pc = cor.return_pcs.back();
+      cor.return_pcs.pop_back();
     };
     
     return op;

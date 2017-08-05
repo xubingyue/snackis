@@ -15,11 +15,12 @@ namespace snabel {
   struct Coro {
     Exec &exec;
     OpSeq ops;
-    int64_t pc, return_pc;
+    int64_t pc;
     std::list<Type> types;
     std::list<Func> funcs;
     std::list<Scope> scopes;
     std::list<Stack> stacks;
+    std::list<int64_t> return_pcs;
     
     Coro(Exec &exe);
     Coro(const Coro &) = delete;

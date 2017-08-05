@@ -4,7 +4,7 @@
 ![script example](images/script.png?raw=true)
 
 ### Postfix
-Just like Yoda of Star-Wars fame, and ancient scientific calculators; as well as most printers in active use; yet unlike currently trending programming languages; Snabel expects arguments before operations.
+Just like Yoda of Star-Wars fame, and yesterdays scientific calculators; as well as most printers in active use; yet unlike currently trending programming languages; Snabel expects arguments before operations.
 
 ```
 > 7 42 + 10 %
@@ -43,6 +43,14 @@ Snabel supports named bindings using the ```let```-keyword. Bound identifiers ar
 ```
 > let fn {7 +}; 35 fn call
 42::I64
+```
+
+### Types
+Snabel provides static types; and will check and optimize code based on types of variables and functions during compilation. First class types and type-inference are provided to help reduce cognitive load and keyboard wear.
+
+```
+> I64
+I64::Type
 ```
 
 ### Running the code
