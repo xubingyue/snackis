@@ -43,9 +43,6 @@ Snackis UI is divided into three parts; to the left is the read-only console, wh
 #### Style
 The entire UI may be styled by editing ```/gui.css```, running the application with an empty file displays the default GTK-style.
 
-#### Reader
-The reader is backed by Snackis scripting-language, [Snabel](https://github.com/andreas-gone-wild/snackis/blob/master/snabel.md). Besides commands, which are implemented as regular functions; Snabel offers arithmetic operators (+-*%) and more; see [Scripts](https://github.com/andreas-gone-wild/snackis/blob/master/README.md#scripts) for more information.
-
 ### Setup
 Once inside, the first thing you probably want to do is to have a look at the setup. Type ```setup``` and press ```Return``` in the reader to open the setup view. Imap/Smtp are required to do anything beyond local/personal use.
 
@@ -145,7 +142,7 @@ Type ```decrypt``` and press ```Return``` in the reader to open the decryption v
 Snackis delegates anything concerning encryption to [libsodium](https://github.com/jedisct1/libsodium). The IETF-variant of ```ChaCha20-Poly1305``` is used to encrypt the master password and database, while ```XSalsa20```/```X25519``` with ```Poly1305 MAC```-authentication is used for everything else. The master password is hashed using ```Scrypt```, and encrypted using the hash as key for future validation.
 
 ### Scripts
-Snackis includes a custom, statically typed postfix language called [Snabel](https://github.com/andreas-gone-wild/snackis/blob/master/snabel.md). Type ```script-new``` and press ```Return``` in the reader to open the script view.
+Snackis includes a custom scripting language called [Snabel](https://github.com/andreas-gone-wild/snackis/blob/master/snabel.md). Type ```script-new``` and press ```Return``` in the reader to open the script view. Snackis reader is also backed by Snabel, which allows convenient evaluation of arbitrary expressions at any time.
 
 ![script example](images/script.png?raw=true)
 
