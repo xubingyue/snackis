@@ -1,6 +1,8 @@
 # Snabel
 #### A statically typed scripting-language embedded in C++
 
+![script example](images/script.png?raw=true)
+
 ### Postfix
 Just like Yoda of Star-Wars fame, and ancient scientific calculators; as well as most printers in active use; yet unlike currently trending programming languages; Snabel expects arguments before operations.
 
@@ -18,7 +20,7 @@ Snabel supports dividing expressions into parts using parentheses, each level st
 ```
 
 ### Lambdas
-Using braces instead of parentheses pushes a pointer to the compiled expression on the stack. ```begin```/```end``` may be used to achieve the same effect over multiple lines.
+Using braces instead of parentheses pushes a pointer to the compiled expression on the stack, ```begin```/```end``` may be used to perform the same operation over multiple lines.
 
 ```
 > {1 2 +}
@@ -42,3 +44,6 @@ Snabel supports named bindings using the ```let```-keyword. Bound identifiers ar
 > let fn {7 +}; 35 fn call
 42::I64
 ```
+
+### Running the code
+Snabel is designed to eventually be compiled as a standalone library, but the code is currently being developed inside [Snackis](https://github.com/andreas-gone-wild/snackis). The fastest way to try out the examples in this document is to first get Snackis up and running, and then execute 'script-new' to open the script view.
