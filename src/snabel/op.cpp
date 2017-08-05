@@ -21,40 +21,6 @@ namespace snabel {
     return op;
   }
 
-  Op Op::make_begin(bool copy_stack) {
-    Op op(OP_BEGIN);
-
-    op.info = [copy_stack](auto &op, auto &scp) {
-      return copy_stack ? "copy" : "empty";
-    };
-
-    op.compile = [](auto &op, auto &scp, auto &out) mutable {
-      op.run(op, scp);
-      return false;
-    };
-    
-    op.run = [copy_stack](auto &op, auto &scp) { begin_scope(scp.coro, copy_stack); };
-    return op;
-  }
-
-  Op Op::make_begin_lambda() {
-    Op op(OP_BEGIN_LAMBDA);
-
-    op.compile = [](auto &op, auto &scp, auto &out) mutable {
-      Coro &cor(scp.coro);
-      curr_stack(cor).clear();
-      
-      const Sym tag(gensym(cor.exec));
-      scp.lambdas.push_back(tag);
-      out.push_back(Op::make_jump(fmt("_exit%0", tag)));
-      out.push_back(Op::make_label(fmt("_enter%0", tag)));
-      out.push_back(Op::make_begin(true));
-      return true;
-    };
-    
-    return op;
-  }
-
   Op Op::make_call(Func &fn) {
     Op op(OP_CALL);
     op.info = [&fn](auto &op, auto &scp) { return fn.name; };
@@ -186,46 +152,23 @@ namespace snabel {
     
     return op;    
   }
-  
-  Op Op::make_end() {
-    Op op(OP_END);
+    
+  Op Op::make_group(bool copy_stack) {
+    Op op(OP_GROUP);
+
+    op.info = [copy_stack](auto &op, auto &scp) {
+      return copy_stack ? "copy" : "empty";
+    };
 
     op.compile = [](auto &op, auto &scp, auto &out) mutable {
-      auto &cor(scp.coro);
-      bool clear(curr_stack(cor).empty());
       op.run(op, scp);
-      if (clear) { curr_stack(cor).clear(); }
       return false;
     };
-
-    op.run = [](auto &op, auto &scp) { end_scope(scp.coro); };
-    return op;
-  }
-
-  Op Op::make_end_lambda() {
-    Op op(OP_END_LAMBDA);
-
-    op.compile = [](auto &op, auto &scp, auto &out) mutable {
-      Coro &cor(scp.coro);
-      curr_stack(cor).clear();
-      
-      if (scp.lambdas.empty()) {
-	ERROR(Snabel, "Missing lambda start");
-	return false;
-      }
-
-      const Sym tag(scp.lambdas.back());
-      scp.lambdas.pop_back();
-      out.push_back(Op::make_end());
-      out.push_back(Op::make_return());
-      out.push_back(Op::make_label(fmt("_exit%0", tag)));
-      out.push_back(Op::make_push(Box(cor.exec.lambda_type, fmt("_enter%0", tag))));
-      return true;
-    };
     
+    op.run = [copy_stack](auto &op, auto &scp) { begin_scope(scp.coro, copy_stack); };
     return op;
   }
-  
+
   Op Op::make_id(const str &txt) {
     Op op(OP_ID);
     op.info = [txt](auto &op, auto &scp) { return txt; };
@@ -329,6 +272,24 @@ namespace snabel {
       return true;
     };
 
+    return op;
+  }
+
+  Op Op::make_lambda() {
+    Op op(OP_LAMBDA);
+
+    op.compile = [](auto &op, auto &scp, auto &out) mutable {
+      Coro &cor(scp.coro);
+      curr_stack(cor).clear();
+      
+      const Sym tag(gensym(cor.exec));
+      scp.lambdas.push_back(tag);
+      out.push_back(Op::make_jump(fmt("_exit%0", tag)));
+      out.push_back(Op::make_label(fmt("_enter%0", tag)));
+      out.push_back(Op::make_group(true));
+      return true;
+    };
+    
     return op;
   }
   
@@ -440,6 +401,45 @@ namespace snabel {
     return op;
   }
 
+  Op Op::make_ungroup() {
+    Op op(OP_UNGROUP);
+
+    op.compile = [](auto &op, auto &scp, auto &out) mutable {
+      auto &cor(scp.coro);
+      bool clear(curr_stack(cor).empty());
+      op.run(op, scp);
+      if (clear) { curr_stack(cor).clear(); }
+      return false;
+    };
+
+    op.run = [](auto &op, auto &scp) { end_scope(scp.coro); };
+    return op;
+  }
+
+  Op Op::make_unlambda() {
+    Op op(OP_UNLAMBDA);
+
+    op.compile = [](auto &op, auto &scp, auto &out) mutable {
+      Coro &cor(scp.coro);
+      curr_stack(cor).clear();
+      
+      if (scp.lambdas.empty()) {
+	ERROR(Snabel, "Missing lambda start");
+	return false;
+      }
+
+      const Sym tag(scp.lambdas.back());
+      scp.lambdas.pop_back();
+      out.push_back(Op::make_ungroup());
+      out.push_back(Op::make_return());
+      out.push_back(Op::make_label(fmt("_exit%0", tag)));
+      out.push_back(Op::make_push(Box(cor.exec.lambda_type, fmt("_enter%0", tag))));
+      return true;
+    };
+    
+    return op;
+  }
+  
   static str def_info(const Op &op, Scope &scp) { return ""; }
 
   static bool def_compile(const Op &op, Scope &scp, OpSeq &out) {
@@ -458,26 +458,22 @@ namespace snabel {
     switch (op.code){
     case OP_BACKUP:
       return "Backup";
-    case OP_BEGIN:
-      return "Begin";
-    case OP_BEGIN_LAMBDA:
-      return "BeginLambda";
     case OP_CALL:
       return "Call";
     case OP_DROP:
       return "Drop";
     case OP_DYNCALL:
       return "Dyncall";
-    case OP_END:
-      return "End";
-    case OP_END_LAMBDA:
-      return "EndLambda";
+    case OP_GROUP:
+      return "Group";
     case OP_ID:
       return "Id";
     case OP_JUMP:
       return "Jump";
     case OP_LABEL:
       return "Label";
+    case OP_LAMBDA:
+      return "Lambda";
     case OP_LET:
       return "Let";
     case OP_PUSH:
@@ -488,6 +484,10 @@ namespace snabel {
       return "Restore";
     case OP_RETURN:
       return "Return";
+    case OP_UNGROUP:
+      return "Ungroup";
+    case OP_UNLAMBDA:
+      return "Unlambda";
     };
 
     ERROR(Snabel, fmt("Invalid op code: %0", op.code));

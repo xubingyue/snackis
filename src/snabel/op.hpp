@@ -16,9 +16,9 @@ namespace snabel {
   struct Scope;
   struct Op;
 
-  enum OpCode { OP_BACKUP, OP_BEGIN, OP_BEGIN_LAMBDA, OP_CALL, OP_DROP, OP_DYNCALL,
-	        OP_END, OP_END_LAMBDA, OP_ID, OP_JUMP, OP_LABEL, OP_LET,
-		OP_PUSH, OP_RESET, OP_RESTORE, OP_RETURN };
+  enum OpCode { OP_BACKUP, OP_CALL, OP_DROP, OP_DYNCALL,
+	        OP_GROUP, OP_ID, OP_JUMP, OP_LABEL, OP_LAMBDA, OP_LET,
+		OP_PUSH, OP_RESET, OP_RESTORE, OP_RETURN, OP_UNGROUP, OP_UNLAMBDA};
 
   using OpSeq = std::deque<Op>;
 
@@ -30,21 +30,21 @@ namespace snabel {
     func<void (const Op &op, Scope &)> run;
     
     static Op make_backup(bool copy);
-    static Op make_begin(bool copy_stack);
-    static Op make_begin_lambda();
     static Op make_call(Func &fn);
     static Op make_drop(size_t cnt=1);
     static Op make_dyncall(opt<Label> lbl=nullopt);
-    static Op make_end();
-    static Op make_end_lambda();
+    static Op make_group(bool copy_stack);
     static Op make_id(const str &txt);
     static Op make_jump(const str &tag, opt<Label> lbl=nullopt);
     static Op make_label(const str &tag);
+    static Op make_lambda();
     static Op make_let(const str &id);
     static Op make_push(const Box &it);
     static Op make_reset();
     static Op make_restore();
     static Op make_return();
+    static Op make_ungroup();
+    static Op make_unlambda();
 
     Op(OpCode cod);
   };

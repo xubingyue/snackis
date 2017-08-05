@@ -9,15 +9,15 @@ namespace snabel {
 	       const Tok &tok,
 	       OpSeq &out) {
     if (tok.text[0] == '{') {      
-      out.push_back(Op::make_begin_lambda());
+      out.push_back(Op::make_lambda());
       str e(tok.text.substr(1, tok.text.size()-2));
       compile(exe, lnr, parse_expr(e), out);
-      out.push_back(Op::make_end_lambda());
+      out.push_back(Op::make_unlambda());
     } else if (tok.text[0] == '(') {
-      out.push_back(Op::make_begin(false));
+      out.push_back(Op::make_group(false));
       str e(tok.text.substr(1, tok.text.size()-2));
       compile(exe, lnr, parse_expr(e), out);
-      out.push_back(Op::make_end());
+      out.push_back(Op::make_ungroup());
     } else if (tok.text[0] == '@') {
       out.push_back(Op::make_label(tok.text.substr(1)));
     } else if (tok.text[0] == '!') {
@@ -26,13 +26,13 @@ namespace snabel {
       out.push_back(Op::make_push(Box(exe.str_type,
 				      tok.text.substr(1, tok.text.size()-2))));
     } else if (tok.text == "begin") {
-      out.push_back(Op::make_begin_lambda());
+      out.push_back(Op::make_lambda());
     } else if (tok.text == "call") {
       out.push_back(Op::make_dyncall());
     } else if (tok.text == "drop") {
       out.push_back(Op::make_drop());
     } else if (tok.text == "end") {
-      out.push_back(Op::make_end_lambda());
+      out.push_back(Op::make_unlambda());
     } else if (tok.text == "reset") {
       out.push_back(Op::make_reset());
     } else if (isdigit(tok.text[0]) || 
