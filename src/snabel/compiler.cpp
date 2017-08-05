@@ -28,6 +28,8 @@ namespace snabel {
 				      tok.text.substr(1, tok.text.size()-2))));
     } else if (tok.text == "begin") {
       out.push_back(Op::make_begin());
+    } else if (tok.text == "drop") {
+      out.push_back(Op::make_drop());
     } else if (tok.text == "end") {
       out.push_back(Op::make_end());
     } else if (tok.text == "reset") {

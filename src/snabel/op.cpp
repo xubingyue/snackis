@@ -32,6 +32,37 @@ namespace snabel {
     return op;
   }
 
+  Op Op::make_drop(size_t cnt) {
+    Op op(OP_DROP, "Drop");
+    op.info = [cnt](auto &op, auto &scp) { return fmt_arg(cnt); };
+    
+    op.run = [cnt](auto &op, auto &scp) {
+      for (size_t i(0); i < cnt; i++) { pop(scp.coro); }
+    };
+
+    op.trace = [cnt](auto &op, auto &scp, bool optimize, auto &out) mutable {
+      if (optimize) {
+	auto i(0);
+	
+	while (i < cnt && !out.empty() && out.back().code == OP_PUSH) {
+	  out.pop_back();
+	  i++;
+	}
+
+	if (i == cnt) { return true; }
+
+	if (i) {
+	  out.push_back(Op::make_drop(cnt-i));
+	  return true;
+	}
+      }
+
+      return false;
+    };
+
+    return op;    
+  }
+  
   Op Op::make_end() {
     Op op(OP_END, "End");
     op.run = [](auto &op, auto &scp) { end_scope(scp.coro); };
@@ -168,37 +199,6 @@ namespace snabel {
     };
 
     return op;
-  }
-
-  Op Op::make_pop(size_t cnt) {
-    Op op(OP_POP, "Pop");
-    op.info = [cnt](auto &op, auto &scp) { return fmt_arg(cnt); };
-    
-    op.run = [cnt](auto &op, auto &scp) {
-      for (size_t i(0); i < cnt; i++) { pop(scp.coro); }
-    };
-
-    op.trace = [cnt](auto &op, auto &scp, bool optimize, auto &out) mutable {
-      if (optimize) {
-	auto i(0);
-	
-	while (i < cnt && !out.empty() && out.back().code == OP_PUSH) {
-	  out.pop_back();
-	  i++;
-	}
-
-	if (i == cnt) { return true; }
-
-	if (i) {
-	  out.push_back(Op::make_pop(cnt-i));
-	  return true;
-	}
-      }
-
-      return false;
-    };
-
-    return op;    
   }
 
   Op Op::make_push(const Box &it) {

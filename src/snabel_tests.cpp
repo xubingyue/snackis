@@ -125,10 +125,17 @@ namespace snabel {
   static void jump_tests() {
     TRY(try_test);    
     Exec exe;
-    //Scope &scp(curr_scope(exe.main));
+    Scope &scp(curr_scope(exe.main));
     compile(exe.main, "42 !exit 7 @exit +");
     run(exe.main);
-    //CHECK(get<int64_t>(pop(scp.coro)) == 42, _);
+    CHECK(get<int64_t>(pop(scp.coro)) == 42, _);
+  }
+
+  static void drop_tests() {
+    TRY(try_test);    
+    Exec exe;
+    compile(exe.main, "1 2 3 drop drop");
+    CHECK(exe.main.ops.size() == 1, _);
   }
 
   void all_tests() {
