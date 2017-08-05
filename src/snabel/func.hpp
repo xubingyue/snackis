@@ -10,13 +10,13 @@
 namespace snabel {
   using namespace snackis;
 
-  struct BasicType;
   struct Box;
   struct Coro;
   struct Scope;
   struct Func;
+  struct Type;
   
-  using ArgTypes = std::deque<BasicType *>;
+  using ArgTypes = std::deque<Type *>;
   using Args = std::deque<Box>;
 
   struct FuncImp {

@@ -2,22 +2,18 @@
 #include "snabel/type.hpp"
 
 namespace snabel {
-  BasicType::BasicType(const str &n):
+  Type::Type(const str &n):
     name(n)
   { }
 
-  BasicType::~BasicType()
+  Type::~Type()
   { }
 
-  bool operator <(const BasicType &x, const BasicType &y) {
+  bool operator <(const Type &x, const Type &y) {
     return x.name < y.name;
   }
 
-  bool isa(const Box &val, const BasicType &typ) {
+  bool isa(const Box &val, const Type &typ) {
     return &val.type == &typ;
   }
-
-  Type::Type(const str &n):
-    BasicType(n)
-  { }
 }
