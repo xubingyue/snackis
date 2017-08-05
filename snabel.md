@@ -18,7 +18,7 @@ Snabel supports dividing expressions into parts using parentheses, each level st
 ```
 
 ### Lambdas
-Using braces instead of parentheses pushes a pointer to the compiled expression on the stack.
+Using braces instead of parentheses pushes a pointer to the compiled expression on the stack. ```begin```/```end``` may be used to achieve the same effect over multiple lines.
 
 ```
 > {1 2 +}
@@ -26,6 +26,13 @@ n/a::Lambda
 
 > {1 2 +} call
 3::I64
+
+> begin
+    1
+    2  +
+    14 *
+  end call
+42::I64
 ```
 
 ### Bindings
