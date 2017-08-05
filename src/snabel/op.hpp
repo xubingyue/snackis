@@ -26,8 +26,8 @@ namespace snabel {
     str name;
     
     func<str (const Op &op, Scope &)> info;
+    func<bool (const Op &op, Scope &, bool optimize, OpSeq &)> compile;
     func<void (const Op &op, Scope &)> run;
-    func<bool (const Op &op, Scope &, bool optimize, OpSeq &)> trace;
     
     static Op make_begin();
     static Op make_call(Func &fn);
@@ -44,7 +44,7 @@ namespace snabel {
   };
 
   str info(const Op &op, Scope &scp);
-  bool trace(const Op &op, Scope &scp, bool optimize, OpSeq &out);
+  bool compile(const Op &op, Scope &scp, bool optimize, OpSeq &out);
   void run(const Op &op, Scope &scp);
 }
 

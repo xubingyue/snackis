@@ -103,35 +103,10 @@ namespace snabel {
     cor.pc = 0;
   }
 
-  static bool trace(Coro &cor, bool optimize) {
-    auto &scp(cor.scopes.front());
-    bool res(false);
-    
-    while (true) {
-      OpSeq out;
-      bool done(true);
-      cor.pc = 0;
-      push_env(scp);
-      
-      for (auto &op: cor.ops) {
-	if (trace(op, curr_scope(cor), optimize, out)) { done = false; }
-	cor.pc++;
-      }
-
-      cor.ops.clear();
-      cor.ops.swap(out);
-      pop_env(scp);
-      if (done) { break; }
-      res = true;
-    }
-
-    cor.pc = 0;
-    return res;
-  }
-
   bool compile(Coro &cor, const str &in, bool optimize) {
     cor.ops.clear();
     size_t lnr(0);
+    
     for (auto &ln: parse_lines(in)) {
       if (!ln.empty()) {
 	compile(cor.exec, lnr, parse_expr(ln), cor.ops);
@@ -140,10 +115,28 @@ namespace snabel {
       lnr++;
     }
 
-    return trace(cor, optimize);
-  }
+    auto &scp(curr_scope(cor));
+    
+    while (true) {
+      OpSeq out;
+      bool done(true);
+      cor.pc = 0;
+      push_env(scp);
+      
+      for (auto &op: cor.ops) {
+	if (compile(op, curr_scope(cor), optimize, out)) { done = false; }
+	cor.pc++;
+      }
 
-  bool optimize(Coro &cor) { return trace(cor, true); }
+      cor.ops.clear();
+      cor.ops.swap(out);
+      pop_env(scp);
+      if (done) { break; }
+    }
+
+    cor.pc = 0;
+    return true;
+  }
 
   void run(Coro &cor) {
     while (cor.pc < cor.ops.size()) {

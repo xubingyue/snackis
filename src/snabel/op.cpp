@@ -36,11 +36,7 @@ namespace snabel {
     Op op(OP_DROP, "Drop");
     op.info = [cnt](auto &op, auto &scp) { return fmt_arg(cnt); };
     
-    op.run = [cnt](auto &op, auto &scp) {
-      for (size_t i(0); i < cnt; i++) { pop(scp.coro); }
-    };
-
-    op.trace = [cnt](auto &op, auto &scp, bool optimize, auto &out) mutable {
+    op.compile = [cnt](auto &op, auto &scp, bool optimize, auto &out) mutable {
       if (optimize) {
 	auto i(0);
 	
@@ -60,6 +56,10 @@ namespace snabel {
       return false;
     };
 
+    op.run = [cnt](auto &op, auto &scp) {
+      for (size_t i(0); i < cnt; i++) { pop(scp.coro); }
+    };
+    
     return op;    
   }
   
@@ -73,18 +73,7 @@ namespace snabel {
     Op op(OP_ID, "Id");
     op.info = [txt](auto &op, auto &scp) { return txt; };
 
-    op.run = [txt](auto &op, auto &scp) {
-      auto fnd(find_env(scp, txt));
-
-      if (!fnd) {
-	ERROR(Snabel, fmt("Unknown identifier: %0", txt));
-	return;
-      }
-
-      push(scp.coro, *fnd);
-    };    
-
-    op.trace = [txt](auto &op, auto &scp, bool optimize, auto &out) {
+    op.compile = [txt](auto &op, auto &scp, bool optimize, auto &out) {
 	auto fnd(find_env(scp, txt));
 
 	if (!fnd) {
@@ -101,6 +90,17 @@ namespace snabel {
 	return false;
     };
 
+    op.run = [txt](auto &op, auto &scp) {
+      auto fnd(find_env(scp, txt));
+
+      if (!fnd) {
+	ERROR(Snabel, fmt("Unknown identifier: %0", txt));
+	return;
+      }
+
+      push(scp.coro, *fnd);
+    };
+
     return op;
   }
 
@@ -109,6 +109,14 @@ namespace snabel {
 
     op.info = [tag, lbl](auto &op, auto &scp) {
       return fmt("%0 (%1)", tag, lbl ? to_str(lbl->pc) : "?");
+    };
+
+    op.compile = [tag, lbl](auto &op, auto &scp, bool optimize, auto &out) {      
+      auto fnd(scp.labels.find(tag));
+      if (fnd == scp.labels.end()) { return false; }
+      if (lbl && fnd->second.pc == lbl->pc) { return false; }
+      out.push_back(Op::make_jump(tag, fnd->second));
+      return true;
     };
 
     op.run = [tag, lbl](auto &op, auto &scp) {
@@ -122,15 +130,7 @@ namespace snabel {
 	ERROR(Snabel, fmt("Missing label: %0", tag));
       }
     };
-
-    op.trace = [tag, lbl](auto &op, auto &scp, bool optimize, auto &out) {      
-      auto fnd(scp.labels.find(tag));
-      if (fnd == scp.labels.end()) { return false; }
-      if (lbl && fnd->second.pc == lbl->pc) { return false; }
-      out.push_back(Op::make_jump(tag, fnd->second));
-      return true;
-    };
-
+    
     return op;
   }
   
@@ -139,7 +139,8 @@ namespace snabel {
     op.info = [tag](auto &op, auto &scp) { return tag; };
 
     int64_t prev_pc(-1);
-    op.trace = [tag, prev_pc](auto &op, auto &scp, bool optimize, auto &out) mutable {
+    op.compile = [tag, prev_pc](auto &op, auto &scp, bool optimize, auto &out)
+      mutable {
       Coro &cor(scp.coro);
       auto fnd(scp.labels.find(tag));
 
@@ -172,13 +173,9 @@ namespace snabel {
     Op op(OP_LET, "Let");
     op.info = [id](auto &op, auto &scp) { return id; };
 
-    op.run = [id](auto &op, auto &scp) {
-      auto v(pop(scp.coro));
-      put_env(scp, id, v);
-    };
-
     int64_t prev_pc(-1);
-    op.trace = [id, prev_pc](auto &op, auto &scp, bool optimize, auto &out) mutable {
+    op.compile = [id, prev_pc](auto &op, auto &scp, bool optimize, auto &out)
+      mutable {
       auto fnd(find_env(scp, id));
       auto &exe(scp.coro.exec);
       
@@ -198,6 +195,11 @@ namespace snabel {
       return false;
     };
 
+    op.run = [id](auto &op, auto &scp) {
+      auto v(pop(scp.coro));
+      put_env(scp, id, v);
+    };
+    
     return op;
   }
 
@@ -214,28 +216,26 @@ namespace snabel {
     return op;
   }
 
-  static str def_info(const Op &op, Scope &scp) {
-    return "";
-  }
+  static str def_info(const Op &op, Scope &scp) { return ""; }
 
-  static void def_run(const Op &op, Scope &scp) {
-  }
-
-  static bool def_trace(const Op &op, Scope &scp, bool optimize, OpSeq &out) {
+  static bool def_compile(const Op &op, Scope &scp, bool optimize, OpSeq &out) {
     return false;
   }
 
+  static void def_run(const Op &op, Scope &scp)
+  { }
+
   Op::Op(OpCode cod, const str &nam):
     code(cod), name(nam),
-    info(def_info), run(def_run), trace(def_trace)
+    info(def_info), compile(def_compile), run(def_run)
   { }
 
   str info(const Op &op, Scope &scp) {
     return op.info(op, scp);
   }
 
-  bool trace(const Op &op, Scope &scp, bool optimize, OpSeq &out) {
-    if (op.trace(op, scp, optimize, out)) { return true; }
+  bool compile(const Op &op, Scope &scp, bool optimize, OpSeq &out) {
+    if (op.compile(op, scp, optimize, out)) { return true; }
     out.push_back(op);
     return false;
   }
