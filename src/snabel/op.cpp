@@ -38,7 +38,7 @@ namespace snabel {
 
     op.compile = [](auto &op, auto &scp, bool optimize, auto &out) mutable {
       Coro &cor(scp.coro);
-      //if (optimize) { curr_stack(cor).clear(); }
+      if (optimize) { curr_stack(cor).clear(); }
       
       const Sym tag(gensym(cor.exec));
       scp.lambda_stack.push_back(tag);
@@ -211,7 +211,7 @@ namespace snabel {
 
     op.compile = [](auto &op, auto &scp, bool optimize, auto &out) mutable {
       Coro &cor(scp.coro);
-      //if (optimize) { curr_stack(cor).clear(); }
+      if (optimize) { curr_stack(cor).clear(); }
       
       if (scp.lambda_stack.empty()) {
 	ERROR(Snabel, "Missing lambda start");
