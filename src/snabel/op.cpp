@@ -129,6 +129,8 @@ namespace snabel {
 
 	if (optimize && &fnd->type != &scp.coro.exec.undef_type) {
 	  push(scp.coro, *fnd);
+	  out.push_back(Op::make_push(*fnd));
+	  return true;
 	}
 	
 	return false;
@@ -232,14 +234,32 @@ namespace snabel {
 	} else {
 	  ERROR(Snabel, fmt("Duplicate binding: %0\n%1", id, *fnd));
 	}
-      } else {
-	put_env(scp, id, Box(exe.undef_type, scp.coro.pc));
-	prev_pc = scp.coro.pc;
-      }
 
-      if (optimize) {
-	auto &s(curr_stack(scp.coro));
-	if (!s.empty()) { s.pop_back(); }
+	if (optimize) {
+	  auto &s(curr_stack(scp.coro));
+
+	  if (s.size() == 1) {
+	    s.pop_back();
+	  } else {
+	    s.clear();
+	  }
+	}
+      } else {
+	opt<Box> val;
+	
+	if (optimize) {
+	  auto &s(curr_stack(scp.coro));
+	  
+	  if (s.size() == 1) {
+	    val.emplace(s.back());
+	    s.pop_back();
+	  } else {
+	    s.clear();
+	  }
+	}
+	
+	put_env(scp, id, val ? *val : Box(exe.undef_type, scp.coro.pc));
+	prev_pc = scp.coro.pc;
       }
 
       return false;
@@ -253,7 +273,7 @@ namespace snabel {
 	s.pop_back();
 	put_env(scp, id, v);
       } else {
-	ERROR(Snabel, fmt("Malformed binding: %0\n%1", id, s));
+	ERROR(Snabel, fmt("Malformed run binding: %0\n%1", id, s));
       }
     };
     
