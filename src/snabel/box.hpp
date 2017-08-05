@@ -3,7 +3,6 @@
 
 #include <variant>
 
-#include "snabel/op.hpp"
 #include "snackis/core/error.hpp"
 #include "snackis/core/fmt.hpp"
 
@@ -19,7 +18,7 @@ namespace snabel {
     bool operator ()(const Box &box) const;
   };
 
-  using Val = std::variant<const Undef, int64_t, str, Func *, Type *, Op, OpSeq>;
+  using Val = std::variant<const Undef, int64_t, str, Func *, Type *>;
   
   struct Box {
     Type &type;

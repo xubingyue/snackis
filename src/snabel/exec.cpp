@@ -60,8 +60,6 @@ namespace snabel {
 			std::forward_as_tuple(null_uid),
 			std::forward_as_tuple(*this, null_uid)).first->second),
     meta_type((add_type(main, "Type"))),
-    op_type((add_type(main, "Op"))),
-    op_seq_type((add_type(main, "OpSeq"))),
     func_type((add_type(main, "Func"))),
     i64_type((add_type(main, "I64"))),
     lambda_type((add_type(main, "Lambda"))),
@@ -71,8 +69,6 @@ namespace snabel {
     next_sym(1)
   {
     meta_type.fmt = [](auto &v) { return get<Type *>(v)->name; };
-    op_type.fmt = [](auto &v) { return fmt_arg(get<Op>(v).code); };
-    op_seq_type.fmt = [](auto &v) { return "n/a"; };
     func_type.fmt = [](auto &v) { return fmt_arg(size_t(get<Func *>(v))); };
     i64_type.fmt = [](auto &v) { return fmt_arg(get<int64_t>(v)); };
     lambda_type.fmt = [](auto &v) { return "n/a"; };

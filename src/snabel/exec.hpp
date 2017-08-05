@@ -15,8 +15,8 @@ namespace snabel {
     std::map<UId, Fiber> fibers;
     Fiber &main;
     Type &meta_type,
-      &op_type, &op_seq_type,
-      &func_type, &i64_type, &lambda_type, &str_type, &undef_type, &void_type;
+      &func_type, &i64_type, &lambda_type, &str_type,
+      &undef_type, &void_type;
     std::atomic<Sym> next_sym;
     
     Exec();
