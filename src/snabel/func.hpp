@@ -1,7 +1,6 @@
 #ifndef SNABEL_FUNC_HPP
 #define SNABEL_FUNC_HPP
 
-#include <list>
 #include <deque>
 
 #include "snackis/core/func.hpp"
@@ -36,7 +35,7 @@ namespace snabel {
 
   struct Func {
     str name;
-    std::list<FuncImp> imps;
+    std::deque<FuncImp> imps;
     Func(const str &nam);
   };
   

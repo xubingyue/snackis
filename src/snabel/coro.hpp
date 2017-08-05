@@ -2,7 +2,6 @@
 #define SNABEL_CORO_HPP
 
 #include <deque>
-#include <list>
 
 #include "snabel/op.hpp"
 #include "snabel/scope.hpp"
@@ -16,11 +15,11 @@ namespace snabel {
     Exec &exec;
     OpSeq ops;
     int64_t pc;
-    std::list<Type> types;
-    std::list<Func> funcs;
-    std::list<Scope> scopes;
-    std::list<Stack> stacks;
-    std::list<int64_t> return_pcs;
+    std::deque<Type> types;
+    std::deque<Func> funcs;
+    std::deque<Scope> scopes;
+    std::deque<Stack> stacks;
+    std::deque<int64_t> returns;
     
     Coro(Exec &exe);
     Coro(const Coro &) = delete;

@@ -53,5 +53,13 @@ Snabel provides static types; and will check and optimize code based on types of
 I64::Type
 ```
 
+### Jumps
+Snabel's control structures are based on the idea of jumping to offsets within the instruction stream, direct support for declaring and jumping to labels is provided through reader macros '@' and '!'.
+
+```
+> 1 2 !skip 3 @skip +
+3::I64
+```
+
 ### Running the code
 Snabel is designed to eventually be compiled as a standalone library, but the code is currently being developed inside [Snackis](https://github.com/andreas-gone-wild/snackis). The fastest way to try out the examples in this document is to first get Snackis up and running, and then execute 'script-new' to open the script view.

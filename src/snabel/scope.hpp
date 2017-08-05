@@ -1,7 +1,7 @@
 #ifndef SNABEL_SCOPE_HPP
 #define SNABEL_SCOPE_HPP
 
-#include <list>
+#include <deque>
 #include <map>
 
 #include "snabel/box.hpp"
@@ -21,8 +21,8 @@ namespace snabel {
   struct Scope {
     Coro &coro;
     std::map<str, Label> labels;
-    std::list<Env> envs;
-    std::list<Sym> lambda_stack;
+    std::deque<Env> envs;
+    std::deque<Sym> lambdas;
     
     Scope(const Scope &src);
     Scope(Coro &cor);

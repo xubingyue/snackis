@@ -45,7 +45,7 @@ namespace snabel {
       curr_stack(cor).clear();
       
       const Sym tag(gensym(cor.exec));
-      scp.lambda_stack.push_back(tag);
+      scp.lambdas.push_back(tag);
       out.push_back(Op::make_jump(fmt("_exit%0", tag)));
       out.push_back(Op::make_label(fmt("_enter%0", tag)));
       out.push_back(Op::make_begin(true));
@@ -167,7 +167,7 @@ namespace snabel {
 
     op.run = [lbl](auto &op, auto &scp) mutable {
       auto &cor(scp.coro);
-      cor.return_pcs.push_back(cor.pc);
+      cor.returns.push_back(cor.pc);
 
       if (!lbl) {
 	auto fn(pop(cor));
@@ -209,13 +209,13 @@ namespace snabel {
       Coro &cor(scp.coro);
       curr_stack(cor).clear();
       
-      if (scp.lambda_stack.empty()) {
+      if (scp.lambdas.empty()) {
 	ERROR(Snabel, "Missing lambda start");
 	return false;
       }
 
-      const Sym tag(scp.lambda_stack.back());
-      scp.lambda_stack.pop_back();
+      const Sym tag(scp.lambdas.back());
+      scp.lambdas.pop_back();
       out.push_back(Op::make_end());
       out.push_back(Op::make_return());
       out.push_back(Op::make_label(fmt("_exit%0", tag)));
@@ -433,8 +433,8 @@ namespace snabel {
 
     op.run = [](auto &op, auto &scp) {
       Coro &cor(scp.coro);
-      cor.pc = cor.return_pcs.back();
-      cor.return_pcs.pop_back();
+      cor.pc = cor.returns.back();
+      cor.returns.pop_back();
     };
     
     return op;
