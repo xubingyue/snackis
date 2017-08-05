@@ -2,7 +2,7 @@
 #### A statically typed scripting-language embedded in C++
 
 ### Postfix
-Just like Yoda of Star-Wars fame, and scientific calculators of ancient times; as well as most printers in active use; but unlike currently trending programming languages; Snabel expects arguments before operations.
+Just like Yoda of Star-Wars fame, and ancient scientific calculators; as well as most printers in active use; yet unlike currently trending programming languages; Snabel expects arguments before operations.
 
 ```
 > 7 42 + 10 %
@@ -18,7 +18,7 @@ Snabel supports dividing expressions into parts using parentheses, each level st
 ```
 
 ### Lambdas
-Using braces instead of parentheses pushes a pointer to the compiled expression on the stack for later evaluation.
+Using braces instead of parentheses pushes a pointer to the compiled expression on the stack.
 
 ```
 > {1 2 +}
