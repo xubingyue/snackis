@@ -81,10 +81,9 @@ namespace snabel {
     CHECK(ts[2].text == "baz", _);
 
     Exec exe;
-    Scope &scp(curr_scope(exe.main));
     compile(exe.main, "(1 1 +) (2 2 +) *");
     run(exe.main);
-    CHECK(get<int64_t>(pop(scp.coro)) == 8, _);    
+    CHECK(get<int64_t>(pop(exe.main)) == 8, _);    
   }
 
   static void compile_tests() {
@@ -101,10 +100,9 @@ namespace snabel {
   static void stack_tests() {
     TRY(try_test);    
     Exec exe;
-    Scope &scp(curr_scope(exe.main));
     compile(exe.main, "42 reset");
     run(exe.main);
-    CHECK(!peek(scp.coro), _);
+    CHECK(!peek(exe.main), _);
   }
 
   static void scope_tests() {
@@ -127,10 +125,9 @@ namespace snabel {
   static void jump_tests() {
     TRY(try_test);    
     Exec exe;
-    Scope &scp(curr_scope(exe.main));
     compile(exe.main, "1 2 !exit 3 @exit +");
     run(exe.main);
-    CHECK(get<int64_t>(pop(scp.coro)) == 3, _);
+    CHECK(get<int64_t>(pop(exe.main)) == 3, _);
   }
 
   static void drop_tests() {

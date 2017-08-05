@@ -46,7 +46,7 @@ namespace snabel {
 
   void jump(Coro &cor, const Label &lbl);
   void rewind(Coro &cor);  
-  bool compile(Coro &cor, const str &in, bool optimize=true);
+  bool compile(Coro &cor, const str &in);
   void run(Coro &cor); 
 }
 

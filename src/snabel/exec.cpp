@@ -67,7 +67,8 @@ namespace snabel {
     lambda_type((add_type(main, "Lambda"))),
     str_type((add_type(main, "Str"))),
     undef_type((add_type(main, "Undef"))),
-    void_type((add_type(main, "Void")))
+    void_type((add_type(main, "Void"))),
+    next_sym(1)
   {
     meta_type.fmt = [](auto &v) { return get<Type *>(v)->name; };
     op_type.fmt = [](auto &v) { return fmt_arg(get<Op>(v).code); };

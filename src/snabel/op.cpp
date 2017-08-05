@@ -12,8 +12,8 @@ namespace snabel {
   Op Op::make_backup(bool copy) {
     Op op(OP_BACKUP);
 
-    op.compile = [](auto &op, auto &scp, bool optimize, auto &out) {
-      if (optimize) { op.run(op, scp); }
+    op.compile = [](auto &op, auto &scp, auto &out) {
+      op.run(op, scp);
       return false;
     };
     
@@ -24,8 +24,12 @@ namespace snabel {
   Op Op::make_begin(bool copy_stack) {
     Op op(OP_BEGIN);
 
-    op.compile = [](auto &op, auto &scp, bool optimize, auto &out) mutable {
-      if (optimize) { op.run(op, scp); }
+    op.info = [copy_stack](auto &op, auto &scp) {
+      return copy_stack ? "copy" : "empty";
+    };
+
+    op.compile = [](auto &op, auto &scp, auto &out) mutable {
+      op.run(op, scp);
       return false;
     };
     
@@ -36,9 +40,9 @@ namespace snabel {
   Op Op::make_begin_lambda() {
     Op op(OP_BEGIN_LAMBDA);
 
-    op.compile = [](auto &op, auto &scp, bool optimize, auto &out) mutable {
+    op.compile = [](auto &op, auto &scp, auto &out) mutable {
       Coro &cor(scp.coro);
-      if (optimize) { curr_stack(cor).clear(); }
+      curr_stack(cor).clear();
       
       const Sym tag(gensym(cor.exec));
       scp.lambda_stack.push_back(tag);
@@ -55,9 +59,9 @@ namespace snabel {
     Op op(OP_CALL);
     op.info = [&fn](auto &op, auto &scp) { return fn.name; };
 
-    op.compile = [&fn](auto &op, auto &scp, bool optimize, auto &out) mutable {
+    op.compile = [&fn](auto &op, auto &scp, auto &out) mutable {
       auto &s(curr_stack(scp.coro));
-      if (!optimize || s.empty()) { return false; }
+      if (s.empty()) { return false; }
       auto imp(match(fn, scp.coro));
 
       if (imp && imp->pure && !imp->args.empty()) {
@@ -106,9 +110,7 @@ namespace snabel {
     Op op(OP_DROP);
     op.info = [cnt](auto &op, auto &scp) { return fmt_arg(cnt); };
     
-    op.compile = [cnt](auto &op, auto &scp, bool optimize, auto &out) mutable {
-      if (!optimize) { return false; }
-      
+    op.compile = [cnt](auto &op, auto &scp, auto &out) mutable {
       Stack &s(curr_stack(scp.coro));
       for (size_t i(0); i < cnt && !s.empty(); i++) {
 	s.pop_back();
@@ -144,22 +146,19 @@ namespace snabel {
       return lbl ? lbl->tag : "";
     };
 
-    op.compile = [lbl](auto &op, auto &scp, bool optimize, auto &out) mutable {
+    op.compile = [lbl](auto &op, auto &scp, auto &out) mutable {
       auto &cor(scp.coro);
-      auto &exe(cor.exec);
+      auto &exe(cor.exec);      
+      DEFER({ curr_stack(cor).clear(); });
+      auto fn(peek(cor));
       
-      if (optimize) {
-	DEFER({ curr_stack(cor).clear(); });
-	auto fn(peek(cor));
+      if (fn && &fn->type == &exe.lambda_type) {
+	auto fnd(scp.labels.find(get<str>(*fn)));
 	
-	if (fn && &fn->type == &exe.lambda_type) {
-	  auto fnd(scp.labels.find(get<str>(*fn)));
-	  
-	  if (fnd != scp.labels.end()) {
-	    out.push_back(Op::make_drop(1));
-	    out.push_back(Op::make_dyncall(fnd->second));
-	    return true;
-	  }
+	if (fnd != scp.labels.end()) {
+	  out.push_back(Op::make_drop(1));
+	  out.push_back(Op::make_dyncall(fnd->second));
+	  return true;
 	}
       }
       
@@ -191,14 +190,11 @@ namespace snabel {
   Op Op::make_end() {
     Op op(OP_END);
 
-    op.compile = [](auto &op, auto &scp, bool optimize, auto &out) mutable {
-      if (optimize) {
-	auto &cor(scp.coro);
-	bool clear(curr_stack(cor).empty());
-	op.run(op, scp);
-	if (clear) { curr_stack(cor).clear(); }
-      }
-      
+    op.compile = [](auto &op, auto &scp, auto &out) mutable {
+      auto &cor(scp.coro);
+      bool clear(curr_stack(cor).empty());
+      op.run(op, scp);
+      if (clear) { curr_stack(cor).clear(); }
       return false;
     };
 
@@ -209,9 +205,9 @@ namespace snabel {
   Op Op::make_end_lambda() {
     Op op(OP_END_LAMBDA);
 
-    op.compile = [](auto &op, auto &scp, bool optimize, auto &out) mutable {
+    op.compile = [](auto &op, auto &scp, auto &out) mutable {
       Coro &cor(scp.coro);
-      if (optimize) { curr_stack(cor).clear(); }
+      curr_stack(cor).clear();
       
       if (scp.lambda_stack.empty()) {
 	ERROR(Snabel, "Missing lambda start");
@@ -234,7 +230,7 @@ namespace snabel {
     Op op(OP_ID);
     op.info = [txt](auto &op, auto &scp) { return txt; };
 
-    op.compile = [txt](auto &op, auto &scp, bool optimize, auto &out) {
+    op.compile = [txt](auto &op, auto &scp, auto &out) {
 	auto fnd(find_env(scp, txt));
 
 	if (!fnd) {
@@ -245,21 +241,18 @@ namespace snabel {
 	if (&fnd->type == &scp.coro.exec.func_type) {
 	  Func &fn(*get<Func *>(*fnd));
 	  out.push_back(Op::make_call(fn));
-	  if (optimize) { curr_stack(scp.coro).clear(); }
+	  curr_stack(scp.coro).clear();
 	  return true;
 	}
 
-	if (optimize) {
-	  if (&fnd->type != &scp.coro.exec.undef_type &&
-	      &fnd->type != &scp.coro.exec.void_type) {
-	    push(scp.coro, *fnd);
-	    out.push_back(Op::make_push(*fnd));
-	    return true;
-	  }
-
-	  curr_stack(scp.coro).clear();
+	if (&fnd->type != &scp.coro.exec.undef_type &&
+	    &fnd->type != &scp.coro.exec.void_type) {
+	  push(scp.coro, *fnd);
+	  out.push_back(Op::make_push(*fnd));
+	  return true;
 	}
-	
+
+	curr_stack(scp.coro).clear();
 	return false;
     };
 
@@ -284,8 +277,8 @@ namespace snabel {
       return fmt("%0 (%1)", tag, lbl ? to_str(lbl->pc) : "?");
     };
 
-    op.compile = [tag, lbl](auto &op, auto &scp, bool optimize, auto &out) {      
-      if (optimize) { curr_stack(scp.coro).clear(); }
+    op.compile = [tag, lbl](auto &op, auto &scp, auto &out) {      
+      curr_stack(scp.coro).clear();
       auto fnd(scp.labels.find(tag));
       if (fnd == scp.labels.end()) { return false; }
       if (lbl && fnd->second.pc == lbl->pc) { return false; }
@@ -309,7 +302,7 @@ namespace snabel {
     op.info = [tag](auto &op, auto &scp) { return tag; };
 
     int64_t prev_pc(-1);
-    op.compile = [tag, prev_pc](auto &op, auto &scp, bool optimize, auto &out)
+    op.compile = [tag, prev_pc](auto &op, auto &scp, auto &out)
       mutable {
       Coro &cor(scp.coro);
       auto fnd(scp.labels.find(tag));
@@ -344,7 +337,7 @@ namespace snabel {
     op.info = [id](auto &op, auto &scp) { return id; };
 
     int64_t prev_pc(-1);
-    op.compile = [id, prev_pc](auto &op, auto &scp, bool optimize, auto &out)
+    op.compile = [id, prev_pc](auto &op, auto &scp, auto &out)
       mutable {
       auto fnd(find_env(scp, id));
       auto &exe(scp.coro.exec);
@@ -358,27 +351,22 @@ namespace snabel {
 	  ERROR(Snabel, fmt("Duplicate binding: %0\n%1", id, *fnd));
 	}
 
-	if (optimize) {
-	  auto &s(curr_stack(scp.coro));
+	auto &s(curr_stack(scp.coro));
 
-	  if (s.size() == 1) {
-	    s.pop_back();
-	  } else {
-	    s.clear();
-	  }
+	if (s.size() == 1) {
+	  s.pop_back();
+	} else {
+	  s.clear();
 	}
       } else {
-	opt<Box> val;
-	
-	if (optimize) {
+	opt<Box> val;	
 	  auto &s(curr_stack(scp.coro));
 
-	  if (s.size() == 1) {
-	    val.emplace(s.back());
-	    s.pop_back();
-	  } else {
-	    s.clear();
-	  }
+	if (s.size() == 1) {
+	  val.emplace(s.back());
+	  s.pop_back();
+	} else {
+	  s.clear();
 	}
 	
 	put_env(scp, id, val ? *val : Box(exe.void_type, scp.coro.pc));
@@ -407,8 +395,8 @@ namespace snabel {
     Op op(OP_PUSH);
     op.info = [it](auto &op, auto &scp) { return fmt_arg(it); };
     
-    op.compile = [it](auto &op, auto &scp, bool optimize, auto &out) {
-      if (optimize) { op.run(op, scp); }
+    op.compile = [it](auto &op, auto &scp, auto &out) {
+      op.run(op, scp);
       return false;
     };
     
@@ -419,8 +407,8 @@ namespace snabel {
   Op Op::make_reset() {
     Op op(OP_RESET);
 
-    op.compile = [](auto &op, auto &scp, bool optimize, auto &out) {
-      if (optimize) { op.run(op, scp); }
+    op.compile = [](auto &op, auto &scp, auto &out) {
+      op.run(op, scp);
       return false;
     };
     
@@ -431,8 +419,8 @@ namespace snabel {
   Op Op::make_restore() {
     Op op(OP_RESTORE);
 
-    op.compile = [](auto &op, auto &scp, bool optimize, auto &out) {
-      if (optimize) { op.run(op, scp); }
+    op.compile = [](auto &op, auto &scp, auto &out) {
+      op.run(op, scp);
       return false;
     };
     
@@ -454,7 +442,7 @@ namespace snabel {
 
   static str def_info(const Op &op, Scope &scp) { return ""; }
 
-  static bool def_compile(const Op &op, Scope &scp, bool optimize, OpSeq &out) {
+  static bool def_compile(const Op &op, Scope &scp, OpSeq &out) {
     return false;
   }
 
@@ -511,8 +499,8 @@ namespace snabel {
     return op.info(op, scp);
   }
 
-  bool compile(const Op &op, Scope &scp, bool optimize, OpSeq &out) {
-    if (op.compile(op, scp, optimize, out)) { return true; }
+  bool compile(const Op &op, Scope &scp, OpSeq &out) {
+    if (op.compile(op, scp, out)) { return true; }
     out.push_back(op);
     return false;
   }

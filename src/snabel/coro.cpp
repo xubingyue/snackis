@@ -116,7 +116,7 @@ namespace snabel {
     cor.pc = 0;
   }
 
-  bool compile(Coro &cor, const str &in, bool optimize) {
+  bool compile(Coro &cor, const str &in) {
     cor.ops.clear();
     size_t lnr(0);
     
@@ -138,7 +138,7 @@ namespace snabel {
       cor.pc = 0;
       
       for (auto &op: cor.ops) {
-	if (compile(op, curr_scope(cor), optimize, out)) {
+	if (compile(op, curr_scope(cor), out)) {
 	  done = false;
 	}
 	
@@ -157,8 +157,6 @@ namespace snabel {
   }
 
   void run(Coro &cor) {
-    begin_scope(cor, false);
-
     while (cor.pc < cor.ops.size()) {
       run(cor.ops[cor.pc], curr_scope(cor));
       cor.pc++;

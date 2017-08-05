@@ -230,7 +230,7 @@ namespace gui {
     TRY(try_exec);
 
     auto &cor(rdr.exec.main);
-    snabel::compile(cor, in, false);    
+    snabel::compile(cor, in);    
     begin_scope(cor, false);
     snabel::run(cor);
     end_scope(cor);

@@ -53,11 +53,10 @@ namespace gui {
     }
   }
 
-  static void on_generate(gpointer *_, ScriptView *v) {
-    TRY(try_generate);
+  static void on_compile(gpointer *_, ScriptView *v) {
+    TRY(try_compile);
     auto code(get_str(GTK_TEXT_VIEW(v->code_fld)));
-    auto optimize(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(v->optimize_fld)));
-    snabel::compile(v->exec.main, code, optimize);    
+    snabel::compile(v->exec.main, code);    
     gtk_list_store_clear(v->bcode_store);
 
     for (auto &op: v->exec.main.ops) {
@@ -71,9 +70,9 @@ namespace gui {
 			 -1);
     }
 
-    log(v->ctx, "Bytecode generated");
+    log(v->ctx, "Finished compiling");
     
-    if (try_generate.errors.empty()) {
+    if (try_compile.errors.empty()) {
       gtk_widget_grab_focus(v->bcode_lst);
       gtk_widget_set_sensitive(v->run_btn, true);
     } else {
@@ -85,10 +84,12 @@ namespace gui {
   static void on_run(gpointer *_, ScriptView *v) {
     TRY(try_run);
     auto &cor(v->exec.main);
-    rewind(cor);
+    snabel::rewind(cor);
+    snabel::begin_scope(cor, false);
     snabel::run(cor);
+    snabel::end_scope(cor);
     auto res(peek(v->exec.main));
-    log(v->ctx, "Result:\n%0", res ? fmt_arg(*res) : "n/a");
+    log(v->ctx, "Script result:\n%0", res ? fmt_arg(*res) : "n/a");
   }
   
   static GtkWidget *init_code(ScriptView &v) {
@@ -109,11 +110,9 @@ namespace gui {
 
     GtkWidget *left_btns(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
     gtk_container_add(GTK_CONTAINER(left), left_btns);
-    gtk_widget_set_halign(v.generate_btn, GTK_ALIGN_START);
-    g_signal_connect(v.generate_btn, "clicked", G_CALLBACK(on_generate), &v);
-    gtk_container_add(GTK_CONTAINER(left_btns), v.generate_btn);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(v.optimize_fld), true);
-    gtk_container_add(GTK_CONTAINER(left_btns), v.optimize_fld);
+    gtk_widget_set_halign(v.compile_btn, GTK_ALIGN_START);
+    g_signal_connect(v.compile_btn, "clicked", G_CALLBACK(on_compile), &v);
+    gtk_container_add(GTK_CONTAINER(left_btns), v.compile_btn);
 
     GtkWidget *right(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
     gtk_container_add(GTK_CONTAINER(frm), right);
@@ -163,9 +162,8 @@ namespace gui {
     tags_fld(gtk_entry_new()),
     code_fld(new_text_view()),
     bcode_lst(new_tree_view(GTK_TREE_MODEL(bcode_store))),
-    generate_btn(gtk_button_new_with_mnemonic("_Generate Bytecode")),
-    optimize_fld(gtk_check_button_new_with_mnemonic("_Optimize")),    
-    run_btn(gtk_button_new_with_mnemonic("_Run Bytecode")),
+    compile_btn(gtk_button_new_with_mnemonic("Compil_e")),
+    run_btn(gtk_button_new_with_mnemonic("_Run")),
     peer_lst(ctx, "Peer", this->rec.peer_ids),
     post_lst(ctx)
   {

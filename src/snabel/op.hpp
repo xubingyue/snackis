@@ -26,7 +26,7 @@ namespace snabel {
     OpCode code;
     
     func<str (const Op &op, Scope &)> info;
-    func<bool (const Op &op, Scope &, bool optimize, OpSeq &)> compile;
+    func<bool (const Op &op, Scope &, OpSeq &)> compile;
     func<void (const Op &op, Scope &)> run;
     
     static Op make_backup(bool copy);
@@ -51,7 +51,7 @@ namespace snabel {
 
   str name(const Op &op);
   str info(const Op &op, Scope &scp);
-  bool compile(const Op &op, Scope &scp, bool optimize, OpSeq &out);
+  bool compile(const Op &op, Scope &scp, OpSeq &out);
   void run(const Op &op, Scope &scp);
 }
 
