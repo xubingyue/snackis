@@ -4,7 +4,7 @@
 ![script example](images/script.png?raw=true)
 
 ### Postfix
-Just like Yoda of Star-Wars fame, and yesterdays scientific calculators; as well as most printers in active use; yet unlike currently trending programming languages; Snabel expects arguments before operations.
+Just like Yoda of Star Wars-fame, and yesterdays scientific calculators; as well as most printers in active use; yet unlike currently trending programming languages; Snabel expects arguments before operations.
 
 ```
 > 7 42 + 10 %
@@ -17,6 +17,14 @@ Snabel supports dividing expressions into parts using parentheses, each level st
 ```
 > (1 2 +) (2 2 *) +
 7::I64
+```
+
+### Stacks
+Snabel owes much of its semantics to the stack. Literals, identifiers and results from function calls are pushed on the current fibers stack in order of appearance. Thanks to lexical scoping with automagic backups and restores and named bindings, keeping the stack squeaky clean is less critical in Snabel than most similar languages.
+
+```
+> 42 7 drop
+42::I64
 ```
 
 ### Lambdas
